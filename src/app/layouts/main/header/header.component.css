@@ -1,0 +1,84 @@
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 280px; /* Desktop: después del sidebar cuando está abierto */
+  right: 0;
+  height: 8vh;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  transition: left 0.4s ease;
+  border-left: none;
+}
+
+header{
+  background-color: #566f7b33 !important;
+  border-radius: 2vh;
+  margin: 1%;
+}
+
+/* Header expandido cuando sidebar está cerrado en desktop */
+.header-expanded {
+  left: 0 !important;
+}
+
+/* Header en móvil - siempre expandido y con z-index alto */
+.header-mobile {
+  left: 0 !important;
+  z-index: 1100 !important; /* Mayor que el sidebar para estar encima */
+}
+
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  margin-right: 15px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  flex: 1;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+   .header-fixed {
+    left: 0; /* Header siempre expandido en móvil */
+    z-index: 1100; /* Asegurar que esté encima del sidebar */
+  }
+}
+
+@media (max-width: 576px) {
+  .header-fixed {
+    height: 50px;
+    padding: 0 15px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+}

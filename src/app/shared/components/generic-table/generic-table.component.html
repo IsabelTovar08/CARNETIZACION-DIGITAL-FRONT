@@ -1,0 +1,41 @@
+<h1>{{ title }}</h1>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ title }}</mat-card-title>
+    <button mat-raised-button color="primary" (click)="emitCreate()">Agregar</button>
+  </mat-card-header>
+
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+      <mat-header-cell *matHeaderCellDef>{{ col.label }}</mat-header-cell>
+      <mat-cell *matCellDef="let item">
+        <ng-container [ngSwitch]="col.key">
+          <mat-slide-toggle
+            *ngSwitchCase="'status'"
+            [(ngModel)]="item.status"
+            (click)="emitToggle(item)">
+          </mat-slide-toggle>
+          <span *ngSwitchDefault>{{ item[col.key] }}</span>
+        </ng-container>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+      <mat-cell *matCellDef="let item">
+        <button mat-icon-button (click)="emitEdit(item)">
+          <mat-icon>edit</mat-icon>
+          sadfasf
+        </button>
+        <button mat-icon-button (click)="emitDelete(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+</mat-card>

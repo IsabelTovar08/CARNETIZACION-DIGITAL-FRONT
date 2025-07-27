@@ -1,0 +1,17 @@
+<header class="header-fixed"
+  [class.header-expanded]="!isMobile && !sidebarOpened"
+  [class.header-mobile]="isMobile">
+  <button class="mobile-menu-btn" (click)="onToggleMenu()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <div class="header-content">
+    <h1 class="header-title">Panel de {{ tipoUsuario }}</h1>
+    <div class="breadcrumb">
+      <ng-container *ngFor="let segment of breadcrumbPath; let last = last">
+        <span>{{ segment }}</span>
+        <span *ngIf="!last"> / </span>
+      </ng-container>
+    </div>
+  </div>
+</header>
