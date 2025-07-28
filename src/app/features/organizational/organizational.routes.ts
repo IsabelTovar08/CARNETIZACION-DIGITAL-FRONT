@@ -7,3 +7,4 @@ export const organizationalRoutes: Routes = [
     component: InfoOrganizationComponent,
   }
 ];
+  

@@ -20,7 +20,7 @@ export const menuAdmin: MenuItem[] = [
       ]
     },
     {
-      id: 'auth',
+      id: 'auths',
       title: 'Authentication',
       type: 'group',
       children: [
@@ -29,17 +29,27 @@ export const menuAdmin: MenuItem[] = [
           title: 'Login',
           type: 'item',
           classes: 'nav-item',
-          url: '/auth/login',
+          url: '/dashboard/login', // <-- Cambia esto
           icon: 'login',
           target: true,
           breadcrumbs: false
         },
         {
-          id: 'register',
-          title: 'Register',
+          id: 'inicio',
+          title: 'Inicio',
           type: 'item',
           classes: 'nav-item',
-          url: '/auth/register',
+          url: '/dashboard/inicio',
+          icon: 'person_add',
+          target: true,
+          breadcrumbs: false
+        },
+        {
+          id: 'contact',
+          title: 'Contacto',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/dashboard/contact',
           icon: 'person_add',
           target: true,
           breadcrumbs: false
@@ -48,7 +58,7 @@ export const menuAdmin: MenuItem[] = [
     },
     {
       id: 'ui-components',
-      title: 'Organizacional',
+      title: 'Organizaciones',
       type: 'group',
       children: [
         {

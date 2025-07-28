@@ -25,8 +25,25 @@ export const routes: Routes = [
         path: 'organizational',
         loadChildren: () =>
           import('./features/organizational/organizational.routes').then(m => m.organizationalRoutes),
+      },
+      {
+        path: 'login',
+        loadChildren: () =>
+           import('./features/auth/auth.routes').then(m => m.loginRoutes),
+      },
+      {
+        path : 
+      },
+      {
+        path: 'inicio',
+        loadChildren: () =>
+          import('./features/auth/auth.routes').then(m => m.inicioRoutes),
+      },
+      {
+        path: 'contact',
+        loadChildren: () =>
+          import('./features/auth/auth.routes').then(m => m.contactRoutes),
       }
-
     ]
   },
   {
