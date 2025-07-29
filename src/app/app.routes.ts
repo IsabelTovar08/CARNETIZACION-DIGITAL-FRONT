@@ -1,17 +1,40 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  // Rutas públicas (fuera del dashboard)
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./auth/auth.routers').then(m => m.loginRoutes),
+  },
+  {
+    path: 'forgotten-password',
+    loadChildren: () =>
+      import('./auth/auth.routers').then(m => m.ForgottenPasswordRoutes),
+  },
+  {
+    path: 'verification-code',
+    loadChildren:() =>
+      import('./auth/auth.routers').then(m => m.verificationCodeRoutes),
+  },
+  {
+    path: 'inicio',
+    loadChildren: () =>
+      import('./auth/auth.routers').then(m => m.inicioRoutes),
+  },
+  {
+    path: 'contact',
+    loadChildren: () =>
+      import('./auth/auth.routers').then(m => m.contactRoutes),
+  },
+
+  //Rutas privadas (dashboard)
   {
     path: 'dashboard',
     loadComponent: () =>
       import('./features/dashboard/pages/dashboardComponent/dashboard.component').then(m => m.DashboardComponent),
     children: [
-      // {
-      //   path: '',
-      //   redirectTo: 'dashboard',
-      //   pathMatch: 'full',
-      // },
-       {
+      {
         path: '',
         loadComponent: () =>
           import('./features/dashboard/pages/dashboard-home/dashboard-home.component').then(m => m.DashboardHomeComponent),
@@ -25,30 +48,14 @@ export const routes: Routes = [
         path: 'organizational',
         loadChildren: () =>
           import('./features/organizational/organizational.routes').then(m => m.organizationalRoutes),
-      },
-      {
-        path: 'login',
-        loadChildren: () =>
-           import('./features/auth/auth.routes').then(m => m.loginRoutes),
-      },
-      {
-        path : 
-      },
-      {
-        path: 'inicio',
-        loadChildren: () =>
-          import('./features/auth/auth.routes').then(m => m.inicioRoutes),
-      },
-      {
-        path: 'contact',
-        loadChildren: () =>
-          import('./features/auth/auth.routes').then(m => m.contactRoutes),
       }
     ]
   },
-  {
+
+  // Redirección por defecto
+  { 
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full',
   }
 ];

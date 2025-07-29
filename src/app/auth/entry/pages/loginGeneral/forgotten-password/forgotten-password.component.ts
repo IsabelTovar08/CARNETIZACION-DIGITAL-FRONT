@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgotten-password',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './forgotten-password.component.html',
   styleUrl: './forgotten-password.component.css'
 })
@@ -11,10 +14,18 @@ export class ForgottenPasswordComponent {
   forgotPasswordForm: FormGroup;
   isLoading = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
+  }
+
+  goToLogin(): void{
+      this.router.navigate(['/login']);
+  }
+
+  goToVerificitonCode(): void{
+      this.router.navigate(['/verification-code']);
   }
 
   onSubmit() {

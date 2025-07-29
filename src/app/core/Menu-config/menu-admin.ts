@@ -35,6 +35,16 @@ export const menuAdmin: MenuItem[] = [
           breadcrumbs: false
         },
         {
+          id: 'forgotten-password',
+          title: 'Olvido de contraseña',
+          type: 'item',
+          classes: 'nav-item',
+          url: '/dashboard/forgotten-password', // <-- Cambia esto
+          icon: 'login',
+          target: true,
+          breadcrumbs: false
+        },
+        {
           id: 'inicio',
           title: 'Inicio',
           type: 'item',
