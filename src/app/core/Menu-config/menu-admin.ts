@@ -53,11 +53,11 @@ export const menuAdmin: MenuItem[] = [
       children: [
         {
           id: 'typography',
-          title: 'Organización',
+          title: 'Eventos y Control de Acceso',
           type: 'item',
           classes: 'nav-item',
           url: '/dashboard/organizational/organization',
-          icon: 'text_fields',
+          icon: 'event_available',
           target: false,
           breadcrumbs: true
         },
