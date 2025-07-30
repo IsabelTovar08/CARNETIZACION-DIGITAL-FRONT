@@ -27,6 +27,11 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./auth/auth.routers').then(m => m.contactRoutes),
   },
+  {
+    path: 'create-password',
+    loadChildren:() =>
+      import('./auth/auth.routers').then(m => m.createPasswordRoutes),
+  },
 
   //Rutas privadas (dashboard)
   {

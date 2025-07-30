@@ -6,6 +6,7 @@ import { InicioComponent } from "./entry/pages/inicio/inicio.component";
 import { ContactComponent } from "./entry/pages/contact/contact.component";
 import { ForgottenPasswordComponent } from "./entry/pages/loginGeneral/forgotten-password/forgotten-password.component";
 import { VerificationCodeComponent } from "./entry/pages/loginGeneral/verification-code/verification-code.component";
+import { CreatePasswordComponent } from "./entry/pages/loginGeneral/create-password/create-password.component";
 
 
 
@@ -27,4 +28,8 @@ export const ForgottenPasswordRoutes: Routes = [
 
 export const verificationCodeRoutes: Routes = [
   {path: '',component: VerificationCodeComponent}
+];
+
+export const createPasswordRoutes : Routes = [
+  {path: '', component: CreatePasswordComponent}
 ];
