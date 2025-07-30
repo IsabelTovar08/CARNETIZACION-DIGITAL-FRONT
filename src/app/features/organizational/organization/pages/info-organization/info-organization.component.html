@@ -1,1 +1,204 @@
-<p>Hola info organization works!</p>
+
+<div class="create-event-wrapper">
+  <h2>Crear Evento</h2>
+
+  <form (ngSubmit)="crearEvento()" #eventoForm="ngForm" class="form-container">
+    <!-- Nombre y Descripción -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nombre">Nombre del Evento</label>
+        <input
+          id="nombre"
+          type="text"
+          class="form-control"
+          [(ngModel)]="evento.nombre"
+          name="nombre"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción del Evento</label>
+        <input
+          id="descripcion"
+          type="text"
+          class="form-control"
+          [(ngModel)]="evento.descripcion"
+          name="descripcion"
+        />
+      </div>
+    </div>
+
+    <!-- Fechas -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fechaInicio">Fecha y hora de Inicio</label>
+        <input
+          id="fechaInicio"
+          type="datetime-local"
+          class="form-control"
+          [(ngModel)]="evento.fechaInicio"
+          name="fechaInicio"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="fechaFin">Fecha y hora Fin</label>
+        <input
+          id="fechaFin"
+          type="datetime-local"
+          class="form-control"
+          [(ngModel)]="evento.fechaFin"
+          name="fechaFin"
+          required
+        />
+      </div>
+    </div>
+
+    <!-- Switches -->
+    <div class="form-row toggles">
+      <div class="toggle">
+        <label>Múltiples Jornadas</label>
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="evento.multiplesJornadas"
+            name="multiplesJornadas"
+          />
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="toggle">
+        <label>Repetir Evento</label>
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="evento.repetirEvento"
+            name="repetirEvento"
+          />
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Acceso -->
+    <div class="section">
+      <h3>Acceso al Evento</h3>
+      <label>
+        <input
+          type="radio"
+          [(ngModel)]="evento.accesoPublico"
+          name="accesoPublico"
+          [value]="true"
+        />
+        Todo el público
+      </label>
+
+      <!-- Filtros -->
+      <h4>Filtros Avanzados</h4>
+      <div class="form-group">
+        <label for="perfil">Perfiles</label>
+        <select
+          id="perfil"
+          class="form-control"
+          [(ngModel)]="evento.perfil"
+          name="perfil"
+        >
+          <option value="">Seleccionar perfil</option>
+          <option *ngFor="let perfil of perfiles" [value]="perfil">
+            {{ perfil }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="unidad">Unidades Organizativas</label>
+        <select
+          id="unidad"
+          class="form-control"
+          [(ngModel)]="evento.unidad"
+          name="unidad"
+        >
+          <option value="">Seleccionar unidades</option>
+          <option *ngFor="let unidad of unidades" [value]="unidad">
+            {{ unidad }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="division">Divisiones</label>
+        <select
+          id="division"
+          class="form-control"
+          [(ngModel)]="evento.division"
+          name="division"
+        >
+          <option value="">Seleccionar divisiones</option>
+          <option *ngFor="let division of divisiones" [value]="division">
+            {{ division }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Puntos de Acceso -->
+    <div class="access-points">
+      <h3>Puntos de Acceso</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let punto of puntosAcceso; let i = index">
+            <td>{{ punto.nombre }}</td>
+            <td>{{ punto.tipo }}</td>
+            <td>
+              <button
+                type="button"
+                (click)="eliminarPunto(i)"
+                class="delete-btn"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="form-row">
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Nombre del punto"
+            [(ngModel)]="nuevoPunto.nombre"
+            name="nuevoNombre"
+          />
+        </div>
+        <div class="form-group">
+          <select
+            class="form-control"
+            [(ngModel)]="nuevoPunto.tipo"
+            name="nuevoTipo"
+          >
+            <option value="Entrance">Entrance</option>
+            <option value="Exit">Exit</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <button type="button" class="add-btn" (click)="agregarPunto()">
+          Agregar
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón final -->
+    <button type="submit" class="create-btn" [disabled]="!eventoForm.valid">
+      Crear Evento
+    </button>
+  </form>
+</div>
