@@ -123,15 +123,33 @@ export const menuAdmin: MenuItem[] = [
             },
             {
               id: 'level-1-2',
-              title: 'Menu Level 2.2',
+              title: 'Usuarios',
               type: 'item',
-              url: '/menu/level1-2'
+              url: '/dashboard/security/users'
             },
             {
-              id: 'level-1-3',
-              title: 'Menu Level 2.3',
+              id: 'level-1-f2',
+              title: 'Roles',
               type: 'item',
-              url: '/menu/level1-3'
+              url: '/dashboard/security/roles'
+            },
+            {
+              id: 'level-1-2f',
+              title: 'Permisos',
+              type: 'item',
+              url: '/dashboard/security/permissions'
+            },
+            {
+              id: 'level-1-d2',
+              title: 'Formularios',
+              type: 'item',
+              url: '/dashboard/security/forms'
+            },
+            {
+              id: 'level-1-d3',
+              title: 'Módulos',
+              type: 'item',
+              url: '/dashboard/security/modules'
             }
           ]
         },

@@ -1,0 +1,15 @@
+<app-generic-table
+  [title]="'Módulos'"
+  [dataSource]="items"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'description', label: 'Descripción' },
+      { key: 'phone', label: 'Teléfono'},
+      { key: 'isDeleted', label: 'Estado' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save()"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

@@ -1,9 +1,29 @@
+import { ListPermissionsComponent } from './permissions/components/list-permissions/list-permissions.component';
 import { Routes } from '@angular/router';
-import { ListPersonComponent } from './people/pages/list-person/list-person.component';
+import { ListPersonComponent } from './people/components/list-person/list-person.component';
+import { ListUsersComponent } from './users/pages/list-users/list-users.component';
+import { ListRolesComponent } from './roles/pages/list-roles/list-roles.component';
+import { ListFormsComponent } from './forms/pages/list-forms/list-forms.component';
+import { ListModulesComponent } from './modules/pages/list-modules/list-modules.component';
+import { FormPErsonComponent } from './people/components/form-person/form-person.component';
+import { PersonPageComponent } from './people/pages/person-page/person-page.component';
 
 export const securityRoutes: Routes = [
-  {
-    path: 'people',
-    component: ListPersonComponent,
-  }
+  { path: 'people', component: PersonPageComponent,
+    children: [
+      { path: 'create', component: FormPErsonComponent},
+      { path: '', component: ListPersonComponent },
+
+    ]
+   },
+  { path: 'permissions', component: ListPermissionsComponent,
+    children: [
+      // { path: '', component: ListPersonComponent },
+      {path: 'create', component: ListPermissionsComponent}
+    ]
+   },
+  { path: 'users', component: ListUsersComponent },
+  { path: 'roles', component: ListRolesComponent },
+  { path: 'forms', component: ListFormsComponent },
+  { path: 'modules', component: ListModulesComponent }
 ];

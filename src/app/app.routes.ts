@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // Rutas públicas (fuera del dashboard)
@@ -31,6 +32,7 @@ export const routes: Routes = [
   //Rutas privadas (dashboard)
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/pages/dashboardComponent/dashboard.component').then(m => m.DashboardComponent),
     children: [
@@ -53,7 +55,7 @@ export const routes: Routes = [
   },
 
   // Redirección por defecto
-  { 
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
