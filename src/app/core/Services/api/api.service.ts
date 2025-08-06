@@ -22,7 +22,7 @@ export class ApiService<T, D> {
     return this.http.get<D>(`${this.urlBase}/${entidad}/active`);
   }
   public Crear(entidad: string, objeto: T) {
-    return this.http.post<D>(`${this.urlBase}/${entidad}`, objeto);
+    return this.wrapper.handleRequest(this.http.post<D>(`${this.urlBase}/${entidad}`, objeto));
   }
   public update(entidad: string, data: T) {
     return this.http.put<D>(`${this.urlBase}/${entidad}/update/`, data);

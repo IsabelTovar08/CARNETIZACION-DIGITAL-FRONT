@@ -5,7 +5,11 @@ import { ApiService } from '../../../../../core/Services/api/api.service';
 import { Module } from '../../../../../core/Models/security/module.models';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
+import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
 
 @Component({
   selector: 'app-list-modules',
@@ -19,20 +23,78 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 })
 export class ListModulesComponent implements OnInit {
   listModule$!: Observable<Module[]>;
-
-  constructor(
-    private apiService: ApiService<Module, Module>,
-    public loadingService: LoangingServiceService
-  ) { }
-
-  ngOnInit(): void {
-     this.listModule$ = this.apiService.ObtenerTodo('Module')
-  }
-
   displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
 
-  save() { }
-  delete(item: any) { }
+  constructor(
+    private apiService: ApiService<Module, Module>,
+    public loadingService: LoangingServiceService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog,
+    private snackbarService: SnackbarService
+
+  ) { }
+
+  ngOnInit(): void {
+    this.cargarData();
+  }
+
+
+  cargarData() {
+    this.listModule$ = this.apiService.ObtenerTodo('Module')
+  }
+
+  openModal(item?: Module) {
+    const dialogRef = this.dialog.open(GenericFormComponent, {
+      disableClose: true,
+      width: '400px',
+      data: {
+        title: item ? 'Editar' : 'Crear',
+        item
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (item) {
+          this.add(result, item.id);
+        } else {
+          this.add(result);
+        }
+      }
+
+      // 🔙 Vuelve a la ruta base sin /create
+      this.router.navigate(['./'], { relativeTo: this.route });
+    });
+  }
+
+
+  add(Module: Module, id?: number) {
+    if (id) {
+      this.apiService.update('Module', Module).subscribe(() => {
+        this.cargarData();
+        this.snackbarService.showSuccess();
+      })
+    }
+    else {
+      this.apiService.Crear('Module', Module).subscribe(() => {
+        this.cargarData();
+        this.snackbarService.showSuccess();
+      })
+    }
+  }
+
+  save(data?: Module) {
+    this.openModal(data)
+  }
+
+  delete(item: any) {
+    this.apiService.delete("Module", item.id).subscribe(() => {
+      this.snackbarService.showInfo('Modulo eliminado con éxito')
+      this.cargarData();
+    })
+  }
+
   toggleIsActive(item: any) { }
 }

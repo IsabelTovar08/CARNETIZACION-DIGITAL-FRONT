@@ -54,20 +54,9 @@ export class GenericTableComponent {
   }
 
   emitEdit(item: any) {
-    Swal.fire({
-      icon: 'question',
-      title: '¿Editar registro?',
-      text: 'Estás a punto de modificar este elemento. ¿Deseas continuar?',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, editar',
-      cancelButtonText: 'Cancelar'
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.onEdit.emit(item);
-        Swal.fire('Editado', 'El elemento está listo para ser editado.', 'success');
-      }
-    });
+    this.onEdit.emit(item);
   }
+
 
   emitDelete(item: any) {
     Swal.fire({
@@ -80,7 +69,6 @@ export class GenericTableComponent {
     }).then(result => {
       if (result.isConfirmed) {
         this.onDelete.emit(item);
-        Swal.fire('Eliminado', 'El elemento ha sido eliminado correctamente.', 'success');
       }
     });
   }
@@ -108,7 +96,7 @@ export class GenericTableComponent {
   }
 
   emitCreate() {
-   this.router.navigate(['create'], { relativeTo: this.route });
+    this.router.navigate(['create'], { relativeTo: this.route });
     this.onCreate.emit();
   }
 }

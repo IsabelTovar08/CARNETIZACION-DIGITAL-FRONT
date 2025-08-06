@@ -1,5 +1,5 @@
 import { GenericModel } from "./generic.model";
 
-export interface From extends GenericModel{
-
+export interface FromModel extends GenericModel{
+  url: string;
 }

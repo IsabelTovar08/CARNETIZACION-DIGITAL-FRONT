@@ -32,6 +32,12 @@
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
       <mat-cell *matCellDef="let item">
+        <!-- Botón extra si existe template personalizado -->
+        <ng-container *ngIf="customTemplates?.['actions-extra']">
+          <ng-container
+            *ngTemplateOutlet="customTemplates['actions-extra']; context: { $implicit: item }">
+          </ng-container>
+        </ng-container>
         <button mat-icon-button (click)="emitEdit(item)">
           <mat-icon>edit</mat-icon>
         </button>
