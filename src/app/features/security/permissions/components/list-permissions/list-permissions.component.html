@@ -9,8 +9,8 @@
       { key: 'phone', label: 'Teléfono'},
       { key: 'isDeleted', label: 'Estado' }
     ]"
-  (onCreate)="save(null)"
-  (onEdit)="save(null)"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
   (onDelete)="delete($event)"
   (onToggleStatus)="toggleIsActive($event)">
 </app-generic-table>

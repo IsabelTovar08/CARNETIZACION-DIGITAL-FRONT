@@ -12,7 +12,7 @@
       { key: 'isDeleted', label: 'Estado' }
     ]"
   (onCreate)="save()"
-  (onEdit)="save()"
+  (onEdit)="save($event)"
   (onDelete)="delete($event)"
   (onToggleStatus)="toggleIsActive($event)">
 </app-generic-table>
