@@ -1,12 +1,12 @@
 <app-generic-table
-  [title]="'Módulos'"
+  [title]="'Roles'"
   [dataSource]="items"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },
       { key: 'description', label: 'Descripción' },
-      { key: 'status', label: 'Estado' }
-
+      { key: 'phone', label: 'Teléfono'},
+      { key: 'isDeleted', label: 'Estado' }
     ]"
   (onCreate)="save()"
   (onEdit)="save()"

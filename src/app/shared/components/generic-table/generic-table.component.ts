@@ -1,5 +1,6 @@
+
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ContentChildren, EventEmitter, Input, Output, QueryList, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-generic-table',
@@ -36,19 +40,75 @@ export class GenericTableComponent {
   @Output() onToggleStatus = new EventEmitter<any>();
   @Output() onCreate = new EventEmitter<void>();
 
+  @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};
+
+  /**
+   *
+   */
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+
+
+  }
+
   emitEdit(item: any) {
-    this.onEdit.emit(item);
+    Swal.fire({
+      icon: 'question',
+      title: '¿Editar registro?',
+      text: 'Estás a punto de modificar este elemento. ¿Deseas continuar?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, editar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.onEdit.emit(item);
+        Swal.fire('Editado', 'El elemento está listo para ser editado.', 'success');
+      }
+    });
   }
 
   emitDelete(item: any) {
-    this.onDelete.emit(item);
+    Swal.fire({
+      icon: 'warning',
+      title: '¿Eliminar registro?',
+      text: 'Esta acción no se puede deshacer. ¿Estás seguro?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.onDelete.emit(item);
+        Swal.fire('Eliminado', 'El elemento ha sido eliminado correctamente.', 'success');
+      }
+    });
   }
 
   emitToggle(item: any) {
-    this.onToggleStatus.emit(item);
+    const isActivating = !item.status;
+
+    Swal.fire({
+      icon: 'question',
+      title: `${isActivating ? '¿Activar' : '¿Desactivar'} registro?`,
+      text: `Estás a punto de ${isActivating ? 'activar' : 'desactivar'} este elemento.`,
+      showCancelButton: true,
+      confirmButtonText: `Sí, ${isActivating ? 'activar' : 'desactivar'}`,
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.onToggleStatus.emit(item);
+        Swal.fire(
+          isActivating ? 'Activado' : 'Desactivado',
+          `El elemento ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,
+          'success'
+        );
+      }
+    });
   }
 
   emitCreate() {
+   this.router.navigate(['create'], { relativeTo: this.route });
     this.onCreate.emit();
   }
 }

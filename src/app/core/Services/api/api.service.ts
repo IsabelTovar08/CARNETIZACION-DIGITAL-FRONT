@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment.development';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
 
   constructor(private http: HttpClient) { }
-  urlBase = environment.URL + 'api';
+  urlBase = environment.URL + '/api';
 
   public ObtenerTodo(entidad: string) {
     return this.http.get<any>(`${this.urlBase}/${entidad}`);
@@ -29,9 +29,7 @@ export class ApiService {
   public deleteLogic(entidad: string, id: number) {
     return this.http.patch(`${this.urlBase}/${entidad}/toggleActive/${id}`, null);
   }
-  public login(credentials: { email: string, password: string }) {
-    return this.http.post<any>(`${this.urlBase}/Auth/login`, credentials);
-  }
+
   loginWithGoogle(tokenId: string) {
     return this.http.post<{ token: string }>(`${this.urlBase}/Auth/google`, { tokenId });
   }

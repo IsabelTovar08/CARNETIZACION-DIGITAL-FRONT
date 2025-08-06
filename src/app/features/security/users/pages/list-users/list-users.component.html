@@ -1,0 +1,29 @@
+
+ <!-- Roles personalizados -->
+<ng-template #rolesTemplate let-item let-key="key">
+  <div class="custom-chip-wrapper">
+    <span *ngFor="let rol of item.roles" class="custom-chip" >
+      {{ rol }}
+    </span>
+  </div>
+</ng-template>
+
+<app-generic-table
+  [title]="'Usuarios'"
+  [dataSource]="items"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'namePerson', label: 'Nombre' },
+      { key: 'email', label: 'Email' },
+      { key: 'roles', label: 'Roles' },
+      { key: 'isDeleted', label: 'Estado' }
+    ]"
+    [customTemplates]="{ roles: rolesTemplate }"
+  (onCreate)="save()"
+  (onEdit)="save()"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>
+
+
+

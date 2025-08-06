@@ -142,7 +142,6 @@ export class DashboardComponent implements OnInit {
 
   // Actualiza el breadcrumb según la URL actual
   private updatePathTitles(currentUrl: string): void {
-    debugger
     const path = this.findPathTitles(this.menuItems, currentUrl);
     if (path) {
       this.navState.setPathTitles(path);
@@ -151,7 +150,6 @@ export class DashboardComponent implements OnInit {
 
   // Busca el breadcrumb navegando por los items del menú
   private findPathTitles(menu: MenuItem[], targetUrl: string, path: string[] = []): string[] | null {
-    debugger
     for (const item of menu) {
       const currentPath = [...path, item.title];
       const normalizedUrl = targetUrl.startsWith('/') ? targetUrl : '/' + targetUrl;
@@ -175,7 +173,6 @@ export class DashboardComponent implements OnInit {
 
   // Método para cerrar sidebar desde el backdrop (opcional)
   closeSidebar() {
-    debugger
     if (this.isMobile) {
       this.drawer.close();
     }

@@ -1,8 +1,9 @@
 <h1>{{ title }}</h1>
 <mat-card>
   <mat-card-header>
-    <mat-card-title>{{ title }}</mat-card-title>
-    <button mat-raised-button color="primary" (click)="emitCreate()">Agregar</button>
+    <!-- <mat-card-title>{{ title }}</mat-card-title> -->
+    <button mat-raised-button color="primary"
+      (click)="emitCreate()">Agregar</button>
   </mat-card-header>
 
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -10,14 +11,21 @@
     <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
       <mat-header-cell *matHeaderCellDef>{{ col.label }}</mat-header-cell>
       <mat-cell *matCellDef="let item">
-        <ng-container [ngSwitch]="col.key">
-          <mat-slide-toggle
-            *ngSwitchCase="'status'"
-            [(ngModel)]="item.status"
-            (click)="emitToggle(item)">
-          </mat-slide-toggle>
-          <span *ngSwitchDefault>{{ item[col.key] }}</span>
+        <ng-container *ngIf="customTemplates[col.key]; else defaultCell">
+          <ng-container
+            *ngTemplateOutlet="customTemplates[col.key]; context: { $implicit: item, key: col.key }"></ng-container>
         </ng-container>
+
+        <ng-template #defaultCell>
+          <ng-container [ngSwitch]="col.key">
+            <mat-slide-toggle
+              *ngSwitchCase="'isDeleted'"
+              [(ngModel)]="item.isDeleted"
+              (click)="emitToggle(item)">
+            </mat-slide-toggle>
+            <span *ngSwitchDefault>{{ item[col.key] || 'N/A' }}</span>
+          </ng-container>
+        </ng-template>
       </mat-cell>
     </ng-container>
 
@@ -26,7 +34,6 @@
       <mat-cell *matCellDef="let item">
         <button mat-icon-button (click)="emitEdit(item)">
           <mat-icon>edit</mat-icon>
-          sadfasf
         </button>
         <button mat-icon-button (click)="emitDelete(item)">
           <mat-icon>delete</mat-icon>

@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../../core/Services/auth/auth-service.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,11 @@ export class LoginComponent {
   showPassword = false;
   isLoading = false;
 
-  constructor(private fb: FormBuilder,private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -39,12 +44,22 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    this.authService.login(this.loginForm.value)
+    .subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+        },
+      error: (error) => {
+        console.error('Error al iniciar sesión:', error);
+      }
+    });
+
     if (this.loginForm.valid) {
       this.isLoading = true;
-      
+
       const formData = this.loginForm.value;
       console.log('Datos del formulario:', formData);
-      
+
       // Simular llamada a API
       setTimeout(() => {
         this.isLoading = false;
