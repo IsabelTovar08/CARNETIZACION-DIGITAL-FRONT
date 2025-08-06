@@ -1,12 +1,18 @@
+/* header.component.css CON ESTILOS DE MODAL */
+
+/* Estilos base del header (mantener los existentes) */
 .header-fixed {
   position: fixed;
   top: 0;
-  left: 280px; /* Desktop: después del sidebar cuando está abierto */
+  left: 280px;
   right: 0;
-  height: 8vh;
-  background: #fff;
+  height: 9vh;
+  min-height: 60px;
+  background: rgba(86, 111, 123, 0.2);
   border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(230, 214, 214, 0.1);
+  border-radius: 2vh;
+  margin: 1%;
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -15,21 +21,17 @@
   border-left: none;
 }
 
-header{
-  background-color: #566f7b33 !important;
-  border-radius: 2vh;
-  margin: 1%;
-}
-
-/* Header expandido cuando sidebar está cerrado en desktop */
 .header-expanded {
   left: 0 !important;
+  margin-left: 1% !important;
+  width: calc(100% - 2%) !important;
 }
 
-/* Header en móvil - siempre expandido y con z-index alto */
 .header-mobile {
   left: 0 !important;
-  z-index: 1100 !important; /* Mayor que el sidebar para estar encima */
+  z-index: 1100 !important;
+  margin-left: 1% !important;
+  width: calc(100% - 2%) !important;
 }
 
 .mobile-menu-btn {
@@ -42,6 +44,7 @@ header{
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .mobile-menu-btn:hover {
@@ -50,6 +53,15 @@ header{
 
 .header-content {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.header-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .header-title {
@@ -57,28 +69,299 @@ header{
   font-size: 18px;
   color: #333;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .breadcrumb {
   font-size: 12px;
   color: #666;
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.notification {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001; /* Para estar encima del contenido pero debajo del modal */
+}
+
+.notification:hover {
+  background: #f5f5f5;
+  transform: translateY(-1px);
+}
+
+.notification mat-icon {
+  font-size: 20px;
+  color: #666;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+  max-width: 150px;
+}
+
+.perfil:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.perfil-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.perfil-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #e0e0e0;
+}
+
+/* === ESTILOS DEL MODAL DE NOTIFICACIONES === */
+
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1998;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.notification-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  z-index: 1999;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-modal-mobile {
+  width: 95%;
+  max-width: none;
+  max-height: 90vh;
+  border-radius: 8px;
+}
+
+.notification-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.notification-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.close-btn mat-icon {
+  font-size: 20px;
+  color: #666;
+}
+
+/* === ANIMACIONES === */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* === RESPONSIVE === */
+
 @media (max-width: 768px) {
-   .header-fixed {
-    left: 0; /* Header siempre expandido en móvil */
-    z-index: 1100; /* Asegurar que esté encima del sidebar */
+  .header-fixed {
+    left: 0;
+    z-index: 1100;
+    height: 60px;
+    min-height: 60px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+
+  .header-actions {
+    gap: 12px;
+  }
+
+  .perfil-name {
+    display: none;
+  }
+
+  .notification-modal {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    animation: slideInMobile 0.3s ease-out;
+  }
+
+  .notification-modal-header {
+    padding: 16px 20px;
   }
 }
 
 @media (max-width: 576px) {
   .header-fixed {
-    height: 50px;
     padding: 0 15px;
+    height: 56px;
+    min-height: 56px;
   }
 
   .header-title {
+    font-size: 14px;
+  }
+
+  .breadcrumb {
+    font-size: 11px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .notification {
+    padding: 6px;
+  }
+
+  .notification mat-icon {
+    font-size: 18px;
+  }
+
+  .perfil-img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .notification-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+
+  .notification-modal-header {
+    padding: 12px 16px;
+  }
+
+  .notification-modal-header h3 {
     font-size: 16px;
+  }
+}
+
+@keyframes slideInMobile {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 320px) {
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-main {
+    margin-right: 8px;
   }
 }
