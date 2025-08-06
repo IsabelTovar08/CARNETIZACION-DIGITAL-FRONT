@@ -21,7 +21,7 @@ export const menuAdmin: MenuItem[] = [
         title: 'Estructura Organizativa',
         type: 'item',
         classes: 'nav-item',
-        url: '/dashboard/estructura-organizativa',
+        url: '/dashboard/estructura-organizativa/organizativa',
         icon: 'account_tree',
         target: false,
         breadcrumbs: true
