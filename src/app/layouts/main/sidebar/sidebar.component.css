@@ -85,12 +85,12 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
         cursor: pointer;
 
         &:hover {
-          background: rgb(255, 0, 0);
+          background: rgba(145, 200, 228, 0.5);
           transform: translateX(4px);
         }
 
         &.active {
-          background: rgba(102, 60, 255, 0.747);
+          background: rgba(145, 200, 228, 0.5);
 
           &::before {
             content: '';
@@ -99,7 +99,7 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
             top: 0;
             height: 100%;
             width: 3px;
-            background: #ff0000;
+            background: #000a27;
             border-radius: 0 3px 3px 0;
           }
         }
@@ -111,10 +111,10 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
           gap: 12px;
 
           .item-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-            /* color: rgba(255, 255, 255, 0.8); */
+            font-size: 46px;
+            width: 46px;
+            height: 46px;
+            color: #013655 !important;
           }
 
           .item-text {
@@ -132,15 +132,15 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
             padding: 12px 16px;
             border-radius: 8px;
             transition: all 0.3s ease;
-            color: #2B2F42 !important;
+            color: #0e3988 !important;
 
 
             &:hover {
-              background: rgb(255, 238, 0);
+              background: rgba(145, 200, 228, 0.6);
             }
 
             &.active {
-              background: rgb(20, 33, 218);
+              background: rgba(145, 200, 228, 0.6);
             }
 
             .collapse-content {
@@ -153,14 +153,14 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
                 width: 20px;
                 height: 20px;
                 /* color: rgba(255, 255, 255, 0.8); */
-                color: #2B2F42 !important;
+                color: #0e3988 !important;
               }
 
               .item-text {
                 font-size: 14px;
                 font-weight: 500;
                 /* color: rgba(255, 255, 255, 0.9); */
-                color: #2B2F42 !important;
+                color: #0e3988 !important;
 
               }
             }
@@ -207,7 +207,7 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
                   background: rgb(179, 255, 0);
 
                   .sub-item-text {
-                    color: #2B2F42
+                    color: #0e3988
                   }
                 }
 
