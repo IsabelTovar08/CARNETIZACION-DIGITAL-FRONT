@@ -11,7 +11,7 @@ export const menuAdmin: MenuItem[] = [
         title: 'Inicio',
         type: 'item',
         classes: 'nav-item',
-        url: '/dashboard/inicio',
+        url: '/dashboard',
         icon: 'home',
         target: false,
         breadcrumbs: true
@@ -47,12 +47,12 @@ export const menuAdmin: MenuItem[] = [
         breadcrumbs: true
       },
       {
-        id: 'eventos-control-acceso',
+        id: 'typography',
         title: 'Eventos y Control de Acceso',
         type: 'item',
         classes: 'nav-item',
-        url: '/dashboard/eventos-control-acceso',
-        icon: 'vpn_key',
+        url: '/dashboard/organizational/organization',
+        icon: 'event_available',
         target: false,
         breadcrumbs: true
       },
