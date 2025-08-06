@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
 import {MatChipsModule} from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
+import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-list-users',
@@ -15,14 +17,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './list-users.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class ListUsersComponent {
-  constructor(private apiService: ApiService) { }
- items: any[] = [];
+export class ListUsersComponent implements OnInit{
+  listUser$!: Observable<UserCreate[]>;
+
+  constructor(private apiService: ApiService<UserCreate, UserList>) { }
 
   ngOnInit(): void {
-    this.apiService.ObtenerTodo('User').subscribe(user => {
-      this.items = user;
-    })
+    this.listUser$ = this.apiService.ObtenerTodo('User')
   }
 
 

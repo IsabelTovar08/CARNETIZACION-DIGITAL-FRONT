@@ -10,7 +10,8 @@
 
 <app-generic-table
   [title]="'Usuarios'"
-  [dataSource]="items"
+  *ngIf="listUser$ | async as listUser"
+  [dataSource]="listUser"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'namePerson', label: 'Nombre' },
