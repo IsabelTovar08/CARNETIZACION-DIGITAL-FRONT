@@ -1,8 +1,10 @@
 <div class="notification-popover" *ngIf="visible" #popover>
   <div class="notification-item" *ngFor="let noti of notifications">
-    <strong>Solicitud de servicio</strong>
+    <div class="notification-header">
+      <strong>Solicitud de servicio</strong>
+      <button (click)="verMas(noti)">Ver más</button>
+    </div>
     <p>{{ noti.empresa }}</p>
-    <button (click)="verMas(noti)">Ver más</button>
   </div>
 
   <div class="ver-todos" (click)="verTodas()">Ver todos</div>
