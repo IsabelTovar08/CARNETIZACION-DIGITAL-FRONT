@@ -1,6 +1,9 @@
+<mat-spinner *ngIf="(loadingService.loading$ | async)"></mat-spinner>
+
 <app-generic-table
   [title]="'Módulos'"
-  [dataSource]="items"
+  *ngIf="listModule$ | async as modules"
+  [dataSource]="modules"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

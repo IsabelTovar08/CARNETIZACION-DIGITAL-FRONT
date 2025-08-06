@@ -1,24 +1,33 @@
-import { Component } from '@angular/core';
+import { LoangingServiceService } from './../../../../../core/Services/loanding/loanging-service.service';
+import { Component, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
+import { Module } from '../../../../../core/Models/security/module.models';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-list-modules',
-  imports: [GenericTableComponent],
+  imports: [
+    CommonModule,
+    GenericTableComponent,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './list-modules.component.html',
   styleUrl: './list-modules.component.css'
 })
-export class ListModulesComponent {
-constructor(private apiService: ApiService) { }
+export class ListModulesComponent implements OnInit {
+  listModule$!: Observable<Module[]>;
+
+  constructor(
+    private apiService: ApiService<Module, Module>,
+    public loadingService: LoangingServiceService
+  ) { }
 
   ngOnInit(): void {
-    this.apiService.ObtenerTodo('Module').subscribe(modules => {
-      this.items = modules;
-    })
+     this.listModule$ = this.apiService.ObtenerTodo('Module')
   }
-  items: any[] = [
-    { id: 1, name: 'John Doe', age: 25 },
-  ];
 
   displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 

@@ -1,6 +1,7 @@
 <app-generic-table
   [title]="'Personas'"
-  [dataSource]="items"
+  *ngIf="listPerson$ | async as list"
+  [dataSource]="list"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'firstName', label: 'Nombre' },
