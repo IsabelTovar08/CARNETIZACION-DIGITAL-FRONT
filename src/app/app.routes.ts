@@ -32,7 +32,7 @@ export const routes: Routes = [
   //Rutas privadas (dashboard)
   {
     path: 'dashboard',
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/pages/dashboardComponent/dashboard.component').then(m => m.DashboardComponent),
     children: [
@@ -55,9 +55,9 @@ export const routes: Routes = [
   },
 
   // Redirección por defecto
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  }
+  // {
+  //   path: '',
+  //   redirectTo: 'login',
+  //   pathMatch: 'full',
+  // }
 ];
