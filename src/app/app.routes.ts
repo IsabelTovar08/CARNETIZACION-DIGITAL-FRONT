@@ -15,7 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'verification-code',
-    loadChildren:() =>
+    loadChildren: () =>
       import('./auth/auth.routers').then(m => m.verificationCodeRoutes),
   },
   {
@@ -29,7 +29,7 @@ export const routes: Routes = [
       import('./auth/auth.routers').then(m => m.contactRoutes),
   },
 
-  //Rutas privadas (dashboard)
+  // Rutas privadas (dashboard)
   {
     path: 'dashboard',
     // canActivate: [authGuard],
@@ -50,11 +50,17 @@ export const routes: Routes = [
         path: 'organizational',
         loadChildren: () =>
           import('./features/organizational/organizational.routes').then(m => m.organizationalRoutes),
+      },
+      // ✅ NUEVA RUTA AGREGADA AQUÍ
+      {
+        path: 'estructura-organizativa',
+        loadChildren: () =>
+          import('./features/estructura-organizativa/estructura-organizativa.routes').then(m => m.estructuraOrganizativaRoutes),
       }
     ]
   },
 
-  // Redirección por defecto
+  // Redirección por defecto (opcional)
   // {
   //   path: '',
   //   redirectTo: 'login',
