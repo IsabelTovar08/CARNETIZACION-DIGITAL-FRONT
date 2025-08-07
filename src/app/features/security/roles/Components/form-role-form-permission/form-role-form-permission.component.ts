@@ -18,6 +18,8 @@ import { FromModel } from '../../../../../core/Models/security/form.models';
 import { ModalPermissionsComponent } from '../modal-permissions/modal-permissions.component';
 import { Module } from '../../../../../core/Models/security/module.models';
 import { RouterLink } from '@angular/router';
+import { RolFormPermissionsList } from '../../../../../core/Models/security/rol-form-permission.models';
+import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
 
 
 interface Permission {
@@ -27,13 +29,13 @@ interface Permission {
   delete: boolean;
 }
 
-interface RolePermissions {
-  roleId: number;
-  formId: number;
-  permissions: Permission;
-  isInherited?: boolean;
-  isLocked?: boolean;
-}
+// interface RolePermissions {
+//   roleId: number;
+//   formId: number;
+//   permissions: Permission;
+//   isInherited?: boolean;
+//   isLocked?: boolean;
+// }
 
 interface Role {
   id: number;
@@ -72,7 +74,8 @@ interface Notification {
     FormsModule,
     MatTooltipModule,
     MatButtonToggleModule,
-    MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatInputModule],
+    MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatInputModule,
+  ],
   templateUrl: './form-role-form-permission.component.html',
   styleUrl: './form-role-form-permission.component.css'
 })
@@ -87,7 +90,7 @@ export class FormRoleFormPermissionComponent {
   // Datos principales
   roles: Role[] = [];
   forms: FormModule[] = [];
-  rolePermissions: RolePermissions[] = [];
+  // rolePermissions: RolePermissions[] = [];
   notifications: Notification[] = [];
 
   // Datos filtrados
@@ -96,13 +99,12 @@ export class FormRoleFormPermissionComponent {
 
   // Control de estado
   currentForm: FromModel | null = null;
-  originalPermissions: RolePermissions[] = [];
-    listRoles$!: Observable<Role[]>;
-    listForm$!: Observable<FromModel[]>;
-    listModule$!: Observable<Module[]>;
-    listRolFormPermission$!: Observable<Module[]>;
-
-
+  // originalPermissions: RolePermissions[] = [];
+  listRoles$!: Observable<Role[]>;
+  listForm$!: Observable<FromModel[]>;
+  listModule$!: Observable<Module[]>;
+  listRolFormPermission$!: Observable<RolFormPermissionsList[]>;
+  RolFormPermission!: RolFormPermissionsList[];
 
 
 
@@ -110,13 +112,12 @@ export class FormRoleFormPermissionComponent {
     private apiServiceRole: ApiService<Role, Role>,
     private apiServiceForm: ApiService<FromModel, FromModel>,
     private apiServiceModule: ApiService<Module, Module>,
-
-
+    private apiServiceRolFormPermission: RolFormPermissionService,
   ) {
-    this.initializeData();
   }
 
   ngOnInit(): void {
+    this.initializeData();
 
   }
 
@@ -125,10 +126,11 @@ export class FormRoleFormPermissionComponent {
     this.listRoles$ = this.apiServiceRole.ObtenerTodo('Rol')
     this.listForm$ = this.apiServiceForm.ObtenerTodo('Form')
     this.listModule$ = this.apiServiceForm.ObtenerTodo('Module')
+    this.listRolFormPermission$ = this.apiServiceRolFormPermission.getAllPermissions()
+    this.listRolFormPermission$.subscribe(data => {
+      this.RolFormPermission = data;
+    });
 
-
-    // Generar permisos iniciales
-    this.applyFilter();
   }
 
   // Métodos de filtrado
@@ -146,114 +148,51 @@ export class FormRoleFormPermissionComponent {
     );
   }
 
-  applyFilter(): void {
-    switch (this.selectedFilter) {
-      case 'all':
-        this.filteredRoles = [...this.roles];
-        this.filteredForms = [...this.forms];
-        break;
-      case 'granted':
-        this.filteredRoles = this.roles.filter(role =>
-          this.forms.some(form => this.hasAnyPermission(role.id, form.id))
-        );
-        break;
-      case 'denied':
-        this.filteredRoles = this.roles.filter(role =>
-          this.forms.some(form => !this.hasAnyPermission(role.id, form.id))
-        );
-        break;
-      case 'partial':
-        this.filteredRoles = this.roles.filter(role =>
-          this.forms.some(form => this.hasPartialPermission(role.id, form.id))
-        );
-        break;
-    }
-    this.filterData();
+
+
+
+
+  hasSpecificPermission(roleId: number, formId: number, permission: keyof Permission) {
+
   }
 
-  // Métodos de permisos
-  getPermission(roleId: number, formId: number): RolePermissions | null {
-    return this.rolePermissions.find(rp =>
-      rp.roleId === roleId && rp.formId === formId
-    ) || null;
+  hasAnyPermission(roleId: number, formId: number) {
+
   }
 
-  hasSpecificPermission(roleId: number, formId: number, permission: keyof Permission): boolean {
-    const rolePermission = this.getPermission(roleId, formId);
-    return rolePermission?.permissions[permission] || false;
+  hasPartialPermission(roleId: number, formId: number) {
+
   }
 
-  hasAnyPermission(roleId: number, formId: number): boolean {
-    const rolePermission = this.getPermission(roleId, formId);
-    if (!rolePermission) return false;
+  getPermissionClass(roleId: number, formId: number) {
 
-    const { create, read, update, delete: del } = rolePermission.permissions;
-    return create || read || update || del;
+
   }
 
-  hasPartialPermission(roleId: number, formId: number): boolean {
-    const rolePermission = this.getPermission(roleId, formId);
-    if (!rolePermission) return false;
+  getPermissionIcon(roleId: number, formId: number) {
 
-    const permissions = Object.values(rolePermission.permissions);
-    const trueCount = permissions.filter(p => p).length;
-    return trueCount > 0 && trueCount < permissions.length;
+
   }
 
-  getPermissionClass(roleId: number, formId: number): string {
-    const rolePermission = this.getPermission(roleId, formId);
-    if (!rolePermission) return 'no-access';
+  getPermissionLabel(roleId: number, formId: number) {
 
-    const permissions = Object.values(rolePermission.permissions);
-    const trueCount = permissions.filter(p => p).length;
 
-    if (trueCount === 0) return 'no-access';
-    if (trueCount === permissions.length) return 'full-access';
-    return 'partial-access';
-  }
-
-  getPermissionIcon(roleId: number, formId: number): string {
-    const permissionClass = this.getPermissionClass(roleId, formId);
-
-    switch (permissionClass) {
-      case 'full-access': return 'check_circle';
-      case 'partial-access': return 'remove_circle';
-      case 'no-access': return 'cancel';
-      default: return 'help';
-    }
-  }
-
-  getPermissionLabel(roleId: number, formId: number): string {
-    const permissionClass = this.getPermissionClass(roleId, formId);
-
-    switch (permissionClass) {
-      case 'full-access': return 'Completo';
-      case 'partial-access': return 'Parcial';
-      case 'no-access': return 'Sin Acceso';
-      default: return 'Indefinido';
-    }
   }
 
   // Métodos de cambios
-  hasPermissionChanges(roleId: number, formId: number): boolean {
-    const current = this.getPermission(roleId, formId);
-    const original = this.originalPermissions.find(rp =>
-      rp.roleId === roleId && rp.formId === formId
-    );
+  hasPermissionChanges(roleId: number, formId: number) {
 
-    if (!current || !original) return false;
-
-    return JSON.stringify(current.permissions) !== JSON.stringify(original.permissions);
   }
 
   // Acciones rápidas
-  quickGrantPermission(role: any, form: any): void {
+  quickGrantPermission(item: any): void {
 
     const dialogRef = this.dialog.open(ModalPermissionsComponent, {
       width: '500px',
       data: {
-        roleName: role.name,
-        formName: form.name,
+        // roleName: ro.name,
+        // formName: form.name,
+        // permissions: this.permissions$
       }
     });
   }
@@ -261,76 +200,24 @@ export class FormRoleFormPermissionComponent {
   quickRevokePermission(roleId: number, formId: number, event: Event): void {
     event.stopPropagation();
 
-    const rolePermission = this.getPermission(roleId, formId);
-    if (rolePermission && !rolePermission.isLocked) {
-      rolePermission.permissions = {
-        create: false,
-        read: false,
-        update: false,
-        delete: false
-      };
-      this.checkForChanges();
-      this.showNotification('warning', 'Permisos revocados');
-    }
+
+
   }
 
   // Acciones en lote
-  bulkPermissionAction(action: string): void {
-    this.isLoading = true;
+  bulkPermissionAction(action: string) {
 
-    switch (action) {
-      case 'grant-all':
-        this.loadingMessage = 'Concediendo todos los permisos...';
-        this.rolePermissions.forEach(rp => {
-          if (!rp.isLocked) {
-            rp.permissions = { create: true, read: true, update: true, delete: true };
-          }
-        });
-        break;
-
-      case 'revoke-all':
-        this.loadingMessage = 'Revocando todos los permisos...';
-        this.rolePermissions.forEach(rp => {
-          if (!rp.isLocked) {
-            rp.permissions = { create: false, read: false, update: false, delete: false };
-          }
-        });
-        break;
-    }
-
-    setTimeout(() => {
-      this.isLoading = false;
-      this.checkForChanges();
-      this.showNotification('success', 'Acción en lote completada');
-    }, 1000);
   }
 
   // Métodos de control
   checkForChanges(): void {
-    this.hasChanges = this.rolePermissions.some((current, index) => {
-      const original = this.originalPermissions[index];
-      return JSON.stringify(current.permissions) !== JSON.stringify(original.permissions);
-    });
+
   }
 
   saveAllPermissions(): void {
-    this.isLoading = true;
-    this.loadingMessage = 'Guardando cambios...';
 
-    // Simular guardado
-    setTimeout(() => {
-      this.originalPermissions = JSON.parse(JSON.stringify(this.rolePermissions));
-      this.hasChanges = false;
-      this.isLoading = false;
-      this.showNotification('success', 'Permisos guardados exitosamente');
-    }, 2000);
   }
 
-  resetChanges(): void {
-    this.rolePermissions = JSON.parse(JSON.stringify(this.originalPermissions));
-    this.hasChanges = false;
-    this.showNotification('info', 'Cambios descartados');
-  }
 
   // Métodos de diálogo y UI
   openPermissionDialog(role: Role, form: FromModel): void {
@@ -343,47 +230,22 @@ export class FormRoleFormPermissionComponent {
   }
 
   grantAllForForm(): void {
-    if (!this.currentForm) return;
 
-    this.rolePermissions
-      .filter(rp => rp.formId === this.currentForm!.id && !rp.isLocked)
-      .forEach(rp => {
-        rp.permissions = { create: true, read: true, update: true, delete: true };
-      });
 
     this.checkForChanges();
-    this.showNotification('success', `Permisos concedidos para ${this.currentForm.name}`);
+    this.showNotification('success', `Permisos concedidos para `);
   }
 
   revokeAllForForm(): void {
-    if (!this.currentForm) return;
 
-    this.rolePermissions
-      .filter(rp => rp.formId === this.currentForm!.id && !rp.isLocked)
-      .forEach(rp => {
-        rp.permissions = { create: false, read: false, update: false, delete: false };
-      });
 
     this.checkForChanges();
-    this.showNotification('warning', `Permisos revocados para ${this.currentForm.name}`);
+    this.showNotification('warning', `Permisos revocados para `);
   }
 
   // Métodos auxiliares
 
 
-  getTotalForms(): number {
-    return this.forms.filter(f => f.isActive).length;
-  }
-
-  getTotalPermissions(): number {
-    return this.rolePermissions.filter(rp => this.hasAnyPermission(rp.roleId, rp.formId)).length;
-  }
-
-  getPermissionCoverage(): number {
-    const total = this.roles.length * this.forms.length;
-    const configured = this.getTotalPermissions();
-    return Math.round((configured / total) * 100);
-  }
 
   getPriorityLabel(priority: string): string {
     switch (priority) {

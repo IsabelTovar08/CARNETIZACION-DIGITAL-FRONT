@@ -10,15 +10,15 @@ import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.serv
 export class ApiService<T, D> {
 
   constructor(
-    private http: HttpClient,
-     private wrapper: HttpServiceWrapperService
+    protected http: HttpClient,
+    protected wrapper: HttpServiceWrapperService
   ) { }
   urlBase = environment.URL + '/api';
 
-  public ObtenerTodo(entidad: string) :Observable<D[]>{
-     return this.wrapper.handleRequest(this.http.get<D[]>(`${this.urlBase}/${entidad}`));
+  public ObtenerTodo(entidad: string): Observable<D[]> {
+    return this.wrapper.handleRequest(this.http.get<D[]>(`${this.urlBase}/${entidad}`));
   }
-  public ObtenerActivos(entidad: string) :Observable<D>{
+  public ObtenerActivos(entidad: string): Observable<D> {
     return this.http.get<D>(`${this.urlBase}/${entidad}/active`);
   }
   public Crear(entidad: string, objeto: T) {

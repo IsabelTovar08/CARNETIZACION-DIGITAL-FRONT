@@ -1,19 +1,16 @@
 <div class="permissions-container">
   <mat-card class="main-card">
-    <!-- Header -->
     <mat-card-header class="permissions-header">
       <mat-card-title>
         <mat-icon>security</mat-icon>
         Gestión de Permisos por Formulario
       </mat-card-title>
       <mat-card-subtitle>
-        Configure los permisos de acceso para cada rol en los diferentes
-        formularios del sistema
+        Configure los permisos de acceso para cada rol en los diferentes formularios del sistema
       </mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content class="permissions-content">
-
       <!-- Stats Cards -->
       <div class="stats-section">
         <mat-card class="stat-card">
@@ -21,8 +18,7 @@
             <div class="stat-content">
               <mat-icon class="stat-icon primary">groups</mat-icon>
               <div class="stat-info">
-                <span class="stat-number">{{ (listRoles$ | async)?.length
-                  }}</span>
+                <span class="stat-number">{{ (listRoles$ | async)?.length }}</span>
                 <span class="stat-label">Roles Activos</span>
               </div>
             </div>
@@ -34,35 +30,19 @@
             <div class="stat-content">
               <mat-icon class="stat-icon success">description</mat-icon>
               <div class="stat-info">
-                <span class="stat-number">{{ (listForm$ | async)?.length
-                  }}</span>
+                <span class="stat-number">{{ (listForm$ | async)?.length }}</span>
                 <span class="stat-label">Formularios</span>
               </div>
             </div>
           </mat-card-content>
         </mat-card>
-
-        <mat-card class="stat-card">
-          <mat-card-content>
-            <div class="stat-content">
-              <mat-icon class="stat-icon warning">security</mat-icon>
-              <div class="stat-info">
-                <span class="stat-number">{{getTotalPermissions()}}</span>
-                <span class="stat-label">Permisos Configurados</span>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
       </div>
+
       <!-- Filtros rápidos -->
       <h3>Módulos</h3>
       <div class="quick-filters">
-        <mat-button-toggle-group [(ngModel)]="selectedFilter"
-          (change)="applyFilter()">
-          <mat-button-toggle *ngFor="let module of listModule$ |async"
-            value="granted">
-            <!-- <mat-icon>check_circle</mat-icon> -->
+        <mat-button-toggle-group [(ngModel)]="selectedFilter">
+          <mat-button-toggle *ngFor="let module of listModule$ |async" value="granted">
             {{module.name}}
           </mat-button-toggle>
         </mat-button-toggle-group>
@@ -76,16 +56,11 @@
               <mat-icon>grid_view</mat-icon>
               Matriz de Permisos
             </mat-card-title>
-            <button mat-icon-button
-              [matMenuTriggerFor]="formMenu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
           </mat-card-header>
 
           <mat-card-content>
             <div class="matrix-table-container">
               <table class="permissions-table">
-                <!-- Header de la tabla -->
                 <thead>
                   <tr>
                     <th class="role-header">
@@ -94,84 +69,74 @@
                         <span>Roles / Formularios</span>
                       </div>
                     </th>
-                    <th *ngFor="let form of listForm$ | async"
-                      class="form-header">
-                      <div class="header-content"
-                        [matTooltip]="form.description">
-                        <!-- <mat-icon>{{form.icon}}</mat-icon> -->
+                    <th *ngFor="let form of listForm$ | async" class="form-header">
+                      <div class="header-content" [matTooltip]="form.description">
                         <span>{{form.name}}</span>
-
                       </div>
                     </th>
                   </tr>
                 </thead>
 
-                <!-- Cuerpo de la tabla -->
                 <tbody>
                   <tr *ngFor="let role of listRoles$ | async" class="role-row">
                     <td class="role-cell">
                       <div class="role-info">
-                        <mat-icon
-                          [style.color]="role.color">assignment_ind</mat-icon>
+                        <mat-icon [style.color]="role.color">assignment_ind</mat-icon>
                         <div class="role-details">
-                          <span class="role-name">{{role.name}}
-
-                          </span>
-
-                          <span
-                            class="role-description">{{role.description}}</span>
+                          <span class="role-name">{{ role.name }}</span>
+                          <span class="role-description">{{ role.description }}</span>
                         </div>
                       </div>
                     </td>
 
-                    <td *ngFor="let form of listForm$ | async"
-                      class="permission-cell">
-                      <div class="permission-control"
-                        [class.has-changes]="hasPermissionChanges(role.id, form.id)">
-                        <mat-card class="permission-card"
-                          [class]="getPermissionClass(role.id, form.id)">
+                    <td *ngFor="let form of listForm$ | async" class="permission-cell">
+                      <div class="permission-control" [class.has-changes]="hasPermissionChanges(role.id, form.id)">
+                        <mat-card
+                          class="permission-card"
+                          [ngClass]="{
+                            'has-permissions':RolFormPermission.length > 0,
+                            'no-permissions':RolFormPermission.length === 0
+                          }">
                           <mat-card-content>
                             <div class="permission-status">
-                              <mat-icon
-                                class="status-icon">{{getPermissionIcon(role.id,
-                                form.id)}}</mat-icon>
-                              <span
-                                class="status-text">{{getPermissionLabel(role.id,
-                                form.id)}}</span>
+                              <mat-icon class="status-icon">
+                                {{RolFormPermission.length > 0 ? 'check_circle' : 'cancel' }}
+                              </mat-icon>
+                              <span class="status-text">
+                                {{RolFormPermission.length > 0 ? 'Permitido' : 'Sin Permisos' }}
+                              </span>
                             </div>
 
-                            <!-- Indicadores de permisos específicos -->
-                            <div class="permission-details">
-                              <!-- <div class="permission-indicators">
-                                <span class="indicator create"
-                                  [class.active]="hasSpecificPermission(role.id, form.id, 'create')"
-                                  matTooltip="Crear">C</span>
-                                <span class="indicator read"
-                                  [class.active]="hasSpecificPermission(role.id, form.id, 'read')"
-                                  matTooltip="Leer">R</span>
-                                <span class="indicator update"
-                                  [class.active]="hasSpecificPermission(role.id, form.id, 'update')"
-                                  matTooltip="Actualizar">U</span>
-                                <span class="indicator delete"
-                                  [class.active]="hasSpecificPermission(role.id, form.id, 'delete')"
-                                  matTooltip="Eliminar">D</span>
-                              </div> -->
-
-                              <div class="quick-actions">
-                                <button mat-icon-button
-                                  class="quick-btn grant"
-                                  (click)="quickGrantPermission(role, form)"
-                                  matTooltip="Gestionar Permisios">
-                                  <mat-icon>add_moderator</mat-icon>
-                                </button>
-                                <button mat-icon-button
-                                  class="quick-btn revoke"
-                                  (click)="quickRevokePermission(role.id, form.id, $event)"
-                                  matTooltip="Revocar todos los permisos">
-                                  <mat-icon>remove_circle</mat-icon>
-                                </button>
+                            <ng-container *ngFor="let item of RolFormPermission">
+                              <div class="permission-details" *ngIf="item.rolId === role.id && item.formId === form.id">
+                                 <div class="permission-indicators" *ngIf="item.permissions">
+                              <span *ngFor="let permission of item.permissions"
+                                    class="indicator active"
+                                    [matTooltip]="permission.name">
+                                {{ permission.name.charAt(0).toUpperCase() }}
+                              </span>
+                            </div>
                               </div>
+                            </ng-container>
+
+                            <div class="quick-actions">
+                              <button
+                                mat-icon-button
+                                class="quick-btn grant"
+                                (click)="quickGrantPermission({rolId: role.id, formId: form.id})"
+                                matTooltip="Gestionar Permisos">
+                                <mat-icon>add_moderator</mat-icon>
+                              </button>
+                              <button
+                                mat-icon-button
+                                class="quick-btn revoke"
+                                *ngIf="RolFormPermission.length > 0"
+                                (click)="quickRevokePermission(role.id, form.id, $event)"
+                                matTooltip="Revocar todos los permisos">
+                                <mat-icon>remove_circle</mat-icon>
+                              </button>
                             </div>
+
                           </mat-card-content>
                         </mat-card>
                       </div>
@@ -183,26 +148,8 @@
           </mat-card-content>
         </mat-card>
       </div>
-
     </mat-card-content>
   </mat-card>
-
-  <!-- Menu contextual para formularios -->
-  <mat-menu #formMenu="matMenu">
-    <button mat-menu-item (click)="grantAllForForm()" routerLink="../roles">
-      <mat-icon>assignment_ind</mat-icon>
-     Gestionar Roles
-    </button>
-    <button mat-menu-item (click)="revokeAllForForm()" routerLink="../forms">
-      <mat-icon>ballot</mat-icon>
-      Gestionar Formularios
-    </button>
-    <button mat-menu-item (click)="viewFormDetails()" routerLink="../permissions">
-      <mat-icon>lock_open_circle</mat-icon>
-      Gestionar Permisos
-    </button>
-  </mat-menu>
-
 </div>
 
 <!-- Loading overlay -->
@@ -213,8 +160,7 @@
 
 <!-- Notification area -->
 <div class="notification-area" *ngIf="notifications.length > 0">
-  <mat-card class="notification-card"
-    *ngFor="let notification of notifications; let i = index">
+  <mat-card class="notification-card" *ngFor="let notification of notifications; let i = index">
     <mat-card-content>
       <div class="notification-content" [class]="notification.type">
         <mat-icon>{{getNotificationIcon(notification.type)}}</mat-icon>
