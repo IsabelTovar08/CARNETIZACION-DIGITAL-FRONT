@@ -59,11 +59,9 @@ export const routes: Routes = [
       }
     ]
   },
-
-  // Redirección por defecto (opcional)
-  // {
-  //   path: '',
-  //   redirectTo: 'login',
-  //   pathMatch: 'full',
-  // }
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  }
 ];

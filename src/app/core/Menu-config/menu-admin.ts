@@ -157,16 +157,6 @@ export const menuAdmin: MenuItem[] = [
           }
         ]
       },
-      {
-        id: 'sample-page',
-        title: 'Sample Page',
-        type: 'item',
-        classes: 'nav-item',
-        url: '/sample-page',
-        icon: 'description',
-        target: false,
-        breadcrumbs: true
-      }
     ]
   }
 ];
