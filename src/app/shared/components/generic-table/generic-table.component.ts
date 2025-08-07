@@ -11,7 +11,11 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
-
+import { MatSelectModule } from "@angular/material/select";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-generic-table',
@@ -24,8 +28,12 @@ import Swal from 'sweetalert2';
     MatButtonModule,
     MatFormFieldModule,
     FormsModule,
-    MatInputModule
-  ],
+    MatInputModule,
+    MatSelectModule,
+    MatDividerModule,
+    MatMenuModule,
+    MatPaginatorModule
+],
   templateUrl: './generic-table.component.html',
   styleUrl: './generic-table.component.css'
 })

@@ -7,6 +7,7 @@ import { ListFormsComponent } from './forms/pages/list-forms/list-forms.componen
 import { ListModulesComponent } from './modules/pages/list-modules/list-modules.component';
 import { FormPErsonComponent } from './people/components/form-person/form-person.component';
 import { PersonPageComponent } from './people/pages/person-page/person-page.component';
+import { FormRoleFormPermissionComponent } from './roles/Components/form-role-form-permission/form-role-form-permission.component';
 
 export const securityRoutes: Routes = [
   { path: 'people', component: PersonPageComponent,
@@ -24,6 +25,8 @@ export const securityRoutes: Routes = [
    },
   { path: 'users', component: ListUsersComponent },
   { path: 'roles', component: ListRolesComponent },
+  { path: 'permission-forms', component: FormRoleFormPermissionComponent },
+
   { path: 'forms', component: ListFormsComponent },
   { path: 'modules', component: ListModulesComponent }
 ];

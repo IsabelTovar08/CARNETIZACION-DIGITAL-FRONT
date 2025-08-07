@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Permission } from '../../../../../core/Models/security/permission.models';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
+import { FormRoleFormPermissionComponent } from '../../Components/form-role-form-permission/form-role-form-permission.component';
 
 @Component({
   selector: 'app-list-roles',
@@ -23,7 +24,8 @@ import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.
     MatButtonModule,
     MatTooltipModule,
     MatSnackBarModule,
-  ],
+    FormRoleFormPermissionComponent
+],
   templateUrl: './list-roles.component.html',
   styleUrl: './list-roles.component.css'
 })
@@ -105,6 +107,13 @@ export class ListRolesComponent implements OnInit {
 
   verPermisos(rol: any) {
     console.log('Permisos del rol:', rol);
+    const dialogRef = this.dialog.open(FormRoleFormPermissionComponent, {
+      disableClose: true,
+      width: '1200px',
+      data: {
+        title:  'Editar',
+      }
+    });
   }
 
 }

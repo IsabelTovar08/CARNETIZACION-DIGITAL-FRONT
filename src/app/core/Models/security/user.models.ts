@@ -9,5 +9,5 @@ export interface UserCreate{
 export interface UserList extends UserCreate{
   namePerson: string;
   roles: string[];
-  IsDeleted: boolean;
+  isDeleted: boolean;
 }

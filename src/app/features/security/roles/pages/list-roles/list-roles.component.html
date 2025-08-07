@@ -1,10 +1,12 @@
 
-<ng-template #actionsExtraTemplate let-item>
+<!-- <ng-template #actionsExtraTemplate let-item>
   <button mat-icon-button (click)="verPermisos(item)"
    matTooltip="Gestionar Permisos">
     <mat-icon>add_moderator</mat-icon>
   </button>
-</ng-template>
+  [customTemplates]="{ 'actions-extra': actionsExtraTemplate }"
+
+</ng-template> -->
 
 <app-generic-table
   [title]="'Roles'"
@@ -16,7 +18,6 @@
       { key: 'description', label: 'Descripción' },
       { key: 'isDeleted', label: 'Estado' }
     ]"
-  [customTemplates]="{ 'actions-extra': actionsExtraTemplate }"
   (onCreate)="save()"
   (onEdit)="save($event)"
   (onDelete)="delete($event)"

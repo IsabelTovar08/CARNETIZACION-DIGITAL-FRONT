@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 
@@ -10,6 +11,9 @@ interface Notificacion {
 @Component({
   selector: 'app-estructura-organizativa',
   templateUrl: './estructura-organizativa.component.html',
+  imports: [
+    CommonModule
+  ],
   styleUrls: ['./estructura-organizativa.component.css']
 })
 export class EstructuraOrganizativaComponent {

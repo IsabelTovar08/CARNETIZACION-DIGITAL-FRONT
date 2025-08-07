@@ -125,11 +125,17 @@ export const menuAdmin: MenuItem[] = [
             type: 'item',
             url: '/dashboard/security/users'
           },
-          {
-            id: 'level-1-f2',
+{
+            id: 'level-1-tf2',
             title: 'Roles',
             type: 'item',
             url: '/dashboard/security/roles'
+          },
+          {
+            id: 'level-1-f2',
+            title: 'Permisos por Formulario',
+            type: 'item',
+            url: '/dashboard/security/permission-forms'
           },
           {
             id: 'level-1-2f',

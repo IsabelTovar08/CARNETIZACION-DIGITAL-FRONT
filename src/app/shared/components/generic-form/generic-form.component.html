@@ -1,4 +1,6 @@
 <h1 mat-dialog-title>{{ title }}</h1>
+<mat-divider></mat-divider>
+<br>
 <div mat-dialog-content>
   <form [formGroup]="form">
 
@@ -6,30 +8,34 @@
       <ng-container *ngIf="!field.hidden">
 
         <!-- Input normal -->
-        <mat-form-field class="w-100" appearance="fill"
-          *ngIf="field.type !== 'textarea'">
+        <label class="text-xs text-gray-500 mb-1 block tracking-wide">
+          {{ field.label }}
+        </label>
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="field.type !== 'textarea' && field.type !== 'select'">
           <mat-label>{{ field.label }}</mat-label>
           <input matInput [formControlName]="field.name"
             [type]="field.type || 'text'" />
         </mat-form-field>
 
-        <mat-form-field class="w-100" appearance="fill"
+        <!-- Textarea -->
+        <mat-form-field class="w-100" appearance="outline"
           *ngIf="field.type === 'textarea'">
           <mat-label>{{ field.label }}</mat-label>
           <textarea matInput [formControlName]="field.name"></textarea>
         </mat-form-field>
 
         <!-- Select -->
-        <ng-container *ngIf="field.type === 'select'">
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>{{ field.label }}</mat-label>
-            <mat-select [formControlName]="field.id">
-              <mat-option *ngFor="let opt of field.options" [value]="opt.value">
-                {{ opt.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ng-container>
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="field.type === 'select'">
+          <mat-label>{{ field.label }}</mat-label>
+          <mat-select [formControlName]="field.name">
+            <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
       </ng-container>
     </ng-container>
 

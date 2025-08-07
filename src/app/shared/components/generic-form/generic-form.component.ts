@@ -5,6 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
+import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
   selector: 'app-generic-form',
@@ -13,8 +14,9 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatIconModule,
     CommonModule,
-    MatSelectModule
-  ],
+    MatSelectModule,
+    MatDividerModule
+],
   templateUrl: './generic-form.component.html',
   styleUrl: './generic-form.component.css'
 })
@@ -30,6 +32,7 @@ export class GenericFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.data)
     this.title = this.data.title || 'Formulario';
 
     //  Campos predefinidos
