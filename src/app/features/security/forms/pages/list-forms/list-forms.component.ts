@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 import { FromModel } from '../../../../../core/Models/security/form.models';
+import { Module } from '../../../../../core/Models/security/module.models';
 
 @Component({
   selector: 'app-list-forms',
@@ -19,6 +20,8 @@ import { FromModel } from '../../../../../core/Models/security/form.models';
 })
 export class ListFormsComponent implements OnInit {
   listForms$!: Observable<FromModel[]>;
+  listModules: Module[] = [];
+
 
   constructor(private apiService: ApiService<FromModel, FromModel>,
     private route: ActivatedRoute,
@@ -31,13 +34,18 @@ export class ListFormsComponent implements OnInit {
     this.cargarData();
   }
 
-  displayedColumns: string[] = ['name', 'description', 'url', 'isDeleted', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'url', 'moduleName','isDeleted', 'actions'];
 
   cargarData() {
     this.listForms$ = this.apiService.ObtenerTodo('Form')
   }
 
+  cargarModules(): Observable<Module[]> {
+  return this.apiService.ObtenerTodo('Module');
+}
+
   openModal(item?: FromModel) {
+  this.cargarModules().subscribe((modules) => {
     const dialogRef = this.dialog.open(GenericFormComponent, {
       disableClose: true,
       width: '400px',
@@ -45,7 +53,18 @@ export class ListFormsComponent implements OnInit {
         title: item ? 'Editar' : 'Crear',
         item,
         fields: [
-          { name: 'url', label: 'Ruta', type: 'string', value: item?.url || '', required: true }
+          { name: 'url', label: 'Ruta', type: 'string', value: item?.url || '', required: true },
+          {
+            name: 'moduleId',
+            type: 'select',
+            label: 'Módulo',
+            value: item?.moduleId || '',
+            options: modules.map(m => ({
+              label: m.name,
+              value: m.id
+            })),
+            required: true
+          }
         ],
         replaceBaseFields: false
       }
@@ -53,17 +72,13 @@ export class ListFormsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (item) {
-          this.add(result, item.id);
-        } else {
-          this.add(result);
-        }
+        item ? this.add(result, item.id) : this.add(result);
       }
-
-      // 🔙 Vuelve a la ruta base sin /create
       this.router.navigate(['./'], { relativeTo: this.route });
     });
-  }
+  });
+}
+
 
 
   add(Form: FromModel, id?: number) {
