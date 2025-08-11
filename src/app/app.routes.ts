@@ -46,16 +46,15 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/security/security.routes').then(m => m.securityRoutes),
       },
-      {
-        path: 'organizational',
-        loadChildren: () =>
-          import('./features/organizational/organizational.routes').then(m => m.organizationalRoutes),
-      },
-      // ✅ NUEVA RUTA AGREGADA AQUÍ
+      // {
+      //   path: 'organizational',
+      //   loadChildren: () =>
+      //     import('./features/organization/organization.routes').then(m => m.organizationalRoutes),
+      // },
       {
         path: 'estructura-organizativa',
         loadChildren: () =>
-          import('./features/estructura-organizativa/estructura-organizativa.routes').then(m => m.estructuraOrganizativaRoutes),
+          import('./features/organization/organization.routes').then(m => m.organizationRoutes),
       }
     ]
   },

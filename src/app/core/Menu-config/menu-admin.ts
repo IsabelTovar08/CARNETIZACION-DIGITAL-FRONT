@@ -16,12 +16,12 @@ export const menuAdmin: MenuItem[] = [
         target: false,
         breadcrumbs: true
       },
-      {
+      {        
         id: 'estructura-organizativa',
         title: 'Estructura Organizativa',
         type: 'item',
         classes: 'nav-item',
-        url: '/dashboard/estructura-organizativa/organizativa',
+        url: '/dashboard/estructura-organizativa',
         icon: 'account_tree',
         target: false,
         breadcrumbs: true

@@ -1,0 +1,158 @@
+.estructura-organizativa {
+  padding: 24px;
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  left: 3vh;
+  margin-bottom: 50px;
+  color: rgb(0, 0, 0);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cards-grid .org-card:nth-child(4),
+.cards-grid .org-card:nth-child(5) {
+  grid-column: span 1;
+}
+
+/* Estilos específicos para las tarjetas organizativas */
+::ng-deep .org-card .card {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: backdrop-filter(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px !important;
+  transition: all 0.3s ease;
+  min-height: 55vh;
+  width: 35vh !important;
+  display: flex;
+  flex-direction: column;
+}
+
+::ng-deep .org-card .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+::ng-deep .org-card .card-image { 
+  padding-top: 2vh;
+  height: 20%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px 16px 0 0;
+}
+
+::ng-deep .org-card .card-image img {
+  width: 80px;
+  height: 100vh;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+::ng-deep .org-card .card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+::ng-deep .org-card .card-title {
+  font-size: 3vh !important;
+  color: #ffffff !important;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+::ng-deep .org-card .card-text {
+  color: #ffffff !important;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-align: center;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .cards-grid .org-card:nth-child(5) {
+    grid-column: span 2;
+    max-width: 400px;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .estructura-organizativa {
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .cards-grid .org-card:nth-child(5) {
+    grid-column: span 1;
+    max-width: none;
+  }
+  
+  ::ng-deep .org-card .card {
+    min-height: 220px;
+  }
+  
+  ::ng-deep .org-card .card-image {
+    height: 100px;
+  }
+  
+  ::ng-deep .org-card .card-image img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    margin-bottom: 24px;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+}

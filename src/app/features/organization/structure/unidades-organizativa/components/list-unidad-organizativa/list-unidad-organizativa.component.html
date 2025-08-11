@@ -1,0 +1,15 @@
+<app-generic-table
+  [title]="'Unidades Organizativas'"
+  *ngIf="listOrganization$ | async as list"
+  [dataSource]="list"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+    { key: 'description',    label: 'Descripción' },
+    { key: 'divisionsCount', label: 'Divisiones Asociadas' },
+    { key: 'branchesCount',  label: 'Sucursales Asociadas' }
+  ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>
