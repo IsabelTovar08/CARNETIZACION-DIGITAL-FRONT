@@ -1,3 +1,5 @@
+import { Role } from "./role.models";
+
 export interface UserCreate{
   userName?: string;
   password: string;
@@ -8,6 +10,6 @@ export interface UserList extends UserCreate{
   id: number;
   emailPerson?: string;
   namePerson: string;
-  roles: string[];
+  roles: Role[];
   isDeleted: boolean;
 }

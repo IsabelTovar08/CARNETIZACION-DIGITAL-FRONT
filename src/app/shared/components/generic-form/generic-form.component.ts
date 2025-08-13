@@ -4,9 +4,10 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormArray } fr
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from "@angular/material/divider";
 import { ActionButtonsComponent } from "../action-buttons/action-buttons.component";
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-generic-form',
@@ -17,8 +18,9 @@ import { ActionButtonsComponent } from "../action-buttons/action-buttons.compone
     CommonModule,
     MatSelectModule,
     MatDividerModule,
-    ActionButtonsComponent
-],
+    ActionButtonsComponent,
+    MatCheckboxModule
+  ],
   templateUrl: './generic-form.component.html',
   styleUrl: './generic-form.component.css'
 })
@@ -30,8 +32,8 @@ export class GenericFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<GenericFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) { }
 
   ngOnInit(): void {
     console.log(this.data)
@@ -39,7 +41,7 @@ export class GenericFormComponent implements OnInit {
 
     //  Campos predefinidos
     const baseFields = [
-      { name : 'id', value: this.data.item?.id || 0, hidden: true },
+      { name: 'id', value: this.data.item?.id || 0, hidden: true },
       { name: 'name', label: 'Nombre', type: 'text', value: this.data.item?.name || '', required: true },
       { name: 'description', label: 'Descripción', type: 'textarea', value: this.data.item?.description || '' }
     ];
@@ -53,11 +55,17 @@ export class GenericFormComponent implements OnInit {
     // Crear el FormGroup
     const group: any = {};
     this.fields.forEach(field => {
+      let value = field.value;
+      if (field.type === 'checkbox') {
+        value = !!field.value; // fuerza true/false
+      }
+
       group[field.name] = [
-        field.value,
+        value,
         field.required ? Validators.required : []
       ];
     });
+
 
     this.form = this.fb.group(group);
   }

@@ -1,6 +1,6 @@
 <div class="table-container">
   <!-- Header con título y búsqueda -->
-  <button mat-flat-button class="add" (click)="emitCreate()">
+  <button *ngIf="buttonSave" mat-flat-button class="add" (click)="emitCreate()">
     <mat-icon>add</mat-icon>
     Agregar
   </button>

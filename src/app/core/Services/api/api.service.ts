@@ -39,7 +39,7 @@ export class ApiService<T, D> {
   }
 
   loginWithGoogle(tokenId: string) {
-    return this.http.post<{ token: string }>(`${this.urlBase}/Auth/google`, { tokenId });
+    return this.wrapper.handleRequest(this.http.post<{ token: string }>(`${this.urlBase}/Auth/google`, { tokenId }));
   }
   exchangeCodeForToken(code: any): Observable<any> {
     return this.http.post(`${this.urlBase}/Auth/login-google-code`, { code });

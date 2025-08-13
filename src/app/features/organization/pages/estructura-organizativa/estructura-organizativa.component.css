@@ -1,5 +1,6 @@
 .estructura-organizativa {
   padding: 24px;
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
 }
@@ -37,23 +38,15 @@
   grid-column: span 1;
 }
 
+/* Estilos específicos para las tarjetas organizativas */
 ::ng-deep .org-card .card {
   background: rgba(255, 255, 255, 0.4) !important;
-<<<<<<< HEAD
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px !important;
-  transition: all 0.3s ease;
-  min-height: 55vh;
-  width: 35vh !important;
-=======
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 18px !important;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 240px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
->>>>>>> origin/develop
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -66,15 +59,9 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-<<<<<<< HEAD
-::ng-deep .org-card .card-image { 
-  padding-top: 2vh;
-  height: auto;
-=======
 ::ng-deep .org-card .card-image {
   padding: 20px 16px 10px 16px;
   height: 100px;
->>>>>>> origin/develop
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -82,15 +69,8 @@
 }
 
 ::ng-deep .org-card .card-image img {
-<<<<<<< HEAD
-  width: auto;
-  max-width: 100%;
-  max-height: 150px; /* Ajuste proporcional para escritorio */
-  height: auto;
-=======
   width: 60px;
   height: 60px;
->>>>>>> origin/develop
   object-fit: contain;
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
   transition: transform 0.3s ease;
@@ -133,10 +113,6 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
   }
-
-  ::ng-deep .org-card .card-image img {
-    max-height: 130px;
-  }
 }
 
 @media (max-width: 768px) {
@@ -156,11 +132,6 @@
   ::ng-deep .org-card .card {
     min-height: 200px;
   }
-<<<<<<< HEAD
-  
-  ::ng-deep .org-card .card-image img {
-    max-height: 110px;
-=======
 
   ::ng-deep .org-card .card-image {
     height: 80px;
@@ -170,7 +141,6 @@
   ::ng-deep .org-card .card-image img {
     width: 48px;
     height: 48px;
->>>>>>> origin/develop
   }
 }
 
@@ -187,13 +157,8 @@
     font-size: 1rem;
   }
 
-<<<<<<< HEAD
-  ::ng-deep .org-card .card-image img {
-    max-height: 90px;
-=======
   .cards-grid {
     grid-template-columns: 1fr;
     gap: 16px;
->>>>>>> origin/develop
   }
 }

@@ -24,7 +24,6 @@ import { FormRoleFormPermissionComponent } from '../../Components/form-role-form
     MatButtonModule,
     MatTooltipModule,
     MatSnackBarModule,
-    FormRoleFormPermissionComponent
 ],
   templateUrl: './list-roles.component.html',
   styleUrl: './list-roles.component.css'

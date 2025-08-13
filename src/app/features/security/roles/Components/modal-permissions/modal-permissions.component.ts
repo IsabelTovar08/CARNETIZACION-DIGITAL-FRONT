@@ -9,10 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../../core/Services/api/api.service';
-import { Role } from '../../../users/pages/list-users/list-users.component';
 import { FromModel } from '../../../../../core/Models/security/form.models';
 import { DataService } from '../../../../../core/Services/shared/data.service';
-import { RoleFormPermisionsRequest } from '../../../../../core/Models/security/role.models';
+import { Role, RoleFormPermisionsRequest } from '../../../../../core/Models/security/role.models';
 import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
 
 @Component({

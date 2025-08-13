@@ -1,3 +1,4 @@
+import { UserRolesService } from './../../../../../core/Services/api/user-roles.service';
 import { PersonList } from './../../../../../core/Models/security/person.models';
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
@@ -7,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -24,23 +25,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PersonCreate } from '../../../../../core/Models/security/person.models';
 import { TargetPersonComponent } from '../../../people/components/target-person/target-person.component';
 import { DataService } from '../../../../../core/Services/shared/data.service';
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatar?: string;
-  department: string;
-  status: 'active' | 'inactive';
-  roles: Role[];
-}
+import { ModalUserRolesComponent } from '../../../roles/Components/modal-user-roles/modal-user-roles.component';
+import { UserRolCreate, UserRolCreateAll, UserRolList } from '../../../../../core/Models/security/user-roles.models';
+import { Role } from '../../../../../core/Models/security/role.models';
 
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  color: string;
-  permissions: number;
-}
+
 @Component({
   selector: 'app-list-users',
   imports: [
@@ -57,7 +46,8 @@ export interface Role {
     ReactiveFormsModule,
     MatTableModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    RouterLink
   ],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.css',
@@ -67,10 +57,13 @@ export class ListUsersComponent implements OnInit {
   listUsers!: UserList[];
   displayedColumns: string[] = ['namePerson', 'emailPerson', 'role', 'isDeleted', 'actions'];
   itemu: any
+  listRoles: Role[] = [];
+
   //  displayedColumns: string[] = ['user', 'department', 'status', 'roles', 'actions']
 
   constructor(private apiService: ApiService<UserCreate, UserList>,
     private personService: ApiService<PersonCreate, PersonList>,
+    private userRolesService: UserRolesService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
@@ -80,15 +73,16 @@ export class ListUsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarData()
-    this.dataSource.data = this.mockUsers;
 
   }
 
   cargarData() {
     this.dataService.usuarios$.subscribe(data => this.listUsers = data);
-
     // Carga inicial de los datos dinámicos
     this.dataService.getUsers();
+
+    this.dataService.roles$.subscribe(data => this.listRoles = data);
+    this.dataService.getRoles();
   }
   openModal(user: UserList) {
     let item: PersonList;
@@ -137,83 +131,66 @@ export class ListUsersComponent implements OnInit {
     this.apiService.deleteLogic('User', item.id).subscribe(() => {
       this.snackbarService.showSuccess("Estado actualizado con éxito");
     })
-   }
+  }
 
 
-  searchControl = new FormControl('');
-  departmentFilter = new FormControl('');
-  statusFilter = new FormControl('');
-  roleFilter = new FormControl('');
+  openUserRolesModal(user: UserList | any) {
+    const fields = [
+      // Campo oculto con el id del usuario
+      { name: 'id', value: user.id || 0, hidden: true },
+
+      // Campo de solo lectura para mostrar el nombre
+      { name: 'name', label: 'Nombre Usuario', type: 'text', value: user.namePerson || '', readonly: true },
+
+      // Roles como checkboxes
+      ...this.listRoles.map(role => ({
+        name: 'role_' + role.id,
+        label: role.name,
+        type: 'checkbox',
+        value: user.roles.some((r: any )=> r.id === role.id) // <-- aquí se marca si ya tiene ese rol
+      }))
+    ];
+
+
+    const dialogRef = this.dialog.open(GenericFormComponent, {
+      width: '400px',
+      disableClose: true,
+      data: {
+        title: 'Roles para usuario',
+        item: user,
+        fields,
+        replaceBaseFields: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const selectedRoleIds = Object.entries(result)
+          .filter(([key, checked]) => checked && key.startsWith('role_'))
+          .map(([key]) => parseInt(key.replace('role_', ''), 10));
+
+        const data: UserRolCreateAll = {
+          userId: user.id,
+          rolesId: selectedRoleIds,
+        };
+
+        this.userRolesService.saveAllRoles(data).subscribe(() => {
+          this.snackbarService.showSuccess();
+          this.cargarData();
+        });
+      }
+    });
+  }
+
 
   viewMode: 'grid' | 'list' = 'grid';
-
-  dataSource = new MatTableDataSource<User>();
-
-  availableRoles: Role[] = [
-    { id: 1, name: 'Super Admin', description: 'Acceso completo', color: '#f44336', permissions: 15 },
-    { id: 2, name: 'Administrador', description: 'Gestión general', color: '#ff9800', permissions: 12 },
-    { id: 3, name: 'Manager', description: 'Gestión de equipo', color: '#2196f3', permissions: 8 },
-    { id: 4, name: 'Editor', description: 'Edición de contenido', color: '#4caf50', permissions: 5 },
-    { id: 5, name: 'Viewer', description: 'Solo lectura', color: '#9c27b0', permissions: 2 }
-  ];
-
-  mockUsers: User[] = [
-    {
-      id: 1,
-      name: 'Ana García',
-      email: 'ana.garcia@company.com',
-      department: 'IT',
-      status: 'active',
-      roles: [
-        { id: 1, name: 'Super Admin', description: 'Acceso completo', color: '#f44336', permissions: 15 },
-        { id: 2, name: 'Administrador', description: 'Gestión general', color: '#ff9800', permissions: 12 }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Carlos Rodríguez',
-      email: 'carlos.rodriguez@company.com',
-      department: 'HR',
-      status: 'active',
-      roles: [
-        { id: 3, name: 'Manager', description: 'Gestión de equipo', color: '#2196f3', permissions: 8 }
-      ]
-    },
-    {
-      id: 3,
-      name: 'María López',
-      email: 'maria.lopez@company.com',
-      department: 'Finance',
-      status: 'inactive',
-      roles: [
-        { id: 4, name: 'Editor', description: 'Edición de contenido', color: '#4caf50', permissions: 5 },
-        { id: 5, name: 'Viewer', description: 'Solo lectura', color: '#9c27b0', permissions: 2 }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Juan Martínez',
-      email: 'juan.martinez@company.com',
-      department: 'Marketing',
-      status: 'active',
-      roles: []
-    },
-    {
-      id: 5,
-      name: 'Laura Sánchez',
-      email: 'laura.sanchez@company.com',
-      department: 'IT',
-      status: 'active',
-      roles: [
-        { id: 2, name: 'Administrador', description: 'Gestión general', color: '#ff9800', permissions: 12 },
-        { id: 4, name: 'Editor', description: 'Edición de contenido', color: '#4caf50', permissions: 5 }
-      ]
-    }
-  ];
-
 
 
   changeViewMode(event: any): void {
     this.viewMode = event.value;
+  }
+
+  savePerson(){
+    this.router.navigate(['createUser'], { relativeTo: this.route });
   }
 }

@@ -43,6 +43,7 @@ export class GenericTableComponent {
   @Input() title: string = '';
   @Input() displayedColumns: string[] = [];
   @Input() columns: { key: string, label: string }[] = [];
+  @Input() buttonSave: boolean = true;
 
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
