@@ -10,3 +10,10 @@ export interface CustomTypeCreate extends GenericModel {
 export interface CustomTypeList extends CustomTypeCreate {
   typeCategoryName: string;
 }
+
+export interface TypeCategory{
+  id: number;
+  name: string;
+  isDeleted: boolean;
+  types?: CustomTypeList[];
+}

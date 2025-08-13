@@ -65,7 +65,11 @@ export class ListRolesComponent implements OnInit {
   }
 
 
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Rol', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+  }
 
   openModal(item?: Role) {
     const dialogRef = this.dialog.open(GenericFormComponent, {

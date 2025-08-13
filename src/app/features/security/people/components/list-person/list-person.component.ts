@@ -9,6 +9,7 @@ import { NgModel } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TargetPersonComponent } from '../target-person/target-person.component';
 import { DataService } from '../../../../../core/Services/shared/data.service';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-list-person',
@@ -25,6 +26,7 @@ export class ListPersonComponent implements OnInit {
     private router: Router,
     private dialog : MatDialog,
     private dataService: DataService,
+    private snackbarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
@@ -53,5 +55,9 @@ export class ListPersonComponent implements OnInit {
   delete(item: any) {
 
   }
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Person', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+   }
 }

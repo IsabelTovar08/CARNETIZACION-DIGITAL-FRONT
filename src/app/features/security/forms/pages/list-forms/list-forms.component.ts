@@ -113,5 +113,9 @@ export class ListFormsComponent implements OnInit {
       this.cargarData();
     })
   }
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Form', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+  }
 }
