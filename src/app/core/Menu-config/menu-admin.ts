@@ -59,25 +59,10 @@ export const menuAdmin: MenuItem[] = [
       {
         id: 'configuracion-general',
         title: 'Configuración General',
-        type: 'collapse',
+        type: 'item',
         classes: 'nav-item',
         url: '/dashboard/configuracion-general',
-        icon: 'settings',
-        children: [
-          {
-            id: 'level-1-1',
-            title: 'Personas',
-            icon: 'layers',
-            type: 'item',
-            url: '/dashboard/seguridad/people'
-          },
-          {
-            id: 'level-1-2',
-            title: 'Usuarios',
-            type: 'item',
-            url: '/dashboard/seguridad/users'
-          },
-        ]
+        icon: 'settings'
       },
       {
         id: 'ayuda',
@@ -123,14 +108,14 @@ export const menuAdmin: MenuItem[] = [
                 title: 'Departamentos',
                 icon: 'person_pin_circle',
                 type: 'item',
-                url: '/dashboard/seguridad/people'
+                url: '/dashboard/parametros/'
               },
               {
                 id: '456',
                 title: 'Municipios',
                 icon: 'person_pin_circle',
                 type: 'item',
-                url: '/dashboard/seguridad/people'
+                url: '/dashboard/parametros/'
               }
             ]
           },
@@ -143,16 +128,16 @@ export const menuAdmin: MenuItem[] = [
               {
                 id: '123',
                 title: 'Estados',
-                icon: 'person_pin_circle',
+                icon: 'check_circle_unread',
                 type: 'item',
-                url: '/dashboard/seguridad/people'
+                url: '/dashboard/parametros/status'
               },
               {
                 id: '456',
-                title: 'Tipos',
-                icon: 'person_pin_circle',
+                title: 'Tipos y Categorías',
+                icon: 'category',
                 type: 'item',
-                url: '/dashboard/seguridad/people'
+                url: '/dashboard/parametros/'
               }
             ]
           },

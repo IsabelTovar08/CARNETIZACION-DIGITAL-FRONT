@@ -1,3 +1,4 @@
+import { parameterRoutes } from './features/parameters/parameter.routes';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -45,6 +46,11 @@ export const routes: Routes = [
         path: 'seguridad',
         loadChildren: () =>
           import('./features/security/security.routes').then(m => m.securityRoutes),
+      },
+      {
+        path: 'parametros',
+        loadChildren: () =>
+          import('./features/parameters/parameter.routes').then(m => m.parameterRoutes),
       },
       // {
       //   path: 'organizational',
