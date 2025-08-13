@@ -57,11 +57,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/parameters/parameter.routes').then(m => m.parameterRoutes),
       },
-      // {
-      //   path: 'organizational',
-      //   loadChildren: () =>
-      //     import('./features/organization/organization.routes').then(m => m.organizationalRoutes),
-      // },
       {
         path: 'estructura-organizativa',
         loadChildren: () =>
@@ -69,9 +64,11 @@ export const routes: Routes = [
       }
     ]
   },
+
+  // Redirección por defecto a la pantalla de bienvenida
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'inicio',
     pathMatch: 'full',
   }
 ];
