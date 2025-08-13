@@ -6,6 +6,7 @@ import { UnidadOrganizativaComponent } from './structure/unidades-organizativa/p
 import { DivisionesInternasComponent } from './structure/divisines-Internal/pages/divisiones-internas/divisiones-internas.component';
 import { PerfilesComponent } from './assignment/perfile/pages/perfiles/perfiles.component';
 import { JornadasComponent } from './structure/jornada/pages/jornadas/jornadas.component';
+import { ListUnidadOrganizativaComponent } from './structure/unidades-organizativa/components/list-unidad-organizativa/list-unidad-organizativa.component';
 
 export const organizationRoutes: Routes = [
   {
@@ -18,7 +19,7 @@ export const organizationRoutes: Routes = [
   },
   {
     path: 'unidades-organizativas',
-    component: UnidadOrganizativaComponent
+    component: ListUnidadOrganizativaComponent
   },
   {
     path: 'divisiones-internas',

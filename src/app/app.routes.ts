@@ -42,7 +42,7 @@ export const routes: Routes = [
           import('./features/dashboard/pages/dashboard-home/dashboard-home.component').then(m => m.DashboardHomeComponent),
       },
       {
-        path: 'security',
+        path: 'seguridad',
         loadChildren: () =>
           import('./features/security/security.routes').then(m => m.securityRoutes),
       },

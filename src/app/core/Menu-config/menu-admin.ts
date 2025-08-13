@@ -16,7 +16,7 @@ export const menuAdmin: MenuItem[] = [
         target: false,
         breadcrumbs: true
       },
-      {        
+      {
         id: 'estructura-organizativa',
         title: 'Estructura Organizativa',
         type: 'item',
@@ -69,13 +69,13 @@ export const menuAdmin: MenuItem[] = [
             title: 'Personas',
             icon: 'layers',
             type: 'item',
-            url: '/dashboard/security/people'
+            url: '/dashboard/seguridad/people'
           },
           {
             id: 'level-1-2',
             title: 'Usuarios',
             type: 'item',
-            url: '/dashboard/security/users'
+            url: '/dashboard/seguridad/users'
           },
         ]
       },
@@ -102,58 +102,123 @@ export const menuAdmin: MenuItem[] = [
     ]
   },
   {
+    id: 'param',
+    title: 'Parámetros',
+    type: 'group',
+    children: [
+      {
+        id: 'menu-levels',
+        title: 'Parámetros',
+        type: 'collapse',
+        icon: 'settings_applications',
+        children: [
+          {
+            id: 'level-1-1',
+            title: 'Ubicación',
+            icon: 'location_on',
+            type: 'collapse',
+            children: [
+              {
+                id: '123',
+                title: 'Departamentos',
+                icon: 'person_pin_circle',
+                type: 'item',
+                url: '/dashboard/seguridad/people'
+              },
+              {
+                id: '456',
+                title: 'Municipios',
+                icon: 'person_pin_circle',
+                type: 'item',
+                url: '/dashboard/seguridad/people'
+              }
+            ]
+          },
+          {
+            id: 'level-1-2',
+            title: 'Sistema',
+            type: 'collapse',
+            icon: 'apps_outage',
+            children: [
+              {
+                id: '123',
+                title: 'Estados',
+                icon: 'person_pin_circle',
+                type: 'item',
+                url: '/dashboard/seguridad/people'
+              },
+              {
+                id: '456',
+                title: 'Tipos',
+                icon: 'person_pin_circle',
+                type: 'item',
+                url: '/dashboard/seguridad/people'
+              }
+            ]
+          },
+        ]
+      },
+    ]
+  },
+  {
     id: 'modulos',
     title: 'Seguridad',
     type: 'group',
     children: [
       {
         id: 'menu-levels',
-        title: 'Security',
+        title: 'Seguridad',
         type: 'collapse',
-        icon: 'layers',
+        icon: 'admin_panel_settings',
         children: [
           {
             id: 'level-1-1',
             title: 'Personas',
-            icon: 'layers',
+            icon: 'person_pin_circle',
             type: 'item',
-            url: '/dashboard/security/people'
+            url: '/dashboard/seguridad/people'
           },
           {
             id: 'level-1-2',
             title: 'Usuarios',
             type: 'item',
-            url: '/dashboard/security/users'
+            icon: 'groups_2',
+            url: '/dashboard/seguridad/users'
           },
-{
+          {
             id: 'level-1-tf2',
             title: 'Roles',
             type: 'item',
-            url: '/dashboard/security/roles'
+            icon: 'add_moderator',
+            url: '/dashboard/seguridad/roles'
           },
           {
             id: 'level-1-f2',
-            title: 'Permisos por Formulario',
+            title: 'Gestión de Permisos',
             type: 'item',
-            url: '/dashboard/security/permission-forms'
+            icon: 'folder_managed',
+            url: '/dashboard/seguridad/permission-forms'
           },
           {
             id: 'level-1-2f',
             title: 'Permisos',
             type: 'item',
-            url: '/dashboard/security/permissions'
+            icon: 'lock_open_circle',
+            url: '/dashboard/seguridad/permissions'
           },
           {
             id: 'level-1-d2',
             title: 'Formularios',
             type: 'item',
-            url: '/dashboard/security/forms'
+            icon: 'lists',
+            url: '/dashboard/seguridad/forms'
           },
           {
             id: 'level-1-d3',
             title: 'Módulos',
             type: 'item',
-            url: '/dashboard/security/modules'
+            icon: 'dashboard_2',
+            url: '/dashboard/seguridad/modules'
           }
         ]
       },
