@@ -22,7 +22,7 @@ import { GenericFormComponent } from '../../../../../shared/components/generic-f
   styleUrl: './list-modules.component.css'
 })
 export class ListModulesComponent implements OnInit {
-  listModule$!: Observable<Module[]>;
+  listModule!: Module[];
   displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
 
@@ -42,7 +42,9 @@ export class ListModulesComponent implements OnInit {
 
 
   cargarData() {
-    this.listModule$ = this.apiService.ObtenerTodo('Module')
+    this.apiService.ObtenerTodo('Module').subscribe((data) => {
+      this.listModule = data;
+    })
   }
 
   openModal(item?: Module) {

@@ -1,7 +1,7 @@
 <app-generic-table
   [title]="'Permisos'"
-  *ngIf="listPermission$ | async as list"
-  [dataSource]="list"
+  *ngIf="listPermission as list"
+  [dataSourceInput]="list"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

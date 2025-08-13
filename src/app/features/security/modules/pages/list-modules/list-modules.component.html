@@ -2,8 +2,8 @@
 
 <app-generic-table
   [title]="'Módulos'"
-  *ngIf="listModule$ | async as modules"
-  [dataSource]="modules"
+  *ngIf="listModule as modules"
+  [dataSourceInput]="modules"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

@@ -1,11 +1,16 @@
-<div class="{{ alertClass }} shadow-sm show fade d-flex align-items-center"
-  style="position: fixed; top: 1rem; right: 1rem; z-index: 1055; min-width: 300px;"
-  role="alert">
-  <div class="me-2">
-    <i class="bi bi-check-circle-fill" *ngIf="type === 'success'"></i>
-    <i class="bi bi-x-circle-fill" *ngIf="type === 'error'"></i>
-    <i class="bi bi-exclamation-triangle-fill" *ngIf="type === 'warning'"></i>
-    <i class="bi bi-info-circle-fill" *ngIf="type === 'info'"></i>
-  </div>
-  <div>{{ message }}</div>
+<div
+  class="alert"
+  [ngClass]="{
+    'alert-success': type === 'success',
+    'alert-danger': type === 'error',
+    'alert-warning': type === 'warning',
+    'alert-info': type === 'info'
+  }"
+  role="alert"
+  style="position: fixed; top: 1rem; right: 1rem; z-index: 3000; min-width: 320px; max-width: 380px;"
+>
+  <mat-icon aria-hidden="true" style="vertical-align: middle; margin-right: 0.5rem;">
+    {{ getIconName(type) }}
+  </mat-icon>
+  {{ message }}
 </div>

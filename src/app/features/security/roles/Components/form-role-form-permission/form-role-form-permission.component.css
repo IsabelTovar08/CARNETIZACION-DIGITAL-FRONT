@@ -57,66 +57,6 @@
   position: relative;
 }
 
-/* Controles superiores */
-.top-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.search-section {
-  flex: 1;
-  min-width: 300px;
-}
-
-.search-field {
-  width: 100%;
-  max-width: 400px;
-}
-
-.search-field .mat-form-field-outline {
-  border-radius: 12px !important;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.action-buttons button {
-  border-radius: 12px !important;
-  font-weight: 600;
-  text-transform: none;
-  padding: 0 24px;
-  height: 48px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.action-buttons .mat-raised-button {
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3) !important;
-}
-
-.action-buttons .mat-raised-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4) !important;
-}
-
-.action-buttons .mat-stroked-button {
-  border: 2px solid #e5e7eb;
-  color: #6b7280;
-}
-
-.action-buttons .mat-stroked-button:hover {
-  border-color: #4f46e5;
-  color: #4f46e5;
-  background: rgba(79, 70, 229, 0.05);
-  transform: translateY(-1px);
-}
-
 /* Stats cards */
 .stats-section {
   display: grid;
@@ -306,13 +246,36 @@
 /* Tabla de permisos */
 .matrix-table-container {
   overflow-x: auto;
-  max-height: 70vh;
 }
 
 .permissions-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
+}
+
+.permissions-table th,
+.permissions-table td {
+  min-width: 160px; /* ancho mínimo para las columnas */
+  max-width: 200px; /* ancho máximo para evitar que crezcan mucho */
+}
+
+.role-cell {
+  width: 300px;     /* primera columna más ancha para nombres */
+  min-width: 300px;
+  max-width: 300px;
+  white-space: normal; /* permite texto multilínea si quieres */
+}
+
+.permission-cell {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;  /* limita el ancho para no dejar mucho espacio */
+  padding: 12px;
+  overflow: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .permissions-table th {
@@ -326,7 +289,9 @@
 .permissions-table th:first-child {
   position: sticky;
   left: 0;
-  z-index: 11;
+  top: 0;
+  z-index: 15;
+  background: #f1f5f9;
 }
 
 .role-header {
@@ -334,12 +299,14 @@
   min-width: 300px;
   padding: 20px;
   background: #f1f5f9 !important;
+  position: sticky;
+   left: 0;
+  z-index: 11;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  gap: 12px;
   font-weight: 600;
   color: #374151;
 }
@@ -349,9 +316,14 @@
   min-width: 160px;
   padding: 20px;
   text-align: center;
-  position: relative;
+  position: sticky;
 }
-
+.form-cell {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: white;
+}
 .form-header .header-content {
   flex-direction: column;
   gap: 8px;
@@ -386,22 +358,21 @@
   background: rgba(79, 70, 229, 0.02);
 }
 
-.role-cell {
-  width: 300px;
-  min-width: 300px;
+/* .role-cell {
+  width: 400px;
   padding: 16px 20px;
   background: white;
-  position: sticky;
   left: 0;
   z-index: 5;
   border-right: 2px solid #e2e8f0;
   border-bottom: 1px solid #e2e8f0;
-}
+} */
 
 .role-info {
   display: flex;
   align-items: center;
   gap: 16px;
+  width: 200px;
 }
 
 .role-info mat-icon {
@@ -428,13 +399,13 @@
   color: #6b7280;
 }
 
-.permission-cell {
+/* .permission-cell {
   width: 160px;
   min-width: 160px;
   padding: 12px;
   border-bottom: 1px solid #e2e8f0;
   border-right: 1px solid #f1f5f9;
-}
+} */
 
 /* Tarjetas de permisos */
 .permission-control {
@@ -442,18 +413,7 @@
   transition: all 0.3s ease;
 }
 
-.permission-control.has-changes::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 12px;
-  height: 12px;
-  background: #f59e0b;
-  border-radius: 50%;
-  z-index: 20;
-  animation: pulse 2s infinite;
-}
+
 
 .permission-card {
   border-radius: 12px !important;
@@ -474,12 +434,6 @@
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   border-color: #10b981;
   color: #065f46;
-}
-
-.permission-card.partial-access {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border-color: #f59e0b;
-  color: #92400e;
 }
 
 .permission-card.no-access {
@@ -884,38 +838,6 @@
   }
 }
 
-/* Estados especiales */
-.permission-card.locked {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.permission-card.inherited {
-  border-style: dashed;
-  opacity: 0.8;
-}
-
-.permission-card.inherited::after {
-  content: 'Heredado';
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  font-size: 8px;
-  background: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.6);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-/* Mejoras de accesibilidad */
-.permission-card:focus {
-  outline: 3px solid #4f46e5;
-  outline-offset: 2px;
-}
-
-.permission-card[aria-pressed="true"] {
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
-}
 
 /* Efectos de hover mejorados */
 .stat-card:hover .stat-icon {

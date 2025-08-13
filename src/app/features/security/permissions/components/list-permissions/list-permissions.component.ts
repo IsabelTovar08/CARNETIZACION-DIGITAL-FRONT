@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
 import { Permission } from '../../../../../core/Models/security/permission.models';
@@ -18,14 +18,14 @@ import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.
   styleUrl: './list-permissions.component.css'
 })
 export class ListPermissionsComponent implements OnInit {
-  listPermission$!: Observable<Permission[]>;
+  listPermission!: Permission[];
   displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
   constructor(private apiService: ApiService<Permission, Permission>,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
   ) { }
 
   ngOnInit(): void {
@@ -39,7 +39,9 @@ export class ListPermissionsComponent implements OnInit {
   }
 
   cargarData() {
-    this.listPermission$ = this.apiService.ObtenerTodo('Permission')
+    this.apiService.ObtenerTodo('Permission').subscribe((data) => {
+      this.listPermission = data
+    })
   }
 
   openModal(item?: Permission) {

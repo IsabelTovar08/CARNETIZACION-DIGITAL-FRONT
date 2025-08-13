@@ -1,7 +1,7 @@
 <app-generic-table
   [title]="'Formularios'"
-  *ngIf="listForms$ | async as forms"
-  [dataSource]="forms"
+  *ngIf="listForms as forms"
+  [dataSourceInput]="forms"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

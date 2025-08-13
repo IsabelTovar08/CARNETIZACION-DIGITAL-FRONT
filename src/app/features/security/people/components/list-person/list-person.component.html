@@ -1,7 +1,7 @@
 <app-generic-table
   [title]="'Personas'"
-  *ngIf="listPerson$ | async as list"
-  [dataSource]="list"
+  *ngIf="listPerson as list"
+  [dataSourceInput]="list"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'firstName', label: 'Nombre' },
@@ -14,7 +14,7 @@
       { key: 'isDeleted', label: 'Estado' }
     ]"
   (onCreate)="save()"
-  (onEdit)="save()"
+  (onEdit)="edit($event)"
   (onDelete)="delete($event)"
   (onToggleStatus)="toggleIsActive($event)">
 </app-generic-table>

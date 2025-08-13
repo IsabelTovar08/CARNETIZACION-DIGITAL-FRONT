@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
-import { Observable } from 'rxjs';
 import { ApiService } from '../../../../../core/Services/api/api.service';
 import { FromModel } from '../../../../../core/Models/security/form.models';
 import { ModalPermissionsComponent } from '../modal-permissions/modal-permissions.component';
@@ -20,48 +19,10 @@ import { Module } from '../../../../../core/Models/security/module.models';
 import { RouterLink } from '@angular/router';
 import { RolFormPermissionsList } from '../../../../../core/Models/security/rol-form-permission.models';
 import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
+import { DataService } from '../../../../../core/Services/shared/data.service';
+import { Role } from '../../../../../core/Models/security/role.models';
+import { Permission } from '../../../../../core/Models/security/permission.models';
 
-
-interface Permission {
-  create: boolean;
-  read: boolean;
-  update: boolean;
-  delete: boolean;
-}
-
-// interface RolePermissions {
-//   roleId: number;
-//   formId: number;
-//   permissions: Permission;
-//   isInherited?: boolean;
-//   isLocked?: boolean;
-// }
-
-interface Role {
-  id: number;
-  name: string;
-  description: string;
-  color: string;
-  icon: string;
-  priority: 'low' | 'medium' | 'high';
-  isActive: boolean;
-}
-
-interface FormModule {
-  id: number;
-  name: string;
-  description: string;
-  icon: string;
-  category: string;
-  isActive: boolean;
-}
-
-interface Notification {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  message: string;
-  timestamp: Date;
-}
 
 @Component({
   selector: 'app-form-role-form-permission',
@@ -85,27 +46,18 @@ export class FormRoleFormPermissionComponent {
   loadingMessage = 'Cargando permisos...';
   hasChanges = false;
   searchTerm = '';
-  selectedFilter = 'all';
-
-  // Datos principales
-  roles: Role[] = [];
-  forms: FormModule[] = [];
-  // rolePermissions: RolePermissions[] = [];
-  notifications: Notification[] = [];
-
-  // Datos filtrados
-  filteredRoles: Role[] = [];
-  filteredForms: FormModule[] = [];
 
   // Control de estado
   currentForm: FromModel | null = null;
   // originalPermissions: RolePermissions[] = [];
-  listRoles$!: Observable<Role[]>;
-  listForm$!: Observable<FromModel[]>;
-  listModule$!: Observable<Module[]>;
-  listRolFormPermission$!: Observable<RolFormPermissionsList[]>;
-  RolFormPermission!: RolFormPermissionsList[];
+  listRoles!: Role[];
+  listForm!: FromModel[];
+  listModule!: Module[];
+  listPermissions!: Permission[];
 
+  listRolFormPermission!: RolFormPermissionsList[];
+  permissionMap: Record<string, RolFormPermissionsList> = {};
+  selectedFilter: number | null = null;
 
 
   constructor(private dialog: MatDialog,
@@ -113,111 +65,82 @@ export class FormRoleFormPermissionComponent {
     private apiServiceForm: ApiService<FromModel, FromModel>,
     private apiServiceModule: ApiService<Module, Module>,
     private apiServiceRolFormPermission: RolFormPermissionService,
+    private dataService: DataService
   ) {
   }
 
   ngOnInit(): void {
     this.initializeData();
-
   }
 
   // Inicialización de datos mock
   private initializeData(): void {
-    this.listRoles$ = this.apiServiceRole.ObtenerTodo('Rol')
-    this.listForm$ = this.apiServiceForm.ObtenerTodo('Form')
-    this.listModule$ = this.apiServiceForm.ObtenerTodo('Module')
-    this.listRolFormPermission$ = this.apiServiceRolFormPermission.getAllPermissions()
-    this.listRolFormPermission$.subscribe(data => {
-      this.RolFormPermission = data;
+
+    this.dataService.roleFormPermissions$.subscribe(data => {
+      this.listRolFormPermission = data || [];
+      this.buildPermissionMap();
     });
+    this.dataService.getRoleFormPermissions();
 
-  }
+    this.dataService.modules$.subscribe(data => this.listModule = data);
+    this.dataService.getModules();
 
-  // Métodos de filtrado
-  filterData(): void {
-    const term = this.searchTerm.toLowerCase();
+    this.dataService.forms$.subscribe(data => this.listForm = data);
+    this.dataService.getForms();
 
-    this.filteredRoles = this.roles.filter(role =>
-      role.name.toLowerCase().includes(term) ||
-      role.description.toLowerCase().includes(term)
-    );
+    this.dataService.roles$.subscribe(data => this.listRoles = data);
+    this.dataService.getRoles();
 
-    this.filteredForms = this.forms.filter(form =>
-      form.name.toLowerCase().includes(term) ||
-      form.description.toLowerCase().includes(term)
-    );
-  }
-
-
-
-
-
-  hasSpecificPermission(roleId: number, formId: number, permission: keyof Permission) {
-
-  }
-
-  hasAnyPermission(roleId: number, formId: number) {
-
-  }
-
-  hasPartialPermission(roleId: number, formId: number) {
-
-  }
-
-  getPermissionClass(roleId: number, formId: number) {
+    this.dataService.permissions$.subscribe(data => this.listPermissions = data);
+    this.dataService.getPermissions();
 
 
   }
-
-  getPermissionIcon(roleId: number, formId: number) {
-
-
+  private buildPermissionMap() {
+    this.permissionMap = this.listRolFormPermission.reduce((map, item) => {
+      map[`${item.rolId}_${item.formId}`] = item;
+      return map;
+    }, {} as Record<string, RolFormPermissionsList>);
   }
 
-  getPermissionLabel(roleId: number, formId: number) {
+  getPermission(roleId: number, formId: number) {
+    return this.permissionMap[`${roleId}_${formId}`] || null;
+  }
 
-
+  get filteredForms() {
+    if (!this.selectedFilter) return this.listForm;
+    return this.listForm.filter(form => form.moduleId === this.selectedFilter);
   }
 
   // Métodos de cambios
   hasPermissionChanges(roleId: number, formId: number) {
-
   }
 
   // Acciones rápidas
-  quickGrantPermission(item: any): void {
+  quickGrantPermission(role: Role, form: FromModel, permissions: Permission[]): void {
+    const selectedPermissionIds = permissions.map(p => p.id);
 
     const dialogRef = this.dialog.open(ModalPermissionsComponent, {
       width: '500px',
       data: {
-        // roleName: ro.name,
-        // formName: form.name,
-        // permissions: this.permissions$
+        role: role,
+        form: form,
+        selectedPermissionIds: selectedPermissionIds
       }
     });
+      dialogRef.afterClosed().subscribe(result => {
+    if (result === true) {
+      // Aquí recargas la lista porque el modal cerró con éxito
+      this.initializeData(); // Cambia por el método que recarga la lista
+    }
+  });
   }
+
 
   quickRevokePermission(roleId: number, formId: number, event: Event): void {
     event.stopPropagation();
 
-
-
   }
-
-  // Acciones en lote
-  bulkPermissionAction(action: string) {
-
-  }
-
-  // Métodos de control
-  checkForChanges(): void {
-
-  }
-
-  saveAllPermissions(): void {
-
-  }
-
 
   // Métodos de diálogo y UI
   openPermissionDialog(role: Role, form: FromModel): void {
@@ -229,63 +152,12 @@ export class FormRoleFormPermissionComponent {
     this.currentForm = form;
   }
 
-  grantAllForForm(): void {
-
-
-    this.checkForChanges();
-    this.showNotification('success', `Permisos concedidos para `);
-  }
-
-  revokeAllForForm(): void {
-
-
-    this.checkForChanges();
-    this.showNotification('warning', `Permisos revocados para `);
-  }
-
-  // Métodos auxiliares
-
-
-
   getPriorityLabel(priority: string): string {
     switch (priority) {
       case 'high': return 'Alta';
       case 'medium': return 'Media';
       case 'low': return 'Baja';
       default: return 'N/A';
-    }
-  }
-
-  // Métodos de notificación
-  showNotification(type: 'success' | 'error' | 'warning' | 'info', message: string): void {
-    const notification: Notification = {
-      id: Date.now().toString(),
-      type,
-      message,
-      timestamp: new Date()
-    };
-
-    this.notifications.push(notification);
-
-    // Auto dismiss después de 5 segundos
-    setTimeout(() => {
-      this.dismissNotification(this.notifications.findIndex(n => n.id === notification.id));
-    }, 5000);
-  }
-
-  dismissNotification(index: number): void {
-    if (index >= 0 && index < this.notifications.length) {
-      this.notifications.splice(index, 1);
-    }
-  }
-
-  getNotificationIcon(type: string): string {
-    switch (type) {
-      case 'success': return 'check_circle';
-      case 'error': return 'error';
-      case 'warning': return 'warning';
-      case 'info': return 'info';
-      default: return 'info';
     }
   }
 

@@ -1,4 +1,4 @@
-import { ApplicationRef, createComponent, Injectable, Injector } from '@angular/core';
+import { ApplicationRef, ComponentRef, createComponent, Injectable, Injector } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackbarComponent } from '../../../shared/components/snackbar/snackbar.component';
 
@@ -7,34 +7,50 @@ import { SnackbarComponent } from '../../../shared/components/snackbar/snackbar.
 })
 export class SnackbarService {
 
-  constructor(private injector: Injector, private appRef: ApplicationRef) { }
-
+   private componentRef: ComponentRef<SnackbarComponent> | null = null;
 
   private defaultMessages = {
-    success: 'Registro almacenado éxitosamente.',
+    success: 'Registro almacenado exitosamente.',
     error: 'Ocurrió un error inesperado.',
     warning: 'Atención: verifica los datos.',
     info: 'Información importante.'
   };
 
+  constructor(private injector: Injector, private appRef: ApplicationRef) { }
 
   show(type: 'success' | 'error' | 'warning' | 'info', message?: string) {
     try {
-      const componentRef = createComponent(SnackbarComponent, {
+      // Destruye snackbar previo si existe
+      if (this.componentRef) {
+        this.destroy();
+      }
+
+      this.componentRef = createComponent(SnackbarComponent, {
         environmentInjector: this.appRef.injector,
         elementInjector: this.injector
       });
 
-      componentRef.instance.type = type;
-      componentRef.instance.message = message || this.defaultMessages[type];
+      this.componentRef.instance.type = type;
+      this.componentRef.instance.message = message ?? this.defaultMessages[type];
 
-      this.appRef.attachView(componentRef.hostView);
+      this.appRef.attachView(this.componentRef.hostView);
 
-      const domElem = (componentRef.hostView as any).rootNodes[0] as HTMLElement;
+      const domElem = (this.componentRef.hostView as any).rootNodes[0] as HTMLElement;
       document.body.appendChild(domElem);
+
+      // Auto ocultar después de 4 segundos
+      setTimeout(() => this.destroy(), 4000);
+
     } catch (error) {
-      // Captura cualquier error inesperado al mostrar el snackbar
       console.error('Error al intentar mostrar el snackbar:', error);
+    }
+  }
+
+  private destroy() {
+    if (this.componentRef) {
+      this.appRef.detachView(this.componentRef.hostView);
+      this.componentRef.destroy();
+      this.componentRef = null;
     }
   }
 

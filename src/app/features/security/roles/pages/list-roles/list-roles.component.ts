@@ -30,7 +30,7 @@ import { FormRoleFormPermissionComponent } from '../../Components/form-role-form
   styleUrl: './list-roles.component.css'
 })
 export class ListRolesComponent implements OnInit {
-  listRoles$!: Observable<Role[]>;
+  listRoles!: Role[];
   displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
 
@@ -47,7 +47,9 @@ export class ListRolesComponent implements OnInit {
   }
 
   cargarData() {
-    this.listRoles$ = this.apiService.ObtenerTodo('Rol')
+    this.apiService.ObtenerTodo('Rol').subscribe((data) => {
+      this.listRoles = data;
+    })
   }
 
 

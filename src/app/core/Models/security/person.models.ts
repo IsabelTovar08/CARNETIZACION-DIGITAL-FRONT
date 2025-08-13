@@ -1,3 +1,5 @@
+import { UserCreate } from "./user.models";
+
 export interface PersonCreate {
   id: number;
   firstName: string;
@@ -5,7 +7,7 @@ export interface PersonCreate {
   lastName: string;
   secondLastName?: string;
   documentTypeId: number;
-  identification: string;
+  documentNumber: string;
   bloodTypeId?: number;
   phone?: string;
   email: string;
@@ -18,4 +20,9 @@ export interface PersonList extends PersonCreate{
   BloodTypeName?: string;
   CityName?: string;
   isDeleted: boolean;
+}
+
+export interface PersonRegistrer {
+  person: PersonCreate;
+  user: UserCreate;
 }

@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 import { FromModel } from '../../../../../core/Models/security/form.models';
 import { Module } from '../../../../../core/Models/security/module.models';
+import { DataService } from '../../../../../core/Services/shared/data.service';
 
 @Component({
   selector: 'app-list-forms',
@@ -19,7 +20,7 @@ import { Module } from '../../../../../core/Models/security/module.models';
   styleUrl: './list-forms.component.css'
 })
 export class ListFormsComponent implements OnInit {
-  listForms$!: Observable<FromModel[]>;
+  listForms!: FromModel[];
   listModules: Module[] = [];
 
 
@@ -27,57 +28,63 @@ export class ListFormsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private dataService: DataService,
+
   ) { }
 
   ngOnInit(): void {
     this.cargarData();
   }
 
-  displayedColumns: string[] = ['name', 'description', 'url', 'moduleName','isDeleted', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'url', 'moduleName', 'isDeleted', 'actions'];
 
   cargarData() {
-    this.listForms$ = this.apiService.ObtenerTodo('Form')
+    // this.apiService.ObtenerTodo('Form').subscribe((data) => {
+    //   this.listForms = data;
+    // })
+    this.dataService.forms$.subscribe(data => this.listForms = data);
+    this.dataService.getForms();
   }
 
   cargarModules(): Observable<Module[]> {
-  return this.apiService.ObtenerTodo('Module');
-}
+    return this.apiService.ObtenerTodo('Module');
+  }
 
   openModal(item?: FromModel) {
-  this.cargarModules().subscribe((modules) => {
-    const dialogRef = this.dialog.open(GenericFormComponent, {
-      disableClose: true,
-      width: '400px',
-      data: {
-        title: item ? 'Editar' : 'Crear',
-        item,
-        fields: [
-          { name: 'url', label: 'Ruta', type: 'string', value: item?.url || '', required: true },
-          {
-            name: 'moduleId',
-            type: 'select',
-            label: 'Módulo',
-            value: item?.moduleId || '',
-            options: modules.map(m => ({
-              label: m.name,
-              value: m.id
-            })),
-            required: true
-          }
-        ],
-        replaceBaseFields: false
-      }
-    });
+    this.cargarModules().subscribe((modules) => {
+      const dialogRef = this.dialog.open(GenericFormComponent, {
+        disableClose: true,
+        width: '400px',
+        data: {
+          title: item ? 'Editar' : 'Crear',
+          item,
+          fields: [
+            { name: 'url', label: 'Ruta', type: 'string', value: item?.url || '', required: true },
+            {
+              name: 'moduleId',
+              type: 'select',
+              label: 'Módulo',
+              value: item?.moduleId || '',
+              options: modules.map(m => ({
+                label: m.name,
+                value: m.id
+              })),
+              required: true
+            }
+          ],
+          replaceBaseFields: false
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        item ? this.add(result, item.id) : this.add(result);
-      }
-      this.router.navigate(['./'], { relativeTo: this.route });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          item ? this.add(result, item.id) : this.add(result);
+        }
+        this.router.navigate(['./'], { relativeTo: this.route });
+      });
     });
-  });
-}
+  }
 
 
 

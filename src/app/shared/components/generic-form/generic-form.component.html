@@ -7,12 +7,15 @@
     <ng-container *ngFor="let field of fields">
       <ng-container *ngIf="!field.hidden">
 
-        <!-- Input normal -->
-        <label class="text-xs text-gray-500 mb-1 block tracking-wide">
+        <!-- Checkbox -->
+        <mat-checkbox *ngIf="field.type === 'checkbox'"
+          [formControlName]="field.name">
           {{ field.label }}
-        </label>
+        </mat-checkbox>
+
+        <!-- Input normal -->
         <mat-form-field class="w-100" appearance="outline"
-          *ngIf="field.type !== 'textarea' && field.type !== 'select'">
+          *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'checkbox'">
           <mat-label>{{ field.label }}</mat-label>
           <input matInput [formControlName]="field.name"
             [type]="field.type || 'text'" />
@@ -42,8 +45,8 @@
   </form>
 </div>
 
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="save()"
-    [disabled]="form.invalid">Guardar</button>
-</div>
+<app-action-buttons
+  [disableSave]="form.invalid"
+  (cancel)="cancel()"
+  (save)="save()">
+</app-action-buttons>

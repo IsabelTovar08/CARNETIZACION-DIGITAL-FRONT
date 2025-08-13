@@ -1,0 +1,182 @@
+/* Contenedor que incluye gráfico y notificaciones en fila */
+.graphs-notifications-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Que el gráfico ocupe aprox 2/3 y notificaciones 1/3 */
+.graphs-notifications-container > .chart-card {
+  flex: 2;
+}
+
+.graphs-notifications-container > .notifications-card {
+  flex: 1;
+}
+
+/* Estilos generales de las tarjetas */
+.card {
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 8px rgba(0, 0, 0, 0.02);
+  padding: 1.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Títulos con colores más suaves y modernos */
+h2 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #3a5068, #557a95);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h3, h4 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  color: #4a6741;
+  margin-bottom: 0.3rem;
+}
+
+h5, h6 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* Texto secundario */
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Indicadores pequeños */
+small.text-success {
+  font-weight: 600;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+}
+
+small.text-danger {
+  font-weight: 600;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+}
+
+/* Avatares redondeados con sombra */
+img.rounded-circle {
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+img.rounded-circle:hover {
+  transform: scale(1.05);
+}
+
+/* Notificaciones: fondo claro con sombra suave y borde izquierdo suavizado */
+.list-unstyled li {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-left: 4px solid #6366f1;
+  padding: 0.8rem 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.list-unstyled li:hover {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  transform: translateX(4px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15);
+}
+
+/* Texto dentro de las notificaciones */
+.list-unstyled small.text-muted {
+  color: #64748b;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Contenido texto notificación ocupa el resto */
+.list-unstyled li > div {
+  flex-grow: 1;
+}
+
+/* Ajuste para el título de la sección de notificaciones */
+.card > h5 {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  color: #4338ca;
+  font-weight: 600;
+  position: relative;
+}
+
+.card > h5::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 2px;
+}
+
+/* Ajustes de los gráficos */
+canvas {
+  max-height: 180px !important;
+  border-radius: 12px;
+}
+
+/* Pequeños detalles para los indicadores grandes */
+h4.fw-bold {
+  font-size: 2.2rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Mejora para el contenedor principal */
+.container {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.4), rgba(241, 245, 249, 0.2));
+  border-radius: 24px;
+  padding: 2rem;
+}
+
+/* Indicadores superiores con gradiente sutil */
+.row .col-md-4 .card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.8));
+  border: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+/* Mejora para números grandes */
+.fw-bold {
+  background: linear-gradient(135deg, #1f2937, #374151);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

@@ -1,2 +1,99 @@
-<p>dashboard-home works!</p>
-<h1>uuuuuuuuuuuuu</h1>
+<div class="container my-4">
+  <!-- Título principal -->
+  <div class="mb-4 text-center">
+    <h2 class="fw-bold text-primary"
+      style="font-size: 1.8rem; letter-spacing: 1.2px;">
+      Panel de Indicadores y Reportes
+    </h2>
+    <p class="text-muted fst-italic">
+      Visión general de emisión de carnets, solicitudes y eventos recientes
+    </p>
+  </div>
+
+  <!-- Indicadores superiores -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm py-3">
+        <h6 class="text-secondary">Carnets Emitidos</h6>
+        <h3 class="fw-bold">1,250</h3>
+        <small class="text-success fw-semibold">+10%</small>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm py-3">
+        <h6 class="text-secondary">Solicitudes Pendientes</h6>
+        <h3 class="fw-bold">35</h3>
+        <small class="text-danger fw-semibold">-5%</small>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm py-3">
+        <h6 class="text-secondary">Próximos Eventos</h6>
+        <h3 class="fw-bold">5</h3>
+        <small class="text-success fw-semibold">+2%</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos pequeños en fila -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5 class="fw-bold mb-2">Carnets Emitidos por Unidad Organizativa</h5>
+        <h6 class="mb-3">Total : 1,250</h6>
+        <canvas baseChart
+          [data]="unitOrgChartData"
+          [options]="smallBarChartOptions"
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5 class="fw-bold mb-2">Carnets Emitidos por Jornada</h5>
+        <h6 class="mb-3">Comparación</h6>
+        <canvas baseChart
+          [data]="shiftChartData"
+          [options]="smallBarChartOptions"
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico eventos -->
+<!-- Contenedor flex para gráfico y notificaciones -->
+<div class="graphs-notifications-container d-flex mb-4" style="gap: 2rem;">
+
+  <!-- Gráfico eventos (2/3 del ancho) -->
+  <div class="card shadow-sm p-3 chart-card flex-grow-2" style="flex: 2;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold mb-0">500 <small class="text-success fw-semibold">+5%</small></h4>
+      <h5 class="mb-0">Total</h5>
+    </div>
+    <canvas baseChart
+      [data]="eventsChartData"
+      [options]="horizontalBarChartOptions"
+      [type]="'bar'">
+    </canvas>
+  </div>
+
+  <!-- Notificaciones recientes (1/3 del ancho) -->
+  <div class="card shadow-sm p-3 notifications-card" style="flex: 1;">
+    <h5 class="mb-3 fw-bold">Notificaciones Recientes</h5>
+    <ul class="list-unstyled">
+      <li *ngFor="let notif of notifications" class="d-flex align-items-center mb-3">
+        <img [src]="notif.avatar" class="rounded-circle me-3" width="48" height="48" alt="avatar" />
+        <div>
+          <strong>Usuario: {{notif.name}}</strong><br />
+          <small class="text-muted">{{notif.message}}</small>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+
+</div>

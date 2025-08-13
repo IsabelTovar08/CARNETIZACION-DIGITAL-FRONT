@@ -1,3 +1,4 @@
+import { PersonList } from './../../../../../core/Models/security/person.models';
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
@@ -20,6 +21,9 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { PersonCreate } from '../../../../../core/Models/security/person.models';
+import { TargetPersonComponent } from '../../../people/components/target-person/target-person.component';
+import { DataService } from '../../../../../core/Services/shared/data.service';
 export interface User {
   id: number;
   name: string;
@@ -54,21 +58,24 @@ export interface Role {
     MatTableModule,
     MatButtonModule,
     MatTooltipModule
-],
+  ],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.css',
   encapsulation: ViewEncapsulation.None
 })
 export class ListUsersComponent implements OnInit {
-  listUser$!: Observable<UserList[]>;
-  displayedColumns: string[] = ['namePerson', 'email', 'roles', 'isDeleted', 'actions'];
+  listUsers!: UserList[];
+  displayedColumns: string[] = ['namePerson', 'emailPerson', 'role', 'isDeleted', 'actions'];
+  itemu: any
   //  displayedColumns: string[] = ['user', 'department', 'status', 'roles', 'actions']
 
   constructor(private apiService: ApiService<UserCreate, UserList>,
+    private personService: ApiService<PersonCreate, PersonList>,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private dataService: DataService
   ) { }
 
   ngOnInit(): void {
@@ -78,36 +85,26 @@ export class ListUsersComponent implements OnInit {
   }
 
   cargarData() {
-    this.listUser$ = this.apiService.ObtenerTodo('User')
+    this.dataService.usuarios$.subscribe(data => this.listUsers = data);
+
+    // Carga inicial de los datos dinámicos
+    this.dataService.getUsers();
   }
-
-  openModal(item?: UserCreate) {
-    const dialogRef = this.dialog.open(GenericFormComponent, {
-      disableClose: true,
-      width: '400px',
-      data: {
-        title: item ? 'Editar' : 'Crear',
-        item,
-        fields: [
-          { name: 'password', label: 'Contraseña', type: 'password', value: item?.password || '', required: true },
-          { name: 'password', label: 'Contraseña', type: 'password', value: item?.password || '', required: true }
-
-        ],
-        replaceBaseFields: true
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (item) {
-          this.add(result, item.id);
-        } else {
-          this.add(result);
+  openModal(user: UserList) {
+    let item: PersonList;
+    this.personService.ObtenerPorId('Person', user.personId).subscribe((response) => {
+      item = response;
+      this.dialog.open(TargetPersonComponent, {
+        disableClose: true,
+        width: '800px',
+        maxHeight: '80vh',
+        data: {
+          title: item ? 'Editar' : 'Crear',
+          item
         }
-      }
+      });
 
-      // 🔙 Vuelve a la ruta base sin /create
-      this.router.navigate(['./'], { relativeTo: this.route });
+      console.log('Datos cargados:', item);
     });
   }
 
@@ -128,7 +125,6 @@ export class ListUsersComponent implements OnInit {
   }
 
   save(data?: UserCreate) {
-    this.openModal(data)
   }
 
   delete(item: any) {
@@ -140,7 +136,7 @@ export class ListUsersComponent implements OnInit {
   toggleIsActive(item: any) { }
 
 
-   searchControl = new FormControl('');
+  searchControl = new FormControl('');
   departmentFilter = new FormControl('');
   statusFilter = new FormControl('');
   roleFilter = new FormControl('');

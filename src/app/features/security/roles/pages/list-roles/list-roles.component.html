@@ -10,8 +10,8 @@
 
 <app-generic-table
   [title]="'Roles'"
-  *ngIf="listRoles$ | async as roles"
-  [dataSource]="roles"
+  *ngIf="listRoles as roles"
+  [dataSourceInput]="roles"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

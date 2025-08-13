@@ -1,3 +1,4 @@
+import { Permission } from './../../../../../core/Models/security/permission.models';
 import { Observable } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, FormArray, ReactiveFormsModule } from '@angular/forms';
@@ -8,18 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../../core/Services/api/api.service';
-export interface Permission {
-  id: string;
-  name: string;
-  description?: string;
-  selected: boolean;
-}
+import { Role } from '../../../users/pages/list-users/list-users.component';
+import { FromModel } from '../../../../../core/Models/security/form.models';
+import { DataService } from '../../../../../core/Services/shared/data.service';
+import { RoleFormPermisionsRequest } from '../../../../../core/Models/security/role.models';
+import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
 
-export interface ModalData {
-  roleName?: string;
-  formName?: string;
-  permissions: Permission[];
-}
 @Component({
   selector: 'app-modal-permissions',
   imports: [
@@ -35,71 +30,85 @@ export interface ModalData {
   styleUrl: './modal-permissions.component.css'
 })
 export class ModalPermissionsComponent {
-  permissionsForm: FormGroup;
-  listPermissins$!: Observable<Permission[]>;
+  permissionsForm!: FormGroup;
+  listPermissions!: Permission[];
+  role!: Role;
+  form!: FromModel;
+  permissionsSelected?: number[];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ModalPermissionsComponent>,
-    private permisionService: ApiService<Permission, Permission>,
-    @Inject(MAT_DIALOG_DATA) public data: ModalData
+    private rfpermisionService: RolFormPermissionService,
+    private dataService: DataService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.permissionsForm = this.createForm();
   }
 
   ngOnInit(): void {
-    this.listPermissins$ = this.permisionService.ObtenerTodo('Permission');
+    // Inicializar listas desde data
+    if (this.data.permissions) {
+      this.listPermissions = this.data.permissions;
+    }
+    if (this.data.role) {
+      this.role = this.data.role;
+    }
+    if (this.data.form) {
+      this.form = this.data.form;
+    }
 
-    // Inicializar valores si se proporcionaron
-    if (this.data.roleName) {
-      this.permissionsForm.get('roleName')?.setValue(this.data.roleName);
-    }
-    if (this.data.formName) {
-      this.permissionsForm.get('formName')?.setValue(this.data.formName);
-    }
+    // Cargar permisos seleccionados si vienen por parámetro
+    this.permissionsSelected = this.data.selectedPermissionIds
+      ? [...this.data.selectedPermissionIds]
+      : [];
+
+    // Suscribirse a cambios en la lista de permisos
+    this.dataService.permissions$.subscribe(data => {
+      this.listPermissions = data;
+    });
+    this.dataService.getPermissions();
+
+    // Crear formulario con valores iniciales
+    this.createForm();
   }
 
-  private createForm(): FormGroup {
-    // const permissionsArray = this.fb.array(
-    //   this.permissions.map(permission => new FormControl(permission.selected))
-    // );
-
-    return this.fb.group({
-      roleName: [''],
-      formName: [''],
-      // permissions: permissionsArray
+  private createForm(): void {
+    this.permissionsForm = this.fb.group({
+      permissions: [this.permissionsSelected] // IDs seleccionados por defecto
     });
   }
 
 
-  get permissionsArray(): FormArray {
-    return this.permissionsForm.get('permissions') as FormArray;
+  // Getter para acceder fácil al FormArray
+
+  togglePermission(id: number, checked: boolean) {
+    if (checked) {
+      if (!this.permissionsSelected?.includes(id)) {
+        this.permissionsSelected?.push(id);
+      }
+    } else {
+      this.permissionsSelected = this.permissionsSelected?.filter(p => p !== id);
+    }
   }
 
-  selectAll(): void {
-    this.permissionsArray.controls.forEach(control => control.setValue(true));
+
+  onSubmit() {
+    this.permissionsForm.patchValue({ permissions: this.permissionsSelected });
+    console.log(this.permissionsForm.value);
+    var data: RoleFormPermisionsRequest = {
+      RoleId: this.role.id,
+      FormId: this.form.id,
+      PermissionsIds: this.permissionsForm.value.permissions
+    }
+
+    this.rfpermisionService.savePermissions(data).subscribe(() => {
+      this.dialogRef.close(true);
+    })
   }
 
-  deselectAll(): void {
-    this.permissionsArray.controls.forEach(control => control.setValue(false));
-  }
 
   onCancel(): void {
     this.dialogRef.close(null);
   }
 
-  // onSave(): void {
-  //   const formValue = this.permissionsForm.value;
-  //   const selectedPermissions = this.permissions.filter((_, index) =>
-  //     formValue.permissions[index]
-  //   );
-
-  //   const result = {
-  //     roleName: formValue.roleName,
-  //     formName: formValue.formName,
-  //     selectedPermissions: selectedPermissions
-  //   };
-
-  //   this.dialogRef.close(result);
-  // }
 }

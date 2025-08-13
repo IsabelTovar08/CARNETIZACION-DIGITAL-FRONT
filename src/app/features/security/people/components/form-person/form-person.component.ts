@@ -9,39 +9,17 @@ import { MatCardModule } from "@angular/material/card";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../../core/Services/api/api.service';
-import { PersonList } from '../../../../../core/Models/security/person.models';
-
-interface DocumentType {
-  id: number;
-  name: string;
-}
-
-interface BloodType {
-  id: number;
-  name: string;
-}
-
-interface City {
-  id: number;
-  name: string;
-}
-
-interface PersonData {
-  isDeleted: boolean;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  secondLastName: string;
-  documentTypeId: number;
-  identification: string;
-  bloodTypeId: number;
-  phone: string;
-  email: string;
-  address: string;
-  cityId: number;
-  username?: string;
-  password?: string;
-}
+import { PersonCreate, PersonList, PersonRegistrer } from '../../../../../core/Models/security/person.models';
+import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
+import { CustomTypeService } from '../../../../../core/Services/api/custom-type.service';
+import { UbicationService } from '../../../../../core/Services/api/ubication.service';
+import { City, Deparment } from '../../../../../core/Models/parameter/ubication.models';
+import { User } from '../../../users/pages/list-users/list-users.component';
+import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
+import { PersonService } from '../../../../../core/Services/api/person.service';
+import Swal from 'sweetalert2';
+import { ListService } from '../../../../../core/Services/shared/list.service';
+import { DataService } from '../../../../../core/Services/shared/data.service';
 
 @Component({
   selector: 'app-form-person',
@@ -56,7 +34,7 @@ interface PersonData {
     MatCardModule,
     MatSelectModule,
     CommonModule
-],
+  ],
   templateUrl: './form-person.component.html',
   styleUrl: './form-person.component.css'
 })
@@ -73,43 +51,27 @@ export class FormPErsonComponent {
   userForm: FormGroup;
 
   // Datos para los selectores
-  documentTypes: DocumentType[] = [
-    { id: 1, name: 'Cédula de Ciudadanía' },
-    { id: 2, name: 'Tarjeta de Identidad' },
-    { id: 3, name: 'Cédula de Extranjería' },
-    { id: 4, name: 'Pasaporte' },
-    { id: 5, name: 'NUIP' }
-  ];
+  documentTypes: CustomTypeSpecific[] = [];
 
-  bloodTypes: BloodType[] = [
-    { id: 1, name: 'O+' },
-    { id: 2, name: 'O-' },
-    { id: 3, name: 'A+' },
-    { id: 4, name: 'A-' },
-    { id: 5, name: 'B+' },
-    { id: 6, name: 'B-' },
-    { id: 7, name: 'AB+' },
-    { id: 8, name: 'AB-' }
-  ];
+  bloodTypes: CustomTypeSpecific[] = [];
 
-  cities: City[] = [
-    { id: 1, name: 'Bogotá' },
-    { id: 2, name: 'Medellín' },
-    { id: 3, name: 'Cali' },
-    { id: 4, name: 'Barranquilla' },
-    { id: 5, name: 'Cartagena' },
-    { id: 6, name: 'Bucaramanga' },
-    { id: 7, name: 'Pereira' },
-    { id: 8, name: 'Santa Marta' },
-    { id: 9, name: 'Ibagué' },
-    { id: 10, name: 'Neiva' }
-  ];
+  cities: City[] = [];
+  deparments: Deparment[] = [];
+
 
   constructor(private formBuilder: FormBuilder,
-    private apiService: ApiService<PersonData, PersonList>
+    private personService: PersonService,
+    private userService: ApiService<UserCreate, UserList>,
+
+    private listService: ListService,
+    private ubicationService: UbicationService,
+
+
+
   ) {
     // Inicializar formularios
     this.personalInfoForm = this.formBuilder.group({
+      id: [''],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       middleName: [''],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -118,27 +80,63 @@ export class FormPErsonComponent {
 
     this.documentForm = this.formBuilder.group({
       documentTypeId: [0, [Validators.required, Validators.min(1)]],
-      identification: ['', [Validators.required, Validators.minLength(6)]],
+      documentNumber: ['', [Validators.required, Validators.minLength(6)]],
       bloodTypeId: [0, [Validators.required, Validators.min(1)]]
     });
 
     this.contactForm = this.formBuilder.group({
       phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      address: ['', [Validators.required, Validators.minLength(10)]],
-      cityId: [0, [Validators.required, Validators.min(1)]]
+      address: ['', Validators.minLength(10)],
+      deparmentId: [null, Validators.required],
+      cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]]
     });
 
     this.userForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
+      personId: [''],
+      username: ['', [Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
-    // Puedes cargar datos adicionales aquí si es necesario
+    this.getData()
+    this.contactForm.get('deparmentId')?.valueChanges.subscribe(departmentId => {
+      if (departmentId) {
+        this.getCytie(departmentId);
+        this.contactForm.get('cityId')?.enable();
+      } else {
+        this.cities = [];
+        this.contactForm.get('cityId')?.setValue(null);
+        this.contactForm.get('cityId')?.disable();
+      }
+    });
+
+
   }
+
+  getData(){
+    this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
+    this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
+    this.listService.getdeparments().subscribe(data => this.deparments = data);
+  }
+
+  get isCityDisabled(): boolean {
+    return this.contactForm?.get('cityId')?.disabled ?? true;
+  }
+
+  get getEmail() {
+    return this.contactForm?.get('email')?.value;
+  }
+
+  getCytie(id: number) {
+    this.ubicationService.GetCytiesByDeparment(id).subscribe((data) => {
+      this.cities = data;
+    })
+  }
+
+
 
   // Validador personalizado para confirmar contraseña
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -188,58 +186,64 @@ export class FormPErsonComponent {
   // Verificar si todo el formulario es válido
   isFormValid(): boolean {
     return this.personalInfoForm.valid &&
-           this.documentForm.valid &&
-           this.contactForm.valid &&
-           this.userForm.valid;
+      this.documentForm.valid &&
+      this.contactForm.valid
   }
 
   // Recopilar todos los datos del formulario
-  getFormData(): PersonData {
+  getFormData(): PersonCreate {
     return {
-      isDeleted: false,
+      id: 0,
       firstName: this.personalInfoForm.get('firstName')?.value || '',
       middleName: this.personalInfoForm.get('middleName')?.value || '',
       lastName: this.personalInfoForm.get('lastName')?.value || '',
       secondLastName: this.personalInfoForm.get('secondLastName')?.value || '',
       documentTypeId: this.documentForm.get('documentTypeId')?.value || 0,
-      identification: this.documentForm.get('identification')?.value || '',
+      documentNumber: this.documentForm.get('documentNumber')?.value || '',
       bloodTypeId: this.documentForm.get('bloodTypeId')?.value || 0,
       phone: this.contactForm.get('phone')?.value || '',
       email: this.contactForm.get('email')?.value || '',
       address: this.contactForm.get('address')?.value || '',
-      cityId: this.contactForm.get('cityId')?.value || 0,
-      username: this.userForm.get('username')?.value || '',
-      password: this.userForm.get('password')?.value || ''
+      cityId: this.contactForm.get('cityId')?.value || 0
     };
+  }
+  getDataUser() : UserCreate {
+    return {
+      userName: this.userForm.get('username')?.value || "null",
+      password: this.userForm.get('password')?.value || '',
+      personId: this.personalInfoForm.get('id')?.value || 0
+    }
   }
 
   // Método para enviar el formulario
   submitForm(): void {
     if (this.isFormValid()) {
       const formData = this.getFormData();
+      var peronRegistrer: PersonRegistrer = {
+        person: formData,
+        user: this.getDataUser()
+      }
+
 
       // Aquí puedes llamar a tu servicio para guardar los datos
-      console.log('Datos del formulario:', formData);
+      console.log('Datos del formulario:', peronRegistrer);
 
-      // Ejemplo de llamada a servicio (descomenta y adapta según tu necesidad):
-      this.apiService.Crear('Person' ,formData).subscribe({
-        next: (response) => {
-          console.log('Persona creada exitosamente:', response);
-          // Mostrar mensaje de éxito
-          this.showSuccessMessage();
+      this.personService.SavePersonWithUser(peronRegistrer).subscribe({
+        next: (personaResponse) => {
+          // Guardar el ID de la persona en el formulario
+
+          console.log('Persona creada exitosamente:', personaResponse);
+          Swal.fire({
+            title: 'Persona creada exitosamente'
+          })
+
         },
-        error: (error) => {
-          console.error('Error al crear persona:', error);
-          // Mostrar mensaje de error
-          this.showErrorMessage();
+        error: (personaError) => {
+          console.error('Error al crear persona:', personaError);
+          this.showErrorMessage(); // puedes personalizar con mensaje específico para "persona"
         }
       });
 
-      // Por ahora solo mostramos un alert
-      alert('¡Persona registrada exitosamente!\n\n' +
-            'Nombre: ' + this.getFullName() + '\n' +
-            'Email: ' + this.contactForm.get('email')?.value + '\n' +
-            'Username: ' + this.userForm.get('username')?.value);
     } else {
       // Marcar todos los campos como tocados para mostrar errores
       this.markAllFieldsAsTouched();

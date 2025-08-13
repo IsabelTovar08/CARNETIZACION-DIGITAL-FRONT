@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-snackbar',
   imports: [
-    CommonModule
-  ],
+    CommonModule,
+    MatIconModule
+],
   templateUrl: './snackbar.component.html',
   styleUrl: './snackbar.component.css'
 })
@@ -16,16 +18,7 @@ export class SnackbarComponent implements OnInit {
   alertClass = '';
 
   ngOnInit(): void {
-    console.log("holaa")
     this.alertClass = this.getBootstrapClass(this.type);
-
-    setTimeout(() => {
-      this.destroy();
-    }, 4000); // 4 segundos
-  }
-
-  destroy() {
-    (this as any).remove(); // elimina el custom element del DOM
   }
 
   getBootstrapClass(type: string): string {
@@ -37,4 +30,14 @@ export class SnackbarComponent implements OnInit {
       default: return 'alert alert-primary';
     }
   }
+
+  getIconName(type: string): string {
+  switch (type) {
+    case 'success': return 'check_circle';
+    case 'error': return 'error';
+    case 'warning': return 'warning';
+    case 'info': return 'info';
+    default: return 'info';
+  }
+}
 }

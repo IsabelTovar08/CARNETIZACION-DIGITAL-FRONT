@@ -18,14 +18,18 @@ export class ApiService<T, D> {
   public ObtenerTodo(entidad: string): Observable<D[]> {
     return this.wrapper.handleRequest(this.http.get<D[]>(`${this.urlBase}/${entidad}`));
   }
+
+  public ObtenerPorId(entidad: string, id: number): Observable<D> {
+    return this.wrapper.handleRequest(this.http.get<D>(`${this.urlBase}/${entidad}/${id}`));
+  }
   public ObtenerActivos(entidad: string): Observable<D> {
     return this.http.get<D>(`${this.urlBase}/${entidad}/active`);
   }
   public Crear(entidad: string, objeto: T) {
     return this.wrapper.handleRequest(this.http.post<D>(`${this.urlBase}/${entidad}`, objeto));
   }
-  public update(entidad: string, data: T) {
-    return this.http.put<D>(`${this.urlBase}/${entidad}/update/`, data);
+  public update(entidad: string, data: T) : Observable<D>{
+    return this.wrapper.handleRequest(this.http.put<D>(`${this.urlBase}/${entidad}/update/`, data));
   }
   public delete(entidad: string, id: number) {
     return this.http.delete(`${this.urlBase}/${entidad}/${id}`);

@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, ContentChildren, EventEmitter, Input, Output, QueryList, TemplateRef } from '@angular/core';
+import { Component, ContentChildren, EventEmitter, Input, Output, QueryList, TemplateRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,14 +8,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { MatSelectModule } from "@angular/material/select";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-generic-table',
@@ -39,7 +39,6 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 })
 export class GenericTableComponent {
   @Input() title: string = '';
-  @Input() dataSource: any[] = [];
   @Input() displayedColumns: string[] = [];
   @Input() columns: { key: string, label: string }[] = [];
 
@@ -50,15 +49,24 @@ export class GenericTableComponent {
 
   @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};
 
+    // Usamos MatTableDataSource para la paginación y ordenamiento
+  dataSource = new MatTableDataSource<any>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   /**
    *
    */
   constructor(
     private router: Router,
     private route: ActivatedRoute
-  ) {
+  ) {}
 
+ @Input() set dataSourceInput(data: any[]) {
+    this.dataSource.data = data || [];
+  }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
   emitEdit(item: any) {

@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import { MatDividerModule } from "@angular/material/divider";
+import { ActionButtonsComponent } from "../action-buttons/action-buttons.component";
 
 @Component({
   selector: 'app-generic-form',
@@ -15,7 +16,8 @@ import { MatDividerModule } from "@angular/material/divider";
     MatIconModule,
     CommonModule,
     MatSelectModule,
-    MatDividerModule
+    MatDividerModule,
+    ActionButtonsComponent
 ],
   templateUrl: './generic-form.component.html',
   styleUrl: './generic-form.component.css'

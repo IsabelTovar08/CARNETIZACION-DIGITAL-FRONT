@@ -1,15 +1,8 @@
 
-<!-- Roles personalizados -->
-<ng-template #rolesTemplate let-item let-key="key">
-  <div class="custom-chip-wrapper">
-    <span *ngFor="let rol of item.roles" class="custom-chip">
-      {{ rol }}
-    </span>
-  </div>
-</ng-template>
+
 <ng-template #actionsExtraTemplate let-item>
   <button mat-icon-button
-   matTooltip="Gestionar Roles">
+    matTooltip="Gestionar Roles">
     <mat-icon>assignment_ind</mat-icon>
   </button>
 
@@ -41,7 +34,7 @@
       <mat-card-header>
         <mat-card-title>
           <div class="card-title-row">
-            <span>Usuarios ({{ (listUser$ | async)?.length
+            <span>Usuarios ({{ listUsers.length
               }})</span>
             <div class="view-options">
               <mat-button-toggle-group [value]="viewMode"
@@ -61,7 +54,7 @@
       <mat-card-content>
         <!-- Grid View -->
         <div *ngIf="viewMode === 'grid'" class="users-grid">
-          <div *ngFor="let user of listUser$ |async" class="user-card">
+          <div *ngFor="let user of listUsers" class="user-card">
             <mat-card class="individual-user-card">
               <mat-card-header>
                 <div mat-card-avatar class="user-avatar">
@@ -69,8 +62,8 @@
                   <mat-icon
                     class="default-avatar">person</mat-icon>
                 </div>
-                <mat-card-title>{{ user.userName || ''}}</mat-card-title>
-                <mat-card-subtitle>{{ user.email || 'No email'
+                <mat-card-title>{{ user.namePerson || ''}}</mat-card-title>
+                <mat-card-subtitle>{{ user.emailPerson || 'Sin email'
                   }}</mat-card-subtitle>
               </mat-card-header>
 
@@ -113,7 +106,7 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #userMenu="matMenu">
-                  <button mat-menu-item>
+                  <button mat-menu-item (click)="openModal(user)">
                     <mat-icon>edit</mat-icon>
                     Editar Usuario
                   </button>
@@ -126,23 +119,29 @@
             </mat-card>
           </div>
         </div>
-
+        <!-- Roles personalizados -->
+        <ng-template #rolesTemplate let-item let-key="key">
+          <div class="custom-chip-wrapper">
+            <span *ngFor="let rol of item.roles" class="custom-chip">
+              {{ rol }}
+            </span>
+          </div>
+        </ng-template>
         <!-- List View -->
         <div *ngIf="viewMode === 'list'" class="users-table">
           <app-generic-table
-            *ngIf="listUser$ | async as listUser"
-            [dataSource]="listUser"
+            *ngIf="listUsers as users"
+            [dataSourceInput]="users"
             [displayedColumns]="displayedColumns"
             [columns]="[
               { key: 'namePerson', label: 'Nombre' },
-              { key: 'email', label: 'Email' },
-              { key: 'roles', label: 'Roles' },
+              { key: 'emailPerson', label: 'Email' },
+              { key: 'role', label: 'Roles' },
               { key: 'isDeleted', label: 'Estado' }
             ]"
-            [customTemplates]="{ roles: rolesTemplate }"
-            [customTemplates]="{ 'actions-extra': actionsExtraTemplate }"
+             [customTemplates]="{ role: rolesTemplate, 'actions-extra': actionsExtraTemplate }"
             (onCreate)="save()"
-            (onEdit)="save($event)"
+            (onEdit)="openModal($event)"
             (onDelete)="delete($event)"
             (onToggleStatus)="toggleIsActive($event)">
           </app-generic-table>
