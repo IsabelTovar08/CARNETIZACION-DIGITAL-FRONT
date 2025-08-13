@@ -24,12 +24,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './list-type-category.component.css'
 })
 export class ListTypeCategoryComponent implements OnInit {
+
   listCategories!: TypeCategory[];
   listTypes: CustomTypeList[] = [];
 
-  /**
-   *
-   */
+  maxVisibleTypes = 3;
+  expandedCategories = new Set<number>();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -38,10 +39,9 @@ export class ListTypeCategoryComponent implements OnInit {
     private apiService: ApiService<any, any>,
     private dialog: MatDialog,
     private snackbarService: SnackbarService
+  ) { }
 
-  ) {
-
-  }
+  // Carga categorías y tipos, asigna tipos a sus categorías
   loadAll() {
     forkJoin([
       this.typeCService.ObtenerTodo('TypeCategory'),
@@ -50,7 +50,6 @@ export class ListTypeCategoryComponent implements OnInit {
       this.listCategories = categories;
       this.listTypes = types;
 
-      // Asignar los tipos dentro de cada categoría
       this.listCategories.forEach(cat => {
         cat.types = this.listTypes.filter(t => t.typeCategoryId === cat.id);
       });
@@ -61,8 +60,7 @@ export class ListTypeCategoryComponent implements OnInit {
     this.loadAll();
   }
 
-
-  // CRUD Categorías
+  // Abrir modal para crear o editar categoría
   openCategoryModal(item?: TypeCategory) {
     const dialogRef = this.dialog.open(GenericFormComponent, {
       disableClose: true,
@@ -80,37 +78,36 @@ export class ListTypeCategoryComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (item) {
-          this.add(result, item.id);
-        } else {
-          this.add(result);
-        }
+        if (item) this.add(result, item.id);
+        else this.add(result);
       }
-
     });
   }
+
+  // Crear o actualizar categoría
   add(TypeCategory: TypeCategory, id?: number) {
     if (id) {
       this.typeCService.update('TypeCategory', TypeCategory).subscribe(() => {
         this.loadAll();
         this.snackbarService.showSuccess();
-      })
-    }
-    else {
+      });
+    } else {
       this.typeCService.Crear('TypeCategory', TypeCategory).subscribe(() => {
         this.loadAll();
         this.snackbarService.showSuccess();
-      })
+      });
     }
   }
+
   deleteCategory(id: number) {
     this.deleteEntity(id, 'TypeCategory');
   }
+
   toggleCategory(category: TypeCategory) {
-    this.toggleEntityActive(category.id, category.isDeleted, 'TypeCategory')
+    this.toggleEntityActive(category.id, category.isDeleted, 'TypeCategory');
   }
 
-  // CRUD Tipos
+  // Abrir modal para crear o editar tipo
   openTypeModal(item: CustomTypeList | null, category: TypeCategory) {
     const dialogRef = this.dialog.open(GenericFormComponent, {
       disableClose: true,
@@ -127,30 +124,35 @@ export class ListTypeCategoryComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (item) {
-          this.addCustomType(result, item.id);
-        } else {
-          this.addCustomType(result);
-        }
+        if (item) this.addCustomType(result, item.id);
+        else this.addCustomType(result);
       }
-
     });
   }
+
   addCustomType(CustomType: CustomTypeCreate, id?: number) {
     if (id) {
       this.typeCService.update('CustomType', CustomType).subscribe(() => {
         this.loadAll();
         this.snackbarService.showSuccess();
-      })
-    }
-    else {
+      });
+    } else {
       this.typeCService.Crear('CustomType', CustomType).subscribe(() => {
         this.loadAll();
         this.snackbarService.showSuccess();
-      })
+      });
     }
   }
 
+  deleteCustomType(id: number) {
+    this.deleteEntity(id, 'CustomType');
+  }
+
+  toggleType(type: CustomTypeList) {
+    this.toggleEntityActive(type.id, type.isDeleted, 'CustomType');
+  }
+
+  // Confirmar y eliminar entidad
   deleteEntity(entityId: number, entityName: string) {
     Swal.fire({
       icon: 'warning',
@@ -166,6 +168,7 @@ export class ListTypeCategoryComponent implements OnInit {
     });
   }
 
+  // Confirmar y activar/desactivar entidad
   toggleEntityActive(entityId: number, isActive: boolean, entityName: string) {
     const action = isActive ? 'activar' : 'desactivar';
     Swal.fire({
@@ -182,58 +185,36 @@ export class ListTypeCategoryComponent implements OnInit {
     });
   }
 
-  // Métodos privados (a implementar)
   private performDelete(entityId: number, entityName: string) {
     this.apiService.delete(entityName, entityId).subscribe(() => {
-      this.loadAll()
-      this.snackbarService.showSuccess("Registro eliminado correctamente")
-    })
+      this.loadAll();
+      this.snackbarService.showSuccess("Registro eliminado correctamente");
+    });
   }
 
   private performToggleActive(entityId: number, entityName: string) {
     this.apiService.deleteLogic(entityName, entityId).subscribe(() => {
-      this.loadAll()
-      this.snackbarService.showSuccess("Registro actualizado correctamente")
-    })
+      this.loadAll();
+      this.snackbarService.showSuccess("Registro actualizado correctamente");
+    });
   }
 
-
-  deleteCustomType(id: number) {
-    this.deleteEntity(id, 'CustomType');
-
-  }
-  toggleType(type: CustomTypeList) {
-    this.toggleEntityActive(type.id, type.isDeleted, 'CustomType')
-
-  }
-
-
-
-  maxVisibleTypes = 3; // máximo tipos a mostrar sin expandir
-
-  // Lleva el estado de cada categoría si está expandida o no
-  expandedCategories = new Set<number>(); // asumiendo que category tiene un id numérico, ej category.id
-
-  // Retorna los tipos visibles para la categoría
+  // Devuelve los tipos visibles para una categoría, según estado de expansión
   getVisibleTypes(category: any) {
-    if (this.expandedCategories.has(category.id)) {
-      return category.types;
-    }
+    if (this.expandedCategories.has(category.id)) return category.types;
     return category.types.slice(0, this.maxVisibleTypes);
   }
 
-  // Cambia estado de mostrar todos o no
+  // Cambia estado de mostrar todos o limitar tipos visibles
   toggleShowAllTypes(category: any) {
-    if (this.expandedCategories.has(category.id)) {
-      this.expandedCategories.delete(category.id);
-    } else {
-      this.expandedCategories.add(category.id);
-    }
+    if (this.expandedCategories.has(category.id)) this.expandedCategories.delete(category.id);
+    else this.expandedCategories.add(category.id);
   }
 
-  // Indica si se están mostrando todos los tipos
+  // Indica si la categoría está expandida
   isShowingAllTypes(category: any) {
     return this.expandedCategories.has(category.id);
   }
 
 }
+
