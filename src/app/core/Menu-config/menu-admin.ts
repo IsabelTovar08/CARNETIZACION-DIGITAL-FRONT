@@ -137,7 +137,7 @@ export const menuAdmin: MenuItem[] = [
                 title: 'Tipos y Categorías',
                 icon: 'category',
                 type: 'item',
-                url: '/dashboard/parametros/'
+                url: '/dashboard/parametros/types-category'
               }
             ]
           },

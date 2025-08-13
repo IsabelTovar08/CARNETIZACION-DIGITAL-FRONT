@@ -32,10 +32,10 @@ export class ApiService<T, D> {
     return this.wrapper.handleRequest(this.http.put<D>(`${this.urlBase}/${entidad}/update/`, data));
   }
   public delete(entidad: string, id: number) {
-    return this.http.delete(`${this.urlBase}/${entidad}/${id}`);
+    return this.wrapper.handleRequest(this.http.delete(`${this.urlBase}/${entidad}/${id}`));
   }
   public deleteLogic(entidad: string, id: number) {
-    return this.http.patch(`${this.urlBase}/${entidad}/toggleActive/${id}`, null);
+    return this.wrapper.handleRequest(this.http.patch(`${this.urlBase}/${entidad}/${id}/toggle-active`, null));
   }
 
   loginWithGoogle(tokenId: string) {

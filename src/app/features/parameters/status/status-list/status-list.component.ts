@@ -50,6 +50,7 @@ export class StatusListComponent {
           title: item ? 'Editar' : 'Crear',
           item,
           fields: [
+            { name : 'id', value: item?.id || 0, hidden: true },
             { name: 'name', label: 'Nombre', type: 'string', value: item?.name || '', required: true },
 
           ],
@@ -92,5 +93,9 @@ export class StatusListComponent {
       this.cargarData();
     })
   }
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Status', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+  }
 }

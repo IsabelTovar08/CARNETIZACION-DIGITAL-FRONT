@@ -1,0 +1,104 @@
+<div class="categories-header">
+  <h2>Categorías y Tipos Generales del Sistema</h2>
+  <p class="description">
+    Aquí puedes gestionar las categorías y tipos que se utilizan en todo el
+    sistema.
+    Añade, edita o activa/desactiva estos elementos para mantener la información
+    actualizada y consistente en todas las funcionalidades.
+  </p>
+</div>
+
+<div class="container-categories">
+  <mat-card class="category-card" *ngFor="let category of listCategories"
+    [class.inactive]="category.isDeleted"
+    [matTooltip]="category.isDeleted ? 'Categoría inactiva' : ''"
+    matTooltipPosition="above">
+
+    <div class="category-header">
+      <h3>{{ category.name }}</h3>
+
+      <div class="category-actions" role="group">
+        <button mat-icon-button color="primary"
+          (click)="openCategoryModal(category)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <ng-container
+          *ngIf="category.types!.length > 0; else showDeleteCategoryButton">
+          <button mat-icon-button
+            [color]="category.isDeleted ? 'warn' : 'primary'"
+            (click)="toggleCategory(category)">
+            <mat-icon>
+              {{ category.isDeleted ? 'highlight_off' : 'check_circle' }}
+            </mat-icon>
+          </button>
+        </ng-container>
+
+        <ng-template #showDeleteCategoryButton>
+          <button mat-icon-button color="warn"
+            (click)="deleteCategory(category.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+      </div>
+
+    </div>
+
+    <button mat-flat-button color="primary" class="btn-add-type"
+      (click)="openTypeModal(null, category)">
+      <mat-icon>add</mat-icon> Agregar Tipo
+    </button>
+
+    <div class="type-list" *ngIf="category.types?.length; else noTypes">
+      <div class="type-item" *ngFor="let type of getVisibleTypes(category)"
+        [class.inactive]="type.isDeleted"
+        [matTooltip]="type.isDeleted ? 'Tipo inactivo' : ''"
+        matTooltipPosition="above">
+
+        <div class="type-info">
+          <h6>{{ type.name }}</h6>
+          <small>{{ type.description }}</small>
+        </div>
+
+        <div class="type-actions">
+          <!-- Botón menú acciones -->
+          <button mat-icon-button [matMenuTriggerFor]="menuTypeActions"
+            aria-label="Acciones del tipo">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <!-- Menú con opciones -->
+          <mat-menu #menuTypeActions="matMenu">
+            <button mat-menu-item
+              (click)="toggleType(type)">
+              <mat-icon>{{ type.isDeleted ? 'toggle_off' : 'toggle_on'
+                }}</mat-icon>
+              <span>{{ type.isDeleted ? 'Activar' : 'Desactivar' }}</span>
+            </button>
+            <button mat-menu-item (click)="openTypeModal(type, category)">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="deleteCustomType(type.id)">
+              <mat-icon>delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </div>
+
+      </div>
+
+      <button *ngIf="category.types!.length > maxVisibleTypes" mat-button
+        color="primary" (click)="toggleShowAllTypes(category)">
+        {{ isShowingAllTypes(category) ? 'Ver menos' : 'Ver más' }}
+      </button>
+
+    </div>
+
+    <ng-template #noTypes>
+      <p class="text-muted fst-italic">No hay tipos para esta categoría.</p>
+    </ng-template>
+
+  </mat-card>
+
+</div>

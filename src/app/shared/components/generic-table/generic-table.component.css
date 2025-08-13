@@ -202,3 +202,7 @@ mat-card {
 .mat-table-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #5a67d8 0%, #6b5b95 100%);
 }
+.deleted-row {
+  opacity: 0.5;
+  color: #999;
+}
