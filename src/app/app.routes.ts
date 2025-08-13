@@ -20,6 +20,11 @@ export const routes: Routes = [
       import('./auth/auth.routers').then(m => m.verificationCodeRoutes),
   },
   {
+    path: 'new-password',
+    loadChildren: () =>
+      import('./auth/auth.routers').then(m => m.newPasswordCodeRoutes),
+  },
+  {
     path: 'inicio',
     loadChildren: () =>
       import('./auth/auth.routers').then(m => m.inicioRoutes),
