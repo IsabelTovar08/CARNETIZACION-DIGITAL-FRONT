@@ -1,6 +1,7 @@
 import { Component, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -19,17 +20,7 @@ export class VerificationCodeComponent {
     { value: '' }
   ]);
 
-  // Señal computada para verificar si el código está completo
-  isCodeComplete = computed(() => {
-    return this.codeInputs().every(input => input.value.length === 1);
-  });
-
-  // Señal computada para obtener el código completo
-  fullCode = computed(() => {
-    return this.codeInputs().map(input => input.value).join('');
-  });
-
-  constructor() {
+    constructor(private router: Router) {
     // Effect para monitorear cambios en el código completo
     effect(() => {
       if (this.isCodeComplete()) {
@@ -37,6 +28,20 @@ export class VerificationCodeComponent {
       }
     });
   }
+
+  // Señal computada para verificar si el código está completo
+  isCodeComplete = computed(() => {
+    return this.codeInputs().every(input => input.value.length === 1);
+  });
+
+  
+
+  // Señal computada para obtener el código completo
+  fullCode = computed(() => {
+    return this.codeInputs().map(input => input.value).join('');
+  });
+
+
 
   onInputChange(index: number, event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -111,11 +116,11 @@ export class VerificationCodeComponent {
   onContinue(): void {
     if (this.isCodeComplete()) {
       console.log('Verificando código:', this.fullCode());
-      // Aquí puedes agregar la lógica para verificar el código
+      this.router.navigate(['/new-password']);
       alert(`Código ingresado: ${this.fullCode()}`);
     }
   }
-
+  
   onResend(): void {
     // Limpiar todos los inputs
     this.codeInputs.set([
