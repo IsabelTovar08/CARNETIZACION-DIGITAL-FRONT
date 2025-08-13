@@ -12,6 +12,9 @@ import { RequestLogin, ResponseLogin } from '../../Models/auth.models';
   providedIn: 'root'
 })
 export class AuthService {
+  updatePassword(formData: any) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
