@@ -59,16 +59,8 @@
                   <div class="collapse-content-wrapper"
                     [class.expanded]="isExpanded(item.id)">
                     <div class="collapse-items">
-                      <div class="sub-menu-item"
-                        *ngFor="let subItem of item.children"
-                        [class.active]="subItem.id === activeItem"
-                        (click)="selectItem(subItem)">
-                        <mat-icon class="item-icon">{{ item.icon }}</mat-icon>
-                        <span class="sub-item-text">{{ subItem.title }}</span>
-                        <mat-icon class="arrow-icon" *ngIf="subItem.children">
-                          chevron_right
-                        </mat-icon>
-                      </div>
+                      <ng-container
+                        *ngTemplateOutlet="renderMenuItems; context: { $implicit: item.children }"></ng-container>
                     </div>
                   </div>
                 </div>
@@ -78,6 +70,44 @@
           </div>
 
         </ng-container>
+        <ng-template #renderMenuItems let-items>
+          <div *ngFor="let subItem of items">
+
+            <div class="menu-item"
+              *ngIf="subItem.type === 'item'"
+              [class.active]="subItem.id === activeItem"
+              (click)="selectItem(subItem)">
+              <mat-icon class="item-icon">{{ subItem.icon }}</mat-icon>
+              <span class="item-text">{{ subItem.title }}</span>
+            </div>
+
+            <div class="menu-item collapsible"
+              *ngIf="subItem.type === 'collapse'">
+              <div class="collapse-header"
+                [class.active]="subItem.id === activeItem"
+                (click)="toggleCollapse(subItem.id)">
+                <div class="collapse-content">
+                  <mat-icon class="item-icon">{{ subItem.icon }}</mat-icon>
+                  <span class="item-text">{{ subItem.title }}</span>
+                </div>
+                <mat-icon class="expand-icon"
+                  [class.rotated]="isExpanded(subItem.id)">
+                  expand_more
+                </mat-icon>
+              </div>
+
+              <div class="collapse-content-wrapper"
+                [class.expanded]="isExpanded(subItem.id)">
+                <div class="collapse-items">
+                  <ng-container
+                    *ngTemplateOutlet="renderMenuItems; context: { $implicit: subItem.children }"></ng-container>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </ng-template>
+
       </nav>
     </div>
   </mat-sidenav>

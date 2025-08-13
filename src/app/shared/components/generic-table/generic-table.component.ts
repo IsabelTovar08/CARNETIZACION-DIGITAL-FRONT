@@ -15,7 +15,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-generic-table',
@@ -32,8 +33,9 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
     MatSelectModule,
     MatDividerModule,
     MatMenuModule,
-    MatPaginatorModule
-],
+    MatPaginatorModule,
+    MatTooltipModule
+  ],
   templateUrl: './generic-table.component.html',
   styleUrl: './generic-table.component.css'
 })
@@ -49,7 +51,7 @@ export class GenericTableComponent {
 
   @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};
 
-    // Usamos MatTableDataSource para la paginación y ordenamiento
+  // Usamos MatTableDataSource para la paginación y ordenamiento
   dataSource = new MatTableDataSource<any>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -59,9 +61,9 @@ export class GenericTableComponent {
   constructor(
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
- @Input() set dataSourceInput(data: any[]) {
+  @Input() set dataSourceInput(data: any[]) {
     this.dataSource.data = data || [];
   }
 
@@ -90,7 +92,7 @@ export class GenericTableComponent {
   }
 
   emitToggle(item: any) {
-    const isActivating = !item.status;
+    const isActivating = item.isDeleted;
 
     Swal.fire({
       icon: 'question',
@@ -101,12 +103,17 @@ export class GenericTableComponent {
       cancelButtonText: 'Cancelar'
     }).then(result => {
       if (result.isConfirmed) {
-        this.onToggleStatus.emit(item);
-        Swal.fire(
-          isActivating ? 'Activado' : 'Desactivado',
-          `El elemento ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,
-          'success'
-        );
+        item.isDeleted = !item.isDeleted;  // invierte el valor
+
+      this.onToggleStatus.emit(item);
+
+      // Forzar actualización tabla:
+      this.dataSource.data = [...this.dataSource.data];
+        // Swal.fire(
+        //   isActivating ? 'Activado' : 'Desactivado',
+        //   `El elemento ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,
+        //   'success'
+        // );
       }
     });
   }

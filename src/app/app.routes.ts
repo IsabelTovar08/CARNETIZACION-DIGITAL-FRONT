@@ -1,3 +1,4 @@
+import { parameterRoutes } from './features/parameters/parameter.routes';
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -42,9 +43,14 @@ export const routes: Routes = [
           import('./features/dashboard/pages/dashboard-home/dashboard-home.component').then(m => m.DashboardHomeComponent),
       },
       {
-        path: 'security',
+        path: 'seguridad',
         loadChildren: () =>
           import('./features/security/security.routes').then(m => m.securityRoutes),
+      },
+      {
+        path: 'parametros',
+        loadChildren: () =>
+          import('./features/parameters/parameter.routes').then(m => m.parameterRoutes),
       },
       // {
       //   path: 'organizational',

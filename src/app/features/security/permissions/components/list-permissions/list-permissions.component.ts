@@ -95,5 +95,9 @@ export class ListPermissionsComponent implements OnInit {
     })
   }
 
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Permission', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+  }
 }

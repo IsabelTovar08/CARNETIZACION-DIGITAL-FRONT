@@ -98,5 +98,9 @@ export class ListModulesComponent implements OnInit {
     })
   }
 
-  toggleIsActive(item: any) { }
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Module', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+   }
 }

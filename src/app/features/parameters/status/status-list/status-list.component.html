@@ -1,14 +1,10 @@
-<mat-spinner *ngIf="(loadingService.loading$ | async)"></mat-spinner>
-
 <app-generic-table
-  [title]="'Módulos'"
-  *ngIf="listModule as modules"
-  [dataSourceInput]="modules"
+  [title]="'Estados del sistema'"
+  *ngIf="listStatus as status"
+  [dataSourceInput]="status"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },
-      { key: 'description', label: 'Descripción' },
-      { key: 'phone', label: 'Teléfono'},
       { key: 'isDeleted', label: 'Activo' }
     ]"
   (onCreate)="save()"

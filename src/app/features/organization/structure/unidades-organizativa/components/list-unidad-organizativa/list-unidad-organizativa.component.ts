@@ -18,8 +18,8 @@ import { OrganizationalUnit } from '../../../../../../core/Models/organization/o
 })
 export class ListUnidadOrganizativaComponent {
 
-  listOrganization$!: Observable<OrganizationalUnit[]>;
-  displayedColumns: string[] = ['description', 'divisionsCount', 'branchesCount', 'actions'];
+  listOrganization!: OrganizationalUnit[];
+  displayedColumns: string[] = ['name', 'divisionsCount', 'branchesCount', 'actions'];
 
   constructor(
     private apiService: ApiService<OrganizationalUnit, OrganizationalUnit>,
@@ -38,7 +38,9 @@ export class ListUnidadOrganizativaComponent {
   }
 
   cargarData() {
-    this.listOrganization$ = this.apiService.ObtenerTodo('OrganizationalUnit');
+    this.apiService.ObtenerTodo('OrganizationalUnit').subscribe((data) => {
+      this.listOrganization = data;
+    })
   }
 
   openModal(item?: OrganizationalUnit) {
