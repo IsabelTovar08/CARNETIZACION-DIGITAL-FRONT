@@ -61,10 +61,6 @@ export class FormRoleFormPermissionComponent {
 
 
   constructor(private dialog: MatDialog,
-    private apiServiceRole: ApiService<Role, Role>,
-    private apiServiceForm: ApiService<FromModel, FromModel>,
-    private apiServiceModule: ApiService<Module, Module>,
-    private apiServiceRolFormPermission: RolFormPermissionService,
     private dataService: DataService
   ) {
   }

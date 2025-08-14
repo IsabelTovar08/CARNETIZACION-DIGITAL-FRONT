@@ -16,10 +16,10 @@ export class RolFormPermissionService extends ApiService<RolFormPermissionsCreat
   }
 
   public getAllPermissions(): Observable<RolFormPermissionsList[]> {
-    return this.http.get<RolFormPermissionsList[]>(`${this.urlBase}/RolFormPermission/all`);
+    return this.wrapper.handleRequest(this.http.get<RolFormPermissionsList[]>(`${this.urlBase}/RolFormPermission/all`));
   }
 
   public savePermissions(request: RoleFormPermisionsRequest) {
-    return this.http.post<boolean>(`${this.urlBase}/RolFormPermission/saveAll`, request);
+    return this.wrapper.handleRequest(this.http.post<boolean>(`${this.urlBase}/RolFormPermission/saveAll`, request));
   }
 }

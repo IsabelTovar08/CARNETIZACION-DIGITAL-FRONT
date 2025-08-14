@@ -98,7 +98,7 @@ export const menuAdmin: MenuItem[] = [
         icon: 'settings_applications',
         children: [
           {
-            id: 'level-1-1',
+            id: 'level-15-1',
             title: 'Ubicación',
             icon: 'location_on',
             type: 'collapse',
@@ -120,7 +120,7 @@ export const menuAdmin: MenuItem[] = [
             ]
           },
           {
-            id: 'level-1-2',
+            id: 'level-1-162',
             title: 'Sistema',
             type: 'collapse',
             icon: 'apps_outage',
@@ -151,20 +151,20 @@ export const menuAdmin: MenuItem[] = [
     type: 'group',
     children: [
       {
-        id: 'menu-levels',
+        id: 'menu-lev1els',
         title: 'Seguridad',
         type: 'collapse',
         icon: 'admin_panel_settings',
         children: [
           {
-            id: 'level-1-1',
+            id: 'level4-1-1',
             title: 'Personas',
             icon: 'person_pin_circle',
             type: 'item',
             url: '/dashboard/seguridad/people'
           },
           {
-            id: 'level-1-2',
+            id: 'level-15-2',
             title: 'Usuarios',
             type: 'item',
             icon: 'groups_2',

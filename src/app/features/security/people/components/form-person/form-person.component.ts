@@ -14,7 +14,6 @@ import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-
 import { CustomTypeService } from '../../../../../core/Services/api/custom-type.service';
 import { UbicationService } from '../../../../../core/Services/api/ubication.service';
 import { City, Deparment } from '../../../../../core/Models/parameter/ubication.models';
-import { User } from '../../../users/pages/list-users/list-users.component';
 import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
 import { PersonService } from '../../../../../core/Services/api/person.service';
 import Swal from 'sweetalert2';

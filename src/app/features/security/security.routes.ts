@@ -29,7 +29,11 @@ export const securityRoutes: Routes = [
       {path: 'create', component: ListPermissionsComponent}
     ]
    },
-  { path: 'users', component: ListUsersComponent },
+  { path: 'users', component: ListUsersComponent,
+    children: [
+      { path: 'createUser', component: FormPErsonComponent}
+    ]
+  },
   { path: 'roles', component: ListRolesComponent },
   { path: 'permission-forms', component: FormRoleFormPermissionComponent },
 

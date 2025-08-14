@@ -1,13 +1,5 @@
 
 
-<ng-template #actionsExtraTemplate let-item>
-  <button mat-icon-button
-    matTooltip="Gestionar Roles">
-    <mat-icon>assignment_ind</mat-icon>
-  </button>
-
-</ng-template>
-
 <div class="user-roles-container">
   <!-- Header -->
   <div class="header-section">
@@ -21,7 +13,8 @@
     </div>
 
     <div class="header-actions">
-      <button mat-raised-button color="primary" class="add-user-btn">
+      <button mat-raised-button color="primary" class="add-user-btn"
+        routerLink="createUser">
         <mat-icon>person_add</mat-icon>
         Nuevo Usuario
       </button>
@@ -88,7 +81,7 @@
                         [style.background-color]="'#4caf50'"
                         [style.color]="'#4caf50'">
 
-                        {{ role }}
+                        {{ role.name }}
                       </mat-chip>
                     </mat-chip-set>
                     <span *ngIf="user.roles.length === 0" class="no-roles">Sin
@@ -98,7 +91,8 @@
               </mat-card-content>
 
               <mat-card-actions align="end">
-                <button mat-stroked-button color="primary">
+                <button mat-stroked-button color="primary"
+                  (click)="openUserRolesModal(user)">
                   <mat-icon>settings</mat-icon>
                   Gestionar Roles
                 </button>
@@ -123,14 +117,23 @@
         <ng-template #rolesTemplate let-item let-key="key">
           <div class="custom-chip-wrapper">
             <span *ngFor="let rol of item.roles" class="custom-chip">
-              {{ rol }}
+              {{ rol.name }}
             </span>
           </div>
+        </ng-template>
+        <ng-template #actionsExtraTemplate let-item>
+          <button mat-icon-button
+            (click)="openUserRolesModal(item)"
+            matTooltip="Gestionar Roles">
+            <mat-icon>assignment_ind</mat-icon>
+          </button>
+
         </ng-template>
         <!-- List View -->
         <div *ngIf="viewMode === 'list'" class="users-table">
           <app-generic-table
             *ngIf="listUsers as users"
+            [buttonSave]="false"
             [dataSourceInput]="users"
             [displayedColumns]="displayedColumns"
             [columns]="[
@@ -139,7 +142,7 @@
               { key: 'role', label: 'Roles' },
               { key: 'isDeleted', label: 'Activo' }
             ]"
-             [customTemplates]="{ role: rolesTemplate, 'actions-extra': actionsExtraTemplate }"
+            [customTemplates]="{ role: rolesTemplate, 'actions-extra': actionsExtraTemplate }"
             (onCreate)="save()"
             (onEdit)="openModal($event)"
             (onDelete)="delete($event)"
