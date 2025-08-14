@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
-import { City, Deparment } from '../../Models/parameter/ubication.models';
+import { CityCreate, Deparment } from '../../Models/parameter/ubication.models';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class UbicationService {
   }
 
   public GetCytiesByDeparment(id: number){
-    return this.http.get<City[]>(`${this.urlBase}/City/city-by-deparment/${id}`);
+    return this.http.get<CityCreate[]>(`${this.urlBase}/City/city-by-deparment/${id}`);
   }
 
   // public GetCytiesByDeparment(id: number){

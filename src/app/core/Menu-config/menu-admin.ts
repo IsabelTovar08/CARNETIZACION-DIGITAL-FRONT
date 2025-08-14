@@ -108,14 +108,14 @@ export const menuAdmin: MenuItem[] = [
                 title: 'Departamentos',
                 icon: 'person_pin_circle',
                 type: 'item',
-                url: '/dashboard/parametros/'
+                url: '/dashboard/organizational/location/deparment'
               },
               {
                 id: '456',
                 title: 'Municipios',
                 icon: 'person_pin_circle',
                 type: 'item',
-                url: '/dashboard/parametros/'
+                url: '/dashboard/organizational/location/'
               }
             ]
           },

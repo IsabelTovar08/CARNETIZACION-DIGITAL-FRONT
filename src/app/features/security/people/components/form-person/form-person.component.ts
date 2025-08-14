@@ -13,7 +13,7 @@ import { PersonCreate, PersonList, PersonRegistrer } from '../../../../../core/M
 import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
 import { CustomTypeService } from '../../../../../core/Services/api/custom-type.service';
 import { UbicationService } from '../../../../../core/Services/api/ubication.service';
-import { City, Deparment } from '../../../../../core/Models/parameter/ubication.models';
+import {  CityCreate, CityList, Deparment } from '../../../../../core/Models/parameter/ubication.models';
 import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
 import { PersonService } from '../../../../../core/Services/api/person.service';
 import Swal from 'sweetalert2';
@@ -54,7 +54,7 @@ export class FormPErsonComponent {
 
   bloodTypes: CustomTypeSpecific[] = [];
 
-  cities: City[] = [];
+  cities: CityCreate[] = [];
   deparments: Deparment[] = [];
 
 
