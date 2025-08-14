@@ -7,31 +7,24 @@ import { DivisionesInternasComponent } from './structure/divisines-Internal/page
 import { PerfilesComponent } from './assignment/perfile/pages/perfiles/perfiles.component';
 import { JornadasComponent } from './structure/jornada/pages/jornadas/jornadas.component';
 import { ListUnidadOrganizativaComponent } from './structure/unidades-organizativa/components/list-unidad-organizativa/list-unidad-organizativa.component';
+import { ListDeparmentComponent } from './location/deparment/components/list-deparment/list-deparment.component';
 
-export const organizationRoutes: Routes = [
+export const organizationalRoutes: Routes = [
   {
-    path: '',
-    component: EstructuraOrganizativaComponent
+    path: 'structure',
+    component: EstructuraOrganizativaComponent,
+    children: [
+      { path: 'sucursales', component: SucursalComponent },
+      { path: 'unidades-organizativas',component: ListUnidadOrganizativaComponent},
+      { path: 'divisiones-internas', component: DivisionesInternasComponent},
+      { path: 'perfiles', component: PerfilesComponent},
+      { path: 'jornadas',component: JornadasComponent}
+    ]
   },
-  {
-  path: 'sucursales',
-  component: SucursalComponent
-}
-,
-  {
-    path: 'unidades-organizativas',
-    component: ListUnidadOrganizativaComponent
-  },
-  {
-    path: 'divisiones-internas',
-    component: DivisionesInternasComponent
-  },
-  {
-    path: 'perfiles',
-    component: PerfilesComponent
-  },
-  {
-    path: 'jornadas',
-    component: JornadasComponent
-  }
+  { path: 'location',
+    children : [
+      { path: 'deparment', component: ListDeparmentComponent}
+    ]
+   }
+
 ];

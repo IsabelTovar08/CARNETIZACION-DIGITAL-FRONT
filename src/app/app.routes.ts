@@ -58,9 +58,9 @@ export const routes: Routes = [
           import('./features/parameters/parameter.routes').then(m => m.parameterRoutes),
       },
       {
-        path: 'estructura-organizativa',
+        path: 'organizational',
         loadChildren: () =>
-          import('./features/organization/organization.routes').then(m => m.organizationRoutes),
+          import('./features/organization/organizational.routes').then(m => m.organizationalRoutes),
       }
     ]
   },

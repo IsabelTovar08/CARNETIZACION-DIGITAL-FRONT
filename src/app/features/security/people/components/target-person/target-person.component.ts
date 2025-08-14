@@ -7,7 +7,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { CustomTypeService } from '../../../../../core/Services/api/custom-type.service';
 import { UbicationService } from '../../../../../core/Services/api/ubication.service';
 import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
-import { City, Deparment } from '../../../../../core/Models/parameter/ubication.models';
+import { CityCreate, CityList, Deparment } from '../../../../../core/Models/parameter/ubication.models';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
@@ -31,7 +31,7 @@ export class TargetPersonComponent {
 
   bloodTypes: CustomTypeSpecific[] = [];
 
-  cities: City[] = [];
+  cities: CityCreate[] = [];
   deparments: Deparment[] = [];
 
   constructor(private fb: FormBuilder,
@@ -40,7 +40,6 @@ export class TargetPersonComponent {
     protected dialogRef: MatDialogRef<GenericFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
-    private apiServiceCity: ApiService<City, City>,
     private apiServicePerson: ApiService<PersonCreate, PersonList>
 
   ) { }

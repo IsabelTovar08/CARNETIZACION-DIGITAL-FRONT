@@ -1,9 +1,11 @@
+import { CityList } from './../../Models/parameter/ubication.models';
 import { Injectable } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
 import { CustomTypeService } from '../api/custom-type.service';
 import { UbicationService } from '../api/ubication.service';
 import { CustomTypeSpecific } from '../../Models/parameter/custom-type.models';
-import { City, Deparment } from '../../Models/parameter/ubication.models';
+import { CityCreate, Deparment } from '../../Models/parameter/ubication.models';
+import { ApiService } from '../api/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,46 +14,51 @@ export class ListService {
 
   constructor(
     private customTypeService: CustomTypeService,
-    private ubicationService: UbicationService
+    private ubicationService: UbicationService,
+    private cityService: ApiService<CityCreate, CityList>
   ) { }
 
   // --- Datos estáticos ---
   private documentTypes$?: Observable<CustomTypeSpecific[]>;
   private bloodTypes$?: Observable<CustomTypeSpecific[]>;
   private deparments$?: Observable<Deparment[]>;
-  private cities$?: Observable<City[]>;
+  private cities$?: Observable<CityList[]>;
 
 
-  getdocumentTypes(): Observable<any[]> {
-    if (!this.documentTypes$) {
-      this.documentTypes$ = this.customTypeService.GetByName('Tipo de documento')
+  getdocumentTypes(forceReload: boolean = false): Observable<any[]> {
+    if (forceReload || !this.documentTypes$) {
+      this.documentTypes$ = this.customTypeService
+        .GetByName('Tipo de documento')
         .pipe(shareReplay(1));
     }
     return this.documentTypes$;
   }
 
-  getbloodTypes(): Observable<any[]> {
-    if (!this.bloodTypes$) {
-      this.bloodTypes$ = this.customTypeService.GetByName('Tipo de sangre')
+  getbloodTypes(forceReload: boolean = false): Observable<any[]> {
+    if (forceReload || !this.bloodTypes$) {
+      this.bloodTypes$ = this.customTypeService
+        .GetByName('Tipo de sangre')
         .pipe(shareReplay(1));
     }
     return this.bloodTypes$;
   }
 
-  getdeparments(): Observable<any[]> {
-    if (!this.deparments$) {
-      this.deparments$ = this.ubicationService.GetDeparments()
+  getdeparments(forceReload: boolean = false): Observable<any[]> {
+    if (forceReload || !this.deparments$) {
+      this.deparments$ = this.ubicationService
+        .GetDeparments()
         .pipe(shareReplay(1));
     }
     return this.deparments$;
   }
 
-  // getCities(): Observable<any[]> {
-  //   if (!this.deparments$) {
-  //     this.deparments$ = this.ubicationService.getc()
-  //       .pipe(shareReplay(1));
-  //   }
-  //   return this.deparments$;
-  // }
+  getCities(forceReload: boolean = false): Observable<any[]> {
+    if (forceReload || !this.cities$) {
+      this.cities$ = this.cityService
+        .ObtenerTodo('City')
+        .pipe(shareReplay(1));
+    }
+    return this.cities$;
+  }
 
 }
