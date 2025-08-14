@@ -52,10 +52,10 @@ export class ListService {
     return this.deparments$;
   }
 
-  getCities(forceReload: boolean = false): Observable<any[]> {
+  getcities(forceReload: boolean = false): Observable<any[]> {
     if (forceReload || !this.cities$) {
-      this.cities$ = this.cityService
-        .ObtenerTodo('City')
+      this.cities$ = this.ubicationService
+        .GetCities()
         .pipe(shareReplay(1));
     }
     return this.cities$;

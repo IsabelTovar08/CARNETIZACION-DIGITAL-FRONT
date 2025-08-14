@@ -30,7 +30,7 @@ export class LoginComponent {
   }
 
   goToForgotPassword(): void{
-      this.router.navigate(['/forgotten-password']);
+      this.router.navigate(['/auth/forgotten-password']);
   }
 
   togglePassword(): void {

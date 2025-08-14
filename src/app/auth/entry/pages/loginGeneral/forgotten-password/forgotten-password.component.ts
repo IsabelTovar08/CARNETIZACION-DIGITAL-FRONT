@@ -25,7 +25,7 @@ export class ForgottenPasswordComponent {
   }
 
   goToVerificitonCode(): void{
-      this.router.navigate(['/verification-code']);
+      this.router.navigate(['/auth/verification-code']);
   }
 
   onSubmit() {
