@@ -13,8 +13,6 @@ export const menuAdmin: MenuItem[] = [
         classes: 'nav-item',
         url: '/dashboard',
         icon: 'home',
-        target: false,
-        breadcrumbs: true
       },
       {
         id: 'estructura-organizativa',
@@ -23,8 +21,6 @@ export const menuAdmin: MenuItem[] = [
         classes: 'nav-item',
         url: '/dashboard/estructura-organizativa',
         icon: 'account_tree',
-        target: false,
-        breadcrumbs: true
       },
       {
         id: 'personas-carnets',
@@ -33,8 +29,6 @@ export const menuAdmin: MenuItem[] = [
         classes: 'nav-item',
         url: '/dashboard/personas-carnets',
         icon: 'badge',
-        target: false,
-        breadcrumbs: true
       },
       {
         id: 'solicitudes-modificacion',
@@ -43,8 +37,6 @@ export const menuAdmin: MenuItem[] = [
         classes: 'nav-item',
         url: '/dashboard/solicitudes-modificacion',
         icon: 'mail_outline',
-        target: false,
-        breadcrumbs: true
       },
       {
         id: 'typography',
@@ -53,8 +45,6 @@ export const menuAdmin: MenuItem[] = [
         classes: 'nav-item',
         url: '/dashboard/organizational/organization',
         icon: 'event_available',
-        target: false,
-        breadcrumbs: true
       },
       {
         id: 'configuracion-general',
@@ -70,9 +60,7 @@ export const menuAdmin: MenuItem[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/dashboard/ayuda',
-        icon: 'help',
-        target: false,
-        breadcrumbs: false
+        icon: 'help'
       },
       {
         id: 'cerrar-sesion',
@@ -80,9 +68,7 @@ export const menuAdmin: MenuItem[] = [
         type: 'item',
         classes: 'nav-item',
         url: '/auth/logout',
-        icon: 'logout',
-        target: false,
-        breadcrumbs: false
+        icon: 'logout'
       }
     ]
   },
@@ -106,14 +92,14 @@ export const menuAdmin: MenuItem[] = [
               {
                 id: '123',
                 title: 'Departamentos',
-                icon: 'person_pin_circle',
+                icon: 'my_location',
                 type: 'item',
                 url: '/dashboard/organizational/location/deparment'
               },
               {
                 id: '456',
                 title: 'Municipios',
-                icon: 'person_pin_circle',
+                icon: 'location_city',
                 type: 'item',
                 url: '/dashboard/organizational/location/'
               }

@@ -5,7 +5,5 @@ export interface MenuItem {
   icon?: string;
   url?: string;
   classes?: string;
-  target?: boolean;
-  breadcrumbs?: boolean;
   children?: MenuItem[];
 }
