@@ -40,7 +40,6 @@ export class GenericNotificationComponent  implements OnInit {
   }
 
   loadNotifications() {
-    // Simulando datos - reemplazar con tu servicio
     this.notifications = [
       {
         id: '1',
@@ -84,7 +83,6 @@ export class GenericNotificationComponent  implements OnInit {
   }
 
   loadMore() {
-    // Implementar lógica para cargar más notificaciones
     console.log('Loading more notifications...');
   }
 

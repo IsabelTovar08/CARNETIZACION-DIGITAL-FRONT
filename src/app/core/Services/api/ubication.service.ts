@@ -22,7 +22,7 @@ export class UbicationService {
     return this.http.get<CityCreate[]>(`${this.urlBase}/City/city-by-deparment/${id}`);
   }
 
-  public GetCities(){
+  public GetCities(){ 
     return this.http.get<CityList[]>(`${this.urlBase}/City`);
   }
 

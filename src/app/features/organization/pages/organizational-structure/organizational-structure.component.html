@@ -1,0 +1,22 @@
+<div class="estructura-organizativa">
+  <div class="header">
+    <h1 class="title">Estructura Organizativa</h1>
+    <p class="subtitle">Administra la estructura de tu organización</p>
+  </div>
+
+  <div class="cards-grid">
+    <app-generic-cards
+      *ngFor="let card of organizationalCards"
+      [title]="card.title"
+      [content]="card.description"
+      [imageUrl]="card.imageUrl"
+      [imageAlt]="card.title"
+      [clickable]="true"
+      variant="elevated"
+      size="medium"
+      [showActions]="false"
+      (cardClick)="onCardClick(card)"
+      class="org-card">
+    </app-generic-cards>
+  </div>
+</div>
