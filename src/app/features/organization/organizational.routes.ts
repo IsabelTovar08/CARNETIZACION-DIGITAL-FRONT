@@ -8,6 +8,7 @@ import { PerfilesComponent } from './assignment/perfile/pages/perfiles/perfiles.
 import { JornadasComponent } from './structure/jornada/pages/jornadas/jornadas.component';
 import { ListUnidadOrganizativaComponent } from './structure/unidades-organizativa/components/list-unidad-organizativa/list-unidad-organizativa.component';
 import { ListDeparmentComponent } from './location/deparment/components/list-deparment/list-deparment.component';
+import { ListCitiesComponent } from './location/city/components/list-cities/list-cities.component';
 
 export const organizationalRoutes: Routes = [
   {
@@ -23,7 +24,8 @@ export const organizationalRoutes: Routes = [
   },
   { path: 'location',
     children : [
-      { path: 'deparment', component: ListDeparmentComponent}
+      { path: 'deparment', component: ListDeparmentComponent},
+      { path: 'city', component: ListCitiesComponent}
     ]
    }
 

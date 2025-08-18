@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-ingresar',
@@ -11,9 +11,9 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class IngresarComponent {
 
-  constructor(private router: Router) {}
+constructor(private router: Router, private route: ActivatedRoute) {}
 
   navigateToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 }

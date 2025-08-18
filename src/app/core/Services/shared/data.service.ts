@@ -9,7 +9,7 @@ import { Form } from '@angular/forms';
 import { Permission } from '../../Models/security/permission.models';
 import { FromModel } from '../../Models/security/form.models';
 import { RolFormPermissionsCreate, RolFormPermissionsList } from '../../Models/security/rol-form-permission.models';
-import { RolFormPermissionService } from '../api/rol-form-permission.service';
+import { RolFormPermissionService } from '../api/rol-form-permission/rol-form-permission.service';
 
 @Injectable({
   providedIn: 'root'

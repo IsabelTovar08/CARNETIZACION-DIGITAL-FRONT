@@ -1,0 +1,12 @@
+/* components/menu-structure-list/menu-structure-list.component.scss */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.spacer { flex: 1; }
+.loader { padding: 24px; text-align: center; }
+.right { text-align: right; }
+mat-card { padding: 0; }
+table { width: 100%; }

@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { UserRolesService } from '../../../../../core/Services/api/user-roles.service';
+import { UserRolesService } from '../../../../../core/Services/api/user-role/user-roles.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserRolCreateAll } from '../../../../../core/Models/security/user-roles.models';
 import { GenericFormComponent } from "../../../../../shared/components/generic-form/generic-form.component";

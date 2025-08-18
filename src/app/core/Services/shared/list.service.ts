@@ -1,8 +1,8 @@
 import { CityList } from './../../Models/parameter/ubication.models';
 import { Injectable } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
-import { CustomTypeService } from '../api/custom-type.service';
-import { UbicationService } from '../api/ubication.service';
+import { CustomTypeService } from '../api/customType/custom-type.service';
+import { UbicationService } from '../api/ubication/ubication.service';
 import { CustomTypeSpecific } from '../../Models/parameter/custom-type.models';
 import { CityCreate, Deparment } from '../../Models/parameter/ubication.models';
 import { ApiService } from '../api/api.service';
@@ -52,10 +52,10 @@ export class ListService {
     return this.deparments$;
   }
 
-  getCities(forceReload: boolean = false): Observable<any[]> {
+  getcities(forceReload: boolean = false): Observable<any[]> {
     if (forceReload || !this.cities$) {
-      this.cities$ = this.cityService
-        .ObtenerTodo('City')
+      this.cities$ = this.ubicationService
+        .GetCities()
         .pipe(shareReplay(1));
     }
     return this.cities$;

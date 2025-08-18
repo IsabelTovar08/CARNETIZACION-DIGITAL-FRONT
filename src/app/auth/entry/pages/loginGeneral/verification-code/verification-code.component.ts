@@ -116,7 +116,7 @@ export class VerificationCodeComponent {
   onContinue(): void {
     if (this.isCodeComplete()) {
       console.log('Verificando código:', this.fullCode());
-      this.router.navigate(['/new-password']);
+      this.router.navigate(['/auth/new-password']);
       alert(`Código ingresado: ${this.fullCode()}`);
     }
   }

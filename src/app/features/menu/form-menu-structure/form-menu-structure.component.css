@@ -1,0 +1,41 @@
+/* src/app/shared/components/menu-item-editor-dialog/menu-item-editor-dialog.component.css */
+/* 🎨 Estilos simples y limpios */
+
+
+
+.children-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 16px;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.mini-card {
+  border-radius: 16px;
+}
+
+.mini-form {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 12px;
+}
+
+.mini-form > :nth-child(3),
+.mini-form > :nth-child(4),
+.mini-form > :nth-child(5) {
+  grid-column: 1 / -1; /* campos largos a todo el ancho */
+}
+
+.mini-icon {
+  margin-right: 8px;
+}
+
+.my-4 {
+  margin: 16px 0;
+}
