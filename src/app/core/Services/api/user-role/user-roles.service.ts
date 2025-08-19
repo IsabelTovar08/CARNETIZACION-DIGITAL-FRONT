@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { UserRolCreate, UserRolCreateAll, UserRolList } from '../../Models/security/user-roles.models';
+import { UserRolCreate, UserRolCreateAll, UserRolList } from '../../../Models/security/user-roles.models';
 import { HttpClient } from '@angular/common/http';
-import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
-import { ApiService } from './api.service';
+import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
+import { ApiService } from '../api.service';
 
 @Injectable({
   providedIn: 'root'

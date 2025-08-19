@@ -1,10 +1,10 @@
-import { RolFormPermissionsCreate, RolFormPermissionsList } from './../../Models/security/rol-form-permission.models';
+import { RolFormPermissionsCreate, RolFormPermissionsList } from '../../../Models/security/rol-form-permission.models';
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
+import { ApiService } from '../api.service';
 import { HttpClient } from '@angular/common/http';
-import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
+import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
 import { Observable } from 'rxjs';
-import { RoleFormPermisionsRequest } from '../../Models/security/role.models';
+import { RoleFormPermisionsRequest } from '../../../Models/security/role.models';
 
 @Injectable({
   providedIn: 'root'

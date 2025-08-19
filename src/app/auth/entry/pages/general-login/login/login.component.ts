@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../../core/Services/auth/auth-service.service';
+import { MenuCreateService } from '../../../../../core/Services/shared/menu-create.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private menu: MenuCreateService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -47,6 +49,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value)
     .subscribe({
       next: () => {
+        this.menu.reload();
         this.router.navigate(['/dashboard']);
         },
       error: (error) => {

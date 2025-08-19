@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
-import { CustomTypeCreate, CustomTypeList, CustomTypeSpecific } from './../../Models/parameter/custom-type.models';
+import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
+import { CustomTypeCreate, CustomTypeList, CustomTypeSpecific } from '../../../Models/parameter/custom-type.models';
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
+import { ApiService } from '../api.service';
 import { Observable } from 'rxjs';
 
 @Injectable({

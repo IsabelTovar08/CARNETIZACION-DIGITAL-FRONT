@@ -1,46 +1,61 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { MenuItem } from '../../../core/Models/MenuItemModel';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { MenuCreateService } from '../../../core/Services/shared/menu-create.service';
+import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
   imports: [MatSidenavModule, MatIconModule, CommonModule],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
 
-  @Input() menuItems: MenuItem[] = []
+  // ✅ Arreglo normal para tu lógica interna
+  menuItems: MenuItem[] = [];
+
+  loading = true;
   @Output() itemSelected = new EventEmitter<{ module: string; submodule?: string }>();
 
   activeItem: string = 'dashboard';
   expandedItems: Set<string> = new Set();
   isMobile: boolean = false;
 
-  constructor
-    (
-      private router: Router,
-    ) {
+  constructor(
+    private router: Router,
+    private menu: MenuCreateService,
+  ) {
     this.checkScreenSize();
   }
 
   ngOnInit(): void {
     this.checkScreenSize();
+    this.loadMenuItems();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['menuItems'] && this.menuItems.length > 0) {
-      this.setActiveItemFromRoute();
-      this.initializeExpandedItems();
-    }
+  // # Cargar menú desde el servicio, guardar en el arreglo normal
+ private loadMenuItems(): void {
+    this.menu.getMenu().subscribe({
+      next: (items) => {
+        this.menuItems = items ?? [];
+        this.loading = false;
+        this.setActiveItemFromRoute();
+        this.initializeExpandedItems();
+      },
+      error: () => {
+        this.menuItems = [];
+        this.loading = false;
+      }
+    });
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any): void {
+
+  @HostListener('window:resize')
+  onResize(): void {
     this.checkScreenSize();
   }
 
@@ -49,18 +64,14 @@ export class SidebarComponent implements OnInit {
   }
 
   private initializeExpandedItems(): void {
-    // Expandir automáticamente los items que contienen el item activo
+    // # Expande automáticamente las ramas que contienen el item activo
     this.menuItems.forEach(group => {
-      if (group.children) {
-        group.children.forEach(item => {
-          if (item.type === 'collapse' && item.children) {
-            const hasActiveChild = item.children.some(child => child.id === this.activeItem);
-            if (hasActiveChild) {
-              this.expandedItems.add(item.id);
-            }
-          }
-        });
-      }
+      group.children?.forEach(item => {
+        if (item.type === 'collapse' && item.children) {
+          const hasActiveChild = item.children.some(child => child.id === this.activeItem);
+          if (hasActiveChild) this.expandedItems.add(item.id);
+        }
+      });
     });
   }
 
@@ -70,22 +81,17 @@ export class SidebarComponent implements OnInit {
     const selected = this.getItemPath(item);
     this.itemSelected.emit(selected);
 
-    // Aquí puedes agregar la lógica de navegación
     if (item.url) {
-      this.router.navigate([`${item.url}`]);
+      this.router.navigate([item.url]);
       console.log('Navigating to:', item.url);
     }
 
-    // Emitir evento si es necesario
     this.onItemSelected(item);
   }
 
   toggleCollapse(itemId: string): void {
-    if (this.expandedItems.has(itemId)) {
-      this.expandedItems.delete(itemId);
-    } else {
-      this.expandedItems.add(itemId);
-    }
+    if (this.expandedItems.has(itemId)) this.expandedItems.delete(itemId);
+    else this.expandedItems.add(itemId);
   }
 
   isExpanded(itemId: string): boolean {
@@ -93,26 +99,23 @@ export class SidebarComponent implements OnInit {
   }
 
   private onItemSelected(item: MenuItem): void {
-    // Aquí puedes emitir un evento o ejecutar lógica adicional
+    // # Lógica adicional cuando seleccionas un item
     console.log('Item selected:', item);
-
-    // Ejemplo de emit si necesitas comunicarte con el componente padre
-    // this.itemSelected.emit(item);
   }
 
-  // Método para actualizar el menu dinámicamente si es necesario
+  // # Si desde fuera te envían un nuevo menú
   updateMenuItems(newMenuItems: MenuItem[]): void {
-    this.menuItems = newMenuItems;
+    this.menuItems = newMenuItems;   // ✅ era incorrecto asignar al Observable
     this.initializeExpandedItems();
   }
 
-  // Método para establecer el item activo desde fuera del componente
+  // # Establecer activo desde afuera si hace falta
   setActiveItem(itemId: string): void {
     this.activeItem = itemId;
     this.initializeExpandedItems();
   }
 
-  // Encuentra el módulo padre del ítem seleccionado
+  // # Encuentra el path (módulo/submódulo) del item seleccionado
   private getItemPath(item: MenuItem): { module: string; submodule?: string } {
     let moduleTitle = '';
     let submoduleTitle = '';
@@ -136,7 +139,7 @@ export class SidebarComponent implements OnInit {
 
     return {
       module: moduleTitle || item.title,
-      submodule: submoduleTitle !== moduleTitle ? submoduleTitle : undefined
+      submodule: submoduleTitle && submoduleTitle !== moduleTitle ? submoduleTitle : undefined
     };
   }
 
@@ -145,12 +148,10 @@ export class SidebarComponent implements OnInit {
 
     for (const group of this.menuItems) {
       for (const item of group.children || []) {
-
-        if (item.type === 'item' && item.url && currentUrl == item.url) {
+        if (item.type === 'item' && item.url && currentUrl === item.url) {
           this.activeItem = item.id;
           return;
         }
-
         if (item.type === 'collapse') {
           for (const subItem of item.children || []) {
             if (subItem.url && currentUrl.includes(subItem.url)) {
@@ -159,9 +160,7 @@ export class SidebarComponent implements OnInit {
             }
           }
         }
-
       }
     }
   }
-
 }

@@ -18,7 +18,7 @@ import { ModalPermissionsComponent } from '../modal-permissions/modal-permission
 import { Module } from '../../../../../core/Models/security/module.models';
 import { RouterLink } from '@angular/router';
 import { RolFormPermissionsList } from '../../../../../core/Models/security/rol-form-permission.models';
-import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
+import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission/rol-form-permission.service';
 import { DataService } from '../../../../../core/Services/shared/data.service';
 import { Role } from '../../../../../core/Models/security/role.models';
 import { Permission } from '../../../../../core/Models/security/permission.models';

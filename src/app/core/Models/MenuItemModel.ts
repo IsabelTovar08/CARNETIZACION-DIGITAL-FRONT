@@ -5,7 +5,14 @@ export interface MenuItem {
   icon?: string;
   url?: string;
   classes?: string;
-  target?: boolean;
-  breadcrumbs?: boolean;
   children?: MenuItem[];
+}
+
+export interface MenuStructure {
+  id: number;
+  parentMenuId?: number | null;
+  moduleId?: number | null;
+  formId?: number | null;
+  type: 'Module' | 'Group' | 'Item'; // ← ajusta a tus tipos reales
+  orderIndex: number;
 }

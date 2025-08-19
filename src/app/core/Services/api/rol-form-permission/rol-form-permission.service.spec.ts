@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RolFormPermissionService } from './rol-form-permission.service';
+import { RolFormPermissionService } from '../rol-form-permission/rol-form-permission.service';
 
 describe('RolFormPermissionService', () => {
   let service: RolFormPermissionService;

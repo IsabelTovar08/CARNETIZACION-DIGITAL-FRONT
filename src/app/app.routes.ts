@@ -8,17 +8,18 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./auth/entry/pages/welcome/welcome.component').then(m => m.IngresarComponent),
-  },                    
+  },
 
   {
     path: 'auth',
     loadChildren: () =>
       import('./auth/auth.routers').then(m => m.authRoutes),
   },
+
   // Rutas privadas (dashboard)
   {
     path: 'dashboard',
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/pages/dashboardComponent/dashboard.component').then(m => m.DashboardComponent),
     children: [
@@ -26,7 +27,7 @@ export const routes: Routes = [
           { path: 'organizational', loadChildren: () => import('./features/organization/organizational.routes').then(m => m.organizationalRoutes), },
           { path: 'seguridad',loadChildren: () => import('./features/security/security.routes').then(m => m.securityRoutes),},
           { path: 'parametros',loadChildren: () => import('./features/parameters/parameter.routes').then(m => m.parameterRoutes),},
-          
+
     ]
   },
 ];

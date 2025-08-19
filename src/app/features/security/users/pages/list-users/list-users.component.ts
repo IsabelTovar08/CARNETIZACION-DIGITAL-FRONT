@@ -1,4 +1,4 @@
-import { UserRolesService } from './../../../../../core/Services/api/user-roles.service';
+import { UserRolesService } from '../../../../../core/Services/api/user-role/user-roles.service';
 import { PersonList } from './../../../../../core/Models/security/person.models';
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
