@@ -76,8 +76,10 @@ export class ListMenuStructureComponent implements OnInit {
     // this.dialog.open(GenericFormDialogComponent, { data: { title, fields, values } })
     // .afterClosed().subscribe(val => guardar y refrescar).
     const ref = this.dialog.open(FormMenuStructureComponent, {
-        width: '95vw', 
-    maxHeight: '90vh',
+      maxWidth: '100vw',
+      width: '60vw',
+      // height: '90vh',
+      panelClass: 'menu-editor-dialog', // para estilos finos
       data: editing // ← aquí pasas TODO el item
     });
 

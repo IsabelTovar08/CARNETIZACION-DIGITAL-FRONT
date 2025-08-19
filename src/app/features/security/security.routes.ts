@@ -8,10 +8,7 @@ import { ListModulesComponent } from './modules/pages/list-modules/list-modules.
 import { FormPErsonComponent } from './people/components/form-person/form-person.component';
 import { PersonPageComponent } from './people/pages/person-page/person-page.component';
 import { FormRoleFormPermissionComponent } from './roles/Components/form-role-form-permission/form-role-form-permission.component';
-import { TargetPersonComponent } from './people/components/target-person/target-person.component';
-import { VistaPrueba2Component } from '../../shared/vista-prueba2/vista-prueba2.component';
 import { VistaPruebaComponent } from '../../shared/vista-prueba/vista-prueba.component';
-import { ListMenuStructureComponent } from '../menu/list-menu-structure/list-menu-structure.component';
 
 export const securityRoutes: Routes = [
   { path: 'people', component: PersonPageComponent,
@@ -39,7 +36,5 @@ export const securityRoutes: Routes = [
   { path: 'permission-forms', component: FormRoleFormPermissionComponent },
 
   { path: 'forms', component: ListFormsComponent },
-  { path: 'modules', component: ListModulesComponent },
-  { path: 'menu', component: ListMenuStructureComponent }
-
+  { path: 'modules', component: ListModulesComponent }
 ];
