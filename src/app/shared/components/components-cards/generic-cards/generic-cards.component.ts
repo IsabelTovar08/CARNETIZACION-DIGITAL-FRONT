@@ -6,7 +6,7 @@ export type CardVariant = 'default' | 'outlined' | 'elevated' | 'filled';
 
 @Component({
   selector: 'app-generic-cards',
-  imports: [CommonModule],
+  imports: [CommonModule ],
   templateUrl: './generic-cards.component.html',
   styleUrl: './generic-cards.component.css'
 })
@@ -49,7 +49,7 @@ export class GenericCardsComponent {
   }
 
   get hasContent(): boolean {
-    return !!this.headerTemplate; // This would need proper content projection detection
+    return !!this.headerTemplate;
   }
 
   onCardClick(): void {

@@ -17,18 +17,18 @@
         </div>
       </div>
 
-      <!-- Image Section -->
+      <!-- Parte de la imagen  -->
       <div class="card-image" *ngIf="imageUrl">
         <img [src]="imageUrl" [alt]="imageAlt || title || 'Card image'" />
       </div>
 
-      <!-- Content Section -->
+      <!-- Contenido-->
       <div class="card-content" *ngIf="showContent">
         <ng-content></ng-content>
         <p *ngIf="!hasContent && content" class="card-text">{{ content }}</p>
       </div>
 
-      <!-- Actions Section -->
+      <!-- Acciones -->
       <div class="card-actions" *ngIf="showActions">
         <ng-content select="[slot=actions]"></ng-content>
       </div>

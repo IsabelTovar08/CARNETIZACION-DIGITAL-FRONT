@@ -1,3 +1,4 @@
+
 <div class="estructura-organizativa">
   <div class="header">
     <h1 class="title">Estructura Organizativa</h1>
@@ -5,18 +6,14 @@
   </div>
 
   <div class="cards-grid">
-    <app-generic-cards
-      *ngFor="let card of organizationalCards"
-      [title]="card.title"
-      [content]="card.description"
-      [imageUrl]="card.imageUrl"
-      [imageAlt]="card.title"
-      [clickable]="true"
-      variant="elevated"
-      size="medium"
-      [showActions]="false"
-      (cardClick)="onCardClick(card)"
-      class="org-card">
-    </app-generic-cards>
+    <app-generic-list-cards
+    [items] = "organizationalCards"
+    [clickable]="true"
+    [pageSize]="10"
+    variant="filled"
+    size="large"
+    (cardClick)="onSectionClick($event)">
+
+    </app-generic-list-cards>
   </div>
 </div>

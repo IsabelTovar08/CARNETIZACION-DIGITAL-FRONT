@@ -1,18 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GenericCardsComponent } from '../../../../shared/components/generic-cards/generic-cards.component';
+import { CardItem, GenericListCardsComponent } from '../../../../shared/components/components-cards/generic-list-cards/generic-list-cards.component';
 
-interface OrganizationalCard {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  route: string;
+interface OrganizationalCard extends CardItem {
+  
+  route?: string;
 }
 @Component({
   selector: 'app-estructura-organizativa',
-  imports: [CommonModule,GenericCardsComponent],
+  imports: [CommonModule,GenericListCardsComponent],
   templateUrl: './organizational-structure.component.html',
   styleUrl: './organizational-structure.component.css'
 })
@@ -25,13 +22,47 @@ export class EstructuraOrganizativaComponent {
     }
 
   organizationalCards: OrganizationalCard[] = [
-    { id: 'sucursales',              title: 'Sucursales',             description: 'Administra las sucursales de tu organización', imageUrl: '/assets/organizaciones/surcursales.png',        route: 'sucursales' },
-    { id: 'unidades-organizativas',  title: 'Unidades Organizativas', description: 'Gestiona las unidades organizativas de tu organización', imageUrl: '/assets/organizaciones/unidadOrganizativa.png', route: '/dashboard/organizational/structure/unidades-organizativas' },
-    { id: 'divisiones-internas',     title: 'Divisiones Internas',    description: 'Administra las divisiones de tu organización', imageUrl: '/assets/organizaciones/divisionesInternas.png', route: 'divisiones-internas' },
-    { id: 'perfiles',                title: 'Perfiles',                description: 'Define los perfiles de los empleados del sistema', imageUrl: '/assets/organizaciones/perfiles.png',            route: 'perfiles' },
-    { id: 'jornadas',                title: 'Jornadas',                description: 'Configura las jornadas laborales de tu organización', imageUrl: '/assets/organizaciones/jornadas.png',            route: 'jornadas' }
+    { 
+      title: 'Sucursales',             
+      content: 'Administra las sucursales de tu organización', 
+      imageUrl: '/assets/organizaciones/surcursales.png',
+      route: '/sucursales'        
+    },
+
+    {   
+      title: 'Unidades Organizativas', 
+      content: 'Gestiona las unidades organizativas de tu organización', 
+      imageUrl: '/assets/organizaciones/unidadOrganizativa.png', 
+      route: '/unidades-organizativas'
+    },
+    {      
+      title: 'Divisiones Internas',    
+      content: 'Administra las divisiones de tu organización', 
+      imageUrl: '/assets/organizaciones/divisionesInternas.png',
+      route: 'divisiones-internas'
+
+    },
+    {                 
+      title: 'Perfiles',                
+      content: 'Define los perfiles de los empleados del sistema', 
+      imageUrl: '/assets/organizaciones/perfiles.png', 
+      route: 'perfiles'           
+    },
+    {                 
+      title: 'Jornadas',                
+      content: 'Configura las jornadas laborales de tu organización', 
+      imageUrl: '/assets/organizaciones/jornadas.png',
+      route: 'jornadas'            
+    }
   
   ];
+
+  onSectionClick(card: OrganizationalCard): void {
+   if (card.route){
+     this.router.navigate([card.route], { relativeTo: this.route });
+   }
+  }
+
 
   
 }
