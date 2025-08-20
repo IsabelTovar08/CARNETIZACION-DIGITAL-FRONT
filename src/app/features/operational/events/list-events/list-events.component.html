@@ -1,0 +1,43 @@
+<app-generic-list-card
+  [title]="'Eventos'"
+  [buttonSave]="true"
+  [dataSourceInput]="listEvents"
+  [pageSize]="9"
+  [customTemplates]="{
+    'meta': metaTpl,
+    'actions': actionsTpl
+  }"
+  (onCreate)="create()"
+  (onView)="view($event)"
+  (onEdit)="edit($event)"
+  (onDelete)="remove($event)"
+  (onToggleStatus)="toggle($event)">
+</app-generic-list-card>
+
+<!-- Meta personalizada: ciudad | fecha -->
+<ng-template #metaTpl let-e>
+  <span>{{ e.city }} | {{ e.dateLabel }}</span>
+</ng-template>
+
+<!-- Acciones personalizadas -->
+<ng-template #actionsTpl let-e>
+  <!-- Botón principal adaptable según bloqueo -->
+  <button mat-stroked-button (click)="view(e)" [disabled]="e.isLocked">
+    {{ e.isLocked ? 'Acceso Restringido' : 'Ver Más Información' }}
+  </button>
+
+  <span class="spacer"></span>
+
+  <!-- Menú compacto de acciones -->
+  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más acciones">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="edit(e)"><mat-icon>edit</mat-icon>Editar</button>
+    <button mat-menu-item (click)="remove(e)"><mat-icon>delete</mat-icon>Eliminar</button>
+    <button mat-menu-item (click)="toggle(e)">
+      <mat-icon>{{ e.isDeleted ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+      {{ e.isDeleted ? 'Activar' : 'Desactivar' }}
+    </button>
+  </mat-menu>
+</ng-template>

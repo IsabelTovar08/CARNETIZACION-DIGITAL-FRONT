@@ -12,8 +12,7 @@ export const organizationalRoutes:
 Routes = [
     { path: 'structure', component: EstructuraOrganizativaComponent,
         children: [
-            {path: '', component: EstructuraOrganizativaComponent},
-            { path: 'sucursales', component: SucursalComponent },
+            { path: 'branch', component: SucursalComponent },
             { path: 'unidades-organizativas',component: ListUnidadOrganizativaComponent},
             { path: 'divisiones-internas', component: DivisionesInternasComponent},
             { path: 'perfiles', component: PerfilesComponent},
