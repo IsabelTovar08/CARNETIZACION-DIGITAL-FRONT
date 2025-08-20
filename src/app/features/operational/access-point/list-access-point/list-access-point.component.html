@@ -1,0 +1,15 @@
+<app-generic-list-card
+  [title]="'Puntos de Acceso'"
+  [dataSourceInput]="accessPoints"
+  [pageSize]="6"
+  [customTemplates]="{ meta: metaTpl }"
+  (onCreate)="create()"
+  (onView)="view($event)"
+  (onEdit)="edit($event)"
+  (onDelete)="remove($event)"
+  (onToggleStatus)="toggle($event)">
+</app-generic-list-card>
+
+<ng-template #metaTpl let-ap>
+  <span>{{ ap.description }}</span>
+</ng-template>

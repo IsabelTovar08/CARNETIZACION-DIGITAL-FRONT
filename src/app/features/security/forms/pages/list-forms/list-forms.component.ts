@@ -10,12 +10,15 @@ import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.
 import { FromModel } from '../../../../../core/Models/security/form.models';
 import { Module } from '../../../../../core/Models/security/module.models';
 import { DataService } from '../../../../../core/Services/shared/data.service';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-list-forms',
   imports: [
     CommonModule,
-    GenericTableComponent],
+    GenericTableComponent,
+    MatIconModule
+],
   templateUrl: './list-forms.component.html',
   styleUrl: './list-forms.component.css'
 })
@@ -37,7 +40,7 @@ export class ListFormsComponent implements OnInit {
     this.cargarData();
   }
 
-  displayedColumns: string[] = ['name', 'description', 'url', 'moduleName', 'isDeleted', 'actions'];
+  displayedColumns: string[] = ['icon','name', 'description', 'url', 'moduleName', 'isDeleted', 'actions'];
 
   cargarData() {
     // this.apiService.ObtenerTodo('Form').subscribe((data) => {
@@ -61,6 +64,7 @@ export class ListFormsComponent implements OnInit {
           item,
           fields: [
             { name: 'url', label: 'Ruta', type: 'string', value: item?.url || '', required: true },
+            { name: 'icon', label: 'Icono', type: 'string', value: item?.icon || '', required: true },
             {
               name: 'moduleId',
               type: 'select',

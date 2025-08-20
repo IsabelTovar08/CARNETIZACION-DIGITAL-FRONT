@@ -10,20 +10,22 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-list-modules',
   imports: [
     CommonModule,
     GenericTableComponent,
-    MatProgressSpinnerModule
-  ],
+    MatProgressSpinnerModule,
+    MatIconModule
+],
   templateUrl: './list-modules.component.html',
   styleUrl: './list-modules.component.css'
 })
 export class ListModulesComponent implements OnInit {
   listModule!: Module[];
-  displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
+  displayedColumns: string[] = ['icon', 'name', 'description', 'isDeleted', 'actions'];
 
 
   constructor(
@@ -53,7 +55,11 @@ export class ListModulesComponent implements OnInit {
       width: '400px',
       data: {
         title: item ? 'Editar' : 'Crear',
-        item
+        item,
+         fields: [
+            { name: 'icon', label: 'Icono', type: 'string', value: item?.icon || '', required: true },
+          ],
+          replaceBaseFields: false
       }
     });
 
