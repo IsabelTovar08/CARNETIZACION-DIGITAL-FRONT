@@ -4,8 +4,8 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { MatCardModule } from "@angular/material/card";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { CustomTypeService } from '../../../../../core/Services/api/custom-type.service';
-import { UbicationService } from '../../../../../core/Services/api/ubication.service';
+import { CustomTypeService } from '../../../../../core/Services/api/customType/custom-type.service';
+import { UbicationService } from '../../../../../core/Services/api/ubication/ubication.service';
 import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
 import { CityCreate, CityList, Deparment } from '../../../../../core/Models/parameter/ubication.models';
 import { CommonModule } from '@angular/common';
@@ -81,6 +81,7 @@ export class TargetPersonComponent {
     this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
     this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
     this.listService.getdeparments().subscribe(data => this.deparments = data);
+    this.listService.getcities().subscribe(data => this.cities = data);
   }
 
   getCytie(id: number) {

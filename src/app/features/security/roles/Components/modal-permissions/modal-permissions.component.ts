@@ -12,7 +12,7 @@ import { ApiService } from '../../../../../core/Services/api/api.service';
 import { FromModel } from '../../../../../core/Models/security/form.models';
 import { DataService } from '../../../../../core/Services/shared/data.service';
 import { Role, RoleFormPermisionsRequest } from '../../../../../core/Models/security/role.models';
-import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission.service';
+import { RolFormPermissionService } from '../../../../../core/Services/api/rol-form-permission/rol-form-permission.service';
 
 @Component({
   selector: 'app-modal-permissions',

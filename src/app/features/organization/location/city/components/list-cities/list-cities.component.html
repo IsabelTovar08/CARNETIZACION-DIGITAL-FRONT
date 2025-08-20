@@ -1,0 +1,15 @@
+<app-generic-table
+  [title]="'Ciudades'"
+  *ngIf="listCityList as list"
+  [dataSourceInput]="list"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'deparmentName', label: 'Departamento' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

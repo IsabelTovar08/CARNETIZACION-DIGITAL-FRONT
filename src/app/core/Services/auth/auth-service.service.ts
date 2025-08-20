@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { tap } from 'rxjs';
 import { TokenService } from '../token/token.service';
 import { RequestLogin, ResponseLogin } from '../../Models/auth.models';
+import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -18,13 +19,15 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
+    protected wrapper: HttpServiceWrapperService
+
   ) { }
-  
+
   urlBase = environment.URL + '/api';
 
   // Auth
   public login(credentials: RequestLogin) {
-    return this.http.post<ResponseLogin>(`${this.urlBase}/Auth/login`, credentials)
+    return this.wrapper.handleRequest(this.http.post<ResponseLogin>(`${this.urlBase}/Auth/login`, credentials))
       .pipe(
         tap(response => this.tokenService.setToken(response.token))
       );

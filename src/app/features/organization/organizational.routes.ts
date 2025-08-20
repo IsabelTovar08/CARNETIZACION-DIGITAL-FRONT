@@ -1,30 +1,25 @@
 import { Routes } from '@angular/router';
-
-import { EstructuraOrganizativaComponent } from './pages/estructura-organizativa/estructura-organizativa.component';
-import { SucursalComponent } from './location/sucursales/pages/surcursal/surcursal.component';
-import { UnidadOrganizativaComponent } from './structure/unidades-organizativa/pages/unidad-organizativa/unidad-organizativa.component';
-import { DivisionesInternasComponent } from './structure/divisines-Internal/pages/divisiones-internas/divisiones-internas.component';
-import { PerfilesComponent } from './assignment/perfile/pages/perfiles/perfiles.component';
-import { JornadasComponent } from './structure/jornada/pages/jornadas/jornadas.component';
-import { ListUnidadOrganizativaComponent } from './structure/unidades-organizativa/components/list-unidad-organizativa/list-unidad-organizativa.component';
+import { EstructuraOrganizativaComponent } from './pages/organizational-structure/organizational-structure.component';
+import { SucursalComponent } from './location/branches/pages/branches/branches.component';
+import { DivisionesInternasComponent } from './structure/internal-divisions/pages/internal-divisions/internal-divisions.component';
+import { PerfilesComponent } from './assignment/profile/pages/profile/profile.component';
+import { JornadasComponent } from './structure/working-day/pages/working-day/working-day.component';
 import { ListDeparmentComponent } from './location/deparment/components/list-deparment/list-deparment.component';
+import { ListCitiesComponent } from './location/city/components/list-cities/list-cities.component';
+import { ListUnidadOrganizativaComponent } from './structure/organizational-unit/components/list-organizational-unit/list-organizational-unit.component';
 
-export const organizationalRoutes: Routes = [
-  {
-    path: 'structure',
-    component: EstructuraOrganizativaComponent,
-    children: [
-      { path: 'sucursales', component: SucursalComponent },
-      { path: 'unidades-organizativas',component: ListUnidadOrganizativaComponent},
-      { path: 'divisiones-internas', component: DivisionesInternasComponent},
-      { path: 'perfiles', component: PerfilesComponent},
-      { path: 'jornadas',component: JornadasComponent}
-    ]
-  },
-  { path: 'location',
-    children : [
-      { path: 'deparment', component: ListDeparmentComponent}
-    ]
-   }
+export const organizationalRoutes:
+Routes = [
+    { path: 'structure', component: EstructuraOrganizativaComponent,
+        children: [
+            {path: '', component: EstructuraOrganizativaComponent},
+            { path: 'sucursales', component: SucursalComponent },
+            { path: 'unidades-organizativas',component: ListUnidadOrganizativaComponent},
+            { path: 'divisiones-internas', component: DivisionesInternasComponent},
+            { path: 'perfiles', component: PerfilesComponent},
+            { path: 'jornadas',component: JornadasComponent} ] },
 
-];
+    { path: 'location',
+        children : [
+            { path: 'department', component: ListDeparmentComponent},
+            { path: 'municipality', component: ListCitiesComponent} ] } ];

@@ -1,4 +1,3 @@
-// header.component.ts ACTUALIZADO
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +15,7 @@ export class HeaderComponent implements OnInit {
   breadcrumbPath: string[] = [];
   moduleName: string = '';
   submoduleName: string = '';
-  
+
   @Input() tipoUsuario: string = '';
   @Input() isMobile: boolean = false;
   @Output() toggleMenu: EventEmitter<void> = new EventEmitter<void>();
@@ -44,7 +43,7 @@ export class HeaderComponent implements OnInit {
   // Métodos para manejar las notificaciones
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
-    
+
     // Prevenir scroll del body cuando el modal está abierto
     if (this.showNotifications) {
       document.body.style.overflow = 'hidden';
@@ -62,7 +61,7 @@ export class HeaderComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     // Comentado para usar overlay en su lugar
-    // if (this.showNotifications && this.notificationTrigger && 
+    // if (this.showNotifications && this.notificationTrigger &&
     //     !this.notificationTrigger.nativeElement.contains(event.target)) {
     //   this.closeNotifications();
     // }
