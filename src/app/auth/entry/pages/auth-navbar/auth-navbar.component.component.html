@@ -5,10 +5,15 @@
   </div>
 
   <div class="navbar-right">
-    <a routerLink="/auth/start" routerLinkActive="active-link">Inicio</a>
-    <a routerLink="/auth/about" routerLinkActive="active-link">Acerca de</a>
-    <a routerLink="/auth/characteristics" routerLinkActive="active-link">Características</a>
-    <a routerLink="/auth/contact" routerLinkActive="active-link">Contacto</a>
+    <div class="nav-menu" #navMenu>
+      <a routerLink="/auth/start" routerLinkActive="active-link" class="nav-link">Inicio</a>
+      <a routerLink="/auth/about" routerLinkActive="active-link" class="nav-link">Acerca de</a>
+      <a routerLink="/auth/characteristics" routerLinkActive="active-link" class="nav-link">Características</a>
+      <a routerLink="/auth/contact" routerLinkActive="active-link" class="nav-link">Contacto</a>
+      
+      <!-- Indicador circular animado -->
+      <div class="active-indicator" #activeIndicator></div>
+    </div>
 
     <a routerLink="/auth" class="login-btn">Ingresar</a>
   </div>
