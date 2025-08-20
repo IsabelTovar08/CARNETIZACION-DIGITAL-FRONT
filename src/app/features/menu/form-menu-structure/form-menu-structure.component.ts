@@ -12,25 +12,14 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from '@angular/material/expansion';
 
-import { MenuItem } from '../../../core/Models/MenuItemModel';
+import { MenuItem, MenuStructure } from '../../../core/Models/MenuItemModel';
 import { DataService } from '../../../core/Services/shared/data.service';
+import { MenuService } from '../../../core/Services/api/menu/menu.service';
 
 // 👉 Interfaces para poblar selects (adáptalas a tus modelos reales)
 interface IModuleOpt { id: number; name: string; }
 interface IFormOpt { id: number; name: string; }
 
-// 👉 DTO esperado por el backend
-interface IMenuStructureDto {
-  id: number;
-  parentMenuId?: number | null;
-  moduleId?: number | null;
-  formId?: number | null;
-  type: string;
-  orderIndex: number;
-  // Cuando NO hay module ni form, puedes incluir icon/url propios si tu API lo soporta en otro contrato.
-  // Children:
-  children: IMenuStructureDto[];
-}
 
 @Component({
   selector: 'app-form-menu-structure',
@@ -57,51 +46,53 @@ export class FormMenuStructureComponent implements OnInit {
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: MenuItem,     // ← recibe TODO el item
+    @Inject(MAT_DIALOG_DATA) public data: MenuStructure,     // ← recibe TODO el item
     private dialogRef: MatDialogRef<FormMenuStructureComponent>,
     private fb: FormBuilder,
-        private dataService: DataService,
+    private dataService: DataService,
+    private menuService: MenuService
 
   ) {
     this.form = this.fb.group({
       id: new FormControl(data.id ?? 0, { nonNullable: true }),
-      parentMenuId: new FormControl<number | null>(null), // ← si abres sobre un padre específico, setéalo
-      title: new FormControl<string>(data.title ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+      parentMenuId: new FormControl(data.parentMenuId), // ← si abres sobre un padre específico, setéalo
+      title: new FormControl<string>(data.title ?? '', { nonNullable: true, validators: [Validators.maxLength(100)] }),
       type: new FormControl<'group' | 'collapse' | 'item'>((data.type as any) ?? 'item', { nonNullable: true }),
-      orderIndex: new FormControl<number>(0, { nonNullable: true, validators: [Validators.min(0)] }),
 
-      // ⚠️ Relación a módulo / formulario (mutuamente excluyentes)
-      moduleId: new FormControl<number | null>(null),
-      formId: new FormControl<number | null>(null),
+      // Relación a módulo / formulario (mutuamente excluyentes)
+      moduleId: new FormControl(0 || data.moduleId),
+      formId: new FormControl(0 || data.formId),
 
-      // 💡 Solo se usan si NO hay moduleId ni formId
-      icon: new FormControl<string | null>(data.icon ?? null),
-      url: new FormControl<string | null>(data['url'] ?? null),
+      // Solo se usan si NO hay moduleId ni formId
+      icon: new FormControl(data.icon),
+      url: new FormControl(data.url ?? null),
 
       children: this.fb.array(
         (data.children ?? []).map(c => this.makeChildGroup(c))
       )
     }, { validators: [this.xorValidator('moduleId', 'formId')] });
 
+    console.log(this.form.value)
     // 🔒 Habilitar/Deshabilitar url/icon según relación
-    this.setupUrlIconToggles(this.form);
+    // this.setupUrlIconToggles(this.form);
   }
   ngOnInit(): void {
     this.dataService.modules$.subscribe(data => this.modules = data);
     this.dataService.getModules();
+
+    this.dataService.forms$.subscribe(data => this.forms = data);
+    this.dataService.getForms();
   }
 
   // 🧱 Grupo para hijo (nivel 1)
-  private makeChildGroup(child?: Partial<MenuItem>): FormGroup {
+  private makeChildGroup(child?: Partial<MenuStructure>): FormGroup {
     const group = this.fb.group({
       id: new FormControl(child?.id ?? 0, { nonNullable: true }),
-      parentMenuId: new FormControl<number | null>(null),
-      title: new FormControl<string>(child?.title ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+      parentMenuId: new FormControl(0 || child?.parentMenuId),
+      title: new FormControl<string>(child?.title ?? '', { nonNullable: true, validators: [Validators.maxLength(100)] }),
       type: new FormControl<'group' | 'collapse' | 'item'>((child?.type as any) ?? 'item', { nonNullable: true }),
-      orderIndex: new FormControl<number>(0, { nonNullable: true, validators: [Validators.min(0)] }),
-
-      moduleId: new FormControl<number | null>(null),
-      formId: new FormControl<number | null>(null),
+      moduleId: new FormControl(0 || child?.moduleId),
+      formId: new FormControl(0 || child?.formId),
 
       icon: new FormControl<string | null>(child?.icon ?? null),
       url: new FormControl<string | null>((child as any)?.url ?? null),
@@ -112,21 +103,20 @@ export class FormMenuStructureComponent implements OnInit {
       )
     }, { validators: [this.xorValidator('moduleId', 'formId')] });
 
-    this.setupUrlIconToggles(group);
+    // this.setupUrlIconToggles(group);
     return group;
   }
 
   // 🧱 Grupo para nieto (nivel 2)
-  private makeGrandChildGroup(gchild?: Partial<MenuItem>): FormGroup {
+  private makeGrandChildGroup(gchild?: Partial<MenuStructure>): FormGroup {
     const group = this.fb.group({
       id: new FormControl(gchild?.id ?? 0, { nonNullable: true }),
-      parentMenuId: new FormControl<number | null>(null),
-      title: new FormControl<string>(gchild?.title ?? '', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+      parentMenuId: new FormControl(0 || gchild?.parentMenuId),
+      title: new FormControl<string>(gchild?.title ?? '', { nonNullable: true, validators: [Validators.maxLength(100)] }),
       type: new FormControl<'group' | 'collapse' | 'item'>((gchild?.type as any) ?? 'item', { nonNullable: true }),
-      orderIndex: new FormControl<number>(0, { nonNullable: true, validators: [Validators.min(0)] }),
 
-      moduleId: new FormControl<number | null>(null),
-      formId: new FormControl<number | null>(null),
+      moduleId: new FormControl(0 || gchild?.moduleId),
+      formId: new FormControl(0 || gchild?.formId),
 
       icon: new FormControl<string | null>(gchild?.icon ?? null),
       url: new FormControl<string | null>((gchild as any)?.url ?? null),
@@ -134,7 +124,7 @@ export class FormMenuStructureComponent implements OnInit {
       children: this.fb.array([]) // ← puedes seguir anidando si lo necesitas
     }, { validators: [this.xorValidator('moduleId', 'formId')] });
 
-    this.setupUrlIconToggles(group);
+    // this.setupUrlIconToggles(group);
     return group;
   }
 
@@ -163,17 +153,22 @@ export class FormMenuStructureComponent implements OnInit {
     this.grandChildren(i).removeAt(j);
   }
 
-  // 💾 Guardar y cerrar (mapeo exacto al DTO del backend)
-  save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    // 👉 Si abriste el modal dentro de un padre, puedes setear parentMenuId antes de mapear
-    const dto = this.mapToDto(this.form.value as any, /*parentId*/ null);
-    this.dialogRef.close(dto);
+  // Pasar el formulario
+save(form: any): void {
+  if (form.invalid) {
+    form.markAllAsTouched();
+    return;
   }
+
+  const dto: MenuStructure = { ...form};
+
+  this.menuService.update('MenuStructure', dto).subscribe({
+    next: () => console.log('✅ guardado'),
+    error: (e) => console.error('❌ error', e)
+  });
+}
+
+
 
   cancel(): void {
     this.dialogRef.close();
@@ -194,57 +189,46 @@ export class FormMenuStructureComponent implements OnInit {
 
   // ===== Validators & utilities (fuera de la clase para reuso) =====
 
-// XOR validator entre dos controles (permite ninguno o uno; no ambos)
- xorValidator(aKey: string, bKey: string): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const a = group.get(aKey)?.value ?? null;
-    const b = group.get(bKey)?.value ?? null;
-    const hasA = a !== null && a !== undefined && a !== '';
-    const hasB = b !== null && b !== undefined && b !== '';
-    return (hasA && hasB) ? { xor: 'moduleId y formId no pueden estar ambos' } : null;
-  };
-}
+  // XOR validator entre dos controles (permite ninguno o uno; no ambos)
+  xorValidator(aKey: string, bKey: string): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const a = group.get(aKey)?.value ?? null;
+      const b = group.get(bKey)?.value ?? null;
+      const hasA = a !== null && a !== undefined && a !== '';
+      const hasB = b !== null && b !== undefined && b !== '';
+      return (hasA && hasB) ? { xor: 'moduleId y formId no pueden estar ambos' } : null;
+    };
+  }
 
-// Habilitar/Deshabilitar url/icon según tenga moduleId o formId
- setupUrlIconState(fg: FormGroup) {
-  const moduleId = fg.get('moduleId')!;
-  const formId = fg.get('formId')!;
-  const url = fg.get('url')!;
-  const icon = fg.get('icon')!;
+  // Habilitar/Deshabilitar url/icon según tenga moduleId o formId
+  setupUrlIconState(fg: FormGroup) {
+    const moduleId = fg.get('moduleId')!;
+    const formId = fg.get('formId')!;
+    const url = fg.get('url')!;
+    const icon = fg.get('icon')!;
 
-  const toggle = () => {
-    const hasRel = !!moduleId.value || !!formId.value;
-    if (hasRel) {
-      url.disable({ emitEvent: false });
-      icon.disable({ emitEvent: false });
-    } else {
-      url.enable({ emitEvent: false });
-      icon.enable({ emitEvent: false });
-    }
-  };
+    const toggle = () => {
+      const hasRel = !!moduleId.value || !!formId.value;
+      if (hasRel) {
+        url.disable({ emitEvent: false });
+        icon.disable({ emitEvent: false });
+      } else {
+        url.enable({ emitEvent: false });
+        icon.enable({ emitEvent: false });
+      }
+    };
 
-  toggle(); // estado inicial
-  moduleId.valueChanges.subscribe(toggle);
-  formId.valueChanges.subscribe(toggle);
-}
+    toggle(); // estado inicial
+    moduleId.valueChanges.subscribe(toggle);
+    formId.valueChanges.subscribe(toggle);
+  }
 
-// Hook para llamar desde cada FormGroup creado
- setupUrlIconToggles(fg: FormGroup) {
-  this.setupUrlIconState(fg);
-}
+  // Hook para llamar desde cada FormGroup creado
+  setupUrlIconToggles(fg: FormGroup) {
+    this.setupUrlIconState(fg);
+  }
 
-// Mapear recursivamente al DTO del backend
- mapToDto(node: any, parentId: number | null): IMenuStructureDto {
-  return {
-    id: node.id ?? 0,
-    parentMenuId: parentId,
-    moduleId: node.moduleId ?? null,
-    formId: node.formId ?? null,
-    type: node.type,
-    orderIndex: Number(node.orderIndex ?? 0),
-    children: (node.children ?? []).map((c: any) => this.mapToDto(c, node.id || null))
-  };
-}
+
 }
 
 

@@ -9,10 +9,14 @@ export interface MenuItem {
 }
 
 export interface MenuStructure {
+  title?: string;
+  icon?: string;
+  url?: string;
   id: number;
   parentMenuId?: number | null;
   moduleId?: number | null;
   formId?: number | null;
   type: 'Module' | 'Group' | 'Item'; // ← ajusta a tus tipos reales
   orderIndex: number;
+  children?: [];
 }
