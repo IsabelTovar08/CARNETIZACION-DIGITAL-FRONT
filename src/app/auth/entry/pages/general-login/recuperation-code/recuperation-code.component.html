@@ -15,7 +15,7 @@
         </div>
 
         <p class="instruction">
-          Digite los 5 dígitos que se enviaron al correo
+          Digite los 5 dígitos que se enviaron al correo, para continuar con la recuperación de su contraseña
           <strong>"examplegmail.com"</strong>:
         </p>
 
@@ -36,7 +36,7 @@
         <button class="continue-btn" [disabled]="!isCodeComplete()" (click)="onContinue()">
           Continuar
         </button>
-        <button class="resend-btn" (click)="onResend()">Reenviar</button>
+        <button class="resend-btn" (click)="reenviarCodigo()">Reenviar</button>
       </div>
     </div>
   </div>
