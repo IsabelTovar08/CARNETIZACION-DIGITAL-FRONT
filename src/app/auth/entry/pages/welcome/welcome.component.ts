@@ -11,9 +11,19 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 })
 export class IngresarComponent {
 
-constructor(private router: Router, private route: ActivatedRoute) {}
+  isContactModalOpen = false;
+
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   navigateToLogin(): void {
     this.router.navigate(['/auth/login']);
+  }
+
+  openContactModal(): void {
+    this.isContactModalOpen = true;
+  }
+
+  closeContactModal(): void {
+    this.isContactModalOpen = false;
   }
 }

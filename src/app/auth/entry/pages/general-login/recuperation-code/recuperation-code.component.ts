@@ -2,16 +2,17 @@ import { Component, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 
 @Component({
   selector: 'app-code-verification',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: `./verification-code.component.html`,
-  styleUrl: `./verification-code.component.css`
+  templateUrl: `./recuperation-code.component.html`,
+  styleUrl: `./recuperation-code.component.css`
 })
-export class VerificationCodeComponent {
+export class RecuperationCodeComponent {
    codeInputs = signal([
     { value: '' },
     { value: '' },
@@ -120,6 +121,9 @@ export class VerificationCodeComponent {
       alert(`Código ingresado: ${this.fullCode()}`);
     }
   }
+  reenviarCodigo() {
+      Swal.fire("Reenvio exitoso! prueba el nuevo codigo");
+    }
   
   onResend(): void {
     // Limpiar todos los inputs

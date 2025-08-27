@@ -1,0 +1,41 @@
+<div class="card-list-container">
+  <ng-container *ngIf="loading && showSkeleton">
+    <div class="skeleton-grid">
+      <div *ngFor="let i of [].constructor(pageSize)" class="skeleton-card"></div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading && pagedItems.length > 0">
+    <!-- cargan las tablas -->
+    <div class="card-grid" [class]="gridClass">
+      <ng-container *ngFor="let item of pagedItems">
+        <!-- lo que se va a mostrar en la carta con variant individual -->
+        <app-generic-cards
+          [title]="item.title"
+          [subtitle]="item.subtitle"
+          [content]="item.content"
+          [imageUrl]="item.imageUrl"
+          [imageAlt]="item.imageAlt"
+          [variant]="getCardVariant(item)"
+          [size]="size"
+          [clickable]="clickable"
+          (cardClick)="onCardClicked(item)">
+          
+          <ng-container *ngIf="customCardTemplate" [ngTemplateOutlet]="customCardTemplate" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+        </app-generic-cards>
+      </ng-container>
+    </div>
+    
+    <!-- es el controlador de las paginas que se muestran dependiendo de la cantidad de cartas -->
+    <div class="pagination-controls" *ngIf="showPagination && totalPages > 1">
+      <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+    </div>
+  </ng-container>
+  
+  <!-- aviso de que no se cargaron las cartas -->
+  <div *ngIf="!loading && items.length === 0" class="empty-state">
+    <p>No hay elementos para mostrar.</p>
+  </div>
+</div>

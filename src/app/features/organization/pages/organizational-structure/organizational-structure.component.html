@@ -5,18 +5,13 @@
   </div>
 
   <div class="cards-grid">
-    <app-generic-cards
-      *ngFor="let card of organizationalCards"
-      [title]="card.title"
-      [content]="card.description"
-      [imageUrl]="card.imageUrl"
-      [imageAlt]="card.title"
+    <app-generic-list-cards
+      [items]="organizationalCards"
       [clickable]="true"
-      variant="elevated"
-      size="medium"
-      [showActions]="false"
-      (cardClick)="onCardClick(card)"
-      class="org-card">
-    </app-generic-cards>
+      [pageSize]="10"
+      variant="organizational"
+      size="large"
+      (cardClick)="onSectionClick($event)">
+    </app-generic-list-cards>
   </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
-import { GenericCardsComponent } from "../../../../shared/components/generic-cards/generic-cards.component";
+import { GenericCardsComponent } from "../../../../shared/components/components-cards/generic-cards/generic-cards.component";
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';

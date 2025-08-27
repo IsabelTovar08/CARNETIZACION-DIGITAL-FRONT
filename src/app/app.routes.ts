@@ -6,8 +6,8 @@ export const routes: Routes = [
   // Rutas públicas (fuera del dashboard)
   {
     path: '',
-    loadComponent: () =>
-      import('./auth/entry/pages/welcome/welcome.component').then(m => m.IngresarComponent),
+    redirectTo: 'auth',
+    pathMatch: 'full',
   },
 
   {
@@ -31,4 +31,5 @@ export const routes: Routes = [
 
     ]
   },
+  
 ];

@@ -1,0 +1,95 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4A709c;
+  padding: 0.75rem 2rem;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar-left {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.brand .bold {
+  color: #111;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  padding: 10px 0;
+}
+
+.nav-link {
+  position: relative;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.nav-link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active-link {
+  color: white;
+  font-weight: 600;
+}
+
+/* Indicador línea animada */
+.active-indicator {
+  position: absolute;
+  bottom: -5px;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, #ffffff, #f0f8ff, #ffffff);
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 
+    0 2px 8px rgba(255, 255, 255, 0.4),
+    0 0 12px rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+.login-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: background 0.3s;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
