@@ -10,13 +10,14 @@ import { ListUnidadOrganizativaComponent } from './structure/organizational-unit
 
 export const organizationalRoutes:
 Routes = [
-    { path: 'structure', component: EstructuraOrganizativaComponent,
+    { path: 'structure',
         children: [
+            { path: '', component: EstructuraOrganizativaComponent },
             { path: 'branch', component: SucursalComponent },
-            { path: 'unidades-organizativas',component: ListUnidadOrganizativaComponent},
-            { path: 'divisiones-internas', component: DivisionesInternasComponent},
-            { path: 'perfiles', component: PerfilesComponent},
-            { path: 'jornadas',component: JornadasComponent} ] },
+            { path: 'unit',component: ListUnidadOrganizativaComponent},
+            { path: 'internal-division', component: DivisionesInternasComponent},
+            { path: 'profile', component: PerfilesComponent},
+            { path: 'shedule',component: JornadasComponent} ] },
 
     { path: 'location',
         children : [

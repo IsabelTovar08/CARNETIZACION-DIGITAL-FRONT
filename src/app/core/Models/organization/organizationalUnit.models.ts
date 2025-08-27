@@ -4,3 +4,6 @@ export interface OrganizationalUnit extends GenericModel{
     divisionsCount: number;
     branchesCount: number;
 }
+
+export interface OrganizationalUnitCreate extends GenericModel{
+}

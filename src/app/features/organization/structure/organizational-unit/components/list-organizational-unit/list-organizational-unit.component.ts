@@ -18,7 +18,7 @@ import { OrganizationalUnit } from '../../../../../../core/Models/organization/o
 export class ListUnidadOrganizativaComponent {
 
   listOrganization!: OrganizationalUnit[];
-  displayedColumns: string[] = ['name', 'divisionsCount', 'branchesCount', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'divisionsCount', 'branchesCount', 'actions'];
 
   constructor(
     private apiService: ApiService<OrganizationalUnit, OrganizationalUnit>,
@@ -51,14 +51,9 @@ export class ListUnidadOrganizativaComponent {
     const dialogRef = this.dialog.open(GenericFormComponent, {
       disableClose: true,
       width: '400px',
-      data: { 
-        title: item ? 'Editar' : 'Crear', 
-        item,
-        fields: [
-          {name: 'id', value: item?.id || 0, hidden: true},
-          {name: 'name', label: 'Nombre', type: 'string', value: item?.name || '', required: true},
-        ],
-        replaceBaseFields: true
+      data: {
+        title: item ? 'Editar' : 'Crear',
+        item
       },
     });
 
@@ -77,15 +72,15 @@ export class ListUnidadOrganizativaComponent {
 
   add(OrganizationalUnit: OrganizationalUnit, id?: number) {
     if (id) {
-      this.apiService.update('OrganizationalUnit', OrganizationalUnit).subscribe(() => { 
-            this.recargarLista(); 
-            this.snackbarService.showSuccess(); 
+      this.apiService.update('OrganizationalUnit', OrganizationalUnit).subscribe(() => {
+            this.recargarLista();
+            this.snackbarService.showSuccess();
           })
-    } 
+    }
     else {
-      this.apiService.Crear('OrganizationalUnit', OrganizationalUnit).subscribe(() => { 
-          this.recargarLista(); 
-          this.snackbarService.showSuccess(); 
+      this.apiService.Crear('OrganizationalUnit', OrganizationalUnit).subscribe(() => {
+          this.recargarLista();
+          this.snackbarService.showSuccess();
         })
     }
   }

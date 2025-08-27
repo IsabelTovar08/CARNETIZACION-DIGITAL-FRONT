@@ -22,6 +22,7 @@ import { RolFormPermissionService } from '../../../../../core/Services/api/rol-f
 import { DataService } from '../../../../../core/Services/shared/data.service';
 import { Role } from '../../../../../core/Models/security/role.models';
 import { Permission } from '../../../../../core/Models/security/permission.models';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 
 
 @Component({
@@ -60,10 +61,12 @@ export class FormRoleFormPermissionComponent {
   selectedFilter: number | null = null;
 
 
-  constructor(private dialog: MatDialog,
-    private dataService: DataService
-  ) {
-  }
+  constructor
+  (
+    private dialog: MatDialog,
+    private dataService: DataService,
+    private snackbarService : SnackbarService
+  ) {}
 
   ngOnInit(): void {
     this.initializeData();
@@ -127,7 +130,8 @@ export class FormRoleFormPermissionComponent {
       dialogRef.afterClosed().subscribe(result => {
     if (result === true) {
       // Aquí recargas la lista porque el modal cerró con éxito
-      this.initializeData(); // Cambia por el método que recarga la lista
+      this.snackbarService.showSuccess("Permisos asignados exitosamente.")
+      this.initializeData();
     }
   });
   }
@@ -157,26 +161,4 @@ export class FormRoleFormPermissionComponent {
     }
   }
 
-  // Métodos de acción
-  createNewRole(): void {
-    console.log('Crear nuevo rol');
-  }
-
-  importPermissions(): void {
-    console.log('Importar permisos');
-  }
-
-  exportPermissions(): void {
-    console.log('Exportar permisos');
-  }
-
-  openPermissionWizard(): void {
-    console.log('Abrir asistente de permisos');
-  }
-
-  viewFormDetails(): void {
-    if (this.currentForm) {
-      console.log('Ver detalles de:', this.currentForm.name);
-    }
-  }
 }
