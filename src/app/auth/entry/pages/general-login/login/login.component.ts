@@ -23,7 +23,6 @@ export class LoginComponent {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private menu: MenuCreateService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -31,8 +30,8 @@ export class LoginComponent {
     });
   }
 
-  goToForgotPassword(): void{
-      this.router.navigate(['/auth/forgotten-password']);
+  goToForgotPassword(): void {
+    this.router.navigate(['/auth/forgotten-password']);
   }
 
   togglePassword(): void {
@@ -46,16 +45,28 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    this.authService.login(this.loginForm.value)
-    .subscribe({
-      next: () => {
-        this.menu.reload();
-        this.router.navigate(['/dashboard']);
-        },
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        if (response.success) {
+          // ✅ Caso exitoso
+          // this.menu.reload();
+          this.router.navigate(['auth/login-code']);
+
+          // Opcional: mostrar notificación
+          console.log(response.message);
+        } else {
+          // ❌ La API respondió 200 pero con error lógico
+          console.warn('Login fallido:', response.message);
+          alert(response.message); // o tu propio servicio de toast
+        }
+      },
       error: (error) => {
+        // ❌ Error de red o statusCode >= 400
         console.error('Error al iniciar sesión:', error);
+        // alert('Ocurrió un error inesperado, intenta de nuevo.');
       }
     });
+
 
     if (this.loginForm.valid) {
       this.isLoading = true;

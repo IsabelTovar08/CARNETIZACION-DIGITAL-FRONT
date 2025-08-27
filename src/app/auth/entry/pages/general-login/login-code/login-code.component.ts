@@ -1,8 +1,11 @@
-import { Component, signal, computed, effect } from '@angular/core';
+import { AuthService } from './../../../../../core/Services/auth/auth-service.service';
+import { Component, signal, computed, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { RequestCode } from '../../../../../core/Models/auth.models';
+import { MenuCreateService } from '../../../../../core/Services/shared/menu-create.service';
 
 
 @Component({
@@ -12,7 +15,7 @@ import Swal from 'sweetalert2';
   templateUrl: './login-code.component.html',
   styleUrl: './login-code.component.css'
 })
-export class LoginCodeComponent {
+export class LoginCodeComponent implements OnInit {
   codeInputs = signal([
     { value: '' },
     { value: '' },
@@ -21,7 +24,13 @@ export class LoginCodeComponent {
     { value: '' }
   ]);
 
-    constructor(private router: Router) {
+  email?: string = '';
+
+  constructor(private router: Router,
+    private authService: AuthService,
+    private menu: MenuCreateService,
+
+  ) {
     // Effect para monitorear cambios en el código completo
     effect(() => {
       if (this.isCodeComplete()) {
@@ -29,13 +38,16 @@ export class LoginCodeComponent {
       }
     });
   }
+  ngOnInit(): void {
+    this.email = this.authService.getPendingEmail() ?? '';
+  }
 
   // Señal computada para verificar si el código está completo
   isCodeComplete = computed(() => {
     return this.codeInputs().every(input => input.value.length === 1);
   });
 
-  
+
 
   // Señal computada para obtener el código completo
   fullCode = computed(() => {
@@ -116,9 +128,34 @@ export class LoginCodeComponent {
 
   onContinue(): void {
     if (this.isCodeComplete()) {
-      console.log('Verificando código:', this.fullCode());
-      this.router.navigate(['/auth/']);
-      alert(`Código ingresado: ${this.fullCode()}`);
+      // console.log('Verificando código:', this.fullCode());
+      // this.router.navigate(['/auth/']);
+      // alert(`Código ingresado: ${this.fullCode()}`);
+      var requestCode: RequestCode = {
+        userId: Number(this.authService.getPendingUserId()),
+        code: this.fullCode()
+      }
+      this.authService.verifiCode(requestCode).subscribe({
+        next: (response) => {
+          if (response) {
+            // ✅ Caso exitoso
+            this.menu.reload();
+            this.router.navigate(['dashboard']);
+
+            // Opcional: mostrar notificación
+            console.log(response.message);
+          } else {
+            // ❌ La API respondió 200 pero con error lógico
+            console.warn('Login fallido:', response.message);
+            // alert(response.message);
+          }
+        },
+        error: (error) => {
+          // ❌ Error de red o statusCode >= 400
+          console.error('Error al iniciar sesión:', error);
+          // alert('Ocurrió un error inesperado, intenta de nuevo.');
+        }
+      });
     }
   }
 
@@ -128,7 +165,7 @@ export class LoginCodeComponent {
 
 
 
-  
+
   onResend(): void {
     // Limpiar todos los inputs
     this.codeInputs.set([
@@ -138,10 +175,10 @@ export class LoginCodeComponent {
       { value: '' },
       { value: '' }
     ]);
-    
+
     console.log('Reenviando código...');
     alert('Código reenviado exitosamente');
-    
+
     // Enfocar el primer input
     setTimeout(() => {
       const firstInput = document.querySelector('.code-digit') as HTMLInputElement;
