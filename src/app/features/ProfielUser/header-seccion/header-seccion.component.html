@@ -1,0 +1,16 @@
+
+<div class="profile-header-container">
+  <div class="header-content">
+    <h1 class="main-title">Mi Cuenta</h1>
+    <p class="subtitle">Administra tu información personal y configuración</p>
+    
+    <nav class="tab-navigation">
+      <button 
+        *ngFor="let tab of tabs" 
+        [class]="'tab-button ' + (activeTab === tab.key ? 'active' : '')"
+        (click)="selectTab(tab.key, tab.route)">
+        {{ tab.label }}
+      </button>
+    </nav>
+  </div>
+</div>

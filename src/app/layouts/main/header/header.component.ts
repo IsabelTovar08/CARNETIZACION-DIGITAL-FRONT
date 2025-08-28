@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationStateService } from '../../../core/Services/navigation-state/navigation-state.service';
 import { GenericNotificationComponent } from '../../../shared/components/generic-notification/generic-notification.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -28,13 +29,15 @@ export class HeaderComponent implements OnInit {
 
   @ViewChild('notificationTrigger') notificationTrigger!: ElementRef;
 
-  constructor(private navState: NavigationStateService) { }
+  constructor(private router: Router,private navState: NavigationStateService) { }
 
   ngOnInit(): void {
     this.navState.pathTitles$.subscribe(path => {
       this.breadcrumbPath = path;
     });
   }
+
+
 
   onToggleMenu() {
     this.toggleMenu.emit();
@@ -51,6 +54,10 @@ export class HeaderComponent implements OnInit {
       document.body.style.overflow = 'auto';
     }
   }
+
+  goToProfile() {
+  this.router.navigate(['/feature/profileUser/profile']);
+}
 
   closeNotifications() {
     this.showNotifications = false;

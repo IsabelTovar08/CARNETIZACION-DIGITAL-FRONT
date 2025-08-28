@@ -28,7 +28,7 @@
         <span class="notification-badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
       </div>
       
-      <div class="perfil">
+      <div class="perfil" (click)="goToProfile()">
         <span class="perfil-name">Camilo Charry</span>
         <img src="/assets/perfiles/perfil.png" alt="Perfil" class="perfil-img">
       </div>
