@@ -131,7 +131,7 @@ export class FormPErsonComponent {
 
   getCytie(id: number) {
     this.ubicationService.GetCytiesByDeparment(id).subscribe((data) => {
-      this.cities = data;
+      this.cities = data.data;
     })
   }
 

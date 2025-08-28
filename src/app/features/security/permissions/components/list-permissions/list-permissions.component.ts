@@ -40,7 +40,7 @@ export class ListPermissionsComponent implements OnInit {
 
   cargarData() {
     this.apiService.ObtenerTodo('Permission').subscribe((data) => {
-      this.listPermission = data
+      this.listPermission = data.data as Permission[]
     })
   }
 

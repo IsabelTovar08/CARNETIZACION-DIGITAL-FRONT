@@ -45,7 +45,7 @@ export class ListModulesComponent implements OnInit {
 
   cargarData() {
     this.apiService.ObtenerTodo('Module').subscribe((data) => {
-      this.listModule = data;
+      this.listModule = data.data as Module[];
     })
   }
 

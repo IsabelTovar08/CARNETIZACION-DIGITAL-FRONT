@@ -43,7 +43,7 @@ export class ListMenuStructureComponent implements OnInit {
   }
   ngOnInit(): void {
     this.menuService.ObtenerTodo('MenuStructure').subscribe((data) => {
-      this.raw = data;
+      this.raw = data.data as MenuItem[];
     })
   }
 

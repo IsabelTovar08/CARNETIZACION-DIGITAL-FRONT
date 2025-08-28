@@ -85,9 +85,8 @@ export class ListUsersComponent implements OnInit {
     this.dataService.getRoles();
   }
   openModal(user: UserList) {
-    let item: PersonList;
     this.personService.ObtenerPorId('Person', user.personId).subscribe((response) => {
-      item = response;
+      let item = response.data;
       this.dialog.open(TargetPersonComponent, {
         disableClose: true,
         width: '800px',

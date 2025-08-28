@@ -47,7 +47,7 @@ export class ListRolesComponent implements OnInit {
 
   cargarData() {
     this.apiService.ObtenerTodo('Rol').subscribe((data) => {
-      this.listRoles = data;
+      this.listRoles = data.data as Role[];
     })
   }
 

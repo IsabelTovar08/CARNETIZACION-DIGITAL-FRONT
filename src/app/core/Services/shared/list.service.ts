@@ -1,6 +1,6 @@
 import { CityList } from './../../Models/parameter/ubication.models';
 import { Injectable } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
+import { map, Observable, shareReplay } from 'rxjs';
 import { CustomTypeService } from '../api/customType/custom-type.service';
 import { UbicationService } from '../api/ubication/ubication.service';
 import { CustomTypeSpecific } from '../../Models/parameter/custom-type.models';
@@ -48,21 +48,29 @@ export class ListService {
 
   getdeparments(forceReload: boolean = false): Observable<any[]> {
     if (forceReload || !this.deparments$) {
-      this.deparments$ = this.ubicationService
+       this.deparments$ = this.ubicationService
         .GetDeparments()
-        .pipe(shareReplay(1));
+         .pipe(
+        map((res) => res.data ?? []),
+        shareReplay(1) // cachear la última emisión
+      );
+
+
     }
     return this.deparments$;
   }
 
-  getcities(forceReload: boolean = false): Observable<any[]> {
-    if (forceReload || !this.cities$) {
-      this.cities$ = this.ubicationService
-        .GetCities()
-        .pipe(shareReplay(1));
-    }
-    return this.cities$;
+  getCities(forceReload: boolean = false): Observable<CityList[]> {
+  if (forceReload || !this.cities$) {
+    this.cities$ = this.ubicationService
+      .GetCities() //
+      .pipe(
+        map((res) => res.data ?? []),
+        shareReplay(1) // cachear la última emisión
+      );
   }
+  return this.cities$;
+}
 
   // getorganizationalUnits(forceReload: boolean = false): Observable<any[]> {
   //   if (forceReload || !this.organizationunit$) {

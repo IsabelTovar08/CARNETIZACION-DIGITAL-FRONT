@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { FromModel } from '../../../../../core/Models/security/form.models';
 import { Module } from '../../../../../core/Models/security/module.models';
 import { DataService } from '../../../../../core/Services/shared/data.service';
 import { MatIconModule } from "@angular/material/icon";
+import { ApiResponse } from '../../../../../core/Models/api-response.models';
 
 @Component({
   selector: 'app-list-forms',
@@ -18,7 +19,7 @@ import { MatIconModule } from "@angular/material/icon";
     CommonModule,
     GenericTableComponent,
     MatIconModule
-],
+  ],
   templateUrl: './list-forms.component.html',
   styleUrl: './list-forms.component.css'
 })
@@ -40,19 +41,18 @@ export class ListFormsComponent implements OnInit {
     this.cargarData();
   }
 
-  displayedColumns: string[] = ['icon','name', 'description', 'url', 'moduleName', 'isDeleted', 'actions'];
+  displayedColumns: string[] = ['icon', 'name', 'description', 'url', 'moduleName', 'isDeleted', 'actions'];
 
   cargarData() {
-    // this.apiService.ObtenerTodo('Form').subscribe((data) => {
-    //   this.listForms = data;
-    // })
     this.dataService.forms$.subscribe(data => this.listForms = data);
     this.dataService.getForms();
   }
-
-  cargarModules(): Observable<Module[]> {
-    return this.apiService.ObtenerTodo('Module');
+  cargarModules(): Observable<FromModel[]> {
+    return this.apiService.ObtenerTodo('Module').pipe(
+      map((res) => (res.data as FromModel[]) ?? [])
+    );
   }
+
 
   openModal(item?: FromModel) {
     this.cargarModules().subscribe((modules) => {

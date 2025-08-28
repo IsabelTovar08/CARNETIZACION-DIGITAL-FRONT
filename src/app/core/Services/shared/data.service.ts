@@ -52,36 +52,36 @@ export class DataService {
 
   getPeople() {
     this.personService.ObtenerTodo('Person')
-      .subscribe(data => this.personasSubject.next(data));
+      .subscribe(data => this.personasSubject.next(data.data));
   }
 
   getUsers() {
     this.userService.ObtenerTodo('User')
-      .subscribe(data => this.usuariosSubject.next(data));
+      .subscribe(data => this.usuariosSubject.next(data.data));
   }
 
   getRoles() {
    this.roleService.ObtenerTodo('Rol')
-      .subscribe(data => this.rolesSubject.next(data));
+      .subscribe(data => this.rolesSubject.next(data.data));
   }
 
   getModules() {
    this.moduleService.ObtenerTodo('Module')
-      .subscribe(data => this.modulesSubject.next(data));
+      .subscribe(data => this.modulesSubject.next(data.data));
   }
 
   getForms() {
    this.formService.ObtenerTodo('Form')
-      .subscribe(data => this.formsSubject.next(data));
+      .subscribe(data => this.formsSubject.next(data.data));
   }
 
   getPermissions() {
    this.permissionService.ObtenerTodo('Permission')
-      .subscribe(data => this.permissionsSubject.next(data));
+      .subscribe(data => this.permissionsSubject.next(data.data));
   }
 
   getRoleFormPermissions() {
    this.rfpermissionService.getAllPermissions()
-      .subscribe(data => this.roleFormPermissionsSubject.next(data));
+      .subscribe(data => this.roleFormPermissionsSubject.next(data.data));
   }
 }

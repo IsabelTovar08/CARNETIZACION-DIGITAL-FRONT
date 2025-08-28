@@ -45,7 +45,7 @@ export class ListCitiesComponent {
   }
 
   cargarData(reload: boolean) {
-    this.listService.getcities(reload).subscribe(data => this.listCityList = data);
+    this.listService.getCities(reload).subscribe(data => this.listCityList = data);
   }
 
   recargarLista() {

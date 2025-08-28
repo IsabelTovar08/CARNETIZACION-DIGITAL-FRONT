@@ -37,7 +37,7 @@ export class ListEventTypesComponent {
 
   cargarData() {
     this.apiService.ObtenerTodo('EventType').subscribe((data) => {
-      this.listEventType = data
+      this.listEventType = data.data as EventType[]
     })
   }
 

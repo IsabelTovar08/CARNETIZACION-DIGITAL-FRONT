@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
 import { Observable } from 'rxjs';
 import { RoleFormPermisionsRequest } from '../../../Models/security/role.models';
+import { ApiResponse } from '../../../Models/api-response.models';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,8 @@ export class RolFormPermissionService extends ApiService<RolFormPermissionsCreat
     super(http, wrapper);
   }
 
-  public getAllPermissions(): Observable<RolFormPermissionsList[]> {
-    return this.wrapper.handleRequest(this.http.get<RolFormPermissionsList[]>(`${this.urlBase}/RolFormPermission/all`));
+  public getAllPermissions(): Observable<ApiResponse<RolFormPermissionsList[]>> {
+    return this.wrapper.handleRequest(this.http.get<ApiResponse<RolFormPermissionsList[]>>(`${this.urlBase}/RolFormPermission/all`));
   }
 
   public savePermissions(request: RoleFormPermisionsRequest) {

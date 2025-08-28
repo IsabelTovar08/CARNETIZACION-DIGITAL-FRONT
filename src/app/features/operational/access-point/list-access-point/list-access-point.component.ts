@@ -1,6 +1,6 @@
+import { AccessPointDto } from './../../../../core/Models/operational/event.model';
 import { Component } from '@angular/core';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
-import { AccessPointDto } from '../../../../core/Models/operational/event.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../core/Services/api/api.service';
@@ -25,7 +25,7 @@ export class ListAccessPointComponent {
   ) { }
   ngOnInit(): void {
     this.apiService.ObtenerTodo('AccessPoint').subscribe((data) => {
-      this.accessPoints = data;
+      this.accessPoints = data.data as AccessPointDto[];
     })
   }
 

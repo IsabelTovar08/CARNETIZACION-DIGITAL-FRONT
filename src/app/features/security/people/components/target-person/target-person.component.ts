@@ -81,12 +81,12 @@ export class TargetPersonComponent {
     this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
     this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
     this.listService.getdeparments().subscribe(data => this.deparments = data);
-    this.listService.getcities().subscribe(data => this.cities = data);
+    this.listService.getCities().subscribe(data => this.cities = data);
   }
 
   getCytie(id: number) {
     this.ubicationService.GetCytiesByDeparment(id).subscribe((data) => {
-      this.cities = data;
+      this.cities = data.data;
       console.log(data)
     })
   }

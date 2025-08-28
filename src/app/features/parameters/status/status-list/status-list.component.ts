@@ -36,7 +36,7 @@ export class StatusListComponent {
 
   cargarData() {
     this.apiService.ObtenerTodo('Status').subscribe((data) => {
-      this.listStatus = data;
+      this.listStatus = data.data as Status[];
     })
   }
 

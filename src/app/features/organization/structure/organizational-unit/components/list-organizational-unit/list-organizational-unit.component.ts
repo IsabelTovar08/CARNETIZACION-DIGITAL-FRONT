@@ -39,7 +39,7 @@ export class ListUnidadOrganizativaComponent {
 
   cargarData(reload: boolean ) {
     this.apiService.ObtenerTodo('OrganizationalUnit').subscribe((data) => {
-      this.listOrganization = data;
+      this.listOrganization = data.data as OrganizationalUnit[];
     })
   }
 

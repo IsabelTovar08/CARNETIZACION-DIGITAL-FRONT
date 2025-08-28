@@ -32,7 +32,7 @@ export class ListEventsComponent implements OnInit {
   }
   ngOnInit(): void {
     this.apiService.ObtenerTodo('Event').subscribe((data) => {
-      this.listEvents = data;
+      this.listEvents = data.data as Event[];
       this.listEvents = this.listEvents.map(this.toCardItem);
     })
   }

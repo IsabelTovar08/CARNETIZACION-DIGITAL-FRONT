@@ -47,8 +47,8 @@ export class ListTypeCategoryComponent implements OnInit {
       this.typeCService.ObtenerTodo('TypeCategory'),
       this.ctService.ObtenerTodo('CustomType')
     ]).subscribe(([categories, types]) => {
-      this.listCategories = categories;
-      this.listTypes = types;
+      this.listCategories = categories.data as TypeCategory[];
+      this.listTypes = types.data as CustomTypeList[];
 
       this.listCategories.forEach(cat => {
         cat.types = this.listTypes.filter(t => t.typeCategoryId === cat.id);
