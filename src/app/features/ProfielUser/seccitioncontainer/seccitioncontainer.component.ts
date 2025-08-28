@@ -11,6 +11,6 @@ import { HeaderSeccionComponent } from '../header-seccion/header-seccion.compone
 })
 export class SeccitioncontainerComponent {
 constructor() {
-    console.log('SeccitioncontainerComponent loaded'); // Línea temporal
+   
   }
 }
