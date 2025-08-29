@@ -1,0 +1,8 @@
+.ingresar-container {
+  height: 100%;
+  overflow: hidden;
+  background: url('/assets/fondo-login.png') center/cover no-repeat;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}

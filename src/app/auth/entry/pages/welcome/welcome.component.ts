@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-ingresar',
+  selector: 'app-welcome',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css']
 })
-export class IngresarComponent {
+export class WelcomeComponent {
 
   isContactModalOpen = false;
 

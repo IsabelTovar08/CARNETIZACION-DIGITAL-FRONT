@@ -1,3 +1,4 @@
+import { authRoutes } from './auth.routers';
 // ./auth/auth.routes.ts
 import { Routes } from "@angular/router";
 import { LoginComponent } from "./entry/pages/general-login/login/login.component";
@@ -10,15 +11,21 @@ import { InicioComponent } from "./entry/pages/start/start.component";
 import { CharacteristicsComponent } from "./entry/pages/characteristics/characteristics.component";
 import { AboutCompanyComponent } from "./entry/pages/about-company/about-company.component";
 import { LoginCodeComponent } from "./entry/pages/general-login/login-code/login-code.component";
-import { WelcomeComponent } from "./entry/pages/welcome/welcome.component";
 
-export const authRoutes: Routes = [
+export const landingRoutes: Routes = [
+  {
+    path: '',
+    component: EntryNavComponent,
+    children: [
+      { path: 'start', component: InicioComponent },
+      { path: 'contact', component: ContactComponent },
+      { path: 'characteristics', component: CharacteristicsComponent },
+      { path: 'about', component: AboutCompanyComponent },
+      {
+        path: 'auth', loadChildren: () =>
+          import('./auth.routers').then(m => m.authRoutes)
+      }
 
-  { path: '', component: WelcomeComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'forgotten-password', component: ForgottenPasswordComponent },
-  { path: 'recuperation-code', component: RecuperationCodeComponent },
-  { path: 'login-code', component: LoginCodeComponent },
-  { path: 'new-password', component: NewPasswordComponent },
-
+    ]
+  }
 ];
