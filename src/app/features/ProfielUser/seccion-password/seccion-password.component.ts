@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-seccion-password',
@@ -16,7 +17,10 @@ export class SeccionPasswordComponent {
   showNewPassword = false;
   showConfirmPassword = false;
 
-  constructor() {
+  constructor(
+        private snackbarService: SnackbarService,
+    
+  ) {
      
     this.passwordForm = this.fb.group({
       contrasenaActual: ['', [Validators.required, Validators.minLength(6)]],
@@ -62,7 +66,8 @@ export class SeccionPasswordComponent {
     if (this.passwordForm.valid) {
       console.log('Contraseña cambiada:', this.passwordForm.value);
       // Aquí iría la lógica para cambiar la contraseña
-      alert('Contraseña cambiada exitosamente');
+        this.snackbarService.showSuccess("Contraseña cambiada exitosamente");
+
       this.passwordForm.reset();
     } else {
       console.log('Formulario inválido');

@@ -1,132 +1,142 @@
-.profile-header-container {
-  background:  #ffffff;
-  opacity: 0.9;
-  color: rgb(0, 0, 0);
-  padding: 2rem 0;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+:root{
+  --banner-h: 80px;   /* alto del banner */
+  --ring: 4px;         /* grosor del aro del avatar */
 }
 
-.header-img-container {
-  width: 100%;
-  height: 200px;
-  overflow: hidden; /* evita que sobresalga */
-  border-radius: 12px 12px 0 0;
-  line-height: 0;
-}
 
-.header-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block; /* quita espacios raros debajo de img */
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 30px;
-  height: 40%;
-  padding: 0 2rem;
+.profile-card{
+  position: relative;
   border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,.1);
+  overflow: hidden; /* limpia las esquinas del banner */
 }
 
-.main-title {
-   font-size: 40px;
-    font-weight: 600;
-    color: #000f73;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.perfil-img {
-    width: 86px;
-    height: 86px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 2px solid #e5e7eb;
-    transition: all 0.3s ease;
-    margin-bottom: 8px;
-  }
 
-.subtitle {
-  font-size: 1.3rem;
-  color: #000000;
-  opacity: 0.9;
+.banner{
+  height: 500px;
+  line-height: 0;
+  position: relative;
+}
+.banner-img{
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/*  Avatar  */
+.perfil-img.avatar{
+  position: absolute;
+  top:199px;                              
+  left: 6%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 2;
+  border: var(--ring) solid #fff;             
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+
+
+.content{
+
+  padding: calc(var(--avatar)/4 + 2rem) 4rem 4rem;
+  background: #ffffff;
+  margin-top: -185px;
+}
+.header-content{
+  max-width: 1200px;
+  margin: 0 19px auto;
+}
+.header-content > :first-child{ margin-top: 0; } /* evita salto por margen superior */
+
+
+.main-title{
+  font-size: 35px;
+  font-weight: 600;
+  color: #000f73;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.subtitle{
+  font-size: 20px;
+  color: #000;
+  opacity: .9;
   margin: 0 0 2rem 0;
   font-weight: 300;
 }
 
-.tab-navigation {
+.tab-navigation{
   display: flex;
   gap: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.1);
   border-radius: 12px;
   width: fit-content;
   padding: 4px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0,0,0,0.08);
 }
-
-.tab-button {
+.tab-button{
   background: transparent;
   border: none;
-  color: rgb(0, 0, 0);
+  color: #000;
   padding: 0.8rem 1.5rem;
   cursor: pointer;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all .3s ease;
   position: relative;
-  flex: 1;
   text-align: center;
 }
-
-.tab-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.tab-button:hover{
+  background: rgba(0,0,0,0.04);
   transform: translateY(-1px);
 }
-
-.tab-button.active {
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.tab-button.active{
+  background: rgba(0,0,0,0.06);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
   transform: translateY(-2px);
 }
-
-.tab-button.active::before {
+.tab-button.active::before{
   content: '';
   position: absolute;
   bottom: -4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 20px;
+  width: 65px;
   height: 3px;
   background: #667eea;
   border-radius: 2px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .header-img-container {
-    height: 150px;
+/* Responsive  */
+
+@media (max-width: 1024px){
+  .content{ padding: 1px }
+  .banner-img{ height: 40%; }
+  .perfil-img.avatar{
+    width: 80px;
+    top: 170px;
+    left: 8%;
   }
-  .header-content {
-    padding: 0 1rem;
+
+  .main-title{ font-size: 2.2rem; }
+  .main-title{ font-size: 2.5rem; }
+  .tab-button{ padding: 0.75rem 1.25rem; font-size: 1rem; }
+}
+@media (max-width: 768px){
+  :root{
+    --banner-h: 80px;
+    --avatar: 20px;
   }
-  
-  .main-title {
-    font-size: 2rem;
-  }
-  
-  .tab-navigation {
-    flex-direction: row;
-  }
-  
-  .tab-button {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
+  .content{ padding: calc(var(--avatar)/2 + .75rem) 1rem 1.5rem; }
+  .main-title{ font-size: 2rem; }
+  .tab-button{ padding: 0.7rem 1rem; font-size: 0.95rem; }
 }

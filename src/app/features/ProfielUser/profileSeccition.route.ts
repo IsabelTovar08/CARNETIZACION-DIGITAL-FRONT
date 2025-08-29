@@ -9,8 +9,8 @@ export const profileSeccitionRoutes: Routes = [
     component: SeccitioncontainerComponent,
     children: [
       { 
-        path: '', redirectTo: 'profile', pathMatch: 'full' },
-      { path: 'profile', component: SeccionPerfilComponent },
+        path: '', redirectTo: 'me', pathMatch: 'full' },
+      { path: 'me', component: SeccionPerfilComponent },
       { path: 'password', component: SeccionPasswordComponent  }
     ]
   }

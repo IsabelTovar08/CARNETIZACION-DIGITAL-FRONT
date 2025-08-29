@@ -56,7 +56,7 @@ export class HeaderComponent implements OnInit {
   }
 
   goToProfile() {
-  this.router.navigate(['/feature/profileUser/profile']);
+  this.router.navigate(['/dashboard/perfil/me']);
 }
 
   closeNotifications() {
@@ -64,7 +64,6 @@ export class HeaderComponent implements OnInit {
     document.body.style.overflow = 'auto';
   }
 
-  // Cerrar al hacer clic fuera (opcional, ya manejado por el overlay)
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     // Comentado para usar overlay en su lugar

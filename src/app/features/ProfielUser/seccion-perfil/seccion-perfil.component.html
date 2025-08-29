@@ -1,10 +1,16 @@
 <div class="perfil-container">
   <div class="form-card">
     <h2>Mi Perfil</h2>
+    <button class="edit" >
+      <!-- (click)="toggleEditMode()" [disabled]="isEditMode" -->
+      <mat-icon>edit</mat-icon>
+      <span>Modo Edición</span>
+    </button>
+
     <p class="form-description">Actualiza tu información personal</p>
+    
 
     <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
-      <!-- Nombre y Primer Apellido en la misma fila -->
       <div class="form-row">
         <div class="form-group">
           <label for="nombre">Nombre *</label>
@@ -83,7 +89,7 @@
           class="reset-btn"
           (click)="resetForm()"
         >
-          Resetear
+          Cancelar
         </button>
         <button 
           type="submit" 
