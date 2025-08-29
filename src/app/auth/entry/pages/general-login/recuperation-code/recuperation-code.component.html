@@ -19,23 +19,9 @@
           <strong>"examplegmail.com"</strong>:
         </p>
 
-        <div class="code-inputs">
-          @for (input of codeInputs(); track $index) {
-            <input
-              type="text"
-              maxlength="1"
-              class="code-digit"
-              [(ngModel)]="input.value"
-              (input)="onInputChange($index, $event)"
-              (keydown)="onKeyDown($index, $event)"
-              (paste)="onPaste($event)"
-            />
-          }
-        </div>
+       
 
-        <button class="continue-btn" [disabled]="!isCodeComplete()" (click)="onContinue()">
-          Continuar
-        </button>
+       
         <button class="resend-btn" (click)="reenviarCodigo()">Reenviar</button>
       </div>
     </div>

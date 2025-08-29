@@ -135,6 +135,15 @@ img.rounded-circle:hover {
   position: relative;
 }
 
+.chart-wrapper {
+  position: relative;
+  height: 280px;  /* Ajusta según quieras */
+}
+
+.notifications-list {
+  max-height: 420px;
+}
+
 .card > h5::after {
   content: '';
   position: absolute;

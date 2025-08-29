@@ -23,6 +23,7 @@ export const routes: Routes = [
       { path: 'organizational', loadChildren: () => import('./features/organization/organizational.routes').then(m => m.organizationalRoutes), },
       { path: 'seguridad', loadChildren: () => import('./features/security/security.routes').then(m => m.securityRoutes), },
       { path: 'parametros', loadChildren: () => import('./features/parameters/parameter.routes').then(m => m.parameterRoutes), },
+      { path: 'perfil', loadChildren: () => import('./features/ProfielUser/profileSeccition.route').then(m => m.profileSeccitionRoutes)},
 
     ]
   },

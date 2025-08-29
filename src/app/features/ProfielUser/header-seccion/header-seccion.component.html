@@ -1,0 +1,27 @@
+<div class="profile-card">
+  <!-- Banner -->
+  <div class="banner">
+    <img src="/assets/fondo-perfil4.jpg" alt="Banner del perfil" class="banner-img">
+  </div>
+
+  <!-- Avatar centrado y sobresaliente -->
+  <img src="/assets/perfiles/perfil.png" alt="Perfil" class="perfil-img avatar">
+
+  <!-- Contenido -->
+  <div class="content">
+    <div class="header-content">
+      <h1 class="main-title">Camilo Charry</h1>
+      <p class="subtitle">Administra tu información personal</p>
+
+      <nav class="tab-navigation">
+        <button
+          *ngFor="let tab of tabs"
+          class="tab-button"
+          [class.active]="activeTab === tab.key"
+          (click)="selectTab(tab.key, tab.route)">
+          {{ tab.label }}
+        </button>
+      </nav>
+    </div>
+  </div>
+</div>

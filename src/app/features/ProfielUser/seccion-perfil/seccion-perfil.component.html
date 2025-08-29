@@ -1,0 +1,104 @@
+<div class="perfil-container">
+  <div class="form-card">
+    <h2>Mi Perfil</h2>
+    <button class="edit" >
+      <!-- (click)="toggleEditMode()" [disabled]="isEditMode" -->
+      <mat-icon>edit</mat-icon>
+      <span>Modo Edición</span>
+    </button>
+
+    <p class="form-description">Actualiza tu información personal</p>
+    
+
+    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input 
+            id="nombre" 
+            type="text" 
+            formControlName="nombre"
+            [class.error]="perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched"
+            placeholder="Ingresa tu nombre"
+          />
+          <div class="error-message" *ngIf="getFieldError('nombre')">
+            {{ getFieldError('nombre') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="primerApellido">Primer Apellido *</label>
+          <input 
+            id="primerApellido" 
+            type="text" 
+            formControlName="primerApellido"
+            [class.error]="perfilForm.get('primerApellido')?.invalid && perfilForm.get('primerApellido')?.touched"
+            placeholder="Ingresa tu primer apellido"
+          />
+          <div class="error-message" *ngIf="getFieldError('primerApellido')">
+            {{ getFieldError('primerApellido') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Segundo Apellido -->
+      <div class="form-group">
+        <label for="segundoApellido">Segundo Apellido</label>
+        <input 
+          id="segundoApellido" 
+          type="text" 
+          formControlName="segundoApellido"
+          placeholder="Ingresa tu segundo apellido (opcional)"
+        />
+      </div>
+
+      <!-- Email y Teléfono en la misma fila -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Correo Electrónico *</label>
+          <input 
+            id="email" 
+            type="email" 
+            formControlName="email"
+            [class.error]="perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched"
+            placeholder="correo@ejemplo.com"
+          />
+          <div class="error-message" *ngIf="getFieldError('email')">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input 
+            id="telefono" 
+            type="tel" 
+            formControlName="telefono"
+            [class.error]="perfilForm.get('telefono')?.invalid && perfilForm.get('telefono')?.touched"
+            placeholder="+57 301 234 5678"
+          />
+          <div class="error-message" *ngIf="getFieldError('telefono')">
+            {{ getFieldError('telefono') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="reset-btn"
+          (click)="resetForm()"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="submit-btn"
+          [disabled]="perfilForm.invalid"
+        >
+          Actualizar Perfil
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

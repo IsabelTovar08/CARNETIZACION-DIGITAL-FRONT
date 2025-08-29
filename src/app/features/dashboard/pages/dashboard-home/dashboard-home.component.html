@@ -64,34 +64,46 @@
 
   <!-- Gráfico eventos -->
 <!-- Contenedor flex para gráfico y notificaciones -->
-<div class="graphs-notifications-container d-flex mb-4" style="gap: 2rem;">
+<div class="row g-3 align-items-stretch">
 
-  <!-- Gráfico eventos (2/3 del ancho) -->
-  <div class="card shadow-sm p-3 chart-card flex-grow-2" style="flex: 2;">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="fw-bold mb-0">500 <small class="text-success fw-semibold">+5%</small></h4>
-      <h5 class="mb-0">Total</h5>
+   <div class="row g-3 align-items-stretch">
+  <!-- Gráfico eventos -->
+  <div class="col-12 col-md-8">
+    <div class="card shadow-sm p-3 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">
+          500 <small class="text-success fw-semibold">+5%</small>
+        </h4>
+        <h5 class="mb-0">Total</h5>
+      </div>
+
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="eventsChartData"
+          [options]="horizontalBarChartOptions"
+          [type]="'bar'">
+        </canvas>
+      </div>
     </div>
-    <canvas baseChart
-      [data]="eventsChartData"
-      [options]="horizontalBarChartOptions"
-      [type]="'bar'">
-    </canvas>
   </div>
 
-  <!-- Notificaciones recientes (1/3 del ancho) -->
-  <div class="card shadow-sm p-3 notifications-card" style="flex: 1;">
-    <h5 class="mb-3 fw-bold">Notificaciones Recientes</h5>
-    <ul class="list-unstyled">
-      <li *ngFor="let notif of notifications" class="d-flex align-items-center mb-3">
-        <img [src]="notif.avatar" class="rounded-circle me-3" width="48" height="48" alt="avatar" />
-        <div>
-          <strong>Usuario: {{notif.name}}</strong><br />
-          <small class="text-muted">{{notif.message}}</small>
-        </div>
-      </li>
-    </ul>
+  <!-- Notificaciones -->
+  <div class="col-12 col-md-4">
+    <div class="card shadow-sm p-3 h-100 d-flex">
+      <h5 class="mb-3 fw-bold">Notificaciones Recientes</h5>
+      <ul class="list-unstyled flex-grow-1 overflow-auto notifications-list">
+        <li *ngFor="let notif of notifications" class="d-flex align-items-center mb-3">
+          <img [src]="notif.avatar" class="rounded-circle me-3 flex-shrink-0" width="48" height="48" alt="avatar" />
+          <div class="min-w-0">
+            <strong class="d-block text-truncate">Usuario: {{ notif.name }}</strong>
+            <small class="text-muted d-block text-truncate">{{ notif.message }}</small>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
+</div>
 
 </div>
 
