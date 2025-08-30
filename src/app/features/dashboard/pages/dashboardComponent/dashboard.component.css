@@ -1,9 +1,13 @@
 .dashboard-container {
   height: 100vh;
   display: flex;
-  /* flex-direction: column; */
   background-color: transparent !important;
+  background-image: url('./../../../../../assets/fondo-dasboard.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-opened.mat-drawer-side {
     background: transparent;
 }

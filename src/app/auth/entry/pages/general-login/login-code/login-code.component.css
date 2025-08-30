@@ -1,9 +1,7 @@
 .verification-container {
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url('/assets/fondo-login.png') center/cover no-repeat;
 }
 
 .verification-card {

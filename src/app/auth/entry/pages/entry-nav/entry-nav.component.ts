@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { AuthNavbarComponent } from '../auth-navbar/auth-navbar.component.component'; // ajusta ruta si es necesario
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs';
+import { AuthNavbarComponent } from "../auth-navbar/auth-navbar.component.component";
 
 @Component({
   selector: 'app-entry-nav',
@@ -10,5 +11,13 @@ import { AuthNavbarComponent } from '../auth-navbar/auth-navbar.component.compon
   styleUrl: './entry-nav.component.css'
 })
 export class EntryNavComponent {
+  isAuthRoute = false;
 
+   constructor(private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.isAuthRoute = event.url.includes('/auth');
+      });
+  }
 }
