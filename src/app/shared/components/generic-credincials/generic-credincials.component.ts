@@ -1,13 +1,16 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, OnChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-generic-credincials',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './generic-credincials.component.html',
   styleUrl: './generic-credincials.component.css'
 })
-export class GenericCredincialsComponent  implements OnInit, OnDestroy {
-@Input() isOpen = false;
+export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() isOpen = false;
   @Input() modalTitle = 'Validar Credenciales';
   @Input() modalSubtitle = 'Ingresa tu contraseña para continuar';
   @Input() userEmail = '';
@@ -19,7 +22,7 @@ export class GenericCredincialsComponent  implements OnInit, OnDestroy {
   showPassword = false;
   error = '';
   isValidating = false;
-  //validationSuccess = false;
+  // validationSuccess = false; // Comentado hasta tener el servicio
 
   ngOnInit() {
     if (this.isOpen) {
@@ -48,29 +51,16 @@ export class GenericCredincialsComponent  implements OnInit, OnDestroy {
     this.isValidating = true;
     this.error = '';
 
-    try {
-      // Simular validación (reemplazar por la logica)
-      await this.simulateValidation();
-      
-      if (this.password === 'demo123') {
-        //this.validationSuccess = true;
-        this.validationSuccess.emit(this.password);
-        setTimeout(() => {
-          this.handleClose();
-          this.resetModal();
-        }, 1500);
-      } else {
-        this.error = 'Contraseña incorrecta. Intenta nuevamente.';
-      }
-    } catch (error) {
-      this.error = 'Error al validar credenciales. Intenta nuevamente.';
-    } finally {
+    // Simular un pequeño delay para mostrar el loading
+    setTimeout(() => {
       this.isValidating = false;
-    }
-  }
-
-  private async simulateValidation(): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Por ahora simplemente emitimos el evento con la contraseña ingresada
+      // Cuando tengas el servicio, aquí harías la validación real
+      this.validationSuccess.emit(this.password);
+      this.handleClose();
+      this.resetModal();
+    }, 1000); // Delay de 1 segundo para mostrar el spinner
   }
 
   togglePasswordVisibility() {
@@ -97,7 +87,7 @@ export class GenericCredincialsComponent  implements OnInit, OnDestroy {
   private resetModal() {
     this.password = '';
     this.error = '';
-    //this.validationSuccess = false;
+    // this.validationSuccess = false; // Comentado hasta tener el servicio
     this.isValidating = false;
     this.showPassword = false;
     document.body.style.overflow = 'auto';

@@ -2,11 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+
 
 @Component({
   selector: 'app-header-seccion',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule, MatTooltip],
   templateUrl: './header-seccion.component.html',
   styleUrl: './header-seccion.component.css'
 })
@@ -14,8 +17,8 @@ export class HeaderSeccionComponent {
   activeTab: string = 'profile';
 
   tabs = [
-    { key: 'profile', label: 'Perfil', route: '/dashboard/seccion-perfil/profile' },
-    { key: 'password', label: 'Contraseña', route: '/dashboard/seccion-perfil/password' }
+    { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' },
+    { key: 'password', label: 'Contraseña', route: '/dashboard/perfil/password' }
   ];
 
   constructor(private router: Router) {
