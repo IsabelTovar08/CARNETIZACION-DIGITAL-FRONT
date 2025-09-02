@@ -6,6 +6,7 @@ import { NewPasswordComponent } from "./entry/pages/general-login/new-password/n
 import { LoginCodeComponent } from "./entry/pages/general-login/login-code/login-code.component";
 import { WelcomeComponent } from "./entry/pages/welcome/welcome.component";
 
+
 export const authRoutes: Routes = [
 
   { path: '', component: WelcomeComponent },

@@ -1,6 +1,6 @@
 import { GenericModel } from "./generic.model";
 
-export interface OrganizationalUnit extends GenericModel{
+export interface OrganizationalUnitList extends GenericModel{
     divisionsCount: number;
     branchesCount: number;
 }

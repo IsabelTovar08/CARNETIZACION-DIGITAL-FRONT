@@ -1,0 +1,16 @@
+<app-generic-table
+  [title]="'Jornadas'"
+  *ngIf="listSchedule"
+  [dataSourceInput]="listSchedule"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'startTime', label: 'Hora de Inicio' },
+      { key: 'endTime', label: 'Hora de Fin' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>
