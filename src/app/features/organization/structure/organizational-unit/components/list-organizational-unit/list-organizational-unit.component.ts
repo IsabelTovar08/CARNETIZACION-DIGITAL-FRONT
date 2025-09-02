@@ -1,104 +1,67 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { GenericTableComponent } from '../../../../../../shared/components/generic-table/generic-table.component';
-import { Observable } from 'rxjs';
-import { ApiService } from '../../../../../../core/Services/api/api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { MatIconModule } from "@angular/material/icon";
+import { MatMenuModule } from "@angular/material/menu";
+import { GenericListCardComponent } from "../../../../../../shared/components/generic-list-card/generic-list-card.component";
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ApiService } from '../../../../../../core/Services/api/api.service';
 import { SnackbarService } from '../../../../../../core/Services/snackbar/snackbar.service';
-import { GenericFormComponent } from '../../../../../../shared/components/generic-form/generic-form.component';
-import { OrganizationalUnit } from '../../../../../../core/Models/organization/organizationalUnit.models';
+
+import { OrganizationalUnitCreate, OrganizationalUnitList } from '../../../../../../core/Models/organization/organizationalUnit.models';
 
 @Component({
-  selector: 'app-list-unidad-organizativa',
-  imports: [CommonModule, GenericTableComponent],
+  selector: 'app-list-organizational-unit',
+  imports: [MatIconModule, MatMenuModule, GenericListCardComponent, MatButtonModule],
   templateUrl: './list-organizational-unit.component.html',
-  styleUrls: ['./list-organizational-unit.component.css']
+  styleUrl: './list-organizational-unit.component.css'
 })
-export class ListUnidadOrganizativaComponent {
-
-  listOrganization!: OrganizationalUnit[];
-  displayedColumns: string[] = ['name', 'description', 'divisionsCount', 'branchesCount', 'actions'];
+export class ListOrganizationalUnitComponent implements OnInit {
+  // Igual que en Events: el dataSource que se pasa ya mapeado a card items
+  listUnits: any[] = [];
 
   constructor(
-    private apiService: ApiService<OrganizationalUnit, OrganizationalUnit>,
+    private apiService: ApiService<OrganizationalUnitCreate, OrganizationalUnitList>,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
   ) {}
 
   ngOnInit(): void {
-    this.cargarData(false);
-    this.route.url.subscribe(segments => {
-      const isCreate = segments.some(s => s.path === 'create');
-      if (isCreate) {this.openModal();
-     }
+    this.apiService.ObtenerTodo('OrganizationalUnit').subscribe((resp) => {
+      const data = (resp?.data ?? []) as OrganizationalUnitList[];
+      this.listUnits = data.map(this.toCardItem);
     });
   }
 
-  cargarData(reload: boolean ) {
-    this.apiService.ObtenerTodo('OrganizationalUnit').subscribe((data) => {
-      this.listOrganization = data.data as OrganizationalUnit[];
-    })
-  }
+  private toCardItem = (e: OrganizationalUnitList): any => {
+    const { id, name, description, isDeleted, ...rest } = e;
+    
+    const divisionsCount = e.divisionsCount ?? 0;
+    const branchesCount = e.branchesCount ?? 0;
 
-  recargarLista(){
-    this.cargarData(true)
-  }
+    return {
+      ...rest,
+      id,
+      title: name ?? 'Unidad Organizativa',
+      subtitle: `${divisionsCount} División${divisionsCount === 1 ? '' : 'es'}, ${branchesCount} Sucursal${branchesCount === 1 ? '' : 'es'}`,
+      description: description ?? 'Sin descripción.',
+      tags: ['Sin estado', 'General'],
+      imageUrl: 'https://www.anahuac.mx/mexico/sites/default/files/styles/webp/public/noticias/Empresas-mas-innovadores-en-el-mundo.jpg.webp?itok=jy4fPHsa',
+      isDeleted: !!isDeleted,
+    };
+  };
 
-  openModal(item?: OrganizationalUnit) {
-    const dialogRef = this.dialog.open(GenericFormComponent, {
-      disableClose: true,
-      width: '400px',
-      data: {
-        title: item ? 'Editar' : 'Crear',
-        item
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result){
-        if(item){
-          this.add(result, item.id);
-        }else{
-          this.add(result);
-        }
-      }
-
-      this.router.navigate(['./'], { relativeTo: this.route });
-    });
-  }
-
-  add(OrganizationalUnit: OrganizationalUnit, id?: number) {
-    if (id) {
-      this.apiService.update('OrganizationalUnit', OrganizationalUnit).subscribe(() => {
-            this.recargarLista();
-            this.snackbarService.showSuccess();
-          })
-    }
-    else {
-      this.apiService.Crear('OrganizationalUnit', OrganizationalUnit).subscribe(() => {
-          this.recargarLista();
-          this.snackbarService.showSuccess();
-        })
-    }
-  }
-
-  save(data?: OrganizationalUnit) {
-     this.openModal(data)
-  }
-
-  delete(item: any) {
-    this.apiService.delete('OrganizationalUnit', item.id).subscribe(() => {
-      this.snackbarService.showInfo('Unidad organizativa eliminada con éxito');
-      this.recargarLista();
-    });
-  }
-
-  toggleIsActive(item: any) {
-    this.apiService.deleteLogic('OrganizationalUnit', item.id).subscribe(() => {
-      this.snackbarService.showSuccess('Unidad organizativa actualizada con éxito');
-    })
-  }
+  create() { }
+  
+  view(e: any): void {
+  // Opción absoluta (incluye 'dashboard' si es tu layout padre):
+  this.router.navigate(['/dashboard/organizational/structure/unit', e.id, 'internal-division']);
+  
+  
+}
+  edit(e: any) { }
+  remove(e: any) { }
+  toggle(e: any) { }
 }

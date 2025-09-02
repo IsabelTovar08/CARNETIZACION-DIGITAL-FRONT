@@ -6,6 +6,8 @@ import { UbicationService } from '../api/ubication/ubication.service';
 import { CustomTypeSpecific } from '../../Models/parameter/custom-type.models';
 import { CityCreate, Deparment } from '../../Models/parameter/ubication.models';
 import { ApiService } from '../api/api.service';
+import { ScheduleCreate, ScheduleList } from '../../Models/organization/schedules.models';
+import { ScheduleService } from '../api/organizational/schedule.service';
 // import { OrganizationalUnit } from '../../Models/organization/organizationalUnit.models';
 
 @Injectable({
@@ -16,7 +18,9 @@ export class ListService {
   constructor(
     private customTypeService: CustomTypeService,
     private ubicationService: UbicationService,
+    private scheduleService: ScheduleService,
     private cityService: ApiService<CityCreate, CityList>,
+    private scheduleApi: ApiService<ScheduleCreate, ScheduleList>,
     // private organizationalUnitService: ApiService<OrganizationalUnit, OrganizationalUnit>
   ) { }
 
@@ -25,6 +29,7 @@ export class ListService {
   private bloodTypes$?: Observable<CustomTypeSpecific[]>;
   private deparments$?: Observable<Deparment[]>;
   private cities$?: Observable<CityList[]>;
+  private schedules$?: Observable<ScheduleList[]>;
   // private organizationunit$?: Observable<OrganizationalUnit[]>;
 
 
@@ -54,8 +59,6 @@ export class ListService {
         map((res) => res.data ?? []),
         shareReplay(1) // cachear la última emisión
       );
-
-
     }
     return this.deparments$;
   }
@@ -72,6 +75,18 @@ export class ListService {
   return this.cities$;
 }
 
+  getSchedules(forceReload = false): Observable<ScheduleList[]> {
+    if (forceReload || !this.schedules$) {
+      this.schedules$ = this.scheduleService
+        .GetAllSchedules()
+        .pipe(
+          map(res => Array.isArray(res) ? res : (res?.data ?? [])),
+          shareReplay(1)
+        );
+    }
+    return this.schedules$!; // non-null assertion para el tipo
+  }
+}
   // getorganizationalUnits(forceReload: boolean = false): Observable<any[]> {
   //   if (forceReload || !this.organizationunit$) {
   //     this.organizationunit$ = this.organizationalUnitService
@@ -81,4 +96,4 @@ export class ListService {
   //   return this.organizationunit$;
   // }
 
-}
+

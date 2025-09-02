@@ -27,6 +27,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 export class GenericFormComponent implements OnInit {
   form!: FormGroup;
   title: string = '';
+  subTitle: string = '';
+
   fields: any[] = [];
 
   constructor(
@@ -38,6 +40,8 @@ export class GenericFormComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data)
     this.title = this.data.title || 'Formulario';
+    this.subTitle = this.data.subTitle || '';
+
 
     //  Campos predefinidos
     const baseFields = [

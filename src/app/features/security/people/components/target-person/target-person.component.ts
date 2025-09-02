@@ -17,6 +17,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from '@angular/material/button';
 import { ChangePasswordComponent } from '../../../users/components/change-password/change-password.component';
 import { ListService } from '../../../../../core/Services/shared/list.service';
+import { ScheduleList } from '../../../../../core/Models/organization/schedules.models';
 
 @Component({
   selector: 'app-target-person',
@@ -33,6 +34,8 @@ export class TargetPersonComponent {
 
   cities: CityCreate[] = [];
   deparments: Deparment[] = [];
+
+  schedules: ScheduleList[] = [];
 
   constructor(private fb: FormBuilder,
     private listService: ListService,
@@ -82,6 +85,7 @@ export class TargetPersonComponent {
     this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
     this.listService.getdeparments().subscribe(data => this.deparments = data);
     this.listService.getCities().subscribe(data => this.cities = data);
+
   }
 
   getCytie(id: number) {

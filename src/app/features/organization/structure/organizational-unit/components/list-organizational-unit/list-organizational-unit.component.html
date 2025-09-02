@@ -1,16 +1,41 @@
-<app-generic-table
+<app-generic-list-card
   [title]="'Unidades Organizativas'"
-  *ngIf="listOrganization as list"
-  [dataSourceInput]="list"
-  [displayedColumns]="displayedColumns"
-  [columns]="[
-    { key: 'name',    label: 'Nombre' },
-    { key: 'description',    label: 'Descripción' },
-    { key: 'divisionsCount', label: 'Divisiones Asociadas' },
-    { key: 'branchesCount',  label: 'Sucursales Asociadas' }
-  ]"
-  (onCreate)="save()"
-  (onEdit)="save($event)"
-  (onDelete)="delete($event)"
-  (onToggleStatus)="toggleIsActive($event)">
-</app-generic-table>
+  [buttonSave]="true"
+  [dataSourceInput]="listUnits"
+  [pageSize]="9"
+  [customTemplates]="{
+    'meta': metaTpl,
+    'actions': actionsTpl
+  }"
+  (onCreate)="create()"
+  (onView)="view($event)"
+  (onEdit)="edit($event)"
+  (onDelete)="remove($event)"
+  (onToggleStatus)="toggle($event)">
+</app-generic-list-card>
+
+<!-- Meta personalizada: divisiones | sucursales -->
+<ng-template #metaTpl let-e>
+  <span>{{ e.subtitle }}</span>
+</ng-template>
+
+<!-- Acciones personalizadas -->
+<ng-template #actionsTpl let-e>
+  <button mat-stroked-button (click)="view(e)">
+    Ver Más Información
+  </button>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más acciones">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="edit(e)"><mat-icon>edit</mat-icon>Editar</button>
+    <button mat-menu-item (click)="remove(e)"><mat-icon>delete</mat-icon>Eliminar</button>
+    <button mat-menu-item (click)="toggle(e)">
+      <mat-icon>{{ e.isDeleted ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+      {{ e.isDeleted ? 'Activar' : 'Desactivar' }}
+    </button>
+  </mat-menu>
+</ng-template>
