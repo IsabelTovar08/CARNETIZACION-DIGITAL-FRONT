@@ -2,23 +2,25 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { GenericCredincialsComponent } from '../../../shared/components/generic-credincials/generic-credincials.component';
 
 @Component({
   selector: 'app-seccion-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  // AGREGAR el componente genérico a las importaciones
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent],
   templateUrl: './seccion-perfil.component.html',
   styleUrl: './seccion-perfil.component.css'
 })
 export class SeccionPerfilComponent {
+  isModalOpen = false;
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
   perfilForm: FormGroup;
 
   constructor() {
-    
     this.perfilForm = this.fb.group({
       nombre: ['Juan Carlos', Validators.required],
       primerApellido: ['García', Validators.required],
@@ -36,6 +38,21 @@ export class SeccionPerfilComponent {
       console.log('Formulario inválido');
       this.markAllFieldsAsTouched();
     }
+  }
+
+  abrirModal() {
+    this.isModalOpen = true;
+  }
+
+  cerrarModal() {
+    this.isModalOpen = false;
+  }
+
+  onValidacionExitosa(password: string) {
+    console.log('Contraseña validada correctamente:', password);
+    this.cerrarModal();
+    // Aquí puedes habilitar la edición del formulario o hacer lo que necesites
+    alert('¡Credenciales validadas! Ahora puedes editar tu perfil.');
   }
 
   private markAllFieldsAsTouched() {
@@ -62,9 +79,5 @@ export class SeccionPerfilComponent {
       email: 'juan.garcia@email.com',
       telefono: '+57 301 234 5678'
     });
-
-
   }
-
-  
 }
