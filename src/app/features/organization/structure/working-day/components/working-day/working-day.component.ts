@@ -56,9 +56,6 @@ export class JornadasComponent {
         title: item ? 'Editar' : 'Crear',
         item,
         fields: [
-          { name: 'id', value: item?.id || 0, hidden: true },
-          { name: 'name', label: 'Nombre', type: 'string', value: item?.name || '', required: true },
-          { name: 'description', label: 'Descripción', type: 'textarea', value: item?.description || '', maxLength: 300 },
           { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.startTime || ''), required: true },
           { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.endTime || ''), required: true },
 
