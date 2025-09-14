@@ -22,29 +22,37 @@
     <!-- Sección de acciones (notificaciones y perfil) -->
     <div class="header-actions">
       <!-- Botón de notificaciones con modal -->
-      <div class="notification" (click)="toggleNotifications()" #notificationTrigger>
+      <div class="notification" (click)="toggleNotifications()"
+        #notificationTrigger>
         <mat-icon>notifications</mat-icon>
         <!-- Badge opcional para contador -->
-        <span class="notification-badge" *ngIf="notificationCount > 0">{{ notificationCount }}</span>
+        <span class="notification-badge" *ngIf="notificationCount > 0">{{
+          notificationCount }}</span>
       </div>
-      
+
       <div class="perfil" (click)="goToProfile()">
-        <span class="perfil-name">Camilo Charry</span>
+        <div class="perfil-text">
+          <span class="perfil-name">{{ user()?.currentProfile?.personName
+            }}</span>
+          <span class="perfil-subname">{{ user()?.currentProfile?.profileName
+            }}</span>
+        </div>
         <img src="/assets/perfiles/perfil.png" alt="Perfil" class="perfil-img">
       </div>
-    </div>
-    </div>
-    </header>
 
-    <div class="notification-overlay" 
-     *ngIf="showNotifications" 
-     (click)="closeNotifications()">
+    </div>
+  </div>
+</header>
+
+<div class="notification-overlay"
+  *ngIf="showNotifications"
+  (click)="closeNotifications()">
 </div>
 
-<div class="notification-modal" 
-     *ngIf="showNotifications"
-     [class.notification-modal-mobile]="isMobile">
-  
+<div class="notification-modal"
+  *ngIf="showNotifications"
+  [class.notification-modal-mobile]="isMobile">
+
   <!-- Header del modal -->
   <div class="notification-modal-header">
     <h3>Notificaciones</h3>
@@ -54,8 +62,8 @@
   </div>
 
   <!-- Componente de notificaciones genérico -->
-  <app-generic-notification 
+  <app-generic-notification
     [visible]="showNotifications"
     (close)="closeNotifications()">
   </app-generic-notification>
-  </div>
+</div>

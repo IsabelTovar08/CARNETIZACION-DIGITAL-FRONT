@@ -5,10 +5,13 @@ import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie'
 import { environment } from '../../../../environments/environment';
-import { Observable, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { TokenService } from '../token/token.service';
 import { RefreshRequest, RequestCode, RequestLogin, ResponseLogin, ResponseToken } from '../../Models/auth.models';
 import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
+import { UserMe } from '../../Models/security/user.models';
+import { UserStoreService } from './user-store.service';
+import { ApiResponse } from '../../Models/api-response.models';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,9 +19,10 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
-    protected wrapper: HttpServiceWrapperService
-
+    protected wrapper: HttpServiceWrapperService,
+    private userStore: UserStoreService,
   ) { }
+
 
   urlBase = environment.URL + '/api';
 
@@ -40,22 +44,24 @@ export class AuthService {
   public verifiCode(credentials: RequestCode) {
     return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/verify-code`, credentials))
       .pipe(
-        tap(res => {
-          // Guarda ambos tokens; refresh por defecto 7 días
-          // this.cachePendingEmail(credentials.Email, res.userId)
-          this.tokenService.setTokens(res.accessToken, res.refreshToken);
-        })
+        tap(res => this.tokenService.setTokens(res.accessToken, res.refreshToken)),
+        switchMap(() => this.getMe()),
+        tap(user => this.userStore.setUser(user.data)),
       );
   }
 
   public refresh(refreshToken: RefreshRequest) {
-    return this.http.post<ResponseToken>(`${this.urlBase}/refresh`, refreshToken)
+    return this.http.post<ResponseToken>(`${this.urlBase}/Auth/refresh`, refreshToken)
       .pipe(
         tap(pair => {
           // Actualiza access token y refresh token
           this.tokenService.setTokens(pair.accessToken, pair.refreshToken);
         })
       );
+  }
+
+  public getMe() {
+    return this.http.get<ApiResponse<UserMe>>(`${this.urlBase}/user/me`)
   }
 
   logout(refreshToken: RefreshRequest): Observable<void> {

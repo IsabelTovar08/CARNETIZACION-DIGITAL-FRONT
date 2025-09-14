@@ -146,7 +146,7 @@ export class LoginCodeComponent implements OnInit {
             console.log(response.message);
           } else {
             // ❌ La API respondió 200 pero con error lógico
-            console.warn('Login fallido:', response.message);
+            // console.warn('Login fallido:', response?.message);
             // alert(response.message);
           }
         },
