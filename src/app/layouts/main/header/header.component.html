@@ -6,12 +6,62 @@
   </button>
 
   <div class="header-content">
-    <h1 class="header-title">Panel de {{ tipoUsuario }}</h1>
-    <div class="breadcrumb">
-      <ng-container *ngFor="let segment of breadcrumbPath; let last = last">
-        <span>{{ segment }}</span>
-        <span *ngIf="!last"> / </span>
-      </ng-container>
+    <!-- Título y breadcrumb en una sección -->
+    <div class="header-main">
+      <h1 class="header-title">Panel de {{ tipoUsuario }}</h1>
+      <div class="breadcrumb">
+        <ng-container *ngFor="let segment of breadcrumbPath; let last = last">
+          <span>{{ segment }}</span>
+          <span *ngIf="!last"> / </span>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Sección de acciones (notificaciones y perfil) -->
+    <div class="header-actions">
+      <!-- Botón de notificaciones con modal -->
+      <div class="notification" (click)="toggleNotifications()"
+        #notificationTrigger>
+        <mat-icon>notifications</mat-icon>
+        <!-- Badge opcional para contador -->
+        <span class="notification-badge" *ngIf="notificationCount > 0">{{
+          notificationCount }}</span>
+      </div>
+
+      <div class="perfil" (click)="goToProfile()">
+        <div class="perfil-text">
+          <span class="perfil-name">{{ user()?.currentProfile?.personName
+            }}</span>
+          <span class="perfil-subname">{{ user()?.currentProfile?.profileName
+            }}</span>
+        </div>
+        <img src="/assets/perfiles/perfil.png" alt="Perfil" class="perfil-img">
+      </div>
+
     </div>
   </div>
 </header>
+
+<div class="notification-overlay"
+  *ngIf="showNotifications"
+  (click)="closeNotifications()">
+</div>
+
+<div class="notification-modal"
+  *ngIf="showNotifications"
+  [class.notification-modal-mobile]="isMobile">
+
+  <!-- Header del modal -->
+  <div class="notification-modal-header">
+    <h3>Notificaciones</h3>
+    <button class="close-btn" (click)="closeNotifications()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Componente de notificaciones genérico -->
+  <app-generic-notification
+    [visible]="showNotifications"
+    (close)="closeNotifications()">
+  </app-generic-notification>
+</div>

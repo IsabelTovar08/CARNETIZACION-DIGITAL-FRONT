@@ -110,9 +110,34 @@ export class VerificationCodeComponent {
 
   onContinue(): void {
     if (this.isCodeComplete()) {
-      console.log('Verificando código:', this.fullCode());
-      // Aquí puedes agregar la lógica para verificar el código
-      alert(`Código ingresado: ${this.fullCode()}`);
+      // console.log('Verificando código:', this.fullCode());
+      // this.router.navigate(['/auth/']);
+      // alert(`Código ingresado: ${this.fullCode()}`);
+      var requestCode: RequestCode = {
+        userId: Number(this.authService.getPendingUserId()),
+        code: this.fullCode()
+      }
+      this.authService.verifiCode(requestCode).subscribe({
+        next: (response) => {
+          if (response) {
+            // ✅ Caso exitoso
+            this.menu.reload();
+            this.router.navigate(['dashboard']);
+
+            // Opcional: mostrar notificación
+            console.log(response.message);
+          } else {
+            // ❌ La API respondió 200 pero con error lógico
+            console.warn('Login fallido:', response);
+            // alert(response.message);
+          }
+        },
+        error: (error) => {
+          // ❌ Error de red o statusCode >= 400
+          console.error('Error al iniciar sesión:', error);
+          // alert('Ocurrió un error inesperado, intenta de nuevo.');
+        }
+      });
     }
   }
 
@@ -125,10 +150,10 @@ export class VerificationCodeComponent {
       { value: '' },
       { value: '' }
     ]);
-    
+
     console.log('Reenviando código...');
     alert('Código reenviado exitosamente');
-    
+
     // Enfocar el primer input
     setTimeout(() => {
       const firstInput = document.querySelector('.code-digit') as HTMLInputElement;

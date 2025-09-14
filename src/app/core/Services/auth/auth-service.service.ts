@@ -5,9 +5,13 @@ import { jwtDecode } from 'jwt-decode';
 import Swal from 'sweetalert2';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie'
 import { environment } from '../../../../environments/environment';
-import { tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { TokenService } from '../token/token.service';
-import { RequestLogin, ResponseLogin } from '../../Models/auth.models';
+import { RefreshRequest, RequestCode, RequestLogin, ResponseLogin, ResponseToken } from '../../Models/auth.models';
+import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
+import { UserMe } from '../../Models/security/user.models';
+import { UserStoreService } from './user-store.service';
+import { ApiResponse } from '../../Models/api-response.models';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,8 +19,10 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private tokenService: TokenService,
+    protected wrapper: HttpServiceWrapperService,
+    private userStore: UserStoreService,
   ) { }
-  
+
   urlBase = environment.URL + '/api';
 
   // Auth
@@ -42,59 +48,49 @@ export class AuthService {
   //   removeCookie(this.tokenKey)
   // }
 
-  // isAuthenticated(): boolean {
-  //   const token = this.getToken();
+  // Auth
+  public verifiCode(credentials: RequestCode) {
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/verify-code`, credentials))
+      .pipe(
+        tap(res => this.tokenService.setTokens(res.accessToken, res.refreshToken)),
+        switchMap(() => this.getMe()),
+        tap(user => this.userStore.setUser(user.data)),
+      );
+  }
 
-  //   if (!token || !this.isTokenValid(token)) {
-  //     this.logoutWithAlert();
-  //     return false;
-  //   }
+  public refresh(refreshToken: RefreshRequest) {
+    return this.http.post<ResponseToken>(`${this.urlBase}/Auth/refresh`, refreshToken)
+      .pipe(
+        tap(pair => {
+          // Actualiza access token y refresh token
+          this.tokenService.setTokens(pair.accessToken, pair.refreshToken);
+        })
+      );
+  }
 
-  //   return true;
-  // }
+  public getMe() {
+    return this.http.get<ApiResponse<UserMe>>(`${this.urlBase}/user/me`)
+  }
 
-  // logout(): void {
-  //   localStorage.removeItem(this.tokenKey);
-  //   this.router.navigate(['']);
-
-  // }
-
-  // private isTokenValid(token: string): boolean {
-  //   try {
-  //     const decoded: any = jwtDecode(token);
-  //     const exp = decoded.exp;
-  //     return Date.now() < exp * 1000;
-  //   } catch {
-  //     return false;
-  //   }
-  // }
+  logout(refreshToken: RefreshRequest): Observable<void> {
+    return this.http.post<void>(`${this.urlBase}/revoke`, { refreshToken })
+      .pipe(
+        tap(() =>
+          this.tokenService.removeAll()
+        )
+      );
+  }
 
 
-  // getUserRoles(): string[] {
-  //   const token = this.getToken();
-  //   if (!token) return [];
+  cachePendingEmail(email: string, id: string) {
+    sessionStorage.setItem('pending_login_email', email);
+    sessionStorage.setItem('pending_login_id', id);
 
-  //   const decoded: any = jwtDecode(token);
-
-  //   const roleClaim = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
-
-  //   const roles = decoded[roleClaim];
-  //   return Array.isArray(roles) ? roles : roles ? [roles] : [];
-  // }
-
-  // logoutWithAlert() {
-  //   if (this.router.url === '/') {
-  //     this.logout();
-  //     return;
-  //   }
-  //   Swal.fire({
-  //     icon: 'warning',
-  //     title: 'Sesión expirada',
-  //     text: 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
-  //     confirmButtonText: 'Aceptar'
-  //   }).then(() => {
-  //     this.logout();
-  //   });
-  // }
-
+  }
+  getPendingEmail(): string | null {
+    return sessionStorage.getItem('pending_login_email');
+  }
+  getPendingUserId(): string | null {
+    return sessionStorage.getItem('pending_login_id');
+  }
 }
