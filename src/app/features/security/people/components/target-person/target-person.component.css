@@ -1,0 +1,67 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Evita que el modal crezca más que la pantalla */
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 900px;
+  margin: auto;
+}
+
+.avatar {
+  background-image: url('https://i.pravatar.cc/150?img=3');
+  background-size: cover;
+}
+
+.scroll-content {
+  flex: 1;
+  overflow-y: auto; /* Scroll solo aquí */
+  padding: 16px;
+  padding-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.section-title {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3f51b5;
+}
+
+/* Email + botón contraseña */
+.email-password-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.email-field {
+  flex: 1;
+}
+
+.hint-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: -8px;
+}
+
+/* Footer fijo */
+.footer {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+}

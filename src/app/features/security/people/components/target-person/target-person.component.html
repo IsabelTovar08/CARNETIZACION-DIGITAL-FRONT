@@ -1,0 +1,130 @@
+<mat-card class="profile-card">
+
+  <!-- Header fijo -->
+  <mat-card-header>
+    <div mat-card-avatar class="avatar"></div>
+    <mat-card-title>Información Personal</mat-card-title>
+    <mat-card-subtitle>Gestiona tu información personal</mat-card-subtitle>
+  </mat-card-header>
+
+  <!-- Contenido con scroll -->
+  <mat-card-content class="scroll-content">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-grid">
+
+      <!-- Sección: Datos personales -->
+      <h3 class="section-title">Datos personales</h3>
+      <mat-divider></mat-divider>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Primer nombre</mat-label>
+        <input matInput formControlName="firstName">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Segundo nombre</mat-label>
+        <input matInput formControlName="middleName">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Primer apellido</mat-label>
+        <input matInput formControlName="lastName">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Segundo apellido</mat-label>
+        <input matInput formControlName="secondLastName">
+      </mat-form-field>
+
+      <!-- Sección: Documento -->
+      <h3 class="section-title">Documento</h3>
+      <mat-divider></mat-divider>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de documento</mat-label>
+        <mat-select formControlName="documentTypeId">
+          <mat-option *ngFor="let doc of documentTypes" [value]="doc.id">
+            {{ doc.name }} - {{ doc.description }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Número de documento</mat-label>
+        <input matInput formControlName="documentNumber">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de sangre</mat-label>
+        <mat-select formControlName="bloodTypeId">
+          <mat-option *ngFor="let blood of bloodTypes" [value]="blood.id">
+            {{ blood.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Sección: Contacto -->
+      <h3 class="section-title">Contacto</h3>
+      <mat-divider></mat-divider>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="phone">
+      </mat-form-field>
+
+      <!-- Email con botón para actualizar contraseña -->
+      <div class="email-password-container full-width">
+        <mat-form-field appearance="outline" class="email-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email">
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" type="button" (click)="onChangePassword()">
+          🔑 Actualizar contraseña
+        </button>
+      </div>
+
+      <!-- Mensaje informativo -->
+      <mat-hint class="hint-text full-width">
+        Al cambiar la contraseña, se enviará un correo de notificación a la dirección registrada.
+      </mat-hint>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Dirección</mat-label>
+        <input matInput formControlName="address">
+      </mat-form-field>
+
+      <!-- Sección: Ubicación -->
+      <h3 class="section-title">Ubicación</h3>
+      <mat-divider></mat-divider>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Departamento</mat-label>
+        <mat-select formControlName="departmentId">
+          <mat-option *ngFor="let dep of deparments" [value]="dep.id">
+            {{ dep.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ciudad</mat-label>
+        <mat-select formControlName="cityId">
+          <mat-option *ngFor="let city of cities" [value]="city.id">
+            {{ city.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </form>
+  </mat-card-content>
+
+  <!-- Footer fijo -->
+  <mat-card-actions class="footer">
+    <app-action-buttons
+      [disableSave]="profileForm.invalid"
+      (cancel)="dialogRef.close()"
+      (save)="onSubmit()">
+    </app-action-buttons>
+  </mat-card-actions>
+
+</mat-card>

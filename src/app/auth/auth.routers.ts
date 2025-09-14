@@ -1,30 +1,18 @@
 import { Routes } from "@angular/router";
+import { LoginComponent } from "./entry/pages/general-login/login/login.component";
+import { ForgottenPasswordComponent } from "./entry/pages/general-login/forgotten-password/forgotten-password.component";
+import { RecuperationCodeComponent, } from "./entry/pages/general-login/recuperation-code/recuperation-code.component";
+import { NewPasswordComponent } from "./entry/pages/general-login/new-password/new-password.component";
+import { LoginCodeComponent } from "./entry/pages/general-login/login-code/login-code.component";
+import { WelcomeComponent } from "./entry/pages/welcome/welcome.component";
 
-import { L } from "@angular/cdk/keycodes";
-import { LoginComponent } from "./entry/pages/loginGeneral/login/login.component";
-import { InicioComponent } from "./entry/pages/inicio/inicio.component";
-import { ContactComponent } from "./entry/pages/contact/contact.component";
-import { ForgottenPasswordComponent } from "./entry/pages/loginGeneral/forgotten-password/forgotten-password.component";
-import { VerificationCodeComponent } from "./entry/pages/loginGeneral/verification-code/verification-code.component";
+export const authRoutes: Routes = [
 
+  { path: '', component: WelcomeComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'forgotten-password', component: ForgottenPasswordComponent },
+  { path: 'recuperation-code', component: RecuperationCodeComponent },
+  { path: 'login-code', component: LoginCodeComponent },
+  { path: 'new-password', component: NewPasswordComponent },
 
-
-export const inicioRoutes: Routes = [
-  { path: '', component: InicioComponent }
-];
-
-export const contactRoutes: Routes = [
-  { path: '', component: ContactComponent }
-];
-
-export const loginRoutes: Routes = [
-    {path: '',component: LoginComponent}
-];
-
-export const ForgottenPasswordRoutes: Routes = [
-    {path: '', component: ForgottenPasswordComponent}
-];
-
-export const verificationCodeRoutes: Routes = [
-  {path: '',component: VerificationCodeComponent}
 ];

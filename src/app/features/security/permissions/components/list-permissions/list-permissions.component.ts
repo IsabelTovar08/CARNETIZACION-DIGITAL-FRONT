@@ -1,12 +1,13 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { GenericTableComponent } from "../../../../../shared/components/generic-table/generic-table.component";
 import { ApiService } from '../../../../../core/Services/api/api.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GenericFormComponent } from '../../../../../shared/components/generic-form/generic-form.component';
 import { Permission } from '../../../../../core/Models/security/permission.models';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-list-permissions',
@@ -17,16 +18,18 @@ import { CommonModule } from '@angular/common';
   styleUrl: './list-permissions.component.css'
 })
 export class ListPermissionsComponent implements OnInit {
-  listPermission$!: Observable<Permission[]>;
+  listPermission!: Permission[];
+  displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
   constructor(private apiService: ApiService<Permission, Permission>,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackbarService: SnackbarService,
   ) { }
 
   ngOnInit(): void {
-    this.listPermission$ = this.apiService.ObtenerTodo('Permission')
+    this.cargarData();
     this.route.url.subscribe(segments => {
       const isCreate = segments.some(s => s.path === 'create');
       if (isCreate) {
@@ -35,8 +38,15 @@ export class ListPermissionsComponent implements OnInit {
     });
   }
 
-  openModal(item: any = null) {
+  cargarData() {
+    this.apiService.ObtenerTodo('Permission').subscribe((data) => {
+      this.listPermission = data.data as Permission[]
+    })
+  }
+
+  openModal(item?: Permission) {
     const dialogRef = this.dialog.open(GenericFormComponent, {
+      disableClose: true,
       width: '400px',
       data: {
         title: item ? 'Editar' : 'Crear',
@@ -46,27 +56,48 @@ export class ListPermissionsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // if (item) {
-        //   this.save(result, item.id);
-        // } else {
-        //   this.save(result);
-        // }
+        if (item) {
+          this.add(result, item.id);
+        } else {
+          this.add(result);
+        }
       }
 
       // 🔙 Vuelve a la ruta base sin /create
       this.router.navigate(['./'], { relativeTo: this.route });
     });
   }
-  items: any[] = [
-    { id: 1, name: 'John Doe', age: 25 },
-  ];
-
-  displayedColumns: string[] = ['name', 'description', 'isDeleted', 'actions'];
 
 
-  save(data: any, id: number | null = null,) {
-    this.openModal()
+  add(permission: Permission, id?: number) {
+    if (id) {
+      this.apiService.update('Permission', permission).subscribe(() => {
+        this.cargarData();
+        this.snackbarService.showSuccess();
+      })
+    }
+    else {
+      this.apiService.Crear('Permission', permission).subscribe(() => {
+        this.cargarData();
+        this.snackbarService.showSuccess();
+      })
+    }
   }
-  delete(item: any) { }
-  toggleIsActive(item: any) { }
+
+  save(data?: Permission) {
+    this.openModal(data)
+  }
+
+  delete(item: any) {
+    this.apiService.delete("Permission", item.id).subscribe(() => {
+      this.snackbarService.showInfo('Permiso eliminado con éxito')
+      this.cargarData();
+    })
+  }
+
+  toggleIsActive(item: any) {
+    this.apiService.deleteLogic('Permission', item.id).subscribe(() => {
+      this.snackbarService.showSuccess("Estado actualizado con éxito");
+    })
+  }
 }

@@ -1,0 +1,208 @@
+/* Estilos para el contenedor principal */
+.table-container {
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 2vh;
+  min-height: auto;
+}
+.add{
+  float: right;
+}
+/* Título principal */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 32px;
+  color: #2c3e50;
+  background: black;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+
+/* Card principal */
+mat-card {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Header del card */
+mat-card-header {
+  padding: 24px 24px 16px 24px !important;
+  background: linear-gradient(135deg, #667eea4f 0%, #764ba241 100%);
+  margin: 0 !important;
+  border-bottom: none;
+}
+
+/* Botón agregar */
+mat-card-header button {
+  color: white !important;
+  border-radius: 50px !important;
+  padding: 12px 32px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  transition: all 0.3s ease !important;
+}
+
+mat-card-header button:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Tabla */
+mat-table {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Header de la tabla */
+mat-header-row {
+  text-transform: uppercase !important;
+}
+
+
+mat-header-cell:last-child {
+  border-right: none;
+}
+
+/* Filas de datos */
+mat-row {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+mat-row:nth-child(even) {
+  background: rgba(248, 249, 250, 0.5);
+}
+
+mat-cell {
+  padding: 16px !important;
+  color: #495057;
+  border-right: 1px solid #f1f3f4;
+  font-size: 14px;
+}
+
+mat-cell:last-child {
+  border-right: none;
+}
+
+/* Botones de acción */
+mat-cell button[mat-icon-button] {
+  margin: 0 4px;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease;
+}
+
+/* Botón editar */
+mat-cell button[mat-icon-button]:first-of-type {
+  color: #28a745 !important;
+}
+
+mat-cell button[mat-icon-button]:first-of-type:hover {
+  background: rgba(40, 167, 69, 0.1) !important;
+  transform: scale(1.1);
+}
+
+/* Botón eliminar */
+mat-cell button[mat-icon-button]:last-of-type {
+  color: #dc3545 !important;
+}
+
+mat-cell button[mat-icon-button]:last-of-type:hover {
+  background: rgba(220, 53, 69, 0.1) !important;
+  transform: scale(1.1);
+}
+
+/* Iconos */
+mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Estados vacíos */
+.mat-cell span {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+
+  mat-card-header {
+    padding: 16px !important;
+    text-align: center;
+  }
+
+  mat-header-cell,
+  mat-cell {
+    padding: 12px 8px !important;
+    font-size: 12px;
+  }
+
+  mat-card-header button {
+    padding: 10px 24px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+mat-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Scroll personalizado */
+.mat-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.mat-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.mat-table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+}
+
+.mat-table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b5b95 100%);
+}
+.deleted-row {
+  opacity: 0.5;
+  color: #999;
+}

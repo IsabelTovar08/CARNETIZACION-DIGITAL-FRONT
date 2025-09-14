@@ -1,0 +1,225 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4a709ce2;
+  padding: 0.75rem 2rem;
+  color: white;
+  font-family: 'Segoe UI', sans-serif;
+  border-bottom-left-radius: 4vh;
+  border-bottom-right-radius: 4vh;
+  flex-wrap: nowrap;
+}
+
+.navbar-left {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.brand .bold {
+  color: #111;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  position: relative;
+  padding: 10px 0;
+}
+
+.nav-link {
+  position: relative;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.nav-link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active-link {
+  color: white;
+  font-weight: 600;
+}
+
+/* Indicador línea animada */
+.active-indicator {
+  position: absolute;
+  bottom: -5px;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, #ffffff, #f0f8ff, #ffffff);
+  border-radius: 2px;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow:
+    0 2px 8px rgba(255, 255, 255, 0.4),
+    0 0 12px rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+.login-btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: background 0.3s;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.login-btn .login-icon {
+  display: none;
+}
+.login-btn .link-text {
+  display: inline;
+}
+
+/* Por defecto: los iconos ocultos, solo texto */
+.nav-icon { display: none; margin-right: 6px; }
+.link-text { display: inline; }
+
+/* ===== Tablet ===== */
+@media (max-width: 1024px) {
+  /* .logo { height: 32px; } */
+  .nav-link { font-size: 14px; padding: 8px 12px; }
+  .login-btn { font-size: 14px; padding: 6px 12px; }
+}
+
+@media (max-width: 760px) {
+  .brand { display: none; }
+  /* .nav-link { font-size: 13px; padding: 3px 5px; } */
+
+}
+/* ===== Móvil compacto ===== */
+@media (max-width: 680px) {
+  .brand { display: none; }   /* Oculta "CARNETGO" */
+
+  .nav-link { font-size: 13px; padding: 6px 8px; }
+  .login-btn { font-size: 13px; padding: 6px 10px; }
+}
+
+/* ===== Súper pequeño: SOLO ICONOS ===== */
+@media (max-width: 520px) {
+  .link-text { display: none; }     /* Oculta texto */
+  .nav-icon  { display: inline-flex; font-size: 22px; }
+
+  .nav-link, .login-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .active-indicator { display: none; }
+
+   .login-btn .link-text {
+    display: none;   /* Oculta texto */
+  }
+
+  .login-btn .login-icon {
+    display: inline-flex;   /* Muestra icono */
+    font-size: 22px;
+  }
+}
+
+/* Botón oculto por defecto (desktop) */
+.menu-btn { display: none; }
+
+/* Responsive: ocultamos menú horizontal y mostramos MatMenu */
+@media (max-width: 680px) {
+  .menu-btn { display: inline-flex; align-items: center; font-weight: 600; }
+  .nav-menu { display: none; } /* oculta el menú horizontal en móvil */
+}
+
+/* Estilo del item activo dentro de MatMenu */
+.mat-mdc-menu-item.active-menu-item {
+  background: rgba(255, 255, 255, 0.18);
+}
+.mat-mdc-menu-item.active-menu-item .mdc-list-item__primary-text {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Por defecto: el badge no se ve en desktop */
+.current-badge {
+  display: none;
+}
+
+/* Solo visible en móvil */
+@media (max-width: 680px) {
+  .current-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* padding: 4px 10px; */
+    margin-left: 6px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .badge-icon {
+    font-size: 22px;
+    height: 22px;
+    width: 22px;
+    border-radius: 16px;
+
+  }
+
+  .badge-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* En móvil se oculta el menú horizontal */
+  .nav-menu {
+    display: none;
+  }
+
+  /* Y solo se ve el botón Menú (mat-menu) */
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+  }
+}
+
+/* En desktop el botón Menú y el badge se ocultan */
+@media (min-width: 681px) {
+  .menu-btn,
+  .current-badge {
+    display: none !important;
+  }
+}

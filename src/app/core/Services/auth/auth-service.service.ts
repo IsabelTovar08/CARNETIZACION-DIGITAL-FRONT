@@ -23,30 +23,22 @@ export class AuthService {
     private userStore: UserStoreService,
   ) { }
 
+
   urlBase = environment.URL + '/api';
 
   // Auth
   public login(credentials: RequestLogin) {
-    return this.http.post<ResponseLogin>(`${this.urlBase}/Auth/login`, credentials)
+    debugger
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/login`, credentials))
       .pipe(
-        tap(response => this.tokenService.setToken(response.token))
+        tap(res => {
+          // Guarda ambos tokens; refresh por defecto 7 días
+          this.cachePendingEmail(credentials.email, res.data.userId)
+
+          // this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        })
       );
   }
-
-  // private tokenKey: string = 'token';
-
-  // setToken(token: string): void {
-  //   setCookie('token', token, {expires: 1, path: '/'});
-  // }
-
-  // getToken() {
-  //   const token = getCookie(this.tokenKey);
-  //   return token;
-  // }
-
-  // removeToken(){
-  //   removeCookie(this.tokenKey)
-  // }
 
   // Auth
   public verifiCode(credentials: RequestCode) {

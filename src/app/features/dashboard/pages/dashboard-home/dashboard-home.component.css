@@ -1,0 +1,183 @@
+/* Contenedor que incluye gráfico y notificaciones en fila */
+.graphs-notifications-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Que el gráfico ocupe aprox 2/3 y notificaciones 1/3 */
+.graphs-notifications-container > .chart-card {
+  flex: 2;
+}
+
+.graphs-notifications-container > .notifications-card {
+  flex: 1;
+}
+
+/* Estilos generales de las tarjetas */
+.card {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Títulos con colores más suaves y modernos */
+h2 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 1.85rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+  text-shadow: none;
+}
+
+h3, h4 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  color: #4a6741;
+  margin-bottom: 0.3rem;
+}
+
+h5, h6 {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* Texto secundario */
+.text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Indicadores pequeños */
+small.text-success {
+  font-weight: 600;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+}
+
+small.text-danger {
+  font-weight: 600;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+}
+
+/* Avatares redondeados con sombra */
+img.rounded-circle {
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+img.rounded-circle:hover {
+  transform: scale(1.05);
+}
+
+/* Notificaciones: fondo claro con sombra suave y borde izquierdo suavizado */
+.list-unstyled li {
+  background: #f8fafc;
+  border-left: 3px solid #6366f1;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.05);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.list-unstyled li:hover {
+  background: #f1f5f9;
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1);
+  border-left-color: #4f46e5;
+}
+
+/* Texto dentro de las notificaciones */
+.list-unstyled small.text-muted {
+  color: #64748b;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+/* Contenido texto notificación ocupa el resto */
+.list-unstyled li > div {
+  flex-grow: 1;
+}
+
+/* Ajuste para el título de la sección de notificaciones */
+.card > h5 {
+  border-bottom: 3px solid #6366f1;
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.5rem;
+  color: #4338ca;
+  font-weight: 600;
+  position: relative;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 280px;  /* Ajusta según quieras */
+}
+
+.notifications-list {
+  max-height: 420px;
+}
+
+.card > h5::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 2px;
+}
+
+/* Ajustes de los gráficos */
+canvas {
+  max-height: 140px !important;
+  border-radius: 8px;
+}
+
+/* Pequeños detalles para los indicadores grandes */
+h4.fw-bold {
+  font-size: 2.2rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+
+/* Indicadores superiores mejorados */
+.row .col-md-4 .card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  padding: 1.25rem;
+}
+
+/* Mejora para números grandes - sin gradiente */
+.fw-bold {
+  color: #1a202c;
+  font-weight: 600;
+}

@@ -1,3 +1,5 @@
 export const environment = {
-  URL: 'https://localhost:7126'
+    // URL: 'http://localhost:8008'
+    URL: 'http://192.168.137.1:8008'
+
 };

@@ -1,0 +1,35 @@
+<div 
+      [class]="cardClasses"
+      [style.width]="width"
+      [style.height]="height"
+      (click)="onCardClick()"
+      [attr.role]="clickable ? 'button' : null"
+      [attr.tabindex]="clickable ? '0' : null"
+      (keydown.enter)="onCardClick()"
+      (keydown.space)="onCardClick()">
+      
+      <!-- Header Section -->
+      <div class="card-header" *ngIf="showHeader">
+        <ng-content select="[slot=header]"></ng-content>
+        <div *ngIf="!hasHeaderContent && (title || subtitle)" class="default-header">
+          <h3 *ngIf="title" class="card-title">{{ title }}</h3>
+          <p *ngIf="subtitle" class="card-subtitle">{{ subtitle }}</p>
+        </div>
+      </div>
+
+      <!-- Parte de la imagen  -->
+      <div class="card-image" *ngIf="imageUrl">
+        <img [src]="imageUrl" [alt]="imageAlt || title || 'Card image'" />
+      </div>
+
+      <!-- Contenido-->
+      <div class="card-content" *ngIf="showContent">
+        <ng-content></ng-content>
+        <p *ngIf="!hasContent && content" class="card-text">{{ content }}</p>
+      </div>
+
+      <!-- Acciones -->
+      <div class="card-actions" *ngIf="showActions">
+        <ng-content select="[slot=actions]"></ng-content>
+      </div>
+    </div>

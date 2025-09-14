@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
 
   menuItems: MenuItem[] = [];
   tipoUsuario: 'admin' | 'doctor' | 'paciente' = 'admin';
-  sidebarOpened = false;
+  sidebarOpened = true;
   isMobile = false;
   ocultarHeader: boolean = false;
   @Output() toggleMenu = new EventEmitter<void>();

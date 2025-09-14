@@ -1,0 +1,143 @@
+/* 🎨 Menu Editor - CSS Limpio y Eficiente */
+
+/* Layout principal */
+.parent-card {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Grid adaptable para formularios */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Estado deshabilitado mejorado */
+.is-disabled,
+.mat-form-field.mat-form-field-disabled,
+.mat-form-field[data-disabled="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.mat-form-field.mat-form-field-disabled .mat-form-field-wrapper {
+  opacity: 0.6;
+}
+
+/* Preview compacto del icono */
+.icon-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(0,0,0,0.04);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.muted {
+  opacity: 0.7;
+}
+
+/* Nota informativa */
+.mini-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  border-radius: 0 8px 8px 0;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+/* Header de secciones */
+.children-header, .row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 16px;
+}
+
+.children-header h3, .row-between h4 {
+  margin: 0;
+  color: #424242;
+}
+
+/* Grid para sub-children */
+.grand-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Tarjetas mini optimizadas */
+.mini-card {
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mini-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.mini-card .mat-card-header {
+  padding-bottom: 8px;
+}
+
+.mini-card .mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+/* Espaciado consistente */
+.my-3 { margin: 12px 0; }
+.my-4 { margin: 16px 0; }
+
+/* Responsive mejoras */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grand-mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .children-header, .row-between {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .icon-preview {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Animaciones sutiles */
+.mat-expansion-panel {
+  transition: all 0.3s ease;
+}
+
+.mat-form-field {
+  transition: all 0.2s ease;
+}
+
+/* Mejora visual para botones */
+.mat-card-actions {
+  gap: 8px;
+}
+
+.mat-card-actions button {
+  min-width: auto;
+}

@@ -1,0 +1,329 @@
+/* Contenedor principal */
+
+
+/* Tarjeta principal del stepper */
+.stepper-card {
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  background: white;
+  overflow: hidden;
+}
+
+/* Header de la tarjeta */
+.stepper-card .mat-card-header {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 24px;
+  margin: -24px -24px 24px -24px;
+}
+
+.stepper-card .mat-card-header .mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.stepper-card .mat-card-header .mat-card-title mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.stepper-card .mat-card-header .mat-card-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+/* Stepper personalizado */
+.custom-stepper {
+  background: transparent;
+}
+
+.custom-stepper .mat-step-header {
+  padding: 16px 24px;
+  border-radius: 8px;
+  margin: 0 4px;
+  transition: all 0.3s ease;
+}
+
+.custom-stepper .mat-step-header:hover {
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.custom-stepper .mat-step-header.cdk-program-focused,
+.custom-stepper .mat-step-header.cdk-keyboard-focused {
+  background: rgba(79, 70, 229, 0.1);
+}
+
+/* Contenido de cada paso */
+.step-content {
+  padding: 32px 24px;
+  background: #fafafb;
+  border-radius: 12px;
+  margin: 24px 0;
+  border: 1px solid #e5e7eb;
+}
+
+.step-title {
+  color: #374151;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border-radius: 2px;
+}
+
+/* Filas de formulario */
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Campos de formulario */
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #4f46e5;
+}
+
+.mat-form-field.mat-focused .mat-form-field-label {
+  color: #4f46e5 !important;
+}
+
+/* Iconos en campos */
+.mat-form-field .mat-icon {
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+.mat-form-field.mat-focused .mat-icon {
+  color: #4f46e5;
+}
+
+/* Botones de acciones */
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  gap: 12px;
+}
+
+.step-actions button {
+  border-radius: 8px !important;
+  font-weight: 500;
+  text-transform: none;
+  padding: 0 24px;
+  height: 44px;
+}
+
+.step-actions .mat-raised-button {
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+}
+
+.step-actions .mat-stroked-button {
+  border: 2px solid #d1d5db;
+  color: #6b7280;
+}
+
+.step-actions .mat-stroked-button:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.05);
+}
+
+/* Acciones finales */
+.final-actions {
+  justify-content: center;
+  gap: 16px;
+}
+
+.reset-btn {
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.reset-btn:hover {
+  background: rgba(220, 38, 38, 0.05) !important;
+}
+
+/* Step de confirmación */
+.confirmation-step {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.success-icon {
+  margin-bottom: 24px;
+}
+
+.success-icon mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #10b981;
+}
+
+.confirmation-message {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* Tarjeta de resumen */
+.summary-card {
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb;
+}
+
+.summary-card .mat-card-header {
+  background: #f9fafb;
+  margin: -16px -16px 16px -16px;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-card .mat-card-title {
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summary-section {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.summary-section h4 {
+  color: #4f46e5;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-section h4 mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.summary-section p {
+  margin: 4px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.summary-section p strong {
+  color: #374151;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 100px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 12px;
+  }
+
+  .stepper-card {
+    border-radius: 12px !important;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .half-width {
+    width: 100%;
+  }
+
+  .step-content {
+    padding: 24px 16px;
+    margin: 16px 0;
+  }
+
+  .step-actions {
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+
+  .custom-stepper {
+    display: block;
+  }
+
+  .custom-stepper .mat-horizontal-stepper-header-container {
+    display: none;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-content {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Estados de validación */
+.mat-form-field.mat-form-field-invalid .mat-form-field-outline-thick {
+  color: #dc2626 !important;
+}
+
+.mat-form-field.mat-form-field-invalid .mat-icon {
+  color: #dc2626 !important;
+}
+
+/* Hints y errores */
+.mat-hint {
+  color: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+.mat-error {
+  font-size: 12px !important;
+  color: #dc2626 !important;
+}

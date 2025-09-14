@@ -1,52 +1,58 @@
-.header-fixed {
-  position: fixed;
-  top: 0;
-  left: 280px; /* Desktop: después del sidebar cuando está abierto */
-  right: 0;
-  height: 8vh;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  transition: left 0.4s ease;
-  border-left: none;
-}
+  /* header.component.css CON ESTILOS MEJORADOS */
 
-header{
-  background-color: #566f7b33 !important;
-  border-radius: 2vh;
-  margin: 1%;
-}
+  /* Estilos base del header (mantener los existentes) */
+  .header-fixed {
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    height: 9vh;
+    min-height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    margin: 1%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: none;
+  }
 
-/* Header expandido cuando sidebar está cerrado en desktop */
-.header-expanded {
-  left: 0 !important;
-}
+  .header-expanded {
+    left: 0 !important;
+    margin-left: 1% !important;
+    width: calc(100% - 2%) !important;
+  }
 
-/* Header en móvil - siempre expandido y con z-index alto */
-.header-mobile {
-  left: 0 !important;
-  z-index: 1100 !important; /* Mayor que el sidebar para estar encima */
-}
+  .header-mobile {
+    left: 0 !important;
+    z-index: 1100 !important;
+    margin-left: 1% !important;
+    width: calc(100% - 2%) !important;
+  }
 
-.mobile-menu-btn {
-  background: none;
-  border: none;
-  margin-right: 15px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .mobile-menu-btn {
+    background: none;
+    border: none;
+    margin-right: 16px;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
 
-.mobile-menu-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
+  .mobile-menu-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+  }
 
   .header-content {
     flex: 1;
@@ -63,12 +69,19 @@ header{
     min-width: 0;
   }
 
-.header-title {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-  font-weight: 600;
-}
+  .header-title {
+    margin: 0;
+    font-size: 20px;
+    color: #1f2937;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
   .breadcrumb {
     font-size: 13px;
@@ -390,11 +403,13 @@ header{
     }
   }
 
-@media (max-width: 576px) {
-  .header-fixed {
-    height: 50px;
-    padding: 0 15px;
-  }
+  @media (max-width: 576px) {
+    .header-fixed {
+      padding: 0 12px;
+      height: 56px;
+      min-height: 56px;
+      border-radius: 8px;
+    }
 
     .header-title {
       font-size: 16px;

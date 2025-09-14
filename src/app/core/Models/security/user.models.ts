@@ -2,7 +2,6 @@ import { Role } from "./role.models";
 
 export interface UserCreate {
   userName?: string;
-  email?: string;
   password: string;
   personId: number;
 }

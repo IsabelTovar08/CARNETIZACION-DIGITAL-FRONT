@@ -2,14 +2,81 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-body {
-  margin: 0;
-  padding: 0;
-  background-image: url('assets/fondo-dasboard.png'); /* ruta relativa desde src/ */
-  background-size: cover;
-  background-position: center;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* ===== Scroll pastel azul estilizado ===== */
+:root {
+  --scroll-w: 14px;
+  --track-bg: #e9f2fb;        /* azul pastel claro */
+  --track-border: #c7d9f5;    /* azul pastel medio */
+  --thumb-bg: #ffffff;        /* pulgar blanco */
+  --thumb-border: #b0c8f2;    /* borde azul claro */
+  --arrow-color: #7a90c2;     /* azul grisáceo suave */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb-border) var(--track-bg);
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: var(--scroll-w);
+  height: var(--scroll-w);
+}
+
+/* Pista redondeada pastel */
+::-webkit-scrollbar-track {
+  background: var(--track-bg);
+  border: 2px solid var(--track-border);
+  border-radius: 999px;
+}
+
+/* Pulgar blanco con borde azul suave */
+::-webkit-scrollbar-thumb {
+  background: var(--thumb-bg);
+  border: 2px solid var(--thumb-border);
+  border-radius: 999px;
+  min-height: 40px;
+  box-shadow: inset 0 0 0 1px rgba(176, 200, 242, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* Hover del pulgar en azul pastel */
+::-webkit-scrollbar-thumb:hover {
+  background: #f5f9ff;
+  border-color: #8daeea;
+}
+
+/* Botones arriba/abajo (flechas pastel) */
+::-webkit-scrollbar-button {
+  height: 18px;
+  background: var(--track-bg);
+  border: 2px solid var(--track-border);
+  border-radius: 999px;
   background-repeat: no-repeat;
-  height: 100vh;
+  background-position: center;
+  background-size: 8px 8px;
+}
+
+/* Flecha ↑ */
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background-image: url("data:image/svg+xml;utf8,\
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+    <path d='M6 14l6-6 6 6' fill='none' stroke='%237a90c2' stroke-width='2'/>\
+  </svg>");
+}
+
+/* Flecha ↓ */
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  background-image: url("data:image/svg+xml;utf8,\
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+    <path d='M6 10l6 6 6-6' fill='none' stroke='%237a90c2' stroke-width='2'/>\
+  </svg>");
 }
 
 @import "leaflet/dist/leaflet.css";
+
