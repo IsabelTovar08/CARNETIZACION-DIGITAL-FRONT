@@ -22,7 +22,7 @@ export class VerificationCredencials {
     });
   }
 
-   // Obtener usuario básico (UserMeDto → para topbar o info mínima)
+  // Obtener usuario básico (UserMeDto → para topbar o info mínima)
   // public getMe(): Observable<ApiResponse<UserMeDto>> {
   //   return this.http.get<any>(`${this.urlBase}/me`).pipe(
   //     map(res => ({
@@ -35,18 +35,11 @@ export class VerificationCredencials {
 
   // Obtener perfil completo con datos de persona (UserProfileDto)
   public getProfile(): Observable<ApiResponse<UserMeDto>> {
-  return this.http.get<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`);
-}
-
-  // ✅ Actualizar datos del perfil (Persona asociada al User)
-  public updateProfile(person: PersonCreate): Observable<ApiResponse<any>> {
-    return this.http.put<any>(`${this.urlBase}/profile`, person).pipe(
-      map(res => ({
-        success: res.status,
-        message: res.message,
-        data: res.data
-      }))
-    );
+    return this.http.get<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`);
   }
 
+  //  Actualizar datos del perfil (Persona asociada al User)
+  public updateProfile(user: UserMeDto): Observable<ApiResponse<UserMeDto>> {
+    return this.http.put<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`, user);
+  }
 }
