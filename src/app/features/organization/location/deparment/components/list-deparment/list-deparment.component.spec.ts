@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';  // 👉 mock de routing
 
 import { ListDeparmentComponent } from './list-deparment.component';
 
@@ -8,9 +10,12 @@ describe('ListDeparmentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListDeparmentComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,   
+        RouterTestingModule,       
+        ListDeparmentComponent     
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListDeparmentComponent);
     component = fixture.componentInstance;

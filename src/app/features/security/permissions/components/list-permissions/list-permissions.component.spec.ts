@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { ListPermissionsComponent } from './list-permissions.component';
 
@@ -8,9 +10,12 @@ describe('ListPermissionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListPermissionsComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,  
+        RouterTestingModule,       
+        ListPermissionsComponent   
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListPermissionsComponent);
     component = fixture.componentInstance;

@@ -12,9 +12,9 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from '@angular/material/expansion';
 
-import { MenuItem, MenuStructure } from '../../../core/Models/MenuItemModel';
-import { DataService } from '../../../core/Services/shared/data.service';
-import { MenuService } from '../../../core/Services/api/menu/menu.service';
+import { MenuItem, MenuStructure } from '../../../../core/Models/MenuItemModel';
+import { DataService } from '../../../../core/Services/shared/data.service';
+import { MenuService } from '../../../../core/Services/api/menu/menu.service';
 
 // 👉 Interfaces para poblar selects (adáptalas a tus modelos reales)
 interface IModuleOpt { id: number; name: string; }

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing'; // por si el componente usa ActivatedRoute
 import { PerfilesComponent } from './profile.component';
 
 describe('PerfilesComponent', () => {
@@ -8,9 +9,12 @@ describe('PerfilesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PerfilesComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule, // ✅ para mockear HttpClient
+        RouterTestingModule,     // ✅ si usa ActivatedRoute o Router
+        PerfilesComponent        // ✅ standalone component
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PerfilesComponent);
     component = fixture.componentInstance;

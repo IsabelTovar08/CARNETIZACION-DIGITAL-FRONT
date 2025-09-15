@@ -52,6 +52,7 @@ export class ModalPermissionsComponent {
     if (this.data.role) {
       this.role = this.data.role;
     }
+
     if (this.data.form) {
       this.form = this.data.form;
     }
@@ -111,3 +112,5 @@ export class ModalPermissionsComponent {
   }
 
 }
+
+
