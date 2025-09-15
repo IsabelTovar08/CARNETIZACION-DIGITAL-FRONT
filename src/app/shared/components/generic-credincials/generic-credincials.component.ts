@@ -48,6 +48,16 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
       return;
     }
 
+    if(this.password.length < 8) {
+      this.error = 'La contraseña debe tener al menos 8 caracteres';
+      return;
+    }
+
+    if(this.password.length >= 100) {
+      this.error = 'La contraseña alconzo el maximo de 100 caracteres';
+      return;
+    }
+
     this.isValidating = true;
     this.error = '';
 

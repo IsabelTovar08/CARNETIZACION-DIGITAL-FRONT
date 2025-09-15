@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';   // 👈
 import { ListMenuStructureComponent } from './list-menu-structure.component';
 
 describe('ListMenuStructureComponent', () => {
@@ -8,9 +9,12 @@ describe('ListMenuStructureComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListMenuStructureComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,    
+        ListMenuStructureComponent
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListMenuStructureComponent);
     component = fixture.componentInstance;

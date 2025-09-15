@@ -1,42 +1,82 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { GenericCredincialsComponent } from '../../../shared/components/generic-credincials/generic-credincials.component';
+import { VerificationCredencials } from '../../../core/Services/token/verificationCredencials';
+import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
+import { UserMeDto } from '../../../core/Models/security/user-me.models';
+import { ApiResponse } from '../../../core/Models/api-response.models';
+import { PersonCreate } from '../../../core/Models/security/person.models';
+
 
 @Component({
   selector: 'app-seccion-perfil',
   standalone: true,
-  // AGREGAR el componente genérico a las importaciones
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent],
   templateUrl: './seccion-perfil.component.html',
-  styleUrl: './seccion-perfil.component.css'
+  styleUrls: ['./seccion-perfil.component.css']
 })
-export class SeccionPerfilComponent {
+export class SeccionPerfilComponent implements OnInit {
+  isEditable = false;
   isModalOpen = false;
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private userService = inject(VerificationCredencials);
 
+  meData?: UserMeDto;
   perfilForm: FormGroup;
 
-  constructor() {
+  constructor(
+    private snackbarService: SnackbarService,
+  ) {
+
     this.perfilForm = this.fb.group({
-      nombre: ['Juan Carlos', Validators.required],
-      primerApellido: ['García', Validators.required],
-      segundoApellido: ['López'],
-      email: ['juan.garcia@email.com', [Validators.required, Validators.email]],
-      telefono: ['+57 301 234 5678', [Validators.pattern(/^\+?[\d\s-()]+$/)]]
+      nombre: ['', Validators.required],
+      primerApellido: ['', Validators.required],
+      segundoApellido: [''],
+      email: ['', [Validators.required, Validators.email]],
+      telefono: ['', [Validators.pattern(/^\+?[\d\s-()]+$/)]]
     });
+    this.perfilForm.disable();
   }
+
+  ngOnInit(): void {
+    this.cargarDatosUsuario();
+  }
+
+  cargarDatosUsuario(): void {
+  this.userService.getProfile().subscribe({
+  next: (res: ApiResponse<UserMeDto>) => {
+    if (res.success && res.data) {
+      const u = res.data;
+
+      this.perfilForm.patchValue({
+        nombre: u.firstName ?? '',
+        primerApellido: u.lastName ?? '',
+        segundoApellido: u.secondLastName ?? '',
+        email: u.email ?? '',
+        telefono: u.phone ?? ''
+      });
+    }
+  }
+});
+}
+
+
+
+
 
   onSubmit() {
     if (this.perfilForm.valid) {
       console.log('Datos actualizados:', this.perfilForm.value);
-      alert('Perfil actualizado exitosamente');
+      this.snackbarService.showSuccess('Perfil actualizado exitosamente');
     } else {
-      console.log('Formulario inválido');
-      this.markAllFieldsAsTouched();
+      this.snackbarService.showError('Formulario inválido, revisa los campos');
+      Object.keys(this.perfilForm.controls).forEach(key => {
+        this.perfilForm.get(key)?.markAsTouched();
+      });
     }
   }
 
@@ -49,11 +89,24 @@ export class SeccionPerfilComponent {
   }
 
   onValidacionExitosa(password: string) {
-    console.log('Contraseña validada correctamente:', password);
-    this.cerrarModal();
-    // Aquí puedes habilitar la edición del formulario o hacer lo que necesites
-    alert('¡Credenciales validadas! Ahora puedes editar tu perfil.');
+    this.userService.verifyPassword(password).subscribe({
+      next: (res) => {
+        if (res.status) {
+          this.isEditable = true;
+          this.perfilForm.enable();
+          this.snackbarService.showSuccess('¡Credenciales validadas! Ahora puedes editar tu perfil.');
+        } else {
+          this.snackbarService.showError(res.message || 'Contraseña incorrecta.');
+        }
+        this.isModalOpen = false;
+      },
+      error: (err) => {
+        console.error('Error al verificar contraseña', err);
+        this.snackbarService.showError('Hubo un problema al verificar tu contraseña.');
+      }
+    });
   }
+
 
   private markAllFieldsAsTouched() {
     Object.keys(this.perfilForm.controls).forEach(key => {
@@ -79,5 +132,7 @@ export class SeccionPerfilComponent {
       email: 'juan.garcia@email.com',
       telefono: '+57 301 234 5678'
     });
+    this.isEditable = false;
+    this.perfilForm.disable();
   }
 }
