@@ -1,0 +1,170 @@
+.estructura-organizativa {
+  padding: 24px;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.header {
+  left: 3vh;
+  margin-bottom: 50px;
+  color: rgb(0, 0, 0);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 10px auto;
+}
+
+
+
+
+
+::ng-deep .card-list-container .card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+
+
+::ng-deep .card-list-container .card-grid > :nth-child(4) {
+  grid-column: 1.5 / span 1;
+}
+
+
+
+::ng-deep .card-list-container .card-grid > :nth-child(5) {
+  grid-column: 2.5 / span 1;
+}
+
+
+/* Estilos básicos para las tarjetas organizacionales */
+::ng-deep .card-list-container .card {
+  border-radius: 18px !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 100px;
+  min-width: 290px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-items: center;
+}
+
+::ng-deep .card-list-container .card:hover {
+  transform: translateY(-6px);
+}
+
+::ng-deep .card-list-container .card-image {
+  padding: 20px;
+  height: 20vh;
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 !important;
+}
+
+::ng-deep .card-list-container .card-image img {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
+  transition: transform 0.3s ease;
+}
+
+::ng-deep .card-list-container .card:hover .card-image img {
+  transform: scale(1.08);
+}
+
+::ng-deep .card-list-container .card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 16px 20px 16px;
+  width: 100%;
+}
+
+::ng-deep .card-list-container .card-title {
+  font-size: 1.1rem !important;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+::ng-deep .card-list-container .card-text {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-align: center;
+  margin: 0;
+  opacity: 0.95;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .estructura-organizativa {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  ::ng-deep .card-list-container .card {
+    min-height: 200px;
+  }
+
+  ::ng-deep .card-list-container .card-image {
+    height: 120px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    margin-bottom: 30px;
+  }
+
+  .title {
+    font-size: 1.875rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

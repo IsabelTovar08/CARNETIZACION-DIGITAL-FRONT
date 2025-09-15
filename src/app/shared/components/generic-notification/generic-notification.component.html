@@ -1,0 +1,78 @@
+<div class="notification-content">
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="notifications.length === 0">
+        <mat-icon class="empty-icon">notifications_none</mat-icon>
+        <h3>No tienes notificaciones</h3>
+        <p>Cuando tengas nuevas notificaciones aparecerán aquí</p>
+      </div>
+
+      <!-- Notifications list -->
+      <div class="notifications-list" *ngIf="notifications.length > 0">
+        <!-- Actions header -->
+        <div class="notifications-actions">
+          <button mat-button class="mark-all-btn" (click)="markAllAsRead()" 
+                  *ngIf="unreadCount > 0">
+            <mat-icon>done_all</mat-icon>
+            Marcar todas como leídas
+          </button>
+          <button mat-button class="clear-all-btn" (click)="clearAll()" 
+                  *ngIf="notifications.length > 0">
+            <mat-icon>clear_all</mat-icon>
+            Limpiar todo
+          </button>
+        </div>
+
+        <!-- Notification items -->
+        <div class="notification-item" 
+             *ngFor="let notification of notifications; trackBy: trackByFn"
+             [class.unread]="!notification.read"
+             [class.read]="notification.read">
+          
+          <!-- Notification icon based on type -->
+          <div class="notification-icon" [ngClass]="'icon-' + notification.type">
+            <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+          </div>
+
+          <!-- Notification content -->
+          <div class="notification-body">
+            <div class="notification-header">
+              <h4 class="notification-title">{{ notification.title }}</h4>
+              <span class="notification-time">{{ getTimeAgo(notification.timestamp) }}</span>
+            </div>
+            
+            <p class="notification-message">{{ notification.message }}</p>
+            
+            <!-- Action button if available -->
+            <div class="notification-actions" *ngIf="notification.actionText">
+              <button mat-button class="action-btn" (click)="onNotificationAction(notification)">
+                <mat-icon *ngIf="notification.actionIcon">{{ notification.actionIcon }}</mat-icon>
+                {{ notification.actionText }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Read/Unread toggle and delete -->
+          <div class="notification-controls">
+            <button mat-icon-button class="control-btn" 
+                    (click)="toggleRead(notification)"
+                    [title]="notification.read ? 'Marcar como no leída' : 'Marcar como leída'">
+              <mat-icon>{{ notification.read ? 'mark_email_unread' : 'mark_email_read' }}</mat-icon>
+            </button>
+            
+            <button mat-icon-button class="control-btn delete-btn" 
+                    (click)="deleteNotification(notification.id)"
+                    title="Eliminar notificación">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load more button -->
+      <div class="load-more" *ngIf="hasMoreNotifications">
+        <button mat-button class="load-more-btn" (click)="loadMore()">
+          <mat-icon>expand_more</mat-icon>
+          Cargar más notificaciones
+        </button>
+      </div>
+    </div>

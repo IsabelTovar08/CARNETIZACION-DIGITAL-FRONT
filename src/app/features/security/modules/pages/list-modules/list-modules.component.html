@@ -1,0 +1,24 @@
+<app-generic-table
+  [title]="'Módulos'"
+  *ngIf="listModule as modules"
+  [dataSourceInput]="modules"
+  [displayedColumns]="displayedColumns"
+  [customTemplates]="{ 'icon': iconTemplate }"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'description', label: 'Descripción' },
+      { key: 'phone', label: 'Teléfono'},
+      { key: 'isDeleted', label: 'Activo' },
+      { key: 'icon', label: 'Ícono' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>
+
+<!-- Template para los íconos -->
+<ng-template let-element let-column="column" #iconTemplate>
+  <mat-icon *ngIf="element.icon">{{ element.icon }}</mat-icon>
+  <span *ngIf="!element.icon">—</span>
+</ng-template>

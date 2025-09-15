@@ -1,0 +1,43 @@
+<div class="verification-container">
+  <div class="verification-card">
+    <!-- Imagen izquierda -->
+    <div class="illustration-section">
+      <img src="assets/olvido-contra.png" alt="Ilustración" class="illustration-image">
+    </div>
+
+    <!-- Formulario derecha -->
+    <div class="form-section">
+      <div class="form-content">
+        <h2 class="title">Código enviado exitosamente</h2>
+
+        <div class="success-icon">
+          <img src="assets/correo.png" alt="Email" />
+        </div>
+
+        <p class="instruction">
+          Digite los 5 dígitos que se enviaron al correo, Para finalizar con la activavion de tu cuenta
+          <strong>{{email}}</strong>:
+        </p>
+
+        <div class="code-inputs">
+          @for (input of codeInputs(); track $index) {
+            <input
+              type="text"
+              maxlength="1"
+              class="code-digit"
+              [(ngModel)]="input.value"
+              (input)="onInputChange($index, $event)"
+              (keydown)="onKeyDown($index, $event)"
+              (paste)="onPaste($event)"
+            />
+          }
+        </div>
+
+        <button class="continue-btn" [disabled]="!isCodeComplete()" (click)="onContinue()">
+          Continuar
+        </button>
+        <button class="resend-btn" (click)="reenviarCodigo()">Reenviar</button>
+      </div>
+    </div>
+  </div>
+</div>

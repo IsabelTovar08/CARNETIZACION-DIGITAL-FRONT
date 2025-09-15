@@ -1,0 +1,17 @@
+<div class="estructura-organizativa">
+  <div class="header">
+    <h1 class="title">Estructura Organizativa</h1>
+    <p class="subtitle">Administra la estructura de tu organización</p>
+  </div>
+
+  <div class="cards-grid">
+    <app-generic-list-cards
+      [items]="organizationalCards"
+      [clickable]="true"
+      [pageSize]="10"
+      variant="organizational"
+      size="large"
+      (cardClick)="onSectionClick($event)">
+    </app-generic-list-cards>
+  </div>
+</div>

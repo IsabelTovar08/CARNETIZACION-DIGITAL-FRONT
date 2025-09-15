@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: #f9fbfc;
+  font-family: 'Inter', sans-serif;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #60a5fa;
+  margin-bottom: 2rem;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+
+/* Quita la línea inferior de los mat-form-field */
+.mat-form-field-appearance-fill .mat-form-field-underline {
+  display: none;
+}
+
+/* Ajusta el fondo y borde redondeado del contenedor de input */
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #e5e7eb; /* gris claro */
+  border-radius: 0.75rem;    /* borde redondeado */
+  padding: 0.5rem 1rem;      /* buen espaciado interno */
+  border: 1px solid #e5e7eb; /* evita el borde extra */
+  transition: border-color 0.2s ease;
+}
+
+/* En caso de error, cambia el borde a rojo */
+.mat-form-field-appearance-fill.mat-form-field-invalid .mat-form-field-flex {
+  border-color: #ef4444;
+}

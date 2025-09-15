@@ -1,0 +1,34 @@
+<app-generic-table
+  [title]="(organizationalUnitName || '')"
+  *ngIf="listInternalDivicion"
+  [dataSourceInput]="listInternalDivicion"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'organizationalUnitName', label: 'Organización' },
+      { key: 'areaCategoryName', label: 'Área' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>
+
+<!-- 
+<app-generic-table
+  [title]="'Divisiones Internas'"
+  *ngIf="listInternalDivicion"
+  [dataSourceInput]="listInternalDivicion"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'organizationalUnitName', label: 'Organizacion' },
+      { key: 'areaCategoryName', label: 'Area' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table> -->

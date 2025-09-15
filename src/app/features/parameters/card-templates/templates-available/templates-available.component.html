@@ -1,0 +1,16 @@
+<div class="plantilla-carnet">
+  <div class="header">
+    <h1 class="title">Plantillas de carnets</h1>
+    <p class="subtitle">plantillas disponibles</p>
+  </div>
+
+  <div class="cards-grid">
+    <app-generic-list-cards
+      [items]="TemplateAvaleCards"
+      [clickable]="true"
+      [pageSize]="10"
+      size="large"
+      (cardClick)="onSectionClick($event)">
+    </app-generic-list-cards>
+  </div>
+</div>

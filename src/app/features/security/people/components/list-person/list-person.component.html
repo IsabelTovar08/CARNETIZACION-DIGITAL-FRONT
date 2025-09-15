@@ -1,0 +1,20 @@
+<app-generic-table
+  [title]="'Personas'"
+  *ngIf="listPerson as list"
+  [dataSourceInput]="list"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'firstName', label: 'Nombre' },
+      { key: 'documentNumber', label: 'Identificación' },
+      { key: 'documentTypeName', label: 'Tipo de Documento' },
+      { key: 'email', label: 'Correo Electrónico' },
+      { key: 'bloodTypeName', label: 'RH' },
+      { key: 'cityName', label: 'Ciudad' },
+      { key: 'phone', label: 'Teléfono'},
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="edit($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

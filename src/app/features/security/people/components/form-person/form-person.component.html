@@ -1,0 +1,401 @@
+<div class="form-container">
+  <mat-card class="stepper-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person_add</mat-icon>
+        Registro de Persona
+      </mat-card-title>
+      <mat-card-subtitle>Complete todos los pasos para registrar una nueva
+        persona</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-stepper [linear]="isLinear" #stepper orientation="horizontal"
+        class="custom-stepper">
+
+        <!-- Paso 1: Información Personal Básica -->
+        <mat-step [stepControl]="personalInfoForm"
+          errorMessage="Complete la información personal">
+          <form [formGroup]="personalInfoForm">
+            <ng-template matStepLabel>Información Personal</ng-template>
+
+            <div class="step-content">
+              <h3 class="step-title">Datos Personales</h3>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Primer Nombre</mat-label>
+                  <input matInput placeholder="Ingrese su primer nombre"
+                    formControlName="firstName" required>
+                  <mat-icon matSuffix>person</mat-icon>
+                  <mat-error
+                    *ngIf="personalInfoForm.get('firstName')?.hasError('required')">
+                    El primer nombre es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Segundo Nombre</mat-label>
+                  <input matInput placeholder="Segundo nombre (opcional)"
+                    formControlName="middleName">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Primer Apellido</mat-label>
+                  <input matInput placeholder="Primer apellido"
+                    formControlName="lastName" required>
+                  <mat-error
+                    *ngIf="personalInfoForm.get('lastName')?.hasError('required')">
+                    El apellido es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Segundo Apellido</mat-label>
+                  <input matInput placeholder="Segundo apellido (opcional)"
+                    formControlName="secondLastName">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button mat-raised-button color="primary" matStepperNext
+                [disabled]="!personalInfoForm.valid">
+                <mat-icon>navigate_next</mat-icon>
+                Siguiente
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Paso 2: Documentación -->
+        <mat-step [stepControl]="documentForm"
+          errorMessage="Complete la información de documentación">
+          <form [formGroup]="documentForm">
+            <ng-template matStepLabel>Documentación</ng-template>
+
+            <div class="step-content">
+              <h3 class="step-title">Información de Identificación</h3>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Tipo de Documento</mat-label>
+                  <mat-select formControlName="documentTypeId" required>
+                    <mat-option *ngFor="let docType of documentTypes"
+                      [value]="docType.id">
+                      {{docType.name}} - {{docType.description}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>badge</mat-icon>
+                  <mat-error
+                    *ngIf="documentForm.get('documentTypeId')?.hasError('required')">
+                    Seleccione un tipo de documento
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Número de Identificación</mat-label>
+                  <input matInput placeholder="Número de documento"
+                    formControlName="documentNumber" required>
+                  <mat-error
+                    *ngIf="documentForm.get('documentNumber')?.hasError('required')">
+                    El número de identificación es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Tipo de Sangre</mat-label>
+                  <mat-select formControlName="bloodTypeId" required>
+                    <mat-option *ngFor="let bloodType of bloodTypes"
+                      [value]="bloodType.id">
+                      {{bloodType.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>bloodtype</mat-icon>
+                  <mat-error
+                    *ngIf="documentForm.get('bloodTypeId')?.hasError('required')">
+                    Seleccione un tipo de sangre
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button mat-stroked-button matStepperPrevious>
+                <mat-icon>navigate_before</mat-icon>
+                Anterior
+              </button>
+              <button mat-raised-button color="primary" matStepperNext
+                [disabled]="!documentForm.valid">
+                <mat-icon>navigate_next</mat-icon>
+                Siguiente
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Paso 3: Información de Contacto -->
+        <mat-step [stepControl]="contactForm"
+          errorMessage="Complete la información de contacto">
+          <form [formGroup]="contactForm">
+            <ng-template matStepLabel>Información de Contacto</ng-template>
+
+            <div class="step-content">
+              <h3 class="step-title">Datos de Contacto</h3>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput placeholder="Número de teléfono"
+                    formControlName="phone" required>
+                  <mat-icon matSuffix>phone</mat-icon>
+                  <mat-error
+                    *ngIf="contactForm.get('phone')?.hasError('required')">
+                    El teléfono es requerido
+                  </mat-error>
+                  <mat-error
+                    *ngIf="contactForm.get('phone')?.hasError('pattern')">
+                    Formato de teléfono inválido
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Correo Electrónico</mat-label>
+                  <input matInput placeholder="correo@ejemplo.com"
+                    formControlName="email" required>
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-error
+                    *ngIf="contactForm.get('email')?.hasError('required')">
+                    El correo electrónico es requerido
+                  </mat-error>
+                  <mat-error
+                    *ngIf="contactForm.get('email')?.hasError('email')">
+                    Formato de correo inválido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Dirección</mat-label>
+                  <textarea matInput placeholder="Dirección completa"
+                    formControlName="address" rows="3"></textarea>
+                  <mat-icon matSuffix>home</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Departamento</mat-label>
+                  <mat-select formControlName="deparmentId" required>
+                    <mat-option *ngFor="let deparment of deparments"
+                      [value]="deparment.id">
+                      {{deparment.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>location_deparment</mat-icon>
+                  <mat-error
+                    *ngIf="contactForm.get('deparmentId')?.hasError('required')">
+                    Seleccione un deparmento
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Ciudad</mat-label>
+                  <mat-select formControlName="cityId" required
+                    [disabled]="isCityDisabled">
+                    <mat-option *ngFor="let city of cities" [value]="city.id">
+                      {{ city.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>location_city</mat-icon>
+                  <mat-error
+                    *ngIf="contactForm.get('cityId')?.hasError('required')">
+                    Seleccione una ciudad
+                  </mat-error>
+                </mat-form-field>
+
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button mat-stroked-button matStepperPrevious>
+                <mat-icon>navigate_before</mat-icon>
+                Anterior
+              </button>
+              <button mat-raised-button color="primary" matStepperNext
+                [disabled]="!contactForm.valid">
+                <mat-icon>navigate_next</mat-icon>
+                Siguiente
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Paso 4: Usuario -->
+        <mat-step [stepControl]="userForm"
+          errorMessage="Complete la información de usuario">
+          <form [formGroup]="userForm">
+            <ng-template matStepLabel>Usuario</ng-template>
+            <div class="step-content">
+              <h3 class="step-title">Información de Usuario</h3>
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput value="{{getEmail}}" readonly>
+                  <mat-icon matSuffix>account_circle</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nombre de Usuario (Opciona)</mat-label>
+                  <input matInput placeholder="Nombre de usuario único"
+                    formControlName="username">
+                  <mat-icon matSuffix>account_circle</mat-icon>
+                  <mat-hint>El nombre de usuario debe ser único en el
+                    sistema</mat-hint>
+                  <mat-error
+                    *ngIf="userForm.get('username')?.hasError('minlength')">
+                    Mínimo 3 caracteres
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Contraseña</mat-label>
+                  <input matInput [type]="hidePassword ? 'password' : 'text'"
+                    formControlName="password" required>
+                  <button mat-icon-button matSuffix
+                    (click)="hidePassword = !hidePassword" type="button">
+                    <mat-icon>{{hidePassword ? 'visibility_off' :
+                      'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error
+                    *ngIf="userForm.get('password')?.hasError('required')">
+                    La contraseña es requerida
+                  </mat-error>
+                  <mat-error
+                    *ngIf="userForm.get('password')?.hasError('minlength')">
+                    Mínimo 6 caracteres
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Confirmar Contraseña</mat-label>
+                  <input matInput
+                    [type]="hideConfirmPassword ? 'password' : 'text'"
+                    formControlName="confirmPassword" required>
+                  <button mat-icon-button matSuffix
+                    (click)="hideConfirmPassword = !hideConfirmPassword"
+                    type="button">
+                    <mat-icon>{{hideConfirmPassword ? 'visibility_off' :
+                      'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error
+                    *ngIf="userForm.get('confirmPassword')?.hasError('required')">
+                    Confirme la contraseña
+                  </mat-error>
+                  <mat-error
+                    *ngIf="userForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                    Las contraseñas no coinciden
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button mat-stroked-button matStepperPrevious>
+                <mat-icon>navigate_before</mat-icon>
+                Anterior
+              </button>
+              <button mat-raised-button color="primary" matStepperNext
+                [disabled]="!userForm.valid">
+                <mat-icon>navigate_next</mat-icon>
+                Siguiente
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Paso 5: Confirmación -->
+        <mat-step>
+          <ng-template matStepLabel>Confirmación</ng-template>
+
+          <div class="step-content confirmation-step">
+            <div class="success-icon">
+              <mat-icon color="primary">check_circle</mat-icon>
+            </div>
+
+            <h3 class="step-title">¡Registro Completado!</h3>
+            <p class="confirmation-message">
+              Se ha completado exitosamente el registro de la persona.
+              Revise la información a continuación antes de finalizar.
+            </p>
+
+            <!-- Resumen de datos -->
+            <mat-card class="summary-card">
+              <mat-card-header>
+                <mat-card-title>Resumen de Información</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="summary-section">
+                  <h4><mat-icon>person</mat-icon> Información Personal</h4>
+                  <p><strong>Nombre:</strong> {{getFullName()}}</p>
+                </div>
+
+                <div class="summary-section">
+                  <h4><mat-icon>badge</mat-icon> Documentación</h4>
+                  <p><strong>Documento:</strong> {{getDocumentTypeName()}} -
+                    {{documentForm.get('documentNumber')?.value}}</p>
+                  <p><strong>Tipo de Sangre:</strong>
+                    {{getBloodTypeName()}}</p>
+                </div>
+
+                <div class="summary-section">
+                  <h4><mat-icon>contact_mail</mat-icon> Contacto</h4>
+                  <p><strong>Teléfono:</strong>
+                    {{contactForm.get('phone')?.value}}</p>
+                  <p><strong>Email:</strong>
+                    {{contactForm.get('email')?.value}}</p>
+                  <p><strong>Dirección:</strong>
+                    {{contactForm.get('address')?.value}}</p>
+                  <p><strong>Ciudad:</strong> {{getCityName()}}</p>
+                </div>
+
+                <div class="summary-section">
+                  <h4><mat-icon>account_circle</mat-icon> Usuario</h4>
+                  <p><strong>Username:</strong>
+                    {{userForm.get('username')?.value}}</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div class="step-actions final-actions">
+            <button mat-stroked-button matStepperPrevious>
+              <mat-icon>navigate_before</mat-icon>
+              Anterior
+            </button>
+            <button mat-stroked-button (click)="stepper.reset()"
+              class="reset-btn">
+              <mat-icon>refresh</mat-icon>
+              Reiniciar
+            </button>
+            <button mat-raised-button color="primary" (click)="submitForm()"
+              [disabled]="!isFormValid()">
+              <mat-icon>save</mat-icon>
+              Guardar Persona
+            </button>
+          </div>
+        </mat-step>
+
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>

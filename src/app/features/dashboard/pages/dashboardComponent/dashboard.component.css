@@ -1,9 +1,13 @@
 .dashboard-container {
   height: 100vh;
   display: flex;
-  /* flex-direction: column; */
   background-color: transparent !important;
+  background-image: url('./../../../../../assets/fondo-dasboard.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-opened.mat-drawer-side {
     background: transparent;
 }
@@ -50,7 +54,7 @@ mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-over {
   align-items: center;
   padding: 0 20px;
   transition: left 0.3s ease;
-  
+
 }
 
 .mobile-menu-btn {
@@ -96,7 +100,7 @@ mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-over {
 .contenedor{
   background: #566f7b33;
   border-radius: 2vh;
-
+  padding: 3%;
 }
 
 /* RESPONSIVE */

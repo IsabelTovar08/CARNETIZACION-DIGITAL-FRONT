@@ -1,0 +1,89 @@
+.map-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+}
+
+.map-image {
+  width: 100%;
+  display: block;
+  pointer-events: none;          /* evita que la imagen bloquee los clics */
+}
+
+.marker-container {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;                   /* queda por encima del mapa */
+}
+
+.marker-icon {
+  width: 100px;                  /* tus medidas */
+  height: 80px;                  /* tus medidas */
+}
+
+/* Posiciones individuales (las tuyas) */
+.marker-norte { top: 20%; left: 77%; }
+.marker-centro { top: 50%; left: 40%; }
+.marker-sur   { top: 25%; left: 55%; }
+
+/* Modal tipo tooltip sobre el icono */
+.marker-modal {
+  position: absolute;
+  z-index: 20;
+  transform: translate(-50%, -110%); /* centra horizontal y sube el modal encima del icono */
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px 12px;
+  width: 240px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  position: relative;
+  text-align: center;
+}
+
+.modal-title {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+
+.modal-text {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+.sucursal-img {
+  width: 100%;
+  border-radius: 6px;
+  margin: 6px 0 8px;
+}
+
+.close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 18px;
+  line-height: 18px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.modal-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #fff;    /* flechita que apunta al icono */
+}

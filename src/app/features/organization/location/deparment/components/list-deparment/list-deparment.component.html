@@ -1,0 +1,14 @@
+<app-generic-table
+  [title]="'Departamentos'"
+  *ngIf="listDeparment as list"
+  [dataSourceInput]="list"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

@@ -1,0 +1,16 @@
+<app-generic-table
+  [title]="'Permisos'"
+  *ngIf="listPermission as list"
+  [dataSourceInput]="list"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'description', label: 'Descripción' },
+      { key: 'phone', label: 'Teléfono'},
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

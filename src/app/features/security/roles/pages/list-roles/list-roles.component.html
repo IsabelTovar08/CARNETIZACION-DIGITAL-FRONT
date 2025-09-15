@@ -1,0 +1,25 @@
+
+<!-- <ng-template #actionsExtraTemplate let-item>
+  <button mat-icon-button (click)="verPermisos(item)"
+   matTooltip="Gestionar Permisos">
+    <mat-icon>add_moderator</mat-icon>
+  </button>
+  [customTemplates]="{ 'actions-extra': actionsExtraTemplate }"
+
+</ng-template> -->
+
+<app-generic-table
+  [title]="'Roles'"
+  *ngIf="listRoles as roles"
+  [dataSourceInput]="roles"
+  [displayedColumns]="displayedColumns"
+  [columns]="[
+      { key: 'name', label: 'Nombre' },
+      { key: 'description', label: 'Descripción' },
+      { key: 'isDeleted', label: 'Activo' }
+    ]"
+  (onCreate)="save()"
+  (onEdit)="save($event)"
+  (onDelete)="delete($event)"
+  (onToggleStatus)="toggleIsActive($event)">
+</app-generic-table>

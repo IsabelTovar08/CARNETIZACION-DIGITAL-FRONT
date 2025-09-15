@@ -1,0 +1,39 @@
+<!-- menu-crud.page.html -->
+<app-generic-table
+  [title]="'Menú del sistema'"
+  [buttonSave]="true"
+  [columns]="columns"
+  [displayedColumns]="displayedColumns"
+  [dataSourceInput]="raw"
+  [customTemplates]="{ 'actions-extra': moreTpl }"
+  (onCreate)="onCreate()"
+  (onEdit)="onEdit($event)"
+  (onDelete)="onDelete($event)"
+  (onToggleStatus)="onToggle($event)">
+
+  <!-- title con indent y icono -->
+  <ng-template #titleTpl let-item>
+    <div [style.padding-left.px]="item.level * 16" class="row-title">
+      <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+      <span>{{ item.title }}</span>
+    </div>
+  </ng-template>
+
+  <!-- type como chip -->
+  <ng-template #typeTpl let-item>
+    <mat-chip-set>
+      <mat-chip [ngClass]="item.type">{{ item.type }}</mat-chip>
+    </mat-chip-set>
+  </ng-template>
+
+  <!-- url clickeable -->
+  <ng-template #urlTpl let-item>
+    <a *ngIf="item.url; else noUrl" [routerLink]="item.url">{{ item.url }}</a>
+    <ng-template #noUrl>—</ng-template>
+  </ng-template>
+
+  <ng-template #moreTpl let-item>
+    <button mat-icon-button><mat-icon>info</mat-icon></button>
+  </ng-template>
+
+</app-generic-table>

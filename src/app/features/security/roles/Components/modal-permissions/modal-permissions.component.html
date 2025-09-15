@@ -1,0 +1,51 @@
+ <div class="permissions-modal">
+  <h2 mat-dialog-title>Configurar Permisos</h2>
+
+  <form [formGroup]="permissionsForm" class="modal-content">
+    <mat-dialog-content>
+      <!-- Nombre del Rol -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre del Rol</mat-label>
+        <input matInput [value]="role.name"
+          placeholder="Ingrese el nombre del rol" readonly>
+      </mat-form-field>
+
+      <!-- Nombre del Formulario -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre del Formulario</mat-label>
+        <input matInput [value]="form.name"
+          placeholder="Ingrese el nombre del formulario" readonly>
+      </mat-form-field>
+
+      <!-- Sección de Permisos -->
+      <div class="permissions-section">
+        <h3 class="permissions-title">Seleccionar Permisos</h3>
+
+        <div class="permissions-list" formArrayName="permissions">
+          <mat-checkbox
+            *ngFor="let permission of listPermissions"
+            [checked]="permissionsSelected?.includes(permission.id)"
+            (change)="togglePermission(permission.id, $event.checked)"
+            class="permission-checkbox">
+
+            <div class="permission-info">
+              <span class="permission-name">{{ permission.name }}</span>
+              <span class="permission-description"
+                *ngIf="permission.description">
+                {{ permission.description }}
+              </span>
+            </div>
+          </mat-checkbox>
+        </div>
+
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-actions">
+      <button mat-button (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="onSubmit()">
+        Guardar Permisos
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

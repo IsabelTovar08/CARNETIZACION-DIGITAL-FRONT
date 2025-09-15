@@ -1,0 +1,29 @@
+.ingresar-container {
+  margin: 0;
+  padding: 0;
+  height: 100vh;                 /* pantalla completa */
+  display: flex;
+  flex-direction: column;        /* header arriba, contenido abajo */
+  background-image: url('./../../../../../assets/fondo-dasboard.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth {
+  background: url('/assets/fondo-login.png') center/cover no-repeat !important;
+}
+
+/* Header */
+app-auth-navbar-component {
+  flex: 0 0 auto;   /* fijo arriba */
+}
+
+/* Contenido dinámico con scroll */
+.app-content {
+  flex: 1;                     /* ocupa el espacio restante */
+  overflow-y: auto;            /* aquí va el scroll */
+  display: flex;
+  justify-content: center;     /* centra horizontal */
+  align-items: center;         /* centra vertical */
+}

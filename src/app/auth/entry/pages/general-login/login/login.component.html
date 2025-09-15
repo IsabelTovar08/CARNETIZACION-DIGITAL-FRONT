@@ -1,0 +1,28 @@
+ <div class="login-container">
+  <div class="login-card">
+    <!-- Imagen -->
+    <div class="illustration-section">
+      <img src="assets/login.png" alt="Login illustration" class="illustration-image">
+    </div>
+
+    <!-- Formulario -->
+    <div class="login-section">
+      <div class="login-header">
+        <h1 class="login-title">Iniciar sesión</h1>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <h4>Correo electrónico</h4>
+        <input type="email" formControlName="email" class="form-input" placeholder="example@gmail.com">
+        <h4>Contraseña</h4>
+        <input type="password" formControlName="password" class="form-input" placeholder="********">
+
+        <div class="forgot-password">
+          <a (click)="goToForgotPassword()" style="cursor: pointer">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="login-button">Ingresar</button>
+      </form>
+    </div>
+  </div>
+</div>

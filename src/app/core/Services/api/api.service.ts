@@ -1,39 +1,47 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment.development';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
+import { ApiResponse } from '../../Models/api-response.models';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class ApiService<T, D> {
 
-  constructor(private http: HttpClient) { }
-  urlBase = environment.URL + 'api';
+  constructor(
+    protected http: HttpClient,
+    protected wrapper: HttpServiceWrapperService
+  ) { }
+  urlBase = environment.URL + '/api';
 
-  public ObtenerTodo(entidad: string) {
-    return this.http.get<any>(`${this.urlBase}/${entidad}`);
+  public ObtenerTodo(entidad: string): Observable<ApiResponse<D[]>> {
+    return this.wrapper.handleRequest(this.http.get<ApiResponse<D[]>>(`${this.urlBase}/${entidad}`));
   }
-  public ObtenerActivos(entidad: string) {
-    return this.http.get<any>(`${this.urlBase}/${entidad}/active`);
+
+  public ObtenerPorId(entidad: string, id: number): Observable<ApiResponse<D>> {
+    return this.wrapper.handleRequest(this.http.get<ApiResponse<D>>(`${this.urlBase}/${entidad}/${id}`));
   }
-  public Crear(entidad: string, objeto: any) {
-    return this.http.post<any>(`${this.urlBase}/${entidad}`, objeto);
+  public ObtenerActivos(entidad: string): Observable<ApiResponse<D>> {
+    return this.http.get<ApiResponse<D>>(`${this.urlBase}/${entidad}/active`);
   }
-  public update(entidad: string, data: any) {
-    return this.http.put(`${this.urlBase}/${entidad}/update/`, data);
+  public Crear(entidad: string, objeto: T) {
+    return this.wrapper.handleRequest(this.http.post<ApiResponse<D>>(`${this.urlBase}/${entidad}`, objeto));
+  }
+  public update(entidad: string, data: T) : Observable<ApiResponse<D>>{
+    return this.wrapper.handleRequest(this.http.put<ApiResponse<D>>(`${this.urlBase}/${entidad}/update/`, data));
   }
   public delete(entidad: string, id: number) {
-    return this.http.delete(`${this.urlBase}/${entidad}/${id}`);
+    return this.wrapper.handleRequest(this.http.delete(`${this.urlBase}/${entidad}/${id}`));
   }
   public deleteLogic(entidad: string, id: number) {
-    return this.http.patch(`${this.urlBase}/${entidad}/toggleActive/${id}`, null);
+    return this.wrapper.handleRequest(this.http.patch(`${this.urlBase}/${entidad}/${id}/toggle-active`, null));
   }
-  public login(credentials: { email: string, password: string }) {
-    return this.http.post<any>(`${this.urlBase}/Auth/login`, credentials);
-  }
+
   loginWithGoogle(tokenId: string) {
-    return this.http.post<{ token: string }>(`${this.urlBase}/Auth/google`, { tokenId });
+    return this.wrapper.handleRequest(this.http.post<{ token: string }>(`${this.urlBase}/Auth/google`, { tokenId }));
   }
   exchangeCodeForToken(code: any): Observable<any> {
     return this.http.post(`${this.urlBase}/Auth/login-google-code`, { code });

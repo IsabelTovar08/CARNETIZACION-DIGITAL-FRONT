@@ -1,0 +1,26 @@
+
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+button {
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: none;
+}
+
+button[color="primary"] {
+  background-color: #3b82f6;
+  color: white;
+}
+
+button[color="warn"],
+button.cancel-button {
+  background-color: #ef4444;
+  color: white;
+}

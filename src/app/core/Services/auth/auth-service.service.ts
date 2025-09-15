@@ -1,77 +1,82 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-// import {jwtDecode} from 'jwt-decode';
-// import Swal from 'sweetalert2';
-
+import { jwtDecode } from 'jwt-decode';
+import Swal from 'sweetalert2';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie'
+import { environment } from '../../../../environments/environment';
+import { Observable, tap } from 'rxjs';
+import { TokenService } from '../token/token.service';
+import { RefreshRequest, RequestCode, RequestLogin, ResponseLogin, ResponseToken } from '../../Models/auth.models';
+import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private router:Router){}
+  constructor(
+    private http: HttpClient,
+    private tokenService: TokenService,
+    protected wrapper: HttpServiceWrapperService
 
-  private tokenKey = 'jwt';
+  ) { }
 
-  setToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+  urlBase = environment.URL + '/api';
+
+  // Auth
+  public login(credentials: RequestLogin) {
+    debugger
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/login`, credentials))
+      .pipe(
+        tap(res => {
+          // Guarda ambos tokens; refresh por defecto 7 días
+          this.cachePendingEmail(credentials.email, res.data.userId)
+
+          // this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        })
+      );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+  // Auth
+  public verifiCode(credentials: RequestCode) {
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/verify-code`, credentials))
+      .pipe(
+        tap(res => {
+          // Guarda ambos tokens; refresh por defecto 7 días
+          // this.cachePendingEmail(credentials.Email, res.userId)
+          this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        })
+      );
   }
 
-  isAuthenticated(): boolean {
-    const token = this.getToken();
-
-    if (!token || !this.isTokenValid(token)) {
-      this.logoutWithAlert();
-      return false;
-    }
-
-    return true;
+  public refresh(refreshToken: RefreshRequest) {
+    return this.http.post<ResponseToken>(`${this.urlBase}/refresh`, refreshToken)
+      .pipe(
+        tap(pair => {
+          // Actualiza access token y refresh token
+          this.tokenService.setTokens(pair.accessToken, pair.refreshToken);
+        })
+      );
   }
 
-  logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    this.router.navigate(['']);
-
-  }
-
-  private isTokenValid(token: string): boolean {
-    try {
-      const decoded: any = jwtDecode(token);
-      const exp = decoded.exp;
-      return Date.now() < exp * 1000;
-    } catch {
-      return false;
-    }
+  logout(refreshToken: RefreshRequest): Observable<void> {
+    return this.http.post<void>(`${this.urlBase}/revoke`, { refreshToken })
+      .pipe(
+        tap(() =>
+          this.tokenService.removeAll()
+        )
+      );
   }
 
 
-  getUserRoles(): string[] {
-    const token = this.getToken();
-    if (!token) return [];
+  cachePendingEmail(email: string, id: string) {
+    sessionStorage.setItem('pending_login_email', email);
+    sessionStorage.setItem('pending_login_id', id);
 
-    const decoded: any = jwtDecode(token);
-
-    const roleClaim = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
-
-    const roles = decoded[roleClaim];
-    return Array.isArray(roles) ? roles : roles ? [roles] : [];
   }
-
-  logoutWithAlert() {
-    if (this.router.url === '/') {
-      this.logout();
-      return;
-    }
-    Swal.fire({
-      icon: 'warning',
-      title: 'Sesión expirada',
-      text: 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
-      confirmButtonText: 'Aceptar'
-    }).then(() => {
-      this.logout();
-    });
+  getPendingEmail(): string | null {
+    return sessionStorage.getItem('pending_login_email');
   }
-
+  getPendingUserId(): string | null {
+    return sessionStorage.getItem('pending_login_id');
+  }
 }

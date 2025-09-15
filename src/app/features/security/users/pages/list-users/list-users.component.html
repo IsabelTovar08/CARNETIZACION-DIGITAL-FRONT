@@ -1,0 +1,153 @@
+
+
+<div class="user-roles-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-section">
+      <h1 class="page-title">
+        <mat-icon>people</mat-icon>
+        Gestión de Roles por Usuario
+      </h1>
+      <p class="page-subtitle">Asigna y administra roles para cada usuario del
+        sistema</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="add-user-btn"
+        routerLink="createUser">
+        <mat-icon>person_add</mat-icon>
+        Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- Users List -->
+  <div class>
+    <mat-card class="users-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="card-title-row">
+            <span>Usuarios ({{ listUsers.length
+              }})</span>
+            <div class="view-options">
+              <mat-button-toggle-group [value]="viewMode"
+                (change)="changeViewMode($event)">
+                <mat-button-toggle value="grid">
+                  <mat-icon>grid_view</mat-icon>
+                </mat-button-toggle>
+                <mat-button-toggle value="list">
+                  <mat-icon>view_list</mat-icon>
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Grid View -->
+        <div *ngIf="viewMode === 'grid'" class="users-grid">
+          <div *ngFor="let user of listUsers" class="user-card">
+            <mat-card class="individual-user-card">
+              <mat-card-header>
+                <div mat-card-avatar class="user-avatar">
+
+                  <mat-icon
+                    class="default-avatar">person</mat-icon>
+                </div>
+                <mat-card-title>{{ user.namePerson || ''}}</mat-card-title>
+                <mat-card-subtitle>{{ user.emailPerson || 'Sin email'
+                  }}</mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="user-info">
+
+                  <div class="info-item">
+                    <mat-icon class="info-icon"
+                      [ngClass]="{'status-active': user.isDeleted}">
+                      {{ user.isDeleted === false ? 'check_circle' : 'cancel' }}
+                    </mat-icon>
+                    <span>{{ user.isDeleted === false ? 'Activo' : 'Inactivo'
+                      }}</span>
+                  </div>
+                </div>
+
+                <div class="roles-section">
+                  <p class="roles-label">Roles asignados:</p>
+                  <div class="roles-chips">
+                    <mat-chip-set>
+                      <mat-chip *ngFor="let role of user.roles.slice(0, 2)"
+                        [style.background-color]="'#4caf50'"
+                        [style.color]="'#4caf50'">
+
+                        {{ role.name }}
+                      </mat-chip>
+                    </mat-chip-set>
+                    <span *ngIf="user.roles.length === 0" class="no-roles">Sin
+                      roles asignados</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <button mat-stroked-button color="primary"
+                  (click)="openUserRolesModal(user)">
+                  <mat-icon>settings</mat-icon>
+                  Gestionar Roles
+                </button>
+                <button mat-icon-button [matMenuTriggerFor]="userMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #userMenu="matMenu">
+                  <button mat-menu-item (click)="openModal(user)">
+                    <mat-icon>edit</mat-icon>
+                    Editar Usuario
+                  </button>
+                  <button mat-menu-item class="danger-item">
+                    <mat-icon>delete</mat-icon>
+                    Eliminar Usuario
+                  </button>
+                </mat-menu>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+        <!-- Roles personalizados -->
+        <ng-template #rolesTemplate let-item let-key="key">
+          <div class="custom-chip-wrapper">
+            <span *ngFor="let rol of item.roles" class="custom-chip">
+              {{ rol.name }}
+            </span>
+          </div>
+        </ng-template>
+        <ng-template #actionsExtraTemplate let-item>
+          <button mat-icon-button
+            (click)="openUserRolesModal(item)"
+            matTooltip="Gestionar Roles">
+            <mat-icon>assignment_ind</mat-icon>
+          </button>
+
+        </ng-template>
+        <!-- List View -->
+        <div *ngIf="viewMode === 'list'" class="users-table">
+          <app-generic-table
+            *ngIf="listUsers as users"
+            [buttonSave]="false"
+            [dataSourceInput]="users"
+            [displayedColumns]="displayedColumns"
+            [columns]="[
+              { key: 'namePerson', label: 'Nombre' },
+              { key: 'emailPerson', label: 'Email' },
+              { key: 'role', label: 'Roles' },
+              { key: 'isDeleted', label: 'Activo' }
+            ]"
+            [customTemplates]="{ role: rolesTemplate, 'actions-extra': actionsExtraTemplate }"
+            (onCreate)="save()"
+            (onEdit)="openModal($event)"
+            (onDelete)="delete($event)"
+            (onToggleStatus)="toggleIsActive($event)">
+          </app-generic-table>
+        </div>
+      </mat-card-content>
+    </mat-card>

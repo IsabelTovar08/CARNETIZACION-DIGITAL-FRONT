@@ -1,0 +1,53 @@
+<h1 mat-dialog-title>{{ title }}</h1>
+<p class="mat-subheading-1" *ngIf="subTitle">{{ subTitle }}</p>
+<mat-divider></mat-divider>
+<br>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+
+    <ng-container *ngFor="let field of fields">
+      <ng-container *ngIf="!field.hidden">
+
+        <!-- Checkbox -->
+        <mat-checkbox *ngIf="field.type === 'checkbox'"
+          [formControlName]="field.name">
+          {{ field.label }}
+        </mat-checkbox>
+
+        <!-- Input normal -->
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'checkbox'">
+          <mat-label>{{ field.label }}</mat-label>
+          <input matInput [formControlName]="field.name"
+            [type]="field.type || 'text'" />
+        </mat-form-field>
+
+        <!-- Textarea -->
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="field.type === 'textarea'">
+          <mat-label>{{ field.label }}</mat-label>
+          <textarea matInput [formControlName]="field.name"></textarea>
+        </mat-form-field>
+
+        <!-- Select -->
+        <mat-form-field class="w-100" appearance="outline"
+          *ngIf="field.type === 'select'">
+          <mat-label>{{ field.label }}</mat-label>
+          <mat-select [formControlName]="field.name">
+            <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </ng-container>
+    </ng-container>
+
+  </form>
+</div>
+
+<app-action-buttons
+  [disableSave]="form.invalid"
+  (cancel)="cancel()"
+  (save)="save()">
+</app-action-buttons>

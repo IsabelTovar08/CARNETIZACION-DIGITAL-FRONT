@@ -1,0 +1,211 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background: url('/assets/fondo-login.png') center/cover no-repeat; */
+  /* box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); */
+}
+
+.login-card {
+  display: flex;
+  max-width: 900px;
+  width: 90%;
+  min-height: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+}
+
+/* Imagen - SOLUCIONADO EL PROBLEMA */
+.illustration-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+
+}
+
+.illustration-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  min-height: 100%;
+}
+
+/* Formulario */
+.login-section {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #749BC2;
+  opacity: 0.8;
+  color: #333;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: #323537;
+}
+
+.form-input:focus {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+/* Botón - MEJORADO */
+.login-button {
+  width: 50%;
+  padding: 2vh;
+  background: linear-gradient(135deg, #0077B6 0%, #003450 100%);
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 8vh;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: center; /* Centra el botón */
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+.forgot-password a {
+  color: #473e3e;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.forgot-password a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Animaciones */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+@media (max-width: 768px) {
+  .login-card {
+    flex-direction: column;
+    max-width: 500px;
+    min-height: auto;
+    height: auto;
+  }
+
+  .illustration-section {
+
+    height: 250px;
+    min-height: unset;
+    order: 0;
+    flex: none;
+  }
+
+  .login-section {
+    order: 1;
+    padding: 2.5rem 1.5rem;
+    flex: none;
+  }
+
+  .login-container {
+    padding: 1.5rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+
+  .login-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .illustration-image {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    width: 95%;
+    border-radius: 16px;
+  }
+
+  .login-section {
+    padding: 2rem 1rem;
+  }
+
+  .form-input {
+    padding: 14px 16px;
+    border-radius: 8px;
+  }
+
+  .login-button {
+    padding: 12px;
+    border-radius: 8px;
+    width: 70%;
+  }
+
+  .illustration-section {
+    height: 200px;
+  }
+
+  .illustration-image {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+}
+
+/* OPCIONAL: Si la imagen sigue sin verse bien, prueba esta alternativa */
+.illustration-image-alternative {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Muestra toda la imagen con posibles espacios */
+  object-position: center;
+  background: #f8f9fa; /* Color de fondo para los espacios vacíos */
+
+}

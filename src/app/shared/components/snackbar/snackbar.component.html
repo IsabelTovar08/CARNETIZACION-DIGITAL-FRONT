@@ -1,0 +1,16 @@
+<div
+  class="alert"
+  [ngClass]="{
+    'alert-success': type === 'success',
+    'alert-danger': type === 'error',
+    'alert-warning': type === 'warning',
+    'alert-info': type === 'info'
+  }"
+  role="alert"
+  style="position: fixed; top: 1rem; right: 1rem; z-index: 3000; min-width: 320px; max-width: 380px;"
+>
+  <mat-icon aria-hidden="true" style="vertical-align: middle; margin-right: 0.5rem;">
+    {{ getIconName(type) }}
+  </mat-icon>
+  {{ message }}
+</div>

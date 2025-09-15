@@ -1,0 +1,83 @@
+.permissions-modal {
+      width: 500px;
+      max-width: 90vw;
+    }
+
+    .modal-content {
+      padding: 0;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .permissions-section {
+      margin-top: 20px;
+    }
+
+    .permissions-title {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .permissions-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 12px;
+    }
+
+    .permission-checkbox {
+      display: block;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .permission-checkbox:last-child {
+      margin-bottom: 0;
+    }
+
+    .permission-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 8px;
+    }
+
+    .permission-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .permission-description {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      justify-content: flex-start;
+    }
+
+    .quick-btn {
+      font-size: 12px;
+      height: 32px;
+    }
+
+    .modal-actions {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    mat-dialog-content {
+      margin: 0;
+      max-height: 70vh;
+      overflow: visible;
+    }

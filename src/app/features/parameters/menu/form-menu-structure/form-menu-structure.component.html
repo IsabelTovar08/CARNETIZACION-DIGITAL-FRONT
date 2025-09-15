@@ -1,0 +1,298 @@
+<!-- form-menu-structure.component.html -->
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-card class="parent-card">
+
+      <!-- ===== Encabezado ===== -->
+      <mat-card-header>
+        <mat-card-title>Editar Menú</mat-card-title>
+        <mat-card-subtitle>
+          ID: {{ form.value.id ?? '—' }} • Tipo: {{ form.value.type || '—' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <!-- ===== 1) Básicos ===== -->
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="title" />
+            <mat-error
+              *ngIf="form.get('title')?.hasError('required')">Requerido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="group">group</mat-option>
+              <mat-option value="collapse">collapse</mat-option>
+              <mat-option value="item">item</mat-option>
+            </mat-select>
+            <mat-hint>group = título • collapse = contenedor • item =
+              enlace</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>ParentMenu</mat-label>
+            <input matInput type="number" formControlName="parentMenuId" />
+          </mat-form-field>
+        </div>
+
+        <!-- ===== 2) Enlace (solo si es item) ===== -->
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Módulo</mat-label>
+            <mat-select formControlName="moduleId"
+              [disabled]="form.get('type')?.value !== 'item'">
+              <mat-option [value]="null">— Ninguno —</mat-option>
+              <mat-option *ngFor="let m of modules" [value]="m.id">{{ m.name
+                }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Formulario</mat-label>
+            <mat-select formControlName="formId"
+              [disabled]="form.get('type')?.value !== 'item'">
+              <mat-option [value]="null">— Ninguno —</mat-option>
+              <mat-option *ngFor="let f of forms" [value]="f.id">{{ f.name
+                }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+
+        <div class="mini-note" *ngIf="form.get('type')?.value === 'item'">
+          <mat-icon inline>info</mat-icon>
+          Define un <strong>Módulo</strong>, <strong>Formulario</strong> o una
+          <strong>URL</strong>.
+        </div>
+
+        <!-- ===== 3) Apariencia ===== -->
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Icono</mat-label>
+            <input matInput formControlName="icon"
+              placeholder="home, event..." />
+            <mat-icon matSuffix>{{ form.value.icon }}</mat-icon>
+          </mat-form-field>
+
+          <!-- Preview compacto -->
+          <div class="icon-preview">
+            <mat-icon *ngIf="form.value.icon; else noicon">{{ form.value.icon
+              }}</mat-icon>
+            <ng-template #noicon><mat-icon>crop_square</mat-icon></ng-template>
+            <span>{{ form.value.title || 'Sin título' }}</span>
+            <small class="muted">• {{ form.value.type || '—' }}</small>
+          </div>
+        </div>
+
+        <!-- ===== Acciones raíz ===== -->
+        <mat-card-actions align="end">
+          <button mat-stroked-button type="button"
+            (click)="cancel()">Cancelar</button>
+          <button mat-flat-button color="primary" type="button"
+            (click)="save(form)">
+            <mat-icon>save</mat-icon> Guardar menú
+          </button>
+        </mat-card-actions>
+
+        <mat-divider class="my-4"></mat-divider>
+
+        <!-- ===== Children ===== -->
+        <div class="children-header">
+          <h3>Children</h3>
+          <button mat-stroked-button color="primary" type="button"
+            (click)="addChild()">
+            <mat-icon>add</mat-icon> Agregar hijo
+          </button>
+        </div>
+
+        <div formArrayName="children">
+          <mat-accordion multi>
+            <mat-expansion-panel
+              *ngFor="let child of children.controls; let i = index; trackBy: trackByIndex"
+              [formGroupName]="i">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon *ngIf="child.value.icon">{{ child.value.icon
+                    }}</mat-icon>
+                  {{ child.value.title || 'Nuevo hijo' }}
+                </mat-panel-title>
+                <mat-panel-description>{{ child.value.type
+                  }}</mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <!-- Inputs del hijo -->
+              <div class="grid">
+                <mat-form-field appearance="outline">
+                  <mat-label>Título</mat-label>
+                  <input matInput formControlName="title" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Tipo</mat-label>
+                  <mat-select formControlName="type">
+                    <mat-option value="item">item</mat-option>
+                    <mat-option value="collapse">collapse</mat-option>
+                    <mat-option value="group">group</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>ParentMenu</mat-label>
+                  <input matInput type="number"
+                    formControlName="parentMenuId" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Módulo</mat-label>
+                  <mat-select formControlName="moduleId"
+                    [disabled]="child.get('type')?.value !== 'item'">
+                    <mat-option [value]="null">— Ninguno —</mat-option>
+                    <mat-option *ngFor="let m of modules" [value]="m.id">{{
+                      m.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Formulario</mat-label>
+                  <mat-select formControlName="formId"
+                    [disabled]="child.get('type')?.value !== 'item'">
+                    <mat-option [value]="null">— Ninguno —</mat-option>
+                    <mat-option *ngFor="let f of forms" [value]="f.id">{{ f.name
+                      }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Icono</mat-label>
+                  <input matInput formControlName="icon" />
+                  <mat-icon matSuffix *ngIf="child.value.icon">{{
+                    child.value.icon }}</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <mat-card-actions align="end">
+                <button mat-flat-button color="primary" type="button"
+                  (click)="save(child.value)">
+                  <mat-icon>save</mat-icon> Guardar hijo
+                </button>
+                <button mat-stroked-button color="warn" type="button"
+                  (click)="removeChild(i)">
+                  <mat-icon>delete</mat-icon> Eliminar hijo
+                </button>
+              </mat-card-actions>
+
+              <mat-divider class="my-3"></mat-divider>
+
+              <!-- ===== Sub-children ===== -->
+              <div class="row-between">
+                <h4>Sub-children</h4>
+                <button mat-stroked-button color="primary" type="button"
+                  (click)="addGrandChild(i)">
+                  <mat-icon>add</mat-icon> Agregar sub-child
+                </button>
+              </div>
+
+              <div formArrayName="children" class="grand-mini-grid">
+                <mat-card
+                  class="mini-card"
+                  *ngFor="let g of grandChildren(i).controls; let j = index; trackBy: trackByIndex"
+                  [formGroupName]="j">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <mat-icon *ngIf="g.value.icon">{{ g.value.icon
+                        }}</mat-icon>
+                      {{ g.value.title || 'Nuevo sub-child' }}
+                    </mat-card-title>
+                    <mat-card-subtitle>{{ g.value.type }}</mat-card-subtitle>
+                  </mat-card-header>
+
+                  <mat-card-content>
+                    <div class="grid">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Título</mat-label>
+                        <input matInput formControlName="title" />
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Tipo</mat-label>
+                        <mat-select formControlName="type">
+                          <mat-option value="item">item</mat-option>
+                          <mat-option value="collapse">collapse</mat-option>
+                          <mat-option value="group">group</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>ParentMenu</mat-label>
+                        <input matInput type="number"
+                          formControlName="parentMenuId" />
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Módulo</mat-label>
+                        <mat-select formControlName="moduleId"
+                          [disabled]="g.get('type')?.value !== 'item'">
+                          <mat-option [value]="null">— Ninguno —</mat-option>
+                          <mat-option *ngFor="let m of modules"
+                            [value]="m.id">{{ m.name }}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Formulario</mat-label>
+                        <mat-select formControlName="formId"
+                          [disabled]="g.get('type')?.value !== 'item'">
+                          <mat-option [value]="null">— Ninguno —</mat-option>
+                          <mat-option *ngFor="let f of forms" [value]="f.id">{{
+                            f.name }}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>URL propia</mat-label>
+                        <input
+                          matInput
+                          formControlName="url"
+                          [disabled]="g.get('type')?.value !== 'item' || !!g.value.moduleId || !!g.value.formId" />
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Icono</mat-label>
+                        <input matInput formControlName="icon" />
+                        <mat-icon matSuffix *ngIf="g.value.icon">{{ g.value.icon
+                          }}</mat-icon>
+                      </mat-form-field>
+                    </div>
+                  </mat-card-content>
+
+                  <mat-card-actions align="end">
+                    <button mat-icon-button color="primary" type="button"
+                      (click)="save(g.value)">
+                      <mat-icon>save</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" type="button"
+                      (click)="removeGrandChild(i, j)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-flat-button color="primary" type="button">
+    <mat-icon>save</mat-icon> Guardar
+  </button>
+</mat-dialog-actions>

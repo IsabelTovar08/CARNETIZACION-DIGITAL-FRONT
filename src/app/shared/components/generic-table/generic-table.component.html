@@ -1,41 +1,77 @@
-<h1>{{ title }}</h1>
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>{{ title }}</mat-card-title>
-    <button mat-raised-button color="primary" (click)="emitCreate()">Agregar</button>
-  </mat-card-header>
+<div class="table-container">
+  <!-- Header con título y búsqueda -->
+  <button *ngIf="buttonSave" mat-flat-button class="add" (click)="emitCreate()">
+    <mat-icon>add</mat-icon>
+    Agregar
+  </button>
+  <div class>
+    <h1>{{ title }}</h1>
+  </div>
 
-  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <mat-card>
+    <mat-card-content>
+      <!-- Tabla -->
+      <div class="table-wrapper" *ngIf="dataSource">
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z2" matSort>
 
-    <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
-      <mat-header-cell *matHeaderCellDef>{{ col.label }}</mat-header-cell>
-      <mat-cell *matCellDef="let item">
-        <ng-container [ngSwitch]="col.key">
-          <mat-slide-toggle
-            *ngSwitchCase="'status'"
-            [(ngModel)]="item.status"
-            (click)="emitToggle(item)">
-          </mat-slide-toggle>
-          <span *ngSwitchDefault>{{ item[col.key] }}</span>
-        </ng-container>
-      </mat-cell>
-    </ng-container>
+          <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ col.label
+              }}</mat-header-cell>
+            <mat-cell *matCellDef="let item">
+              <ng-container *ngIf="customTemplates[col.key]; else defaultCell">
+                <ng-container
+                  *ngTemplateOutlet="customTemplates[col.key]; context: { $implicit: item, key: col.key }"></ng-container>
+              </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
-      <mat-cell *matCellDef="let item">
-        <button mat-icon-button (click)="emitEdit(item)">
-          <mat-icon>edit</mat-icon>
-          sadfasf
-        </button>
-        <button mat-icon-button (click)="emitDelete(item)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-cell>
-    </ng-container>
+              <ng-template #defaultCell>
+                <ng-container [ngSwitch]="col.key">
+                  <mat-slide-toggle
+                    *ngSwitchCase="'isDeleted'"
+                     [checked]="!item.isDeleted"
+                    (click)="emitToggle(item)">
+                  </mat-slide-toggle>
+                  <span *ngSwitchDefault>{{ item[col.key] || 'N/A' }}</span>
+                </ng-container>
+              </ng-template>
+            </mat-cell>
+          </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+            <mat-cell *matCellDef="let item">
+              <div class="action-buttons">
+                <!-- Botón extra si existe template personalizado -->
+                <ng-container *ngIf="customTemplates?.['actions-extra']">
+                  <ng-container
+                    *ngTemplateOutlet="customTemplates['actions-extra']; context: { $implicit: item }">
+                  </ng-container>
+                </ng-container>
 
-  </mat-table>
-</mat-card>
+                <button mat-icon-button (click)="emitEdit(item)"
+                  matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="emitDelete(item)"
+                  matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" [class.deleted-row]="row.isDeleted" [matTooltip]="row.isDeleted ? 'Registro inactivo' : ''" matTooltipPosition="above"></mat-row>
+
+        </mat-table>
+      </div>
+      <!-- Paginación simple -->
+      <mat-paginator
+        *ngIf="dataSource.data.length > 0"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        [length]="dataSource.data.length"
+        [pageSize]="10"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

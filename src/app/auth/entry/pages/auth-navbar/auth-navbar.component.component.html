@@ -1,0 +1,70 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <img src="/assets/icon.png" alt="Logo" class="logo" />
+    <span class="brand">CARNET<span class="bold">GO</span></span>
+
+    <span class="current-badge" *ngIf="currentLabel">
+      <mat-icon class="badge-icon">{{ currentIcon || 'home' }}</mat-icon>
+      <span class="badge-text">{{ currentLabel }}</span>
+    </span>
+  </div>
+
+  <div class="navbar-right">
+    <button mat-icon-button class="menu-btn"
+      [matMenuTriggerFor]="mainMenu"><mat-icon
+        class="mat-18">menu</mat-icon></button>
+
+    <mat-menu #mainMenu="matMenu">
+      <button mat-menu-item
+        [routerLink]="'/'"
+        [routerLinkActive]="'active-link'"
+        [class.active-menu-item]="currentUrl === '/'">
+        Inicio
+      </button>
+      <button mat-menu-item
+        [routerLink]="'/start'"
+        fragment="que-es"
+        [routerLinkActive]="'active-link'"
+        [class.active-menu-item]="currentUrl === '/start'">
+        Acerca de
+      </button>
+      <button mat-menu-item
+        [routerLink]="'/characteristics'"
+        [routerLinkActive]="'active-link'"
+        [class.active-menu-item]="currentUrl === '/characteristics'">
+        Características
+      </button>
+      <button mat-menu-item
+        [routerLink]="'/contact'"
+        [routerLinkActive]="'active-link'"
+        [class.active-menu-item]="currentUrl === '/contact'">
+        Contacto
+      </button>
+    </mat-menu>
+
+    <div class="nav-menu" #navMenu>
+      <a routerLink="/" routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <span class="link-text">Inicio</span>
+      </a>
+      <a routerLink="/about" routerLinkActive="active-link" class="nav-link">
+        <span class="link-text">Acerca de</span>
+      </a>
+      <a routerLink="/characteristics" routerLinkActive="active-link"
+        class="nav-link">
+        <span class="link-text">Características</span>
+      </a>
+      <a routerLink="/contact" routerLinkActive="active-link" class="nav-link">
+        <span class="link-text">Contacto</span>
+      </a>
+
+      <div class="active-indicator" #activeIndicator></div>
+    </div>
+
+    <a routerLink="/auth" class="login-btn">
+      <mat-icon class="login-icon">account_circle</mat-icon>
+      <span class="link-text">Ingresar</span>
+    </a>
+
+  </div>
+</nav>

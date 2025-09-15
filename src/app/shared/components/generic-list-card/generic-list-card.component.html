@@ -1,0 +1,124 @@
+<div class="header">
+  <div class="header-left">
+    <h1>{{ title }}</h1>
+  </div>
+
+  <button *ngIf="buttonSave" mat-flat-button class="add" (click)="emitCreate()">
+    <mat-icon>add</mat-icon>
+    Agregar
+  </button>
+</div>
+
+<!-- GRID DE CARDS -->
+<div class="cards-grid">
+  <mat-card class="event-card" *ngFor="let item of items | slice:0:pageSize"
+            [class.inactive]="isInactive(item)">
+    <!-- Media / Imagen -->
+    <div class="card-media">
+      <ng-container *ngIf="customTemplates['media']; else defaultMedia">
+        <ng-container *ngTemplateOutlet="customTemplates['media']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+      <ng-template #defaultMedia>
+        <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="{{item.title}}" />
+        <div *ngIf="!item.imageUrl" class="media-placeholder">
+          <mat-icon>image</mat-icon>
+        </div>
+      </ng-template>
+
+      <!-- Candado -->
+      <div class="lock-badge" *ngIf="isLocked(item)" matTooltip="Contenido restringido">
+        <mat-icon>lock</mat-icon>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <mat-card-content>
+      <div class="title-row">
+        <ng-container *ngIf="customTemplates['title']; else defaultTitle">
+          <ng-container *ngTemplateOutlet="customTemplates['title']; context: { $implicit: item }"></ng-container>
+        </ng-container>
+        <ng-template #defaultTitle>
+          <h3 class="title">{{ item.name }}</h3>
+        </ng-template>
+      </div>
+
+      <div class="subtitle" *ngIf="!customTemplates['subtitle'] && item.subtitle">
+        {{ item.subtitle }}
+      </div>
+      <ng-container *ngIf="customTemplates['subtitle']">
+        <ng-container *ngTemplateOutlet="customTemplates['subtitle']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+
+      <div class="meta">
+        <ng-container *ngIf="customTemplates['meta']; else defaultMeta">
+          <ng-container *ngTemplateOutlet="customTemplates['meta']; context: { $implicit: item }"></ng-container>
+        </ng-container>
+        <ng-template #defaultMeta>
+          <span *ngIf="item.dateLabel" class="dot">{{ item.dateLabel }}</span>
+        </ng-template>
+      </div>
+
+      <!-- <div class="desc" *ngIf="!customTemplates['description'] && item.description">
+        {{ item.description }}
+      </div> -->
+      <ng-container *ngIf="customTemplates['description']">
+        <ng-container *ngTemplateOutlet="customTemplates['description']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+
+      <!-- Tags -->
+      <div class="tags" *ngIf="!customTemplates['tags'] && item.tags?.length">
+        <mat-chip-set>
+          <mat-chip *ngFor="let t of item.tags">{{ t }}</mat-chip>
+        </mat-chip-set>
+      </div>
+      <ng-container *ngIf="customTemplates['tags']">
+        <ng-container *ngTemplateOutlet="customTemplates['tags']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+    </mat-card-content>
+
+    <!-- Footer / Acciones -->
+    <mat-card-actions class="actions">
+      <!-- Slot de acciones parametrizable -->
+      <ng-container *ngIf="customTemplates['actions']; else defaultActions">
+        <ng-container *ngTemplateOutlet="customTemplates['actions']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+
+      <!-- Acciones por defecto (similares a tu imagen) -->
+      <ng-template #defaultActions>
+        <button mat-stroked-button (click)="emitView(item)" [disabled]="isLocked(item)">
+          Ver Más Información
+        </button>
+
+        <span class="spacer"></span>
+
+        <button mat-icon-button matTooltip="Editar" (click)="emitEdit(item)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button matTooltip="Eliminar" (click)="emitDelete(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+        <button mat-icon-button
+                [matTooltip]="isInactive(item) ? 'Activar' : 'Desactivar'"
+                (click)="emitToggle(item)">
+          <mat-icon>{{ isInactive(item) ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+        </button>
+      </ng-template>
+
+      <!-- Slot de footer extra (derecha) -->
+      <ng-container *ngIf="customTemplates['footer']">
+        <span class="spacer"></span>
+        <ng-container *ngTemplateOutlet="customTemplates['footer']; context: { $implicit: item }"></ng-container>
+      </ng-container>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<!-- Paginador simple (si quieres más, podemos integrar virtual scroll) -->
+<div class="paginator-wrap" *ngIf="items.length > pageSize">
+  <mat-paginator [length]="items.length"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="[6, 9, 12, 18]">
+  </mat-paginator>
+</div>
