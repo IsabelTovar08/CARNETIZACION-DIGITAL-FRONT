@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { ListFormsComponent } from './list-forms.component';
 
@@ -8,9 +10,12 @@ describe('ListFormsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListFormsComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule, 
+        RouterTestingModule,      
+        ListFormsComponent
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListFormsComponent);
     component = fixture.componentInstance;

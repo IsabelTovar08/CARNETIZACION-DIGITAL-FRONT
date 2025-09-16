@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FormMenuStructureComponent } from './form-menu-structure.component';
 
@@ -8,9 +10,15 @@ describe('FormMenuStructureComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FormMenuStructureComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,    
+        FormMenuStructureComponent   
+      ],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: {} }, 
+        { provide: MatDialogRef, useValue: {} }
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FormMenuStructureComponent);
     component = fixture.componentInstance;

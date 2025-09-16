@@ -84,7 +84,8 @@ export const menuAdmin: MenuItem[] = [
         "children": [
           { "id": "estados", "title": "Estados", "type": "item", "classes": "nav-item", "url": "/dashboard/parametros/status", "icon": "check_circle_unread" },
           { "id": "tipos-categorias", "title": "Tipos y Categorías", "type": "item", "classes": "nav-item", "url": "/dashboard/parametros/types-category", "icon": "category" },
-          { "id": "tipos-personalizados", "title": "Tipos Personalizados", "type": "item", "classes": "nav-item", "url": "/dashboard/parametros/custom-types", "icon": "tune" }
+          { "id": "Menu", "title": "Menu", "type": "item", "classes": "nav-item", "url": "/dashboard/parametros/menu", "icon": "mode_standby" },
+          { "id": "plantillas-disponibles", "title": "Plantillas Disponibles", "type": "item", "classes": "nav-item", "url": "/dashboard/parametros/templates-available", "icon": "assignment_ind" },
         ]
       },
       {

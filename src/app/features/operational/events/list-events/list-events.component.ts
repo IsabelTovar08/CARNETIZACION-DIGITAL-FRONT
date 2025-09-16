@@ -27,6 +27,7 @@ export class ListEventsComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
+    
   ) {
 
   }
@@ -66,7 +67,9 @@ export class ListEventsComponent implements OnInit {
     };
   };
 
-  create() {  }
+  create() {
+  this.router.navigate(['crear'], { relativeTo: this.route });
+}
   view(e: any) { }
   edit(e: any) { }
   remove(e: any) { }

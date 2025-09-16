@@ -10,8 +10,10 @@
 
     <p class="form-description">Actualiza tu información personal</p>
 
+    <!-- Formulario -->
+    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()" [class.disabled-form]="!isEditable">
 
-    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+      <!-- Nombre y Primer Apellido -->
       <div class="form-row">
         <div class="form-group">
           <label for="nombre">Nombre *</label>
@@ -41,7 +43,7 @@
           placeholder="Ingresa tu segundo apellido (opcional)" />
       </div>
 
-      <!-- Email y Teléfono en la misma fila -->
+      <!-- Email y Teléfono -->
       <div class="form-row">
         <div class="form-group">
           <label for="email">Correo Electrónico *</label>
@@ -64,11 +66,12 @@
         </div>
       </div>
 
+      <!-- Botones -->
       <div class="form-actions">
         <button type="button" class="reset-btn" (click)="resetForm()">
           Cancelar
         </button>
-        <button type="submit" class="submit-btn" [disabled]="perfilForm.invalid">
+        <button type="submit" class="submit-btn" [disabled]="perfilForm.invalid || !isEditable">
           Actualizar Perfil
         </button>
       </div>
@@ -76,10 +79,11 @@
   </div>
 </div>
 
-<app-generic-credincials
-  *ngIf="isModalOpen"
-  [isOpen]="isModalOpen"
-  [userEmail]="'usuario@correo.com'"
-  (closeModal)="cerrarModal()"
+<!-- Modal para validación de credenciales -->
+<app-generic-credincials 
+  *ngIf="isModalOpen" 
+  [isOpen]="isModalOpen" 
+  [userEmail]="meData?.email || ''"
+  (closeModal)="cerrarModal()" 
   (validationSuccess)="onValidacionExitosa($event)">
 </app-generic-credincials>

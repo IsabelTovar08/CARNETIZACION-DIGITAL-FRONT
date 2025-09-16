@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { ListOrganizationalUnitComponent } from './list-organizational-unit.component';
 
@@ -8,9 +11,16 @@ describe('ListOrganizationalUnitComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListOrganizationalUnitComponent]
-    })
-    .compileComponents();
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        ListOrganizationalUnitComponent,
+      ],
+      providers: [
+        { provide: MatDialogRef, useValue: { close: () => {} } },
+        { provide: MAT_DIALOG_DATA, useValue: { name: 'Test', permissions: [] } },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ListOrganizationalUnitComponent);
     component = fixture.componentInstance;
