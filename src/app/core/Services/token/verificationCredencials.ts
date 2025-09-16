@@ -42,4 +42,21 @@ export class VerificationCredencials {
   public updateProfile(user: UserMeDto): Observable<ApiResponse<UserMeDto>> {
     return this.http.put<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`, user);
   }
+
+  public changePassword(
+    currentPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ): Observable<ApiResponse<any>> {
+    return this.http.patch<ApiResponse<any>>(
+      `${environment.URL}/api/auth/change-password`,
+      {
+        currentPassword,
+        newPassword,
+        confirmNewPassword
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
 }
