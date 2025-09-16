@@ -1,0 +1,23 @@
+<!-- template-renderer.component.html -->
+<div class="renderer-wrapper">
+  <div class="toolbar">
+    <button type="button" class="toggle-btn" (click)="toggleSide()">
+      {{ toggleLabel }}
+    </button>
+  </div>
+
+  <div class="template-container">
+    <!-- Imagen de fondo dinámica -->
+    <img [src]="currentBackgroundUrl" class="template-bg" alt="Plantilla" />
+
+    <!-- Elementos superpuestos dinámicos (frente o reverso) -->
+    <div
+      class="element"
+      *ngFor="let key of (currentElements | keyvalue)"
+      [ngStyle]="getPositionStyle(key.value)"
+      [attr.data-field]="key.key"
+    >
+      {{ key.key }}
+    </div>
+  </div>
+</div>

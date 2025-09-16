@@ -9,7 +9,7 @@ import { DataService } from '../../../../../core/Services/shared/data.service';
 
 @Component({
   selector: 'app-modal-user-roles',
-  imports: [GenericFormComponent],
+  imports: [],
   templateUrl: './modal-user-roles.component.html',
   styleUrl: './modal-user-roles.component.css'
 })
