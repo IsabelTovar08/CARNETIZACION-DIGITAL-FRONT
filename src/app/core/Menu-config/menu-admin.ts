@@ -27,7 +27,7 @@ export const menuAdmin: MenuItem[] = [
           { "id": "sucursales", "title": "Sucursales", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/structure/branch", "icon": "store" },
           { "id": "unidades-organizativas", "title": "Unidades Organizativas", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/structure/unit", "icon": "schema" },
           { "id": "divisiones-internas", "title": "Divisiones Internas", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/structure/internal-division", "icon": "account_tree" },
-          { "id": "perfiles", "title": "Perfiles", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/profile", "icon": "badge" },
+          { "id": "perfiles", "title": "Perfiles", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/structure/profile", "icon": "badge" },
           { "id": "jornadas", "title": "Jornadas", "type": "item", "classes": "nav-item", "url": "/dashboard/organizational/structure/schedule", "icon": "schedule" }
         ]
       },
