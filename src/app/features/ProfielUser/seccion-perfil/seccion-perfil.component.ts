@@ -9,6 +9,7 @@ import { SnackbarService } from '../../../core/Services/snackbar/snackbar.servic
 import { UserMeDto } from '../../../core/Models/security/user-me.models';
 import { ApiResponse } from '../../../core/Models/api-response.models';
 import { PersonCreate } from '../../../core/Models/security/person.models';
+import { ApiService } from '../../../core/Services/api/api.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class SeccionPerfilComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private userService = inject(VerificationCredencials);
+  private apiService = inject(ApiService<UserMeDto, UserMeDto>);
 
   meData?: UserMeDto;
   perfilForm: FormGroup;
@@ -36,8 +38,10 @@ export class SeccionPerfilComponent implements OnInit {
       nombre: ['', Validators.required],
       primerApellido: ['', Validators.required],
       segundoApellido: [''],
-      email: ['', [Validators.required, Validators.email]],
+      email: [''],
       telefono: ['', [Validators.pattern(/^\+?[\d\s-()]+$/)]]
+
+      // [Validators.required, Validators.email]
     });
     this.perfilForm.disable();
   }
@@ -47,38 +51,56 @@ export class SeccionPerfilComponent implements OnInit {
   }
 
   cargarDatosUsuario(): void {
-  this.userService.getProfile().subscribe({
-  next: (res: ApiResponse<UserMeDto>) => {
-    if (res.success && res.data) {
-      const u = res.data;
+    this.userService.getProfile().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.meData = res.data;
 
-      this.perfilForm.patchValue({
-        nombre: u.firstName ?? '',
-        primerApellido: u.lastName ?? '',
-        segundoApellido: u.secondLastName ?? '',
-        email: u.email ?? '',
-        telefono: u.phone ?? ''
-      });
-    }
+          this.perfilForm.patchValue({
+            nombre: this.meData.firstName,
+            primerApellido: this.meData.lastName,
+            segundoApellido: this.meData.secondLastName,
+            email: this.meData.email,
+            telefono: this.meData.phone ?? ''
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar usuario', err);
+        this.snackbarService.showError('No se pudieron cargar los datos del usuario.');
+      }
+    });
   }
-});
-}
-
-
-
-
 
   onSubmit() {
-    if (this.perfilForm.valid) {
-      console.log('Datos actualizados:', this.perfilForm.value);
-      this.snackbarService.showSuccess('Perfil actualizado exitosamente');
-    } else {
-      this.snackbarService.showError('Formulario inválido, revisa los campos');
-      Object.keys(this.perfilForm.controls).forEach(key => {
-        this.perfilForm.get(key)?.markAsTouched();
-      });
-    }
+  if (this.perfilForm.valid) {
+    const updatedData: UserMeDto = {
+      ...this.meData!,          
+      ...this.perfilForm.value  
+    };
+
+    this.userService.updateProfile(updatedData).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.snackbarService.showSuccess('Perfil actualizado exitosamente');
+          this.meData = res.data; 
+          this.perfilForm.patchValue(this.meData); 
+          this.isEditable = false;
+          this.perfilForm.disable();
+        } else {
+          this.snackbarService.showError(res.message || 'Error al actualizar perfil');
+        }
+      },
+      error: (err) => {
+        console.error('Error al actualizar perfil', err);
+        this.snackbarService.showError('Hubo un problema al actualizar el perfil');
+      }
+    });
+  } else {
+    this.snackbarService.showError('Formulario inválido, revisa los campos');
+    this.markAllFieldsAsTouched();
   }
+}
 
   abrirModal() {
     this.isModalOpen = true;
@@ -125,14 +147,26 @@ export class SeccionPerfilComponent implements OnInit {
   }
 
   resetForm() {
+  if (this.meData) {
     this.perfilForm.reset({
-      nombre: 'Juan Carlos',
-      primerApellido: 'García',
-      segundoApellido: 'López',
-      email: 'juan.garcia@email.com',
-      telefono: '+57 301 234 5678'
+      nombre: this.meData.firstName,
+      primerApellido: this.meData.lastName, 
+      segundoApellido: this.meData.secondLastName || '',
+      email: this.meData.email,
+      telefono: this.meData.phone || ''
     });
-    this.isEditable = false;
-    this.perfilForm.disable();
+  } else {
+   
+    this.perfilForm.reset({
+      nombre: '',
+      primerApellido: '',
+      segundoApellido: '',
+      email: '',
+      telefono: ''
+    });
   }
+
+  this.isEditable = false;
+  this.perfilForm.disable();
+}
 }
