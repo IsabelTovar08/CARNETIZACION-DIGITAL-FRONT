@@ -1,0 +1,49 @@
+<mat-card class="upload-box">
+  <mat-card-content>
+    <h3>Cargar Archivo</h3>
+
+    <!-- Stepper -->
+    <mat-horizontal-stepper [linear]="true" #stepper>
+
+      <!-- Paso 1: Seleccionar archivo -->
+      <mat-step [stepControl]="fileForm">
+        <form [formGroup]="fileForm">
+          <ng-template matStepLabel>Subir archivo</ng-template>
+
+          <div class="drop-zone"
+               (drop)="onFileDrop($event)"
+               (dragover)="onDragOver($event)">
+            <p>Arrastra y suelta un archivo o haz clic para importar</p>
+            <p class="formats">Formatos compatibles: CSV, XLSX</p>
+            <button mat-raised-button color="primary" (click)="importFile()">
+              Seleccionar Archivo
+            </button>
+          </div>
+
+          <p *ngIf="selectedFile" class="file-info">
+            Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
+          </p>
+
+          <div class="step-actions">
+            <button mat-button matStepperNext [disabled]="!selectedFile">Siguiente</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Paso 2: Confirmar carga -->
+      <mat-step>
+        <ng-template matStepLabel>Confirmar carga</ng-template>
+        <div class="confirm-box">
+          <mat-icon>description</mat-icon>
+          <p *ngIf="selectedFile">Archivo listo: <strong>{{ selectedFile.name }}</strong></p>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Anterior</button>
+          <button mat-flat-button color="primary" (click)="uploadFile()">Cargar datos</button>
+        </div>
+      </mat-step>
+
+    </mat-horizontal-stepper>
+  </mat-card-content>
+</mat-card>

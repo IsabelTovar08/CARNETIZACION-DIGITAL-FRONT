@@ -15,6 +15,6 @@ export class MenuService extends ApiService<MenuStructure, MenuItem>{
   }
 
   public GetMenuByUser() :Observable<MenuItem[]>{
-    return this.http.get<MenuItem[]>(`${this.urlBase}/MenuStructure/menu-by-user`);
+    return this.http.get<MenuItem[]>(`${this.urlBase}/Menu/menu-by-user`);
   }
 }

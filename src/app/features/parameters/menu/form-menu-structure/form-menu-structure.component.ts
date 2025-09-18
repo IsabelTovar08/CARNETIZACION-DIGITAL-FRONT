@@ -162,7 +162,7 @@ save(form: any): void {
 
   const dto: MenuStructure = { ...form};
 
-  this.menuService.update('MenuStructure', dto).subscribe({
+  this.menuService.update('Menu', dto).subscribe({
     next: () => console.log('✅ guardado'),
     error: (e) => console.error('❌ error', e)
   });

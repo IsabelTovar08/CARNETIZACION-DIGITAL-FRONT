@@ -1,0 +1,39 @@
+<div class="page-container mat-elevation-z2">
+
+  <!-- Configuración previa -->
+  <app-config-form></app-config-form>
+
+  <!-- Bloque de carga -->
+  <app-file-upload></app-file-upload>
+
+  <!-- Tabla genérica -->
+  <app-generic-table
+    [title]="'Últimos registros generados'"
+    [displayedColumns]="displayedColumns"
+    [columns]="columns"
+    [dataSourceInput]="records"
+    [customTemplates]="{
+      photo: photoTemplate,
+      state: stateTemplate,
+      'actions-extra': actionsTemplate
+    }"
+    (onEdit)="onEdit($event)"
+    (onDelete)="onDelete($event)"
+    (onToggleStatus)="onToggleStatus($event)">
+  </app-generic-table>
+
+  <!-- Templates personalizados -->
+  <ng-template #photoTemplate let-item>
+    <img [src]="item.photo" alt="Foto" class="avatar">
+  </ng-template>
+
+  <ng-template #stateTemplate let-item>
+    <mat-chip color="primary" selected>{{ item.state }}</mat-chip>
+  </ng-template>
+
+  <ng-template #actionsTemplate let-item>
+    <button mat-stroked-button color="accent" (click)="viewCard(item)">
+      Ver carnet
+    </button>
+  </ng-template>
+</div>
