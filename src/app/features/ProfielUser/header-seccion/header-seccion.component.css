@@ -5,7 +5,7 @@
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 4px 20px rgba(0,0,0,.1);
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 
@@ -24,7 +24,7 @@
 /*  Avatar  */
 .perfil-img.avatar{
   position: absolute;
-  top:89px;                              
+  top:89px;
   left: 6%;
   transform: translateX(-50%);
   width: 68px;
@@ -32,7 +32,7 @@
   border-radius: 50%;
   object-fit: cover;
   z-index: 2;
-  border: var(--ring) solid #fff;             
+  border: var(--ring) solid #fff;
   box-shadow: 0 10px 25px rgba(0,0,0,.15);
 }
 
@@ -51,14 +51,14 @@
 }
 
 .header-content .subtitle .icons:hover{
-  
+
   font-size: 25px;
   color: #525d8f;
 }
 
 .header-subtitle {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }
@@ -83,7 +83,7 @@
 
   color: #667eea;
   transform: translateY(-2px);
-  
+
 }
 
 .content{
@@ -103,7 +103,7 @@
   transform: translateY(-2px);
   cursor: pointer;
   transition: all .3s ease;
-  
+
 }
 .header-content > :first-child{ margin-top: 0; } /* evita salto por margen superior */
 
@@ -197,3 +197,4 @@
     gap: 0.5rem;
   }
 }
+

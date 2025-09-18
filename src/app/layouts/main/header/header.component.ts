@@ -7,6 +7,8 @@ import { GenericNotificationComponent } from '../../../shared/components/generic
 import { Router } from '@angular/router';
 import { UserStoreService } from '../../../core/Services/auth/user-store.service';
 import { UserMe } from '../../../core/Models/security/user.models';
+import Swal from 'sweetalert2';
+import { TokenService } from '../../../core/Services/token/token.service';
 
 @Component({
   selector: 'app-header',
@@ -37,7 +39,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private navState: NavigationStateService,
-    private store: UserStoreService
+    private store: UserStoreService,
+    private authService: TokenService
   ) {}
 
 
@@ -93,5 +96,23 @@ export class HeaderComponent implements OnInit {
     if (this.showNotifications) {
       this.closeNotifications();
     }
+  }
+
+  onLogout() {
+    Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: 'Tu sesión se cerrará y deberás iniciar de nuevo.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, cerrar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout(); // 👉 lógica de cerrar sesión
+        Swal.fire('Sesión cerrada', 'Has salido correctamente.', 'success');
+      }
+    });
   }
 }

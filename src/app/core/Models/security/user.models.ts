@@ -19,7 +19,7 @@ export interface UserMe {
   email?: string;
   PhoneNumber: string;
   roles: Role[];
-  PhotoUrl?: string;
+  photoUrl?: string;
   permissions: Role[];
   currentProfile: any;
 

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
@@ -12,6 +12,7 @@ import { HttpServiceWrapperService } from '../loanding/http-service-wrapper.serv
 import { UserMe } from '../../Models/security/user.models';
 import { UserStoreService } from './user-store.service';
 import { ApiResponse } from '../../Models/api-response.models';
+import { CHECK_AUTH } from '../../auth/auth-context';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,8 +29,10 @@ export class AuthService {
 
   // Auth
   public login(credentials: RequestLogin) {
-    debugger
-    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/login`, credentials))
+
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/login`, credentials, {
+      context: new HttpContext().set(CHECK_AUTH, false)
+    }))
       .pipe(
         tap(res => {
           // Guarda ambos tokens; refresh por defecto 7 días
@@ -42,7 +45,9 @@ export class AuthService {
 
   // Auth
   public verifiCode(credentials: RequestCode) {
-    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/verify-code`, credentials))
+    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/verify-code`, credentials, {
+      context: new HttpContext().set(CHECK_AUTH, false)
+    }))
       .pipe(
         tap(res => this.tokenService.setTokens(res.accessToken, res.refreshToken)),
         switchMap(() => this.getMe()),
@@ -51,14 +56,17 @@ export class AuthService {
   }
 
   public refresh(refreshToken: RefreshRequest) {
-    return this.http.post<ResponseToken>(`${this.urlBase}/Auth/refresh`, refreshToken)
+    return this.http.post<ResponseToken>(`${this.urlBase}/Auth/refresh`, refreshToken, {
+      context: new HttpContext().set(CHECK_AUTH, false)
+    })
       .pipe(
         tap(pair => {
-          // Actualiza access token y refresh token
+          console.log('[REFRESH RESPONSE]', pair);
           this.tokenService.setTokens(pair.accessToken, pair.refreshToken);
         })
       );
   }
+
 
   public getMe() {
     return this.http.get<ApiResponse<UserMe>>(`${this.urlBase}/user/me`)

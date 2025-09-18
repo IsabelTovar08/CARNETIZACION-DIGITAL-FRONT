@@ -122,7 +122,7 @@
   <mat-card-actions class="footer">
     <app-action-buttons
       [disableSave]="profileForm.invalid"
-      (cancel)="dialogRef.close()"
+      (cancel)="dialogRef?.close()"
       (save)="onSubmit()">
     </app-action-buttons>
   </mat-card-actions>

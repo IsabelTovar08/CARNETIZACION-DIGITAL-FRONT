@@ -1,5 +1,5 @@
 import { ApiService } from './../../../../../core/Services/api/api.service';
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, Optional } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from "@angular/material/card";
 import { MatInputModule } from "@angular/material/input";
@@ -37,48 +37,51 @@ export class TargetPersonComponent {
 
   schedules: ScheduleList[] = [];
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private listService: ListService,
     private ubicationService: UbicationService,
-    protected dialogRef: MatDialogRef<GenericFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
-    private apiServicePerson: ApiService<PersonCreate, PersonList>
+    private apiServicePerson: ApiService<PersonCreate, PersonList>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
+  ) {}
 
-  ) { }
+  // propiedad para simular cierre si es modal
+  dialogRef?: MatDialogRef<TargetPersonComponent>;
 
-  ngOnInit(): void {
-    console.log(this.data)
-    this.profileForm = this.fb.group({
-      id: [this.data.item.id || ''],
-      firstName: [this.data.item.firstName || '', [Validators.required, Validators.minLength(2)]],
-      middleName: [this.data.item.middleName || '', [Validators.minLength(2)]],
-      lastName: [this.data.item.lastName || '', [Validators.required, Validators.minLength(2)]],
-      secondLastName: [this.data.item.secondLastName || ''],
-      documentTypeId: [this.data.item.documentTypeId || 0, [Validators.required, Validators.min(1)]],
-      documentNumber: [this.data.item.documentNumber || '', [Validators.required, Validators.minLength(6)]],
-      bloodTypeId: [this.data.item.bloodTypeId || 0, [Validators.required, Validators.min(1)]],
-      phone: [this.data.item.phone || '', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
-      email: [this.data.item.email || '', [Validators.required, Validators.email]],
-      address: [this.data.item.address || '', Validators.minLength(10)],
-      departmentId: [this.data.item.departmentId || 0],
-      cityId: [this.data.item.cityId || 0, [Validators.required]],
-    });
+ngOnInit(): void {
+  const item = this.data?.item ?? {};   // 👈 evita el error si no viene de MatDialog
 
-    this.getData()
+  this.profileForm = this.fb.group({
+    id: [item.id || ''],
+    firstName: [item.firstName || '', [Validators.required, Validators.minLength(2)]],
+    middleName: [item.middleName || '', [Validators.minLength(2)]],
+    lastName: [item.lastName || '', [Validators.required, Validators.minLength(2)]],
+    secondLastName: [item.secondLastName || ''],
+    documentTypeId: [item.documentTypeId || 0, [Validators.required, Validators.min(1)]],
+    documentNumber: [item.documentNumber || '', [Validators.required, Validators.minLength(6)]],
+    bloodTypeId: [item.bloodTypeId || 0, [Validators.required, Validators.min(1)]],
+    phone: [item.phone || '', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
+    email: [item.email || '', [Validators.required, Validators.email]],
+    address: [item.address || '', Validators.minLength(10)],
+    departmentId: [item.departmentId || 0],
+    cityId: [item.cityId || 0, [Validators.required]],
+  });
 
-    this.profileForm.get('departmentId')?.valueChanges.subscribe(departmentId => {
-      if (departmentId) {
-        this.getCytie(departmentId);
-        this.profileForm.get('cityId')?.enable();
-      } else {
-        this.cities = [];
-        this.profileForm.get('cityId')?.setValue(null);
-        this.profileForm.get('cityId')?.disable();
-      }
-    });
+  this.getData();
 
-  }
+  this.profileForm.get('departmentId')?.valueChanges.subscribe(departmentId => {
+    if (departmentId) {
+      this.getCytie(departmentId);
+      this.profileForm.get('cityId')?.enable();
+    } else {
+      this.cities = [];
+      this.profileForm.get('cityId')?.setValue(null);
+      this.profileForm.get('cityId')?.disable();
+    }
+  });
+}
+
 
   getData(){
     this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
@@ -109,7 +112,7 @@ export class TargetPersonComponent {
     }
   }
   onChangePassword() {
-    const dialogRef = this.dialog.open(ChangePasswordComponent, {
+    const dialogRef = this.dialog?.open(ChangePasswordComponent, {
       disableClose: true,
       width: '400px',
       data: { email: this.profileForm.get('email')?.value }
