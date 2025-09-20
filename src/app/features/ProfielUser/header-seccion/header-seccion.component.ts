@@ -29,8 +29,7 @@ export class HeaderSeccionComponent implements OnInit {
   isLoggedIn!: Signal<boolean>;
 
   tabs = [
-    { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' },
-    { key: 'password', label: 'Contraseña', route: '/dashboard/perfil/password' }
+    { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' }
   ];
 
   constructor(
@@ -46,8 +45,6 @@ export class HeaderSeccionComponent implements OnInit {
     ).subscribe((event: NavigationEnd) => {
       if (event.url.includes('profile')) {
         this.activeTab = 'profile';
-      } else if (event.url.includes('password')) {
-        this.activeTab = 'password';
       }
     });
   }
