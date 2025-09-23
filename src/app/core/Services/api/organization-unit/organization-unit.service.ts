@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { OrganizationalUnitCreate, OrganizationalUnitList } from '../../Models/organization/organizationalUnit.models';
-import { ApiResponse } from '../../Models/api-response.models';
+import { environment } from '../../../../../environments/environment';
+import { OrganizationalUnitCreate, OrganizationalUnitList } from '../../../Models/organization/organizationalUnit.models';
+import { ApiResponse } from '../../../Models/api-response.models';
 
 @Injectable({
   providedIn: 'root'

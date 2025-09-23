@@ -8,7 +8,7 @@ import { GenericTableComponent } from '../../../../../../shared/components/gener
 import { CommonModule } from '@angular/common';
 import { GenericFormComponent } from '../../../../../../shared/components/generic-form/generic-form.component';
 import { InternalDivisionCreate, InternalDivisionList } from '../../../../../../core/Models/organization/internal-divison.models';
-import { OrganizationalUnitService } from '../../../../../../core/Services/api/organization-unit.service';
+import { OrganizationalUnitService } from '../../../../../../core/Services/api/organization-unit/organization-unit.service';
 import { SubTitle } from 'chart.js';
 import { GenericModel } from '../../../../../../core/Models/security/generic.model';
 
@@ -25,7 +25,7 @@ export class DivisionesInternasComponent {
 
   // si navegas desde la tarjeta de Unidad Organizativa
   private organizationalUnitId!: number;
-  organizationalUnitName?: string; 
+  organizationalUnitName?: string;
   listareas: GenericModel[] = [];
 
 
@@ -109,8 +109,8 @@ export class DivisionesInternasComponent {
         subTitle: this.organizationalUnitName,
         item,
         fields: [
-          { name: 'AreaCategoryId', type: 'select', label: 'Área', 
-            value: item?.areaCategoryId || '', 
+          { name: 'AreaCategoryId', type: 'select', label: 'Área',
+            value: item?.areaCategoryId || '',
             options: (this.listareas ?? []).map(a => ({ label: a.name, value: a.id })),
             required: true },
           { name: 'OrganizationalUnitId', value: item?.organizationalUnitId || this.organizationalUnitId, hidden: true }

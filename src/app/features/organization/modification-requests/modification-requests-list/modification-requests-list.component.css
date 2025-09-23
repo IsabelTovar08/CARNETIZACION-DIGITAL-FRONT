@@ -1,0 +1,29 @@
+.badge-success {
+  background: #22c55e;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.badge-danger {
+  background: #ef4444;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.badge-warning {
+  background: #facc15;
+  color: #000;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.modification-requests h2 {
+  margin-bottom: 0.25rem;
+}
+
+.modification-requests p {
+  margin-bottom: 1rem;
+  color: #6b7280;
+}

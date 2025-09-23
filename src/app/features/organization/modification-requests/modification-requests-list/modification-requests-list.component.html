@@ -1,0 +1,30 @@
+<div class="modification-requests">
+  <h2>Solicitudes de Modificación</h2>
+  <p>Revisar y gestionar las solicitudes de modificación de datos personales.</p>
+
+  <app-generic-table
+    [title]="title"
+    [columns]="columns"
+    [displayedColumns]="displayedColumns"
+    [dataSourceInput]="requests"
+    [customTemplates]="customTemplates"
+    [buttonSave]="false">
+  </app-generic-table>
+
+  <!-- Template para estado -->
+  <ng-template #statusTemplate let-item>
+    <span [ngClass]="{
+      'badge-success': item.status === 'Aprobado',
+      'badge-danger': item.status === 'Rechazado',
+      'badge-warning': item.status === 'Pendiente'
+    }">
+      {{ item.status }}
+    </span>
+  </ng-template>
+
+  <!-- Template para acciones -->
+  <ng-template #actionsTemplate let-item>
+    <button mat-stroked-button color="primary" (click)="approve(item)">Aprobar</button>
+    <button mat-stroked-button color="warn" (click)="reject(item)">Rechazar</button>
+  </ng-template>
+</div>
