@@ -168,6 +168,19 @@
   background: #667eea;
   border-radius: 2px;
 }
+/* Mantener línea azul fija en el primer tab ("Perfil") */
+.tab-button:first-child::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px; /* ajusta según el ancho del texto */
+  height: 3px;
+  background: #667eea;
+  border-radius: 2px;
+}
+
 
 /* Responsive  */
 

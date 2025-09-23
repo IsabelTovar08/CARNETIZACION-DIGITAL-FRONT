@@ -1,7 +1,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  max-height: 90vh; /* Evita que el modal crezca más que la pantalla */
+  max-height: 100%;
 }
 
 .profile-card {
@@ -19,44 +19,77 @@
 
 .scroll-content {
   flex: 1;
-  overflow-y: auto; /* Scroll solo aquí */
+  overflow-y: auto;
   padding: 16px;
   padding-bottom: 24px;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  max-width: 100%;
 }
 
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Clases para controlar el ancho de los campos */
 .full-width {
   grid-column: 1 / -1;
 }
 
+.half-width {
+  grid-column: span 1;
+}
+
 .section-title {
   grid-column: 1 / -1;
-  margin-top: 16px;
-  font-size: 1.1rem;
+  margin: 24px 0 8px 0;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #3f51b5;
+}
+
+.section-title:first-of-type {
+  margin-top: 8px;
+}
+
+/* Divider después de títulos */
+mat-divider {
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
 }
 
 /* Email + botón contraseña */
 .email-password-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
+  grid-column: 1 / -1;
 }
 
 .email-field {
   flex: 1;
+  min-width: 0; /* Permite que el campo se encoja */
+}
+
+.email-password-container button {
+  margin-top: 8px; /* Alinea con el input */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .hint-text {
   font-size: 0.85rem;
   color: #666;
+  grid-column: 1 / -1;
   margin-top: -8px;
+  margin-bottom: 8px;
 }
 
 /* Footer fijo */
@@ -64,4 +97,14 @@
   padding: 16px;
   border-top: 1px solid #e0e0e0;
   background: white;
+}
+
+/* Ajustes específicos para mat-form-field */
+mat-form-field {
+  width: 100%;
+}
+
+/* Para campos que deben ocupar toda la fila */
+mat-form-field.full-width {
+  grid-column: 1 / -1;
 }
