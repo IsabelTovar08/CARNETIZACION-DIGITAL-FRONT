@@ -52,9 +52,9 @@ export class CreateEventComponent {
 
   // Tipos de access point
   accessPointTypes = [
-    { id: 1, name: 'Entrance' },
+    { id: 1, name: 'Entrada' },
     { id: 2, name: 'Exit' },
-    { id: 3, name: 'Both' }
+    { id: 3, name: 'Mixto' }
   ];
 
   constructor(
@@ -64,7 +64,7 @@ export class CreateEventComponent {
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
-      code: [''], // si lo dejas vacío, generaré uno
+      code: [''], 
       description: [''],
       eventStart: [''],
       eventEnd: [''],
@@ -80,7 +80,7 @@ export class CreateEventComponent {
       divisions: [[]],
       branchId: [1],
 
-      // mini-form para agregar AP
+      // mini formularios para agregar los nuevos puntos de acceso
       apName: [''],
       apDescription: [''],
       apTypeId: [null]
@@ -97,7 +97,7 @@ export class CreateEventComponent {
     this.loadAudienceOptions();
   }
 
-  // --------- CARGAS ---------
+  // CARGAS de los datos de perfil, unidad organizativa, divicion interna y puntos de acceso
 
   loadAudienceOptions() {
     this.eventService.getProfiles().subscribe({
@@ -128,7 +128,7 @@ export class CreateEventComponent {
     });
   }
 
-  // --------- ACCESS POINTS UI ---------
+  //ACCESS POINTS
 
   openAddAccessPointDialog() {
     this.showAddForm = true;
@@ -148,7 +148,7 @@ export class CreateEventComponent {
     });
   }
 
-  /** Agregar AP desde el mini-form (nuevo) */
+  /** Agregar ounto de acceso desde el mini-form */
   addAccessPointManual() {
     const name = (this.eventForm.get('apName')?.value || '').trim();
     const description = (this.eventForm.get('apDescription')?.value || '').trim();
@@ -172,13 +172,13 @@ export class CreateEventComponent {
 
     this.accessPoints.push(ap);
 
-    // limpiar mini-form y ocultar
+    // limpiar mini formormulario y ocultar
     this.showAddForm = false;
     this.eventForm.patchValue({ apName: '', apDescription: '', apTypeId: null });
     this.useservice.showSuccess('Punto de acceso agregado');
   }
 
-  /** Agregar AP tomando uno del catálogo (lo clona como NUEVO con id 0) */
+  /** Agregar un punto de acceso tomando uno del catálogo (lo clona como NUEVO con id 0) */
   addAccessPointFromAvailable(item: {id: number; name: string; typeId?: number; description?: string}) {
     const ap: AccessPointDto = {
       id: 0,
@@ -205,14 +205,14 @@ export class CreateEventComponent {
   private mapFormToDto(): CreateEventRequest {
     const f = this.eventForm.value;
 
-    // genera code si no lo llenaron
+    // genera un codigo si no lo llenaron
     const code = (f.code && String(f.code).trim().length > 0) ? f.code : this.generateCode(8);
 
     return {
       event: {
         id: 0,
         name: f.name,
-        code, // 👈 requerido por backend
+        code, 
         description: f.description,
         eventStart: f.eventStart,
         eventEnd: f.eventEnd,
@@ -226,11 +226,11 @@ export class CreateEventComponent {
 
       // 👇 ahora enviamos objetos, NO IDs
       accessPoints: this.accessPoints.map(ap => ({
-        id: 0, // nuevo
+        id: 0, 
         name: ap.name,
         description: ap.description,
         typeId: ap.typeId
-        // eventId NO es necesario para crear
+        // eventId NO es necesario
       })),
 
       profileIds: f.profiles || [],
