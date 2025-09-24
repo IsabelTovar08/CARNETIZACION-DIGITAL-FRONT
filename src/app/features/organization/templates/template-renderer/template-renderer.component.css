@@ -1,0 +1,39 @@
+/* template-renderer.component.scss */
+.renderer-wrapper {
+  margin-bottom: 2rem;
+}
+
+.toolbar {
+  margin-bottom: .5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.toggle-btn {
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  padding: .4rem .8rem;
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+.template-container {
+  position: relative; /* los hijos absolutely-positioned se anclan aquí */
+  display: inline-block;
+}
+
+.template-bg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Por ahora mostramos el nombre del campo para verificar posiciones */
+.element {
+  position: absolute;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e53935; /* se ve encima fácil */
+  pointer-events: none;
+  user-select: none;
+}

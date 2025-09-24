@@ -5,13 +5,32 @@
   </div>
 
   <!-- Avatar centrado y sobresaliente -->
-  <img src="/assets/perfiles/perfil.png" alt="Perfil" class="perfil-img avatar">
+  <div class="profile-container">
+    <!-- Imagen -->
+    <img [src]="user()?.photoUrl" alt="Perfil" class="perfil-img avatar">
+
+    <!-- Ícono editar (solo visible si NO estamos editando) -->
+    <div *ngIf="!isEditing" class="edit-icon" (click)="fileInput.click()">
+      ✏️
+    </div>
+
+    <!-- Botones guardar / cancelar (solo visibles si hay edición) -->
+    <div *ngIf="isEditing" class="edit-actions">
+      <button class="btn-save" (click)="saveImage()">Guardar</button>
+      <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+    </div>
+
+    <!-- Input oculto -->
+    <input type="file" accept="image/*" #fileInput (change)="onFileSelected($event)" hidden>
+  </div>
+
+
 
   <!-- Contenido -->
   <div class="content">
     <div class="header-content">
       <div class="header-title">
-        <h1 class="main-title">Camilo Charry
+        <h1 class="main-title">{{this.user()?.currentProfile?.personName}}
         </h1>
         <div class="header-subtitle subtitle">
           <p class="left-text">Administra tu información personal</p>

@@ -11,7 +11,7 @@ const REFRESH_KEY = 'refresh_token'; // Refresh token
   providedIn: 'root'
 })
 export class TokenService {
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   // Guardar tokens (access 1 día, refresh 7 días por defecto)
   setTokens(access: string, refresh: string, refreshDays = 7): void {
@@ -19,7 +19,6 @@ export class TokenService {
     setCookie(REFRESH_KEY, refresh, { expires: refreshDays, path: '/', sameSite: 'Strict' });
   }
 
-  // Solo access (por si lo necesitas en otros flujos)
   setAccessToken(access: string): void {
     setCookie(ACCESS_KEY, access, { expires: 1, path: '/', sameSite: 'Strict' });
   }
@@ -38,7 +37,6 @@ export class TokenService {
   }
 
   // --- Validación de access token ---
-
   private getAccessExp(): number | undefined {
     const token = this.getAccessToken();
     if (!token) return undefined;
@@ -57,7 +55,6 @@ export class TokenService {
     return now >= exp;
   }
 
-  // ¿El access expira en <= threshold segundos?
   willAccessExpireSoon(thresholdSeconds = 30): boolean {
     const exp = this.getAccessExp();
     if (!exp) return true;
@@ -65,15 +62,20 @@ export class TokenService {
     return (exp - now) <= thresholdSeconds;
   }
 
-  // --- Sesión / UX ---
+  // --- Sesión ---
+  // Solo valida, no dispara alertas
+  hasValidSession(): boolean {
+    const access = this.getAccessToken();
+    const refresh = this.getRefreshToken();
 
+    if (!access && !refresh) return false;   // nada
+    if (refresh) return true;                // se puede salvar
+    return !this.isAccessExpired();          // solo access válido
+  }
+
+  // Usar en guards/componentes si quieres UX
   isAuthenticated(): boolean {
-    const token = this.getAccessToken();
-    if (!token || this.isAccessExpired()) {
-      this.logoutWithAlert();
-      return false;
-    }
-    return true;
+    return this.hasValidSession();
   }
 
   logout(): void {
@@ -93,6 +95,4 @@ export class TokenService {
       confirmButtonText: 'Aceptar'
     }).then(() => this.logout());
   }
-
-
 }

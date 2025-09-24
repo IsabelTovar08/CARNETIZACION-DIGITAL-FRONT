@@ -3,34 +3,44 @@
   <!-- Header fijo -->
   <mat-card-header>
     <div mat-card-avatar class="avatar"></div>
-    <mat-card-title>Información Personal</mat-card-title>
+    <mat-card-title>
+      Información Personal
+      <!-- Botón editar solo aparece si requiere validación y no está en modo edición -->
+      <button *ngIf="showEditButton()" 
+              mat-icon-button 
+              class="edit-button" 
+              (click)="onEdit()"
+              title="Editar información">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-title>
     <mat-card-subtitle>Gestiona tu información personal</mat-card-subtitle>
   </mat-card-header>
 
   <!-- Contenido con scroll -->
   <mat-card-content class="scroll-content">
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-grid">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-grid" [class.disabled-form]="!isEditable">
 
       <!-- Sección: Datos personales -->
       <h3 class="section-title">Datos personales</h3>
       <mat-divider></mat-divider>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Primer nombre</mat-label>
         <input matInput formControlName="firstName">
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Segundo nombre</mat-label>
         <input matInput formControlName="middleName">
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Primer apellido</mat-label>
         <input matInput formControlName="lastName">
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Segundo apellido</mat-label>
         <input matInput formControlName="secondLastName">
       </mat-form-field>
@@ -39,7 +49,7 @@
       <h3 class="section-title">Documento</h3>
       <mat-divider></mat-divider>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Tipo de documento</mat-label>
         <mat-select formControlName="documentTypeId">
           <mat-option *ngFor="let doc of documentTypes" [value]="doc.id">
@@ -48,12 +58,12 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Número de documento</mat-label>
         <input matInput formControlName="documentNumber">
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Tipo de sangre</mat-label>
         <mat-select formControlName="bloodTypeId">
           <mat-option *ngFor="let blood of bloodTypes" [value]="blood.id">
@@ -66,13 +76,13 @@
       <h3 class="section-title">Contacto</h3>
       <mat-divider></mat-divider>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Teléfono</mat-label>
         <input matInput formControlName="phone">
       </mat-form-field>
 
       <!-- Email con botón para actualizar contraseña -->
-      <div class="email-password-container full-width">
+      <div class="email-password-container">
         <mat-form-field appearance="outline" class="email-field">
           <mat-label>Email</mat-label>
           <input matInput formControlName="email">
@@ -84,7 +94,7 @@
       </div>
 
       <!-- Mensaje informativo -->
-      <mat-hint class="hint-text full-width">
+      <mat-hint class="hint-text">
         Al cambiar la contraseña, se enviará un correo de notificación a la dirección registrada.
       </mat-hint>
 
@@ -97,7 +107,7 @@
       <h3 class="section-title">Ubicación</h3>
       <mat-divider></mat-divider>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Departamento</mat-label>
         <mat-select formControlName="departmentId">
           <mat-option *ngFor="let dep of deparments" [value]="dep.id">
@@ -106,7 +116,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="half-width">
         <mat-label>Ciudad</mat-label>
         <mat-select formControlName="cityId">
           <mat-option *ngFor="let city of cities" [value]="city.id">
@@ -121,10 +131,19 @@
   <!-- Footer fijo -->
   <mat-card-actions class="footer">
     <app-action-buttons
-      [disableSave]="profileForm.invalid"
-      (cancel)="dialogRef.close()"
+      [disableSave]="profileForm.invalid || !isEditable"
+      (cancel)="onCancel()"
       (save)="onSubmit()">
     </app-action-buttons>
   </mat-card-actions>
 
 </mat-card>
+
+<!-- Modal para validación de credenciales (solo aparece si requirePasswordValidation = true) -->
+<app-generic-credincials 
+  *ngIf="isModalOpen && requirePasswordValidation" 
+  [isOpen]="isModalOpen" 
+  [userEmail]="profileForm.get('email')?.value || ''"
+  (closeModal)="cerrarModal()" 
+  (validationSuccess)="onValidacionExitosa($event)">
+</app-generic-credincials>

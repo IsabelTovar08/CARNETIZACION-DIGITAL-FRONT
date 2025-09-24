@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { PersonService } from './../../../core/Services/api/person/person.service';
+import { Component, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { UserStoreService } from '../../../core/Services/auth/user-store.service';
+import { UserMe } from '../../../core/Models/security/user.models';
+import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
 
 
 @Component({
@@ -13,29 +17,94 @@ import { MatTooltip } from '@angular/material/tooltip';
   templateUrl: './header-seccion.component.html',
   styleUrl: './header-seccion.component.css'
 })
-export class HeaderSeccionComponent {
+export class HeaderSeccionComponent implements OnInit {
   activeTab: string = 'profile';
 
+  profileImage: string = '/assets/perfiles/perfil.png';
+  tempImage: string | null | undefined = null;
+  selectedFile: File | null = null;
+  isEditing: boolean = false;
+
+  user!: Signal<UserMe | null>;
+  isLoggedIn!: Signal<boolean>;
+
   tabs = [
-    { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' },
-    { key: 'password', label: 'Contraseña', route: '/dashboard/perfil/password' }
+    { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' }
   ];
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private store: UserStoreService,
+    private PersonService: PersonService,
+    private snackbarService: SnackbarService
+
+  ) {
     // Detectar cambios de ruta para actualizar el tab activo
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       if (event.url.includes('profile')) {
         this.activeTab = 'profile';
-      } else if (event.url.includes('password')) {
-        this.activeTab = 'password';
       }
     });
+  }
+  ngOnInit(): void {
+    this.user = this.store.user;
+    this.isLoggedIn = this.store.isLoggedIn;
+    if (this.user()?.photoUrl) {
+      this.profileImage = this.user()!.photoUrl!;
+    }
   }
 
   selectTab(tabKey: string, route: string) {
     this.activeTab = tabKey;
     this.router.navigate([route]);
   }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.selectedFile = input.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.tempImage = e.target.result;  // preview temporal en base64
+        this.isEditing = true;
+      };
+
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  saveImage(): void {
+    if (this.selectedFile) {
+      // Preview queda como la imagen actual
+      this.profileImage = this.tempImage!;
+      this.isEditing = false;
+
+      // Armamos FormData para enviar al backend
+      const formData = new FormData();
+      formData.append("file", this.selectedFile);
+      if (formData) {
+        this.PersonService.SavePhoto(this.selectedFile).subscribe({
+          next: (response) => {
+            this.snackbarService.showSuccess('Imagen actualizada con éxito');
+            this.tempImage = null;
+            this.selectedFile = null;
+          },
+          error: (err) => {
+            console.error("Error subiendo la imagen", err);
+            this.snackbarService.showError('Ocurrió un error al subir la imagen');
+          }
+        });
+      }
+    }
+  }
+
+  cancelEdit(): void {
+    this.tempImage = null;
+    this.selectedFile = null;
+    this.isEditing = false;
+  }
+
 }

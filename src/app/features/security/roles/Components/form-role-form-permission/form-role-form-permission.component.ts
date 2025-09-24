@@ -28,7 +28,6 @@ import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.
 @Component({
   selector: 'app-form-role-form-permission',
   imports: [MatCardModule,
-    RouterLink,
     MatButtonModule,
     CommonModule,
     MatChipsModule,

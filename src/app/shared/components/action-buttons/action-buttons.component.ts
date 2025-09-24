@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Optional, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -18,7 +18,7 @@ export class ActionButtonsComponent {
    *
    */
 
-  constructor(private dialogRef: MatDialogRef<any>) {
+  constructor(@Optional() public dialogRef?: MatDialogRef<ActionButtonsComponent>) {
 
   }
 
