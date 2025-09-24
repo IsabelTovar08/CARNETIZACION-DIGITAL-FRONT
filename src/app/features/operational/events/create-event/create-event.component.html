@@ -1,0 +1,241 @@
+<div class="container">
+  <h2>Crear Evento</h2>
+  
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+    <div class="main-layout">
+      <!-- Columna Izquierda -->
+      <div class="left-column">
+        
+        <!-- Información del evento -->
+        <div class="info-card">
+          <h3 class="card-title">Información del evento</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre del Evento</mat-label>
+                <input matInput formControlName="name" placeholder="Enter event name">
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descripción del Evento</mat-label>
+                <textarea matInput formControlName="description" rows="3" placeholder="Describe tu evento"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Fecha y hora de Inicio</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="eventStart" placeholder="MM / DD / YYYY">
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Fecha y hora Fin</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="eventEnd" placeholder="Select end date and time">
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group toggle-group">
+              <div class="toggle-field">
+                <span class="toggle-label">Múltiples Jornadas</span>
+                <mat-slide-toggle formControlName="multipleJornadas"></mat-slide-toggle>
+              </div>
+            </div>
+            <div class="form-group toggle-group">
+              <div class="toggle-field">
+                <span class="toggle-label">Repetir Evento</span>
+                <mat-slide-toggle formControlName="repeatEvent"></mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acceso al Evento -->
+        <div class="access-card">
+          <h3 class="card-title">Acceso al Evento</h3>
+          
+          <div class="access-options">
+            <mat-radio-group formControlName="accessType" class="access-radio-group">
+              <div class="access-radio-option" [class.selected]="eventForm.get('accessType')?.value === 'public'">
+                <mat-radio-button value="public">
+                  <div class="access-content">
+                    <div class="access-title">
+                      <mat-icon class="access-icon">public</mat-icon>
+                      Todo al público
+                    </div>
+                    <div class="access-description">Cualquier persona puede acceder al evento</div>
+                  </div>
+                </mat-radio-button>
+              </div>
+              
+              <div class="access-radio-option" [class.selected]="eventForm.get('accessType')?.value === 'private'">
+                <mat-radio-button value="private">
+                  <div class="access-content">
+                    <div class="access-title">
+                      <mat-icon class="access-icon">lock</mat-icon>
+                      Acceso privado
+                    </div>
+                    <div class="access-description">Solo personas autorizadas pueden acceder</div>
+                  </div>
+                </mat-radio-button>
+              </div>
+            </mat-radio-group>
+          </div>
+        </div>
+
+        <!-- Filtros Avanzados -->
+        <div class="filters-card">
+          <h3 class="card-title">Filtros Avanzados</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Perfiles</mat-label>
+                <mat-select formControlName="profiles" multiple placeholder="Seleccionar perfil">
+                  <mat-option *ngFor="let profile of profilesOptions" [value]="profile.id">
+                    {{ profile.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Unidades Organizativas</mat-label>
+                <mat-select formControlName="organizationalUnits" multiple placeholder="Seleccionar unidades">
+                  <mat-option *ngFor="let unit of organizationalUnitOptions" [value]="unit.id">
+                    {{ unit.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Divisiones</mat-label>
+                <mat-select formControlName="divisions" multiple placeholder="Seleccionar divisiones">
+                  <mat-option *ngFor="let division of internalDivisionOptions" [value]="division.id">
+                    {{ division.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Código</mat-label>
+                <input matInput formControlName="code" placeholder="Código (auto si vacío)">
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Campos ocultos para mantener compatibilidad -->
+          <div style="display: none;">
+            <mat-form-field>
+              <input matInput formControlName="eventTypeId" [value]="1">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="sheduleId" [value]="1">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha -->
+      <div class="right-column">
+        <!-- Puntos de Acceso -->
+        <div class="access-points-card">
+          <div class="access-points-header">
+            <h3 class="card-title">Puntos de Acceso</h3>
+            <button mat-raised-button color="primary" class="add-btn" (click)="openAddAccessPointDialog()">
+              <mat-icon>add</mat-icon> Agregar
+            </button>
+          </div>
+
+          <!-- Lista de puntos de acceso seleccionados -->
+          <div class="access-points-table" *ngIf="accessPoints.length > 0">
+            <div class="table-header">
+              <span class="header-cell">NOMBRE</span>
+              <span class="header-cell">TIPO</span>
+              <span class="header-cell">ACCIONES</span>
+            </div>
+            <div class="table-body">
+              <div *ngFor="let ap of accessPoints; let i = index" class="table-row">
+                <span class="table-cell">{{ ap.name }}</span>
+                <span class="table-cell type-cell">{{ getAccessPointTypeName(ap.typeId) }}</span>
+                <span class="action-cell">
+                  <button mat-button class="delete-btn" (click)="deleteAccessPoint(i)">Delete</button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estado vacío -->
+          <div class="empty-state" *ngIf="accessPoints.length === 0">
+            <mat-icon class="empty-icon">location_on</mat-icon>
+            <p>No hay puntos de acceso agregados</p>
+            <p class="empty-description">Agrega puntos de acceso para tu evento</p>
+          </div>
+
+          <!-- Mini-form para agregar AP (oculto por defecto) -->
+          <div class="ap-mini-form" *ngIf="showAddForm">
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nombre del Punto</mat-label>
+                  <input matInput formControlName="apName" placeholder="Entrada Norte">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Tipo</mat-label>
+                  <mat-select formControlName="apTypeId" placeholder="Seleccionar tipo">
+                    <mat-option [value]="1">Entrance</mat-option>
+                    <mat-option [value]="2">Exit</mat-option>
+                    <mat-option [value]="3">Both</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Descripción</mat-label>
+                  <input matInput formControlName="apDescription" placeholder="Puerta principal">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-actions-mini">
+              <button mat-button type="button" (click)="cancelAddAccessPoint()">Cancelar</button>
+              <button mat-raised-button color="primary" type="button" (click)="addAccessPointManual()">
+                Agregar punto
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón crear evento -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" class="create-btn">
+        Crear Evento
+      </button>
+    </div>
+  </form>
+</div>
