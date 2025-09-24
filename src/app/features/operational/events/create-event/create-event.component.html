@@ -1,6 +1,5 @@
 <div class="container">
   <h2>Crear Evento</h2>
-<<<<<<< HEAD
   
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
     <div class="main-layout">
@@ -228,169 +227,13 @@
               </button>
             </div>
           </div>
-=======
-
-  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-    <!-- Primera fila: Nombre y Descripción -->
-    <div class="form-row">
-      <div class="form-column">
-        <label class="field-label">Nombre del Evento</label>
-        <mat-form-field appearance="fill" class="full-width">
-          <input matInput formControlName="name" placeholder="Enter event name">
-        </mat-form-field>
-      </div>
-      <div class="form-column">
-        <label class="field-label">Descripción del Evento</label>
-        <mat-form-field appearance="fill" class="full-width">
-          <textarea matInput formControlName="description" rows="3" placeholder="Describe tu evento"></textarea>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <!-- Segunda fila: Fechas -->
-    <div class="form-row">
-      <div class="form-column">
-        <label class="field-label">Fecha y hora de Inicio</label>
-        <mat-form-field appearance="fill" class="full-width">
-          <input matInput [matDatepicker]="startPicker" formControlName="eventStart" placeholder="MM / DD / YYYY">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="form-column">
-        <label class="field-label">Fecha y hora Fin</label>
-        <mat-form-field appearance="fill" class="full-width">
-          <input matInput [matDatepicker]="endPicker" formControlName="eventEnd" placeholder="Select end date and time">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <!-- Tercera fila: Toggles -->
-    <div class="form-row">
-      <div class="form-column">
-        <div class="toggle-field">
-          <span class="toggle-label">Múltiples Jornadas</span>
-          <mat-slide-toggle formControlName="multipleJourneys" color="accent"></mat-slide-toggle>
-        </div>
-      </div>
-      <div class="form-column">
-        <div class="toggle-field">
-          <span class="toggle-label">Repetir Evento</span>
-          <mat-slide-toggle formControlName="repeatEvent" color="accent"></mat-slide-toggle>
->>>>>>> c56a32e10b106e304da0a2263168acd074e7bc84
         </div>
       </div>
     </div>
 
-<<<<<<< HEAD
     <!-- Botón crear evento -->
     <div class="form-actions">
       <button mat-raised-button color="primary" type="submit" class="create-btn">
-=======
-    <!-- Sección de Acceso al Evento y Puntos de Acceso -->
-    <div class="form-row">
-      <!-- Columna izquierda: Acceso al Evento y Filtros -->
-      <div class="form-column">
-        <div class="section-card">
-          <h3 class="section-title">Acceso al Evento</h3>
-          <div class="access-options">
-            <mat-radio-group formControlName="accessType" class="access-radio-group">
-              <mat-radio-button value="public" class="access-radio">
-                <mat-icon class="access-icon">public</mat-icon>
-                <div class="access-content">
-                  <span class="access-title">Todo el público</span>
-                  <span class="access-description">Cualquier persona puede acceder al evento</span>
-                </div>
-              </mat-radio-button>
-              <mat-radio-button value="private" class="access-radio">
-                <mat-icon class="access-icon">lock</mat-icon>
-                <div class="access-content">
-                  <span class="access-title">Acceso privado</span>
-                  <span class="access-description">Solo personas autorizadas pueden acceder</span>
-                </div>
-              </mat-radio-button>
-            </mat-radio-group>
-          </div>
-
-          <div class="filters-section">
-            <h4 class="filter-title">Filtros Avanzados</h4>
-            
-            <div class="filter-group">
-              <label class="filter-label">Perfiles</label>
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-select formControlName="profiles" placeholder="Seleccionar perfil">
-                  <mat-option value="profile1">Perfil 1</mat-option>
-                  <mat-option value="profile2">Perfil 2</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label">Unidades Organizativas</label>
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-select formControlName="organizationalUnits" placeholder="Seleccionar unidades">
-                  <mat-option value="unit1">Unidad 1</mat-option>
-                  <mat-option value="unit2">Unidad 2</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label">Divisiones</label>
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-select formControlName="divisions" placeholder="Seleccionar divisiones">
-                  <mat-option value="division1">División 1</mat-option>
-                  <mat-option value="division2">División 2</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Columna derecha: Puntos de Acceso -->
-      <div class="form-column">
-        <div class="section-card">
-          <h3 class="section-title">Puntos de Acceso</h3>
-          <div class="access-points-table">
-            <div class="table-header">
-              <span class="header-cell">Nombre</span>
-              <span class="header-cell">Tipo</span>
-              <span class="header-cell">Acciones</span>
-            </div>
-            <div class="table-row">
-              <span class="table-cell">Main Entrance</span>
-              <span class="table-cell type-cell">Entrance</span>
-              <span class="table-cell action-cell">
-                <button mat-button class="delete-btn">Delete</button>
-              </span>
-            </div>
-            <div class="table-row">
-              <span class="table-cell">Exit 1</span>
-              <span class="table-cell type-cell">Exit</span>
-              <span class="table-cell action-cell">
-                <button mat-button class="delete-btn">Delete</button>
-              </span>
-            </div>
-            <div class="table-row">
-              <span class="table-cell">VIP Lounge</span>
-              <span class="table-cell type-cell">Both</span>
-              <span class="table-cell action-cell">
-                <button mat-button class="delete-btn">Delete</button>
-              </span>
-            </div>
-          </div>
-          <button mat-button class="add-btn">Agregar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Botón de crear evento -->
-    <div class="form-actions">
-      <button mat-raised-button type="submit" class="create-btn">
->>>>>>> c56a32e10b106e304da0a2263168acd074e7bc84
         Crear Evento
       </button>
     </div>
