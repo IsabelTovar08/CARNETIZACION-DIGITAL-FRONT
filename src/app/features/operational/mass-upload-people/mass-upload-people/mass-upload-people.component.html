@@ -1,10 +1,13 @@
 <div class="page-container mat-elevation-z2">
 
   <!-- Configuración previa -->
-  <app-config-form></app-config-form>
+   <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
 
   <!-- Bloque de carga -->
-  <app-file-upload></app-file-upload>
+  <app-file-upload
+    (fileSelected)="onFileSelected($event)"
+    (fileUploaded)="uploadToBackend()">
+  </app-file-upload>
 
   <!-- Tabla genérica -->
   <app-generic-table

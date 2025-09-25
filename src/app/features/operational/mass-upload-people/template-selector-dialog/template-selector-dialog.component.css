@@ -1,0 +1,25 @@
+.template-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.template-item {
+  width: 250px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.template-item app-template-renderer {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.template-name {
+  margin-top: 8px;
+  font-weight: bold;
+}

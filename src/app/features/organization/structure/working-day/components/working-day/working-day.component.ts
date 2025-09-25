@@ -19,6 +19,8 @@ import { fromApiTime } from '../../../../../../core/utils/time-only';
 export class JornadasComponent {
   listSchedule!: ScheduleList[];
   displayedColumns: string[] = ['name', 'startTime', 'endTime', 'isDeleted', 'actions'];
+  listDays: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
 
   constructor(private apiService: ApiService<ScheduleCreate, ScheduleList>,
     private route: ActivatedRoute,
@@ -39,7 +41,7 @@ export class JornadasComponent {
   }
 
   cargarData(reload: boolean) {
-    this.apiService.ObtenerTodo('Schedule').subscribe(data => 
+    this.apiService.ObtenerTodo('Schedule').subscribe(data =>
       this.listSchedule = data.data
     );
   }
@@ -58,7 +60,11 @@ export class JornadasComponent {
         fields: [
           { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.startTime || ''), required: true },
           { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.endTime || ''), required: true },
-
+          ...this.listDays.map(day => ({
+            label: day,
+            type: 'checkbox',
+            value: day
+          }))
         ],
         replaceBaseFields: true
       },

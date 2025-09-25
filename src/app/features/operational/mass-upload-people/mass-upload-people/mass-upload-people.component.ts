@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { MatButtonModule } from '@angular/material/button';
 import { ImportBatchService } from '../../../../core/Services/import-banch/import-banch.service';
 import { ImportBatchRowTable } from '../../../../core/Models/operational/import-banch.models';
+import { ApiService } from '../../../../core/Services/api/api.service';
 
 @Component({
   selector: 'app-mass-upload-people',
@@ -25,9 +26,14 @@ export class MassUploadPeopleComponent {
     { key: 'state', label: 'Estado' }
   ];
 
-  records: ImportBatchRowTable[] = [];
+   records: ImportBatchRowTable[] = [];
+  configData: any = {};
+  selectedFile: File | null = null;
 
-  constructor(private importBatchService: ImportBatchService) {}
+  constructor(private importBatchService: ImportBatchService,
+        private templateService: ApiService<any, any>,
+
+  ) {}
 
   ngOnInit(): void {
   this.importBatchService.getRowsForTable(2).subscribe({
@@ -66,6 +72,37 @@ export class MassUploadPeopleComponent {
       `,
       confirmButtonText: 'Cerrar',
       width: 400
+    });
+  }
+
+
+  onConfigChanged(config: any) {
+    this.configData = config;
+  }
+
+   onFileSelected(file: File) {
+    this.selectedFile = file;
+  }
+
+  uploadToBackend() {
+    if (!this.selectedFile) {
+      Swal.fire('Error', 'Debes seleccionar un archivo', 'error');
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Config
+    Object.keys(this.configData).forEach(key => {
+      formData.append(key, this.configData[key]);
+    });
+
+    // Archivo
+    formData.append('file', this.selectedFile);
+
+    this.templateService.uploadImport(formData).subscribe({
+      next: () => Swal.fire('Éxito', 'Archivo cargado correctamente', 'success'),
+      error: () => Swal.fire('Error', 'Error al cargar archivo', 'error')
     });
   }
 }

@@ -5,17 +5,36 @@
 
       <mat-form-field>
         <mat-label>Plantilla de Carnet</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let tpl of templates" [value]="tpl.id">{{ tpl.name }}</mat-option>
-        </mat-select>
+        <input matInput [value]="selectedTemplate?.name" readonly placeholder="Seleccione una plantilla">
+        <button type="button" mat-icon-button matSuffix (click)="openTemplateSelector()">
+          <mat-icon>collections</mat-icon>
+        </button>
       </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>División Interna</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let div of divisions" [value]="div.id">{{ div.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+
+      <!-- Campo con Autocomplete -->
+      <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>División Interna</mat-label>
+          <input #input
+                type="text"
+                placeholder="Seleccione una división"
+                matInput
+                [formControl]="divisionControl"
+                [matAutocomplete]="auto"
+                (input)="filter()"
+                (focus)="filter()">
+
+          <mat-autocomplete requireSelection #auto="matAutocomplete">
+            @for (div of filteredDivisions; track div.id) {
+              <mat-option [value]="div.name">
+                {{ div.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </form>
+
 
       <mat-form-field>
         <mat-label>Perfil</mat-label>
@@ -25,14 +44,15 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Vigencia (Desde - Hasta)</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate placeholder="Desde">
-          <input matEndDate placeholder="Hasta">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
+  <mat-label>Vigencia (Desde - Hasta)</mat-label>
+  <mat-date-range-input [formGroup]="validityForm" [rangePicker]="picker">
+    <input matStartDate formControlName="ValidFrom" placeholder="Desde" (dateChange)="emitConfig()">
+    <input matEndDate formControlName="ValidTo" placeholder="Hasta" (dateChange)="emitConfig()">
+  </mat-date-range-input>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-date-range-picker #picker></mat-date-range-picker>
+</mat-form-field>
+
 
     </form>
   </mat-card-content>

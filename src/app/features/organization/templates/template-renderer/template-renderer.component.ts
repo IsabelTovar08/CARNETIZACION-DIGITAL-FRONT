@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class TemplateRendererComponent {
   @Input() template!: Template;
+  
 
   // Estado local: ¿estamos viendo el reverso?
   isBackSide = false;

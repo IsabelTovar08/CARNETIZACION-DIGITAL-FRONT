@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Seleccionar Plantilla</h2>
+<mat-dialog-content>
+  <div class="template-list">
+    <div class="template-item"
+         *ngFor="let tpl of data.templates"
+         (click)="selectTemplate(tpl)">
+
+      <!-- Aquí usamos TU componente -->
+      <app-template-renderer
+        [template]="tpl">
+      </app-template-renderer>
+
+      <p class="template-name">{{ tpl.name }}</p>
+    </div>
+  </div>
+</mat-dialog-content>

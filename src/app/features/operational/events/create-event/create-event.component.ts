@@ -39,6 +39,12 @@ export class CreateEventComponent {
   eventForm!: FormGroup;
   showAddForm = false;
 
+  toppingList = [
+    { name: 'Extra cheese', description: 'Mozzarella rallada fresca' },
+    { name: 'Mushroom', description: 'Hongos frescos laminados' },
+    { name: 'Pepperoni', description: 'Rodajas finas de salami picante' }
+  ];
+
   // Catálogo disponible por sucursal (para ayudar a elegir/replicar)
   availableAccessPoints: Array<{ id: number; name: string; typeId?: number; type?: string; description?: string }> = [];
 
@@ -64,7 +70,7 @@ export class CreateEventComponent {
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
-      code: [''], 
+      code: [''],
       description: [''],
       eventStart: [''],
       eventEnd: [''],
@@ -132,19 +138,19 @@ export class CreateEventComponent {
 
   openAddAccessPointDialog() {
     this.showAddForm = true;
-    this.eventForm.patchValue({ 
-      apName: '', 
-      apDescription: '', 
-      apTypeId: null 
+    this.eventForm.patchValue({
+      apName: '',
+      apDescription: '',
+      apTypeId: null
     });
   }
 
   cancelAddAccessPoint() {
     this.showAddForm = false;
-    this.eventForm.patchValue({ 
-      apName: '', 
-      apDescription: '', 
-      apTypeId: null 
+    this.eventForm.patchValue({
+      apName: '',
+      apDescription: '',
+      apTypeId: null
     });
   }
 
@@ -212,7 +218,7 @@ export class CreateEventComponent {
       event: {
         id: 0,
         name: f.name,
-        code, 
+        code,
         description: f.description,
         eventStart: f.eventStart,
         eventEnd: f.eventEnd,
@@ -226,7 +232,7 @@ export class CreateEventComponent {
 
       // 👇 ahora enviamos objetos, NO IDs
       accessPoints: this.accessPoints.map(ap => ({
-        id: 0, 
+        id: 0,
         name: ap.name,
         description: ap.description,
         typeId: ap.typeId
