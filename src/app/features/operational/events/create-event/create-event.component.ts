@@ -20,6 +20,7 @@ import {
   SelectOption,
   AccessPointDto
 } from '../../../../core/Models/operational/event.model';
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 @Component({
   selector: 'app-create-event',
@@ -30,8 +31,9 @@ import {
     RouterModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatDatepickerModule, MatNativeDateModule,
-    MatSlideToggleModule, MatButtonModule, MatIconModule, MatRadioModule
-  ],
+    MatSlideToggleModule, MatButtonModule, MatIconModule, MatRadioModule,
+    MatButtonToggleModule
+],
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css']
 })
