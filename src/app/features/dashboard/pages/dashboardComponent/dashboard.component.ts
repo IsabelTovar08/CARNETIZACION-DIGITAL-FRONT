@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NavigationEnd, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
+
 import { CommonModule } from '@angular/common';
 import { menuAdmin } from '../../../../core/Menu-config/menu-admin';
 import { MenuItem } from '../../../../core/Models/MenuItemModel';
@@ -23,6 +24,7 @@ import { HeaderComponent } from '../../../../layouts/main/header/header.componen
 import { SidebarComponent } from '../../../../layouts/main/sidebar/sidebar.component';
 import { NavigationStateService } from '../../../../core/Services/navigation-state/navigation-state.service';
 import { filter, Subscription } from 'rxjs';
+import { DashboardFooterComponent } from '../../../../dashboard-footer/dashboard-footer.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -44,6 +46,7 @@ import { filter, Subscription } from 'rxjs';
     SidebarComponent,
     RouterModule,
     CommonModule,
+    DashboardFooterComponent,
     HeaderComponent
   ],
   templateUrl: './dashboard.component.html',

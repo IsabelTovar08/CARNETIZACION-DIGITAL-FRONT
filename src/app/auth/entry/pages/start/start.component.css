@@ -76,7 +76,7 @@ height: 100vh;
 
 /* Columna izquierda (CTA + flecha + redes) */
 .hero-left {  
-  max-width: 500px;
+  max-width: 550px;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -85,8 +85,9 @@ height: 100vh;
 }
 
 .cta {
-  margin-bottom: 16px;
-  font-size: clamp(16px, 2vw, 20px);
+  margin-bottom: 12px;
+  margin-right: 30%;
+  font-size: clamp(16px, 2vw, 16px);
   font-weight: 500;
   line-height: 1.5;
 }
@@ -94,6 +95,7 @@ height: 100vh;
 /* Flecha */
 .arrow {
   margin-bottom: 16px;
+  margin-left: 55%;
 }
 
 .arrow img {
@@ -154,7 +156,7 @@ height: 100vh;
 .icon-email {
   --delay: 0.60s;
   top: 0;
-  left: 60%;
+  left: 55%;
 }
 
 .icon-settings {
@@ -166,19 +168,19 @@ height: 100vh;
 .icon-chat {
   --delay: 1.00s;
   top: 8%;
-  right: 0;
+  right: 8%;
 }
 
 .icon-phone {
   --delay: 1.20s;
   bottom: 28%;
-  right: -3%;
+  right: 8%;
 }
 
 .icon-qr {
   --delay: 1.30s;
   bottom: 8%;
-  right: 35%;
+  left: 55%;
 }
 
 /* ===== SECCIÓN ABOUT ===== */
@@ -443,9 +445,60 @@ height: 100vh;
 /* Contacto */
 .section-contact {
   background-color: #f8f9fa;
-  padding: clamp(40px, 8vw, 80px) clamp(20px, 5vw, 60px);
   text-align: center;
+   max-width: 100%;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 80px) clamp(20px, 5vw, 60px);
 }
+
+.contact-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  padding: 0 !important;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.contact-header {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .1) 20%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, .08) 15%, transparent 20%);
+  padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px);
+  color: rgb(9, 103, 170);
+}
+
+.contact-header h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.contact-header p {
+  font-size: clamp(14px, 2.5vw, 16px);
+  opacity: 0.9;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.contact-form {
+  padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px) !important;
+}
+
+.form-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 8px;
+  grid-template-columns: 1fr;
+}
+
+.form-row:not(.single) {
+  grid-template-columns: 1fr 1fr;
+}
+
 
 .contact-content h1 {
   color: #333;
@@ -456,6 +509,110 @@ height: 100vh;
 .contact-content p {
   color: #666;
   font-size: clamp(14px, 2.5vw, 18px);
+}
+
+.form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Personalización de mat-form-field */
+::ng-deep .form-field .mat-mdc-form-field {
+  width: 100%;
+}
+
+::ng-deep .form-field .mat-mdc-text-field-wrapper {
+  background-color: #fafafa;
+  border-radius: 6px;
+}
+
+::ng-deep .form-field .mat-mdc-form-field-focus-overlay {
+  background-color: transparent;
+}
+
+::ng-deep .form-field .mat-mdc-form-field-subscript-wrapper {
+  margin-top: 4px;
+}
+
+/* Personalización del outline */
+::ng-deep .form-field.mat-form-field-appearance-outline .mat-mdc-form-field-outline {
+  color: #e0e0e0;
+}
+
+::ng-deep .form-field.mat-form-field-appearance-outline.mat-focused .mat-mdc-form-field-outline-thick {
+  color: #1976d2;
+}
+
+/* Estilos del botón de envío */
+.submit-section {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%) !important;
+  color: white !important;
+  width: 100%;
+  height: 48px;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.submit-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4) !important;
+}
+
+.submit-button.submitting {
+  background: #4caf50 !important;
+}
+
+.submit-button:disabled {
+  opacity: 0.6 !important;
+}
+
+.spinner {
+  position: absolute;
+  right: 16px;
+}
+
+::ng-deep .submit-button .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Personalización de mat-select */
+::ng-deep .mat-mdc-select-panel {
+  border-radius: 6px;
+}
+
+::ng-deep .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+::ng-deep .mat-mdc-option.mat-mdc-option-active {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Animaciones */
@@ -538,12 +695,52 @@ height: 100vh;
     grid-template-columns: 1fr 0.8fr;
     gap: clamp(16px, 4vw, 32px);
   }
+  .cta {
+  margin-bottom: 10px;
+  margin-right: 20%;
+  font-size: clamp(20px, 2vw, 20px);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
   
   .left-features,
   .right-features {
     left: clamp(10px, 5vw, 40px);
     right: clamp(10px, 5vw, 40px);
   }
+
+ 
+
+.icon-email {
+  --delay: 0.60s;
+  top: 0;
+  left: 60%;
+}
+
+.icon-settings {
+  --delay: 0.80s;
+  top: 30%;
+  left: 60%;
+}
+
+.icon-chat {
+  --delay: 1.00s;
+  top: 8%;
+  right: 4%;
+}
+
+.icon-phone {
+  --delay: 1.20s;
+  bottom: 28%;
+  right: 4%;
+}
+
+.icon-qr {
+  --delay: 1.30s;
+  bottom: 8%;
+  left: 60%;
+}
   
   /* Características responsive */
   .characteristics-content {
@@ -575,6 +772,10 @@ height: 100vh;
     padding-block: clamp(20px, 8vw, 40px);
   }
 
+  .form-row:not(.single) {
+    grid-template-columns: 1fr;
+  }
+
   .hero-main {
     grid-template-columns: 1fr;
     gap: clamp(24px, 6vw, 40px);
@@ -597,28 +798,28 @@ height: 100vh;
 
   /* Reposicionar iconos para móviles */
   .icon-email {
-    top: 15%;
-    left: 10%;
+    top: 10%;
+    left: 28%;
   }
 
   .icon-settings {
-    top: 45%;
-    left: 5%;
+    top: 25%;
+    left: 28%;
   }
 
   .icon-chat {
-    top: 15%;
-    right: 10%;
+    top: 13%;
+    right: 26%;
   }
 
   .icon-phone {
-    bottom: 35%;
-    right: 5%;
+    bottom: 60%;
+    right: 26%;
   }
 
   .icon-qr {
-    bottom: 10%;
-    right: 15%;
+    bottom: 47%;
+    left: 28%;
   }
 
   /* About responsive */
@@ -716,27 +917,27 @@ height: 100vh;
 
   .icon-email {
     top: 12%;
-    left: 8%;
+    left: 14%;
   }
 
   .icon-settings {
-    top: 50%;
-    left: 3%;
+    top: 28%;
+    left: 14%;
   }
 
   .icon-chat {
     top: 12%;
-    right: 8%;
+    right: 15%;
   }
 
   .icon-phone {
-    bottom: 40%;
-    right: 3%;
+    bottom: 60%;
+    right: 15%;
   }
 
   .icon-qr {
-    bottom: 8%;
-    right: 12%;
+    bottom: 50%;
+    left: 14%;
   }
 }
 
