@@ -47,4 +47,13 @@ export class ApiService<T, D> {
     return this.http.post(`${this.urlBase}/Auth/login-google-code`, { code });
   }
 
+
+    /**
+   * Sube archivo con configuración al backend
+   */
+  uploadImport(formData: FormData): Observable<any> {
+    return this.http.post(`${this.urlBase}/excel/import/people`, formData);
+  }
+
+
 }

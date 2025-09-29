@@ -1,11 +1,11 @@
 <div class="container">
   <h2>Crear Evento</h2>
-  
+
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
     <div class="main-layout">
       <!-- Columna Izquierda -->
       <div class="left-column">
-        
+
         <!-- Información del evento -->
         <div class="info-card">
           <h3 class="card-title">Información del evento</h3>
@@ -45,6 +45,20 @@
             </div>
           </div>
 
+
+          <mat-form-field>
+            <mat-label>Toppings</mat-label>
+            <mat-select  multiple>
+              <mat-option *ngFor="let topping of toppingList" [value]="topping.name">
+                <div class="option-content">
+                  <span class="option-title">{{ topping.name }}</span>
+                  <small class="option-description">{{ topping.description }}</small>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
           <div class="form-row">
             <div class="form-group toggle-group">
               <div class="toggle-field">
@@ -64,7 +78,7 @@
         <!-- Acceso al Evento -->
         <div class="access-card">
           <h3 class="card-title">Acceso al Evento</h3>
-          
+
           <div class="access-options">
             <mat-radio-group formControlName="accessType" class="access-radio-group">
               <div class="access-radio-option" [class.selected]="eventForm.get('accessType')?.value === 'public'">
@@ -78,7 +92,7 @@
                   </div>
                 </mat-radio-button>
               </div>
-              
+
               <div class="access-radio-option" [class.selected]="eventForm.get('accessType')?.value === 'private'">
                 <mat-radio-button value="private">
                   <div class="access-content">
@@ -97,7 +111,7 @@
         <!-- Filtros Avanzados -->
         <div class="filters-card">
           <h3 class="card-title">Filtros Avanzados</h3>
-          
+
           <div class="form-row">
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">

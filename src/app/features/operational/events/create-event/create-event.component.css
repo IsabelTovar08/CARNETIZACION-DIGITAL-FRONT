@@ -338,11 +338,11 @@ h2 {
     border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
   }
-  
+
   .mat-mdc-form-field-flex:hover {
     border-color: #3182ce;
   }
-  
+
   .mat-mdc-form-field-focused .mat-mdc-form-field-flex {
     border-color: #3182ce;
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
@@ -351,7 +351,7 @@ h2 {
   .mat-mdc-form-field-outline {
     display: none;
   }
-  
+
   .mat-mdc-form-field-outline-thick {
     display: none;
   }
@@ -383,7 +383,7 @@ h2 {
     transition: all 0.2s ease;
     min-height: 48px;
   }
-  
+
   .mat-mdc-select-trigger:hover {
     border-color: #3182ce;
   }
@@ -414,7 +414,7 @@ h2 {
     padding: 0;
     margin-right: 12px;
   }
-  
+
   .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle,
   .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle,
   .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__inner-circle {
@@ -439,16 +439,16 @@ h2 {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .container {
     padding: 16px;
   }
-  
+
   h2 {
     font-size: 24px;
   }
@@ -459,10 +459,24 @@ h2 {
   .access-points-card {
     padding: 20px;
   }
-  
+
   .access-points-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.option-title {
+  font-weight: bold;
+}
+
+.option-description {
+  font-size: 12px;
+  color: gray;
 }
