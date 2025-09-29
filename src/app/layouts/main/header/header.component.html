@@ -36,9 +36,10 @@
             }}</span>
           <span class="perfil-subname">{{ user()?.currentProfile?.profileName
             }}</span>
+             </div><img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'" alt="Perfil" class="perfil-img">
         </div>
         
-      </div><img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'" alt="Perfil" class="perfil-img">
+     
       <button mat-icon-button>
         <mat-icon (click)="onLogout()">logout</mat-icon>
       </button>
