@@ -17,4 +17,11 @@ export class UserStoreService {
   // Mutaciones
   setUser(u: UserMe | null) { this._user.set(u); }
   clear() { this._user.set(null); }
+
+  updateUserPhoto(newPhotoUrl: string): void {
+    const currentUser = this._user();
+    if (currentUser) {
+      this._user.set({ ...currentUser, photoUrl: newPhotoUrl });
+    }
+  }
 }

@@ -17,21 +17,20 @@
         <mat-form-field class="example-full-width" appearance="fill">
           <mat-label>División Interna</mat-label>
           <input #input
-                type="text"
-                placeholder="Seleccione una división"
-                matInput
-                [formControl]="divisionControl"
-                [matAutocomplete]="auto"
-                (input)="filter()"
-                (focus)="filter()">
+              type="text"
+              placeholder="Seleccione una división"
+              matInput
+              [formControl]="divisionControl"
+              [matAutocomplete]="auto"
+              (input)="filter()"
+              (focus)="filter()">
 
-          <mat-autocomplete requireSelection #auto="matAutocomplete">
-            @for (div of filteredDivisions; track div.id) {
-              <mat-option [value]="div.name">
-                {{ div.name }}
-              </mat-option>
-            }
-          </mat-autocomplete>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayDivision" (optionSelected)="emitConfig()">
+          <mat-option *ngFor="let div of filteredDivisions" [value]="div">
+            {{ div.name }}
+          </mat-option>
+        </mat-autocomplete>
+
         </mat-form-field>
       </form>
 
@@ -44,14 +43,14 @@
       </mat-form-field>
 
       <mat-form-field>
-  <mat-label>Vigencia (Desde - Hasta)</mat-label>
-  <mat-date-range-input [formGroup]="validityForm" [rangePicker]="picker">
-    <input matStartDate formControlName="ValidFrom" placeholder="Desde" (dateChange)="emitConfig()">
-    <input matEndDate formControlName="ValidTo" placeholder="Hasta" (dateChange)="emitConfig()">
-  </mat-date-range-input>
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-date-range-picker #picker></mat-date-range-picker>
-</mat-form-field>
+        <mat-label>Vigencia (Desde - Hasta)</mat-label>
+        <mat-date-range-input [formGroup]="validityForm" [rangePicker]="picker">
+          <input matStartDate formControlName="ValidFrom" placeholder="Desde" (dateChange)="emitConfig()">
+          <input matEndDate formControlName="ValidTo" placeholder="Hasta" (dateChange)="emitConfig()">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
 
 
     </form>

@@ -1,5 +1,5 @@
 import { ApiService } from './../../../../../core/Services/api/api.service';
-import { Component, Inject, Input, Optional } from '@angular/core';
+import { Component, Inject, Input, Optional, Signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from "@angular/material/card";
 import { MatInputModule } from "@angular/material/input";
@@ -22,6 +22,8 @@ import { ListService } from '../../../../../core/Services/shared/list.service';
 import { ScheduleList } from '../../../../../core/Models/organization/schedules.models';
 import { VerificationCredencials } from '../../../../../core/Services/token/verificationCredencials';
 import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
+import { UserMe } from '../../../../../core/Models/security/user.models';
+import { UserStoreService } from '../../../../../core/Services/auth/user-store.service';
 
 @Component({
   selector: 'app-target-person',
@@ -42,6 +44,8 @@ import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.
 })
 export class TargetPersonComponent {
 
+  
+
   // Input para controlar si requiere validación de contraseña
   @Input() requirePasswordValidation = false;
 
@@ -51,6 +55,9 @@ export class TargetPersonComponent {
   cities: CityCreate[] = [];
   deparments: Deparment[] = [];
   schedules: ScheduleList[] = [];
+
+   user!: Signal<UserMe | null>;
+  isLoggedIn!: Signal<boolean>;
 
   // Variables para el control de edición y modal
   isEditable = true; // Por defecto editable si no requiere validación
@@ -65,6 +72,7 @@ export class TargetPersonComponent {
     private userService: VerificationCredencials,
     private snackbarService: SnackbarService,
     private apiServicePerson: ApiService<PersonCreate, PersonList>,
+     private store: UserStoreService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
   ) {}
 
@@ -74,6 +82,9 @@ export class TargetPersonComponent {
   ngOnInit(): void {
     const item = this.data?.item ?? {};   // 👈 evita el error si no viene de MatDialog
 
+    this.user = this.store.user;
+    this.isLoggedIn = this.store.isLoggedIn;
+    
     this.profileForm = this.fb.group({
       id: [item.id || ''],
       firstName: [item.firstName || '', [Validators.required, Validators.minLength(2)]],

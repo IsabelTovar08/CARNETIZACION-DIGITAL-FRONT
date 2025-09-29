@@ -65,22 +65,32 @@ export class ConfigFormComponent implements OnInit {
     );
   }
 
-
+  displayDivision(division?: InternalDivisionList): string {
+    return division ? division.name : '';
+  }
   emitConfig() {
     const division = this.divisionControl.value;
-    const validFrom = this.validityForm.value.ValidFrom;
-    const validTo = this.validityForm.value.ValidTo;
-
+    console.log('División seleccionada:', division
+    );
     this.configChanged.emit({
+      OrganizationId: 1,
+      OrganizationCode: 'ORG001',
+      OrganizationalUnitId: 1,
+      OrganizationalUnitCode: 'UNIT001',
       InternalDivisionId: division?.id ?? 0,
-      InternalDivisionCode: division?.code ?? '',
+      InternalDivisionCode: division?.code ?? 'CODE001',
       CardTemplateId: this.selectedTemplate?.id ?? 0,
-      CardTemplateCode: this.selectedTemplate?.code ?? '',
+      CardTemplateCode: this.selectedTemplate?.code ?? 'CODE001',
       ProfileId: this.profiles.find(p => p.id)?.id ?? 0,
-      ValidFrom: validFrom ? new Date(validFrom) : null,
-      ValidTo: validTo ? new Date(validTo) : null
+      ValidFrom: this.validityForm.value.ValidFrom
+        ? new Date(this.validityForm.value.ValidFrom).toISOString()
+        : null,
+      ValidTo: this.validityForm.value.ValidTo
+        ? new Date(this.validityForm.value.ValidTo).toISOString()
+        : null
     });
   }
+
 
   getData() {
     this.getTemplates();

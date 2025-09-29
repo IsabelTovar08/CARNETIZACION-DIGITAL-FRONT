@@ -5,6 +5,7 @@ import { ListEventsComponent } from "./events/list-events/list-events.component"
 import { ListAccessPointComponent } from "./access-point/list-access-point/list-access-point.component";
 import { CreateEventComponent } from './events/create-event/create-event.component';
 import { MassUploadPeopleComponent } from './mass-upload-people/mass-upload-people/mass-upload-people.component';
+import { DetailsPeopleImportComponent } from './mass-upload-people/details-people-import/details-people-import.component';
 
 export const operationalRoutes: Routes = [
   { path: 'event-types', component: ListEventTypesComponent },
@@ -17,8 +18,7 @@ export const operationalRoutes: Routes = [
       { path: 'crear', component: CreateEventComponent }
     ]
   },
-  { path : 'card-issuance', component: MassUploadPeopleComponent}
-
-
+  { path : 'card-issuance', component: MassUploadPeopleComponent},
+  { path : 'import-batches/:id/details', component: DetailsPeopleImportComponent}
 
 ];

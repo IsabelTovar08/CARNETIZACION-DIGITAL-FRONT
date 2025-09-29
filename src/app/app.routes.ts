@@ -31,7 +31,7 @@ export const routes: Routes = [
       {
         path: 'ayuda',
         loadChildren: () =>
-          import('./features/dashboard/help.routes').then(m => m.helpRoutes)
+          import('./features/dashboard/help-user/help.routes').then(m => m.helpRoutes)
       },
 
 

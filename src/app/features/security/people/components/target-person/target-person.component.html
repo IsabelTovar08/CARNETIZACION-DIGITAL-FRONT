@@ -2,7 +2,7 @@
 
   <!-- Header fijo -->
   <mat-card-header>
-    <div mat-card-avatar class="avatar"></div>
+    <img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'" alt="Perfil" class="perfil-img">
     <mat-card-title>
       Información Personal
       <!-- Botón editar solo aparece si requiere validación y no está en modo edición -->

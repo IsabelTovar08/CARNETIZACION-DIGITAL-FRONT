@@ -78,26 +78,21 @@ export class HeaderSeccionComponent implements OnInit {
 
   saveImage(): void {
     if (this.selectedFile) {
-      // Preview queda como la imagen actual
-      this.profileImage = this.tempImage!;
-      this.isEditing = false;
+      this.PersonService.SavePhoto(this.selectedFile).subscribe({
+        next: (response) => {
+      
+          this.store.updateUserPhoto(this.tempImage!);
 
-      // Armamos FormData para enviar al backend
-      const formData = new FormData();
-      formData.append("file", this.selectedFile);
-      if (formData) {
-        this.PersonService.SavePhoto(this.selectedFile).subscribe({
-          next: (response) => {
-            this.snackbarService.showSuccess('Imagen actualizada con éxito');
-            this.tempImage = null;
-            this.selectedFile = null;
-          },
-          error: (err) => {
-            console.error("Error subiendo la imagen", err);
-            this.snackbarService.showError('Ocurrió un error al subir la imagen');
-          }
-        });
-      }
+          this.snackbarService.showSuccess('Imagen actualizada con éxito');
+          this.tempImage = null;
+          this.selectedFile = null;
+          this.isEditing = false;
+        },
+        error: (err) => {
+          console.error("Error subiendo la imagen", err);
+          this.snackbarService.showError('Ocurrió un error al subir la imagen');
+        }
+      });
     }
   }
 
