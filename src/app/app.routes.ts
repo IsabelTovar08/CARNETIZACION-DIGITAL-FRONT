@@ -25,14 +25,7 @@ export const routes: Routes = [
       { path: 'seguridad', loadChildren: () => import('./features/security/security.routes').then(m => m.securityRoutes) },
       { path: 'parametros', loadChildren: () => import('./features/parameters/parameter.routes').then(m => m.parameterRoutes) },
       { path: 'perfil', loadChildren: () => import('./features/ProfielUser/profileSeccition.route').then(m => m.profileSeccitionRoutes) },
-
-      // ✅ Ayuda
-      // dentro de children de /dashboard
-      {
-        path: 'ayuda',
-        loadChildren: () =>
-          import('./features/dashboard/help-user/help.routes').then(m => m.helpRoutes)
-      },
+      {path: 'ayuda', loadChildren: () => import('./features/dashboard/help-user/help.routes').then(m => m.helpRoutes)},
 
 
     ]

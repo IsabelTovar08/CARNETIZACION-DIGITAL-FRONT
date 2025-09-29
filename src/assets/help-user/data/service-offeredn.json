@@ -1,0 +1,12 @@
+{
+  "title": "Servicio ofrecido",
+  "features": [
+    "Registro masivo: Carga rápida de personal a través de archivos Excel o formularios en línea.",
+    "Diseño personalizado: Carnets con logo institucional, colores corporativos, fotografía y código QR único.",
+    "Descarga en PDF: Cada carnet está disponible para descarga o impresión en formato PDF.",
+    "Envío automático por correo: El carnet se envía al correo registrado inmediatamente después de su generación.",
+    "Validación por QR: Escaneo rápido para verificar la identidad y autenticidad del carnet.",
+    "Impresión física (opcional): Producción de carnets en PVC o materiales ecológicos, según necesidad.",
+    "Panel administrativo: Plataforma para gestionar usuarios, generar reportes y consultar estadísticas."
+  ]
+}

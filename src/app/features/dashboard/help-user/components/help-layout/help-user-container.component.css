@@ -186,9 +186,59 @@
 .faq-row:hover {
   background: #f8fafc;
 }
-.faq-row + .faq-row{ 
+/* .faq-row + .faq-row{ 
   border-top: 1px dashed #e2e8f0; 
+} */
+
+/* Acordeon de faq */
+.faq-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
+.faq-row:hover {
+  background: #f8fafc;
+}
+.faq-row + .faq-row {
+  border-top: 1px dashed #e2e8f0;
+}
+
+.faq-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.faq-header strong {
+  flex-grow: 1;
+  text-align: left;
+  color: #111827;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.faq-answer {
+  margin-left: 40px;
+  margin-top: 6px;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
 .doc{ color: #6b7280; }
 .faq-row strong{ 
   color: #111827; 

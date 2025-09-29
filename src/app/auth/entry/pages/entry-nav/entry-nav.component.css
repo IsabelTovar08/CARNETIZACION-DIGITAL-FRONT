@@ -4,7 +4,7 @@
   height: 100vh;                 /* pantalla completa */
   display: flex;
   flex-direction: column;        /* header arriba, contenido abajo */
-  background-image: url('./../../../../../assets/fondo-dasboard.png');
+  background-image: url('./../../../../../assets/img-diseño/fondo-dasboard.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
