@@ -8,43 +8,41 @@
       <span class="badge-text">{{ currentLabel }}</span>
     </span>
   </div>
-
   <div class="navbar-right">
     <!-- Botón menú -->
     <button mat-icon-button class="menu-btn" [matMenuTriggerFor]="mainMenu">
       <mat-icon class="mat-18">menu</mat-icon>
     </button>
 
-    <!-- Menú desplegable -->
-    <mat-menu #mainMenu="matMenu">
-      <button mat-menu-item [routerLink]="['/']" fragment="home">Inicio</button>
-      <button mat-menu-item [routerLink]="['/']" fragment="about">Acerca de</button>
-      <button mat-menu-item [routerLink]="['/']" fragment="characteristics">Características</button>
-      <button mat-menu-item [routerLink]="['/']" fragment="contacto">Contacto</button>
-    </mat-menu>
+  <!-- Menú desplegable -->
+  <mat-menu #mainMenu="matMenu">
+    <button mat-menu-item (click)="scrollToSection('home')">Inicio</button>
+    <button mat-menu-item (click)="scrollToSection('about')">Acerca de</button>
+    <button mat-menu-item (click)="scrollToSection('characteristics')">Características</button>
+    <button mat-menu-item (click)="scrollToSection('contacto')">Contacto</button>
+  </mat-menu>
 
-    <!-- Navegación horizontal -->
-    <div class="nav-menu" #navMenu>
-      <a [routerLink]="['/']" fragment="home" class="nav-link">
-        <span class="link-text">Inicio</span>
-      </a>
-      <a [routerLink]="['/']" fragment="about" class="nav-link">
-        <span class="link-text">Acerca de</span>
-      </a>
-      <a [routerLink]="['/']" fragment="characteristics" class="nav-link">
-        <span class="link-text">Características</span>
-      </a>
-      <a [routerLink]="['/']" fragment="contacto" class="nav-link">
-        <span class="link-text">Contacto</span>
-      </a>
+  <!-- Navegación horizontal -->
+  <div class="nav-menu" #navMenu>
+    <a (click)="scrollToSection('home', $event)" [routerLink]="['/']" fragment="home" class="nav-link">
+      <span class="link-text">Inicio</span>
+    </a>
+    <a (click)="scrollToSection('about', $event)" [routerLink]="['/']" fragment="about" class="nav-link">
+      <span class="link-text">Acerca de</span>
+    </a>
+    <a (click)="scrollToSection('characteristics', $event)" [routerLink]="['/']" fragment="characteristics"
+      class="nav-link">
+      <span class="link-text">Características</span>
+    </a>
+    <a (click)="scrollToSection('contacto', $event)" [routerLink]="['/']" fragment="contacto" class="nav-link">
+      <span class="link-text">Contacto</span>
+    </a>
 
-      <div class="active-indicator" #activeIndicator></div>
-    </div>
-
-    <!-- Botón login -->
-    <a routerLink="/auth" class="login-btn">
+    <div class="active-indicator" #activeIndicator></div>
+  </div>
+  <a routerLink="/auth" class="login-btn">
       <mat-icon class="login-icon">account_circle</mat-icon>
       <span class="link-text">Ingresar</span>
     </a>
-  </div>
+      </div>
 </nav>

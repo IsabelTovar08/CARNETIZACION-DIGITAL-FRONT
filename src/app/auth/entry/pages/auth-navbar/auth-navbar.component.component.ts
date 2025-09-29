@@ -126,6 +126,40 @@ export class AuthNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => this.updateIndicatorPosition(), 50);
   }
 
+   scrollToSection(sectionId: string, event?: Event) {
+    event?.preventDefault(); // Previene la navegación del routerLink
+    
+    const currentPath = this.router.url.split('?')[0].split('#')[0];
+    
+    // Si ya estamos en la página principal, solo hacemos scroll
+    if (currentPath === '/') {
+      this.performScroll(sectionId);
+    } else {
+      // Si estamos en otra página, navegamos primero y luego hacemos scroll
+      this.router.navigate(['/'], { fragment: sectionId }).then(() => {
+        // Pequeño delay para asegurar que el DOM se actualice
+        setTimeout(() => this.performScroll(sectionId), 100);
+      });
+    }
+  }
+
+   private performScroll(sectionId: string) {
+    // Intentar scroll directo primero
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+    } else {
+      // Fallback con ViewportScroller si el elemento no se encuentra inmediatamente
+      setTimeout(() => {
+        this.viewportScroller.scrollToAnchor(sectionId);
+      }, 100);
+    }
+  }
+
   scrollTo(sectionId: string) {
     this.viewportScroller.scrollToAnchor(sectionId);
   }
