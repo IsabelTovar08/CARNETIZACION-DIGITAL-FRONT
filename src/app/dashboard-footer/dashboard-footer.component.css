@@ -12,49 +12,59 @@
   --social-instagram: #e4405f;    /* Instagram rosa */
   --social-twitter: #1da1f2;      /* Twitter azul */
   --social-bg: #6c757d;          /* Gris para iconos sociales */
-  
+
   /* Responsive breakpoints */
-  
+
 }
 
 /* Reset y base */
 * {
   box-sizing: border-box;
 }
-
-/* Footer principal */
 .corporate-footer {
   margin-top: auto;
-  margin-bottom: 1%;
-  width: 99%;
-  left: 0.5%;
-  background: #0D47A1; /* Azul fuerte */
-   background-image: url('../../assets/fondo-footer.jpg'); /* tu imagen */
-  color: #0023ae;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  width: 100%;
+  background: #0D47A1; /* azul sólido */
+  color: #fff;
   position: relative;
   overflow: hidden;
-}
-/* 
-.corporate-footer::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: -60px;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  background: #afafaf;
-  border-radius: 50% 50% 0 0;
-  transform: scaleX(1.5);
-} */
+  border-bottom-right-radius: 2vh;
+  border-bottom-left-radius: 2vh;
 
-/* Sección principal */
+  /* Ola más arriba y con más curvatura */
+  clip-path: path("M0,30 C480,-30 960,90 1440,30 L1440,320 L0,320 Z");
+}
+
 .footer-main {
-  padding: 80px 0 40px 0;
+  padding: 40px 0 35px;
   position: relative;
   z-index: 1;
 }
+
+
+/* Parte inferior plana (legales, copyright) */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.3);
+  padding: 16px 32px;
+  background: #0C3E92; /* un azul un poco más oscuro si quieres diferenciar */
+}
+
+
+
+/* Animación de burbujas */
+@keyframes floatShapes {
+  0% { background-position: 20% 30%, 80% 40%, 40% 80%, 70% 70%; }
+  50% { background-position: 22% 28%, 78% 42%, 42% 78%, 72% 72%; }
+  100% { background-position: 20% 30%, 80% 40%, 40% 80%, 70% 70%; }
+}
+
+/* Contenido */
+.footer-main {
+  padding: 80px 0 40px 0;
+  position: relative;
+  z-index: 1; /* encima de la ola y burbujas */
+}
+
 
 .footer-container {
   max-width: var(--max-width);
@@ -214,7 +224,7 @@
     text-align: center;
     gap: 12px;
   }
-  
+
   .legal-links {
     justify-content: center;
     gap: 16px;
@@ -233,7 +243,7 @@
   .footer-main {
     animation: fadeInUp 0.6s ease-out;
   }
-  
+
   .footer-link,
   .social-link,
   .legal-link {
@@ -274,7 +284,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
-  
+
   .social-column {
     grid-column: 1 / -1;
     justify-self: center;
@@ -310,7 +320,7 @@
     color: black !important;
     border-top: 1px solid #ccc !important;
   }
-  
+
   .social-links,
   .footer-bottom {
     display: none !important;
