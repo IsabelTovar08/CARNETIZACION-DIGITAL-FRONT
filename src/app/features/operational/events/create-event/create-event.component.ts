@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -21,11 +21,18 @@ import {
   AccessPointDto
 } from '../../../../core/Models/operational/event.model';
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { ScheduleCreate, ScheduleList } from '../../../../core/Models/organization/schedules.models';
+import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
+import { fromApiTime } from '../../../../core/utils/time-only';
+import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
+import { ApiService } from '../../../../core/Services/api/api.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-event',
   standalone: true,
   imports: [
+    GenericTableComponent,
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
@@ -40,6 +47,9 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 export class CreateEventComponent {
   eventForm!: FormGroup;
   showAddForm = false;
+  listSchedule!: ScheduleList[];
+  displayedColumns: string[] = ['name', 'startTime', 'endTime', 'isDeleted', 'actions'];
+  listDays: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   toppingList = [
     { name: 'Extra cheese', description: 'Mozzarella rallada fresca' },
@@ -65,10 +75,13 @@ export class CreateEventComponent {
     { id: 3, name: 'Mixto' }
   ];
 
-  constructor(
+  constructor(private apiService: ApiService<ScheduleCreate, ScheduleList>,
     private fb: FormBuilder,
     private eventService: EventService,
     private useservice: SnackbarService,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
@@ -105,6 +118,16 @@ export class CreateEventComponent {
     this.loadAudienceOptions();
   }
 
+   cargarData(reload: boolean) {
+    this.apiService.ObtenerTodo('Schedule').subscribe(data =>
+      this.listSchedule = data.data
+    );
+  }
+
+  recargarLista() {
+    this.cargarData(true)
+  }
+
   // CARGAS de los datos de perfil, unidad organizativa, divicion interna y puntos de acceso
 
   loadAudienceOptions() {
@@ -136,6 +159,54 @@ export class CreateEventComponent {
     });
   }
 
+  //Jornadas y horarios
+  openModal(item?: ScheduleList) {
+      const dialogRef = this.dialog.open(GenericFormComponent, {
+        disableClose: true,
+        width: '400px',
+        data: {
+          title: item ? 'Editar' : 'Crear',
+          item,
+          fields: [
+            { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.startTime || ''), required: true },
+            { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.endTime || ''), required: true },
+            ...this.listDays.map(day => ({
+              label: day,
+              type: 'checkbox',
+              value: day
+            }))
+          ],
+          replaceBaseFields: true
+        },
+      });
+       dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (item) {
+          this.add(result, item.id);
+        } else {
+          this.add(result);
+        }
+      }
+
+      this.router.navigate(['./'], { relativeTo: this.route });
+    });
+  }
+
+  add(schedule: ScheduleCreate, id?: number) {
+    if (id) {
+      this.apiService.update('Deparment', schedule).subscribe(() => {
+        this.recargarLista();
+        this.useservice.showSuccess();
+      })
+    }
+    else {
+      this.apiService.Crear('Schedule', schedule).subscribe(() => {
+        this.recargarLista();
+        this.useservice.showSuccess();
+      })
+    }
+  }
+
   //ACCESS POINTS
 
   openAddAccessPointDialog() {
@@ -146,6 +217,8 @@ export class CreateEventComponent {
       apTypeId: null
     });
   }
+
+
 
   cancelAddAccessPoint() {
     this.showAddForm = false;

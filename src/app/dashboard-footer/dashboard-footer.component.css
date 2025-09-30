@@ -6,7 +6,7 @@
   --footer-text-primary: #033571; /* Azul oscuro para títulos */
   --footer-text-secondary: #6c757d; /* Gris para enlaces */
   --footer-text-hover: #007bff;   /* Azul para hover */
-  --footer-border: #dee2e6;       /* Gris claro para bordes */
+  --footer-border: #000000;       /* Gris claro para bordes */
   --social-linkedin: #0077b5;     /* LinkedIn azul */
   --social-facebook: #1877f2;     /* Facebook azul */
   --social-instagram: #e4405f;    /* Instagram rosa */
@@ -24,17 +24,18 @@
 
 /* Footer principal */
 .corporate-footer {
-  margin-top: auto;
-  margin-bottom: 1%;
-  width: 99%;
-  left: 0.5%;
-  background: #0D47A1; /* Azul fuerte */
-   background-image: url('../../assets/fondo-footer.jpg'); /* tu imagen */
-  color: #0023ae;
+  margin-top: 10vh;
+  
+  width: 173.3vh;
+  right: 3.1%; 
+  background: linear-gradient(135deg, #ffffff 0%, #e1f7ff 50%, #ffffff 100%);
+  
+  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   position: relative;
   overflow: hidden;
 }
+
 /* 
 .corporate-footer::before {
   content: "";
@@ -51,7 +52,7 @@
 
 /* Sección principal */
 .footer-main {
-  padding: 80px 0 40px 0;
+  padding: 120px 0 40px 0;
   position: relative;
   z-index: 1;
 }
@@ -67,6 +68,7 @@
 
 /* Columnas del footer */
 .footer-column {
+  margin-top: -10vh;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -75,7 +77,7 @@
 .column-title {
   font-size: 14px;
   font-weight: 700;
-  color: #608aff; /* Blanco */
+  color: #008ec6; 
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -90,20 +92,41 @@
 }
 
 .footer-link {
-  color: #052f45; /* Blanco atenuado */
+  color: rgb(156, 173, 172);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.2s ease;
 }
 
 .footer-link:hover {
-  color: var(--footer-text-hover);
+  color: #000000;
 }
 
 .footer-link:focus {
   outline: 2px solid var(--footer-text-hover);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+.wave-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.wave-top svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 400px;
+}
+
+.wave-top .shape-fill {
+  fill: #1874ff; 
 }
 
 /* Sección de redes sociales */
@@ -121,7 +144,7 @@
   width: 36px;
   height: 36px;
   background: var(--social-bg);
-  color: rgb(35, 120, 195);
+  color: rgb(0, 0, 0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +155,7 @@
 
 .social-link:hover {
   opacity: 0.7;
-  background: none; /* Quitar el fondo cuadrado */
+  background: none; 
 }
 
 
@@ -163,7 +186,6 @@
   background: var(--social-twitter);
 }
 
-/* Footer bottom */
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -172,12 +194,12 @@
 
 .footer-bottom-content {
  display: flex;
-  justify-content: space-between; /* texto a la izquierda, links a la derecha */
+  justify-content: space-between; 
   align-items: center;
-  flex-wrap: wrap; /* para que en móvil se acomoden */
+  flex-wrap: wrap; 
   gap: 12px;
-  max-width: 1200px; /* opcional: alinear con el resto del footer */
-  margin: 0 auto; /* centrar el contenido */
+  max-width: 1200px; 
+  margin: 0 auto; 
 }
 
 .copyright {
@@ -186,9 +208,9 @@
 }
 
 .legal-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  color: rgba(12, 131, 4, 0.9);
+  text-decoration: none;
+  font-size: 14px;
 }
 
 .legal-link {
@@ -198,7 +220,7 @@
 }
 
 .legal-link:hover {
-    color: #000000;
+    color: #00a0e4;
 }
 
 .legal-link:focus {
@@ -209,6 +231,15 @@
 
 /* Responsive footer bottom */
 @media (max-width: 768px) {
+
+    .wave-top svg {
+    height: 70px;
+  }
+
+  .footer-main {
+    padding: 90px 0 40px 0;
+  }
+
   .footer-bottom-content {
     flex-direction: column;
     text-align: center;
@@ -222,9 +253,18 @@
 }
 
 @media (max-width: 480px) {
+
   .legal-links {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .wave-top svg {
+    height: 50px;
+  }
+
+   .footer-main {
+    padding: 70px 0 40px 0;
   }
 }
 
@@ -299,7 +339,7 @@
 
 /* Hover effects adicionales */
 .footer-column:hover .column-title {
-  color: var(--footer-text-hover);
+  color: #0091ff;
   transition: color 0.2s ease;
 }
 
