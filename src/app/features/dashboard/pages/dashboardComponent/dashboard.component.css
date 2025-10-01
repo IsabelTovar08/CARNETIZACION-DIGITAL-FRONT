@@ -8,35 +8,10 @@
   background-repeat: no-repeat;
 }
 
-mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-opened.mat-drawer-side {
+mat-drawer.mat-drawer.sidebar-drawer {
     background: transparent;
-}
-mat-drawer-container.mat-drawer-container.drawer-container.mat-drawer-container-explicit-backdrop.mat-drawer-transition {
-    background-color: transparent !important;
-}
-
-mat-drawer-container.mat-drawer-container.drawer-container.mat-drawer-transition {
-    background-color: transparent !important;
-}
-mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-container.mat-drawer-transition {
-      border-radius: 8vh !important;
-    background-color: #00ff22 !important;
-
-
-}
-
-mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-over.mat-drawer-opened {
-  border-top-right-radius: 8vh;
-  border-bottom-right-radius: 8vh;
-  background: transparent;
-
-}
-
-mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-over {
-  border-top-right-radius: 8vh;
-  border-bottom-right-radius: 8vh;
-  background: transparent;
-
+    border-top-right-radius: 4.5vh;
+    border-bottom-right-radius: 4.5vh;
 }
 
 .header-fixed {
@@ -94,12 +69,13 @@ mat-drawer.mat-drawer.sidebar-drawer.mat-drawer-over {
 .main-content {
   background: transparent;
   padding: 20px;
-  margin-top: 9vh;
+  padding-top: 13vh;
 }
 
 .contenedor{
-  background: #566f7b33;
-  border-radius: 2vh;
+  background: #dbdefe33;
+  border-top-right-radius: 2vh;
+  border-top-left-radius: 2vh;
   padding: 3%;
 }
 

@@ -12,50 +12,59 @@
   --social-instagram: #e4405f;    /* Instagram rosa */
   --social-twitter: #1da1f2;      /* Twitter azul */
   --social-bg: #6c757d;          /* Gris para iconos sociales */
-  
+
   /* Responsive breakpoints */
-  
+
 }
 
 /* Reset y base */
 * {
   box-sizing: border-box;
 }
-
-/* Footer principal */
 .corporate-footer {
-  margin-top: 10vh;
-  
-  width: 173.3vh;
-  right: 3.1%; 
-  background: linear-gradient(135deg, #ffffff 0%, #e1f7ff 50%, #ffffff 100%);
-  
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin-top: auto;
+  width: 100%;
+  background: #0D47A1; /* azul sólido */
+  color: #fff;
   position: relative;
   overflow: hidden;
+  border-bottom-right-radius: 2vh;
+  border-bottom-left-radius: 2vh;
+
+  /* Ola más arriba y con más curvatura */
+  clip-path: path("M0,30 C480,-30 960,90 1440,30 L1440,320 L0,320 Z");
 }
 
-/* 
-.corporate-footer::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: -60px;
-  left: 0;
-  width: 100%;
-  height: 120px;
-  background: #afafaf;
-  border-radius: 50% 50% 0 0;
-  transform: scaleX(1.5);
-} */
-
-/* Sección principal */
 .footer-main {
-  padding: 120px 0 40px 0;
+  padding: 40px 0 35px;
   position: relative;
   z-index: 1;
 }
+
+
+/* Parte inferior plana (legales, copyright) */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.3);
+  padding: 16px 32px;
+  background: #0C3E92; /* un azul un poco más oscuro si quieres diferenciar */
+}
+
+
+
+/* Animación de burbujas */
+@keyframes floatShapes {
+  0% { background-position: 20% 30%, 80% 40%, 40% 80%, 70% 70%; }
+  50% { background-position: 22% 28%, 78% 42%, 42% 78%, 72% 72%; }
+  100% { background-position: 20% 30%, 80% 40%, 40% 80%, 70% 70%; }
+}
+
+/* Contenido */
+.footer-main {
+  padding: 80px 0 40px 0;
+  position: relative;
+  z-index: 1; /* encima de la ola y burbujas */
+}
+
 
 .footer-container {
   max-width: var(--max-width);
@@ -77,7 +86,7 @@
 .column-title {
   font-size: 14px;
   font-weight: 700;
-  color: #008ec6; 
+  color: #608aff; /* Blanco */
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -108,27 +117,6 @@
   border-radius: 2px;
 }
 
-.wave-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
-}
-
-.wave-top svg {
-  position: relative;
-  display: block;
-  width: calc(100% + 1.3px);
-  height: 400px;
-}
-
-.wave-top .shape-fill {
-  fill: #1874ff; 
-}
-
 /* Sección de redes sociales */
 .social-column {
   align-items: flex-start;
@@ -155,7 +143,7 @@
 
 .social-link:hover {
   opacity: 0.7;
-  background: none; 
+  background: none; /* Quitar el fondo cuadrado */
 }
 
 
@@ -194,12 +182,12 @@
 
 .footer-bottom-content {
  display: flex;
-  justify-content: space-between; 
+  justify-content: space-between; /* texto a la izquierda, links a la derecha */
   align-items: center;
-  flex-wrap: wrap; 
+  flex-wrap: wrap; /* para que en móvil se acomoden */
   gap: 12px;
-  max-width: 1200px; 
-  margin: 0 auto; 
+  max-width: 1200px; /* opcional: alinear con el resto del footer */
+  margin: 0 auto; /* centrar el contenido */
 }
 
 .copyright {
@@ -245,7 +233,7 @@
     text-align: center;
     gap: 12px;
   }
-  
+
   .legal-links {
     justify-content: center;
     gap: 16px;
@@ -273,7 +261,7 @@
   .footer-main {
     animation: fadeInUp 0.6s ease-out;
   }
-  
+
   .footer-link,
   .social-link,
   .legal-link {
@@ -314,7 +302,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
-  
+
   .social-column {
     grid-column: 1 / -1;
     justify-self: center;
@@ -350,7 +338,7 @@
     color: black !important;
     border-top: 1px solid #ccc !important;
   }
-  
+
   .social-links,
   .footer-bottom {
     display: none !important;
