@@ -1,0 +1,105 @@
+<div class="bg">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <header class="header">
+      <h1>Ayuda</h1>
+      <p class="subtitle">Dinos en qué podemos ayudarte</p>
+
+      <div class="search-row">
+        <div class="search">
+          <span class="ms material-symbols-outlined">search</span>
+          <input
+            type="search"
+            placeholder="Consultar"
+            [(ngModel)]="query"
+            (keyup.enter)="search()"
+            aria-label="Consultar"
+          />
+        </div>
+        <button class="btn-search" (click)="search()">BUSCAR</button>
+      </div>
+    </header>
+
+    <!-- Layout con grid -->
+    <div class="content">
+      <!-- Sidebar -->
+      <aside class="sidebar" role="navigation" aria-label="Secciones de ayuda">
+        <button
+          class="side-item"
+          *ngFor="let s of sections"
+          [class.active]="section===s.id"
+          (click)="setSection(s.id)"
+          type="button"
+        >
+          <div class="left">
+            <span class="icon-badge">
+              <span class="ms material-symbols-outlined">{{ s.icon }}</span>
+            </span>
+            <span class="label">{{ s.label }}</span>
+          </div>
+          <span class="ms chevron material-symbols-outlined">expand_more</span>
+        </button>
+      </aside>
+
+      <main class="panel">
+        <!-- FAQ -->
+        <section *ngIf="section==='faq'">
+          <h2 class="title">Consultas Frecuentes</h2>
+          <div class="card-list">
+            <div class="faq-row" *ngFor="let f of filteredFaqs" [class.open]="expandedId === f.id">
+              <div class="faq-header" (click)="toggleFaq(f.id)">
+                <span class="ms doc material-symbols-outlined">description</span>
+                <strong>{{ f.text }}</strong>
+                <span class="ms chevron material-symbols-outlined">
+                  {{ expandedId === f.id ? 'expand_less' : 'expand_more' }}
+                </span>
+              </div>
+              <div class="faq-answer" *ngIf="expandedId === f.id">
+                <p>{{ f.answer }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Productos -->
+        <section *ngIf="section==='productos' && productos">
+          <h2 class="title">{{ productos.title }}</h2>
+          <div class="card">
+            <p><strong>{{ productos.content[0] }}</strong></p>
+            <p>{{ productos.content[1] }}</p>
+            <p><strong>{{ productos.content[2] }}</strong></p>
+            <p>{{ productos.content[3] }}</p>
+            <p><strong>Encontrarás detalles sobre:</strong></p>
+            <ul>
+              <li *ngFor="let d of productos.details">
+                <strong>{{ d.title }}:</strong> {{ d.description }}
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Evento -->
+        <section *ngIf="section==='evento' && evento">
+          <h2 class="title">{{ evento.title }}</h2>
+          <div class="card">
+            <p *ngFor="let p of evento.content">{{ p }}</p>
+          </div>
+        </section>
+
+        <!-- Servicio -->
+        <section *ngIf="section==='servicio' && servicio">
+          <h2 class="title">{{ servicio.title }}</h2>
+          <div class="card">
+            <ul>
+              <li *ngFor="let f of servicio.features">
+                <strong>{{ f.split(':')[0] }}:</strong> {{ f.split(':')[1] }}
+              </li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+  </div>
+</div>

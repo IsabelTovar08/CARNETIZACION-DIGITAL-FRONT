@@ -1,0 +1,13 @@
+<section class="p-6 bg-gray-50 min-h-screen">
+  <app-generic-list-card
+    title="Listado de Asistencias"
+    [buttonSave]="true"
+    [dataSourceInput]="attendances"
+    [pageSize]="6"
+    (onCreate)="onAdd()"
+    (onView)="onView($event)"
+    (onEdit)="onEdit($event)"
+    (onDelete)="onDelete($event)"
+    (onToggleStatus)="onToggle($event)">
+  </app-generic-list-card>
+</section>

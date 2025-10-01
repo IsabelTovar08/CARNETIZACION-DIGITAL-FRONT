@@ -1,30 +1,29 @@
-
-
-.profile-card{
+/* Estilos existentes del perfil */
+.profile-card {
   position: relative;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0,0,0,.1);
-  overflow: hidden; 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+  overflow: hidden;
 }
 
-
-.banner{
+.banner {
   height: 260px;
   line-height: 0;
   position: relative;
 }
-.banner-img{
+
+.banner-img {
   width: 100%;
   height: 50%;
   object-fit: cover;
   display: block;
 }
 
-/*  Avatar  */
-.perfil-img.avatar{
+/* Avatar */
+.perfil-img.avatar {
   position: absolute;
-  top:89px;                              
+  top: 89px;
   left: 6%;
   transform: translateX(-50%);
   width: 68px;
@@ -32,17 +31,96 @@
   border-radius: 50%;
   object-fit: cover;
   z-index: 2;
-  border: var(--ring) solid #fff;             
-  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+  border: var(--ring) solid #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
 }
 
-.header-content .subtitle{
+/* NUEVO: Contenedor para los botones de edición */
+.edit-actions {
+  position: absolute;
+  top: 150px;
+  left: 7%;
+  transform: translateX(-50%);
   display: flex;
-  gap:4rem;
+  gap: 8px;
+  z-index: 3;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* NUEVO: Estilos base para ambos botones */
+.btn-save,
+.btn-cancel {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  height: 32px;
+}
+
+/* NUEVO: Botón guardar con estilo success */
+.btn-save {
+  background: linear-gradient(135deg, #108cb9 0%, #057496 100%);
+  color: white;
+}
+
+.btn-save:hover {
+  background: linear-gradient(135deg, #056896 0%, #044478 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 100, 185, 0.4);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* NUEVO: Botón cancelar con estilo neutral */
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.95);
+  color: #6b7280;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-cancel:hover {
+  background: rgba(248, 249, 250, 0.98);
+  color: #4b5563;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-cancel:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* NUEVO: Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Estilos existentes continuados */
+.header-content .subtitle {
+  display: flex;
+  gap: 4rem;
   align-items: center;
 }
-
-
 
 ::ng-deep .mat-tooltip {
   background-color: #667eea;
@@ -50,65 +128,61 @@
   font-size: 13px;
 }
 
-.header-content .subtitle .icons:hover{
-  
+.header-content .subtitle .icons:hover {
   font-size: 25px;
   color: #525d8f;
 }
 
 .header-subtitle {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }
 
 .left-text {
-  margin: 0; /* elimina el margen por defecto del <p> */
+  margin: 0;
 }
-
-
 
 .text-icon-group {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem; /* o usa 2px si lo quieres casi pegado */
+  gap: 0.3rem;
 }
 
-
-
-
-
-.icons:hover{
-
+.icons:hover {
   color: #667eea;
   transform: translateY(-2px);
-  
 }
 
-.content{
-
+.content {
   padding: calc(var(--avatar)/4 + 2rem) 4rem 4rem;
   background: #ffffff;
-  margin-top: -100px;
+  margin-top: -80px;
 }
-.header-content{
+
+.header-content {
   max-width: 1200px;
   margin: 0 19px auto;
 }
 
-.icons{
+.edit-icon {
+  margin-left: 9%;
+}
+
+.icons {
   font-size: 20px;
   color: #000000;
   transform: translateY(-2px);
   cursor: pointer;
   transition: all .3s ease;
-  
 }
-.header-content > :first-child{ margin-top: 0; } /* evita salto por margen superior */
 
+.header-content> :first-child {
+  margin-top: 0;
+}
 
-.main-title{
+.main-title {
   font-size: 35px;
   font-weight: 600;
   color: #000f73;
@@ -116,7 +190,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.subtitle{
+
+.subtitle {
   font-size: 17px;
   color: #000;
   opacity: .9;
@@ -124,17 +199,18 @@
   font-weight: 300;
 }
 
-.tab-navigation{
+.tab-navigation {
   display: flex;
   gap: 0;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   width: fit-content;
   padding: 4px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
-.tab-button{
+
+.tab-button {
   background: transparent;
   border: none;
   color: #000;
@@ -147,17 +223,20 @@
   position: relative;
   text-align: center;
 }
-.tab-button:hover{
-  background: rgba(0,0,0,0.04);
+
+.tab-button:hover {
+  background: rgba(0, 0, 0, 0.04);
   transform: translateY(-1px);
 }
-.tab-button.active{
-  background: rgba(0,0,0,0.06);
+
+.tab-button.active {
+  background: rgba(0, 0, 0, 0.06);
   color: #1f2937;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
   transform: translateY(-2px);
 }
-.tab-button.active::before{
+
+.tab-button.active::before {
   content: '';
   position: absolute;
   bottom: -4px;
@@ -169,28 +248,147 @@
   border-radius: 2px;
 }
 
-/* Responsive  */
+.tab-button:first-child::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px;
+  height: 3px;
+  background: #667eea;
+  border-radius: 2px;
+}
 
-@media (max-width: 1024px){
-  .content{ padding: 1px }
-  .banner-img{ height: 40%; }
-  .perfil-img.avatar{
+/* Responsive */
+@media (max-width: 1024px) {
+  .content {
+    padding: 1px
+  }
+
+  .banner-img {
+    height: 40%;
+  }
+
+  .perfil-img.avatar {
     width: 80px;
     top: 65px;
     left: 8%;
   }
 
-  .main-title{ font-size: 2.2rem; }
-  .main-title{ font-size: 2.5rem; }
-  .tab-button{ padding: 0.75rem 1.25rem; font-size: 1rem; }
-}
-@media (max-width: 768px){
+  .edit-icon {
+    margin-left: 14%;
+  }
 
-  .perfil-img.avatar{
+  /* NUEVO: Ajuste de botones en tablet */
+  .edit-actions {
+    top: 120px;
+    left: 8%;
+  }
+
+  .main-title {
+    font-size: 2.2rem;
+  }
+
+  .tab-button {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .perfil-img.avatar {
     width: 68px;
     top: 70px;
     left: 15%;
   }
+
+  /* NUEVO: Ajuste de botones en móvil */
+  .edit-actions {
+    top: 140px;
+    left: 15%;
+    gap: 6px;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-width: 60px;
+    height: 28px;
+  }
+
+  .edit-icon {
+    margin-left: 20%;
+  }
+
+  .header-subtitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 425px) {
+
+  .perfil-img.avatar {
+    width: 68px;
+    top: 70px;
+    left: 15%;
+  }
+
+  /* NUEVO: Ajuste de botones en móvil */
+  .edit-actions {
+    top: 140px;
+    left: 35%;
+    gap: 6px;
+  }
+
+
+  .btn-save,
+  .btn-cancel {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-width: 60px;
+    height: 28px;
+  }
+
+
+  .header-subtitle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+
+}
+
+@media (max-width: 320px) {
+  .perfil-img.avatar {
+    width: 68px;
+    top: 70px;
+    left: 15%;
+  }
+
+  /* NUEVO: Ajuste de botones en móvil */
+  .edit-actions {
+    top: 140px;
+    left: 25%;
+    gap: 3px;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-width: 60px;
+    height: 28px;
+  }
+
+  .edit-icon {
+    margin-left: 29%;
+  }
+
   .header-subtitle {
     flex-direction: column;
     align-items: flex-start;

@@ -35,14 +35,20 @@ export class SeccionPerfilComponent implements OnInit {
   ) {
 
     this.perfilForm = this.fb.group({
-      nombre: ['', Validators.required],
-      primerApellido: ['', Validators.required],
-      segundoApellido: [''],
-      email: [''],
-      telefono: ['', [Validators.pattern(/^\+?[\d\s-()]+$/)]]
-
-      // [Validators.required, Validators.email]
+      firstName: ['', Validators.required],
+      middleName: [''],
+      lastName: ['', Validators.required],
+      secondLastName: [''],
+      documentTypeId: [null, Validators.required],
+      documentNumber: ['', Validators.required],
+      bloodTypeId: [null],
+      phone: ['', [Validators.pattern(/^\+?[\d\s-()]+$/)]], 
+      email: ['', [Validators.required, Validators.email]],
+      address: [''],
+      cityId: [null, Validators.required]
     });
+
+    // al inicio el form queda bloqueado
     this.perfilForm.disable();
   }
 
@@ -53,16 +59,9 @@ export class SeccionPerfilComponent implements OnInit {
   cargarDatosUsuario(): void {
     this.userService.getProfile().subscribe({
       next: (res) => {
-        if (res.success) {
-          this.meData = res.data;
-
-          this.perfilForm.patchValue({
-            nombre: this.meData.firstName,
-            primerApellido: this.meData.lastName,
-            segundoApellido: this.meData.secondLastName,
-            email: this.meData.email,
-            telefono: this.meData.phone ?? ''
-          });
+        if (res.success && res.data) {
+          // 👇 Aquí cargas el form directamente
+          this.perfilForm.patchValue(res.data);
         }
       },
       error: (err) => {
@@ -72,35 +71,33 @@ export class SeccionPerfilComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-  if (this.perfilForm.valid) {
-    const updatedData: UserMeDto = {
-      ...this.meData!,          
-      ...this.perfilForm.value  
-    };
 
-    this.userService.updateProfile(updatedData).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.snackbarService.showSuccess('Perfil actualizado exitosamente');
-          this.meData = res.data; 
-          this.perfilForm.patchValue(this.meData); 
-          this.isEditable = false;
-          this.perfilForm.disable();
-        } else {
-          this.snackbarService.showError(res.message || 'Error al actualizar perfil');
+  onSubmit() {
+    if (this.perfilForm.valid) {
+      const updatedData = this.perfilForm.value;
+
+      this.userService.updateProfile(updatedData).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            this.snackbarService.showSuccess('Perfil actualizado exitosamente');
+            // recargas el form con lo que viene del backend 
+            this.perfilForm.patchValue(res.data);
+            this.isEditable = false;
+            this.perfilForm.disable();
+          } else {
+            this.snackbarService.showError(res.message || 'Error al actualizar perfil');
+          }
+        },
+        error: (err) => {
+          console.error('Error al actualizar perfil', err);
+          this.snackbarService.showError('Hubo un problema al actualizar el perfil');
         }
-      },
-      error: (err) => {
-        console.error('Error al actualizar perfil', err);
-        this.snackbarService.showError('Hubo un problema al actualizar el perfil');
-      }
-    });
-  } else {
-    this.snackbarService.showError('Formulario inválido, revisa los campos');
-    this.markAllFieldsAsTouched();
+      });
+    } else {
+      this.snackbarService.showError('Formulario inválido, revisa los campos');
+      this.markAllFieldsAsTouched();
+    }
   }
-}
 
   abrirModal() {
     this.isModalOpen = true;
@@ -147,26 +144,8 @@ export class SeccionPerfilComponent implements OnInit {
   }
 
   resetForm() {
-  if (this.meData) {
-    this.perfilForm.reset({
-      nombre: this.meData.firstName,
-      primerApellido: this.meData.lastName, 
-      segundoApellido: this.meData.secondLastName || '',
-      email: this.meData.email,
-      telefono: this.meData.phone || ''
-    });
-  } else {
-   
-    this.perfilForm.reset({
-      nombre: '',
-      primerApellido: '',
-      segundoApellido: '',
-      email: '',
-      telefono: ''
-    });
+    this.cargarDatosUsuario(); //llama al servicio de nuevo
+    this.isEditable = false;
+    this.perfilForm.disable();
   }
-
-  this.isEditable = false;
-  this.perfilForm.disable();
-}
 }

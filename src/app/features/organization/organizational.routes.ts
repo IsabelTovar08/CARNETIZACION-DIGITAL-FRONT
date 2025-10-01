@@ -7,22 +7,30 @@ import { JornadasComponent } from './structure/working-day/components/working-da
 import { ListDeparmentComponent } from './location/deparment/components/list-deparment/list-deparment.component';
 import { ListCitiesComponent } from './location/city/components/list-cities/list-cities.component';
 import { ListOrganizationalUnitComponent } from './structure/organizational-unit/components/list-organizational-unit/list-organizational-unit.component';
+import { ModificationRequestsListComponent } from './modification-requests/modification-requests-list/modification-requests-list.component';
 
 export const organizationalRoutes:
-Routes = [
-    { path: 'structure',
-        children: [
-            { path: '', component: EstructuraOrganizativaComponent },
-            { path: 'branch', component: SucursalComponent },
-            { path: 'unit',component: ListOrganizationalUnitComponent
-             },
-            { path: 'unit/:id/internal-division', component: DivisionesInternasComponent},
+  Routes = [
+    {
+      path: 'structure',
+      children: [
+        { path: '', component: EstructuraOrganizativaComponent },
+        { path: 'branch', component: SucursalComponent },
+        {
+          path: 'unit', component: ListOrganizationalUnitComponent
+        },
+        { path: 'unit/:id/internal-division', component: DivisionesInternasComponent },
 
-            { path: 'internal-division', component: DivisionesInternasComponent},
-            { path: 'profile', component: PerfilesComponent},
-            { path: 'schedule',component: JornadasComponent} ] },
+        { path: 'internal-division', component: DivisionesInternasComponent },
+        { path: 'profile', component: PerfilesComponent },
+        { path: 'schedule', component: JornadasComponent }]
+    },
 
-    { path: 'location',
-        children : [
-            { path: 'department', component: ListDeparmentComponent},
-            { path: 'municipality', component: ListCitiesComponent} ] } ];
+    {
+      path: 'location',
+      children: [
+        { path: 'department', component: ListDeparmentComponent },
+        { path: 'municipality', component: ListCitiesComponent }]
+    },
+    {path: 'modification-requests', component: ModificationRequestsListComponent}
+  ];

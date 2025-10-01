@@ -1,0 +1,27 @@
+  <app-generic-table
+    [title]="'Últimos registros generados'"
+    [displayedColumns]="displayedColumns"
+    [columns]="columns"
+    [dataSourceInput]="records"
+    [customTemplates]="{
+      photo: photoTemplate,
+      state: stateTemplate,
+      'actions-extra': actionsTemplate
+    }"
+  [buttonSave]="false">
+  </app-generic-table>
+
+  <!-- Templates personalizados -->
+  <ng-template #photoTemplate let-item>
+    <img [src]="item.photo" alt="Foto" class="avatar">
+  </ng-template>
+
+  <ng-template #stateTemplate let-item>
+    <mat-chip color="primary" selected>{{ item.state }}</mat-chip>
+  </ng-template>
+
+  <ng-template #actionsTemplate let-item>
+    <button mat-stroked-button color="accent" (click)="viewCard(item)">
+      Ver carnet
+    </button>
+  </ng-template>

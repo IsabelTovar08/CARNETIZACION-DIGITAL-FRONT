@@ -4,6 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
+import { NotificationDto } from '../../../core/Models/notifications/notifications.models';
+import { NotificationsService } from '../../../core/Services/api/notifications/notifications.service';
+import { ApiResponse } from '../../../core/Models/api-response.models';
+import { DateHelperService } from '../../../core/helpers/Date/date-helper.service';
 
 export interface Notification {
   id: string;
@@ -14,6 +18,8 @@ export interface Notification {
   read: boolean;
   actionText?: string;
   actionIcon?: string;
+  sendDate: string;         // Fecha en que fue enviada
+
 }
 
 @Component({
@@ -22,87 +28,77 @@ export interface Notification {
   templateUrl: './generic-notification.component.html',
   styleUrl: './generic-notification.component.css'
 })
-export class GenericNotificationComponent  implements OnInit {
+export class GenericNotificationComponent implements OnInit {
   @Input() visible: boolean = false;
   @Output() close = new EventEmitter<void>();
   @Output() notificationAction = new EventEmitter<Notification>();
 
-  notifications: Notification[] = [];
+  notifications: Notification[] = []; // 👈 ya no usamos backendNotifications
   hasMoreNotifications: boolean = false;
+
+  constructor(
+    private notificationService: NotificationsService,
+    private dateHelper: DateHelperService
+  ) {}
 
   get unreadCount(): number {
     return this.notifications.filter(n => !n.read).length;
   }
 
-  ngOnInit() {
-    // Datos de ejemplo - reemplazar con tu servicio
+  ngOnInit(): void {
     this.loadNotifications();
   }
 
-  loadNotifications() {
-    this.notifications = [
-      {
-        id: '1',
-        title: 'Nueva actualización disponible',
-        message: 'Una nueva versión del sistema está disponible. Se recomienda actualizar para obtener las últimas características.',
-        type: 'info',
-        timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutos atrás
-        read: false,
-        actionText: 'Actualizar ahora',
-        actionIcon: 'system_update'
+  loadNotifications(): void {
+    this.notificationService.getMyNotifications().subscribe({
+      next: (response: ApiResponse<NotificationDto[]>) => {
+        const dtos = response.data ?? [];
+        this.notifications = dtos.map(dto => this.mapDtoToNotification(dto));
       },
-      {
-        id: '2',
-        title: 'Advertencia de seguridad',
-        message: 'Se detectaron múltiples intentos de acceso fallidos desde una dirección IP desconocida.',
-        type: 'warning',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-        read: false,
-        actionText: 'Ver detalles',
-        actionIcon: 'security'
-      },
-      {
-        id: '3',
-        title: 'Tarea completada exitosamente',
-        message: 'La sincronización de datos se completó correctamente. Todos los registros están actualizados.',
-        type: 'success',
-        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día atrás
-        read: true
-      },
-      {
-        id: '4',
-        title: 'Error en el procesamiento',
-        message: 'No se pudo procesar el archivo adjunto. Verifica el formato e intenta nuevamente.',
-        type: 'error',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 días atrás
-        read: true,
-        actionText: 'Reintentar',
-        actionIcon: 'refresh'
+      error: (err: unknown) => {
+        console.error('Error loading notifications:', err);
+        this.notifications = [];
       }
-    ];
+    });
   }
 
-  loadMore() {
-    console.log('Loading more notifications...');
+  private mapDtoToNotification(dto: NotificationDto): Notification {
+    return {
+      id: String(dto.id),
+      title: dto.title,
+      message: dto.message,
+      type: this.mapTypeNameToUiType(dto.notificationTypeName),
+      timestamp: new Date(dto.creationDate),
+      read: false,
+      sendDate: dto.sendDate
+    };
   }
 
-  markAllAsRead() {
-    this.notifications.forEach(n => n.read = true);
+  private mapTypeNameToUiType(typeName?: string): 'info' | 'warning' | 'error' | 'success' {
+    const name = (typeName ?? '').toLowerCase();
+    if (name.includes('warn') || name.includes('advert')) return 'warning';
+    if (name.includes('error') || name.includes('fail') || name.includes('danger')) return 'error';
+    if (name.includes('success') || name.includes('ok') || name.includes('done')) return 'success';
+    return 'info';
   }
 
-  clearAll() {
+  markAllAsRead(): void {
+    this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+  }
+
+  clearAll(): void {
     this.notifications = [];
   }
 
-  toggleRead(notification: Notification) {
+  toggleRead(notification: Notification): void {
     notification.read = !notification.read;
   }
 
-  deleteNotification(id: string) {
+  deleteNotification(id: string): void {
     this.notifications = this.notifications.filter(n => n.id !== id);
   }
 
-  onNotificationAction(notification: Notification) {
+  onNotificationAction(notification: Notification): void {
     this.notificationAction.emit(notification);
   }
 
@@ -116,20 +112,30 @@ export class GenericNotificationComponent  implements OnInit {
     return icons[type as keyof typeof icons] || 'notifications';
   }
 
-  getTimeAgo(timestamp: Date): string {
-    const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (days > 0) return `${days}d`;
-    if (hours > 0) return `${hours}h`;
-    if (minutes > 0) return `${minutes}m`;
-    return 'Ahora';
-  }
-
   trackByFn(index: number, item: Notification): string {
     return item.id;
   }
+
+  getTimeAgo(date: string) {
+    return this.dateHelper.timeAgo(date);
+  }
+
+  readonly messageCharThreshold: number = 160; // cantidad a partir de la cual mostramos "Ver más"
+private expandedIds = new Set<string>();     // ids expandidos
+
+/** Determina si un item está expandido en UI */
+isExpanded(id: string): boolean {
+  return this.expandedIds.has(id);
+}
+
+/** Alterna expandir/contraer el mensaje */
+toggleExpand(id: string): void {
+  if (this.expandedIds.has(id)) this.expandedIds.delete(id);
+  else this.expandedIds.add(id);
+}
+
+/** Muestra "Ver más" si el mensaje supera el umbral */
+shouldShowReadMore(n: Notification): boolean {
+  return (n.message?.length || 0) > this.messageCharThreshold;
+}
 }

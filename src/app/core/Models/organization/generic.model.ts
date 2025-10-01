@@ -3,4 +3,5 @@ export interface GenericModel{
   name: string;
   description: string;
   isDeleted: boolean;
+  code?: string;
 }

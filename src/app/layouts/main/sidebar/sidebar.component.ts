@@ -38,7 +38,7 @@ export class SidebarComponent implements OnInit {
   }
 
   // # Cargar menú desde el servicio, guardar en el arreglo normal
- private loadMenuItems(): void {
+  private loadMenuItems(): void {
     this.menu.getMenu().subscribe({
       next: (items) => {
         this.menuItems = items ?? [];
@@ -90,9 +90,15 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleCollapse(itemId: string): void {
-    if (this.expandedItems.has(itemId)) this.expandedItems.delete(itemId);
-    else this.expandedItems.add(itemId);
+    if (this.expandedItems.has(itemId)) {
+      // Si ya está abierto, se cierra
+      this.expandedItems.delete(itemId);
+    } else {
+      this.expandedItems.clear();
+      this.expandedItems.add(itemId);
+    }
   }
+
 
   isExpanded(itemId: string): boolean {
     return this.expandedItems.has(itemId);
@@ -144,7 +150,7 @@ export class SidebarComponent implements OnInit {
   }
 
   private setActiveItemFromRoute(): void {
-    const currentUrl = this.router.url;
+    const currentUrl = this.router.url.split('?')[0]; // quitar query params si los hay
 
     for (const group of this.menuItems) {
       for (const item of group.children || []) {
@@ -154,7 +160,7 @@ export class SidebarComponent implements OnInit {
         }
         if (item.type === 'collapse') {
           for (const subItem of item.children || []) {
-            if (subItem.url && currentUrl.includes(subItem.url)) {
+            if (subItem.url && currentUrl === subItem.url) {
               this.activeItem = subItem.id;
               return;
             }
@@ -163,4 +169,5 @@ export class SidebarComponent implements OnInit {
       }
     }
   }
+
 }

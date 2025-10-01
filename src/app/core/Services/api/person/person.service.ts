@@ -18,8 +18,14 @@ export class PersonService extends ApiService<PersonCreate, PersonList> {
   }
 
   public SavePersonWithUser(person: PersonRegistrer){
-    return this.http.post(`${this.urlBase}/Person/save-person-with-user`, person);
+    return this.wrapper.handleRequest(this.http.post(`${this.urlBase}/Person/save-person-with-user`, person));
   }
-  
-  
+
+  public SavePhoto(file: File) : Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.wrapper.handleRequest(this.http.post(`${this.urlBase}/Person/7/photo`, formData));
+  }
+
 }

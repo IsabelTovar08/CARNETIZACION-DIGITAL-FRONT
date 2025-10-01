@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
 import { filter, debounceTime, takeUntil } from 'rxjs/operators';
 import { fromEvent, Subject } from 'rxjs';
 import { MatIconModule } from "@angular/material/icon";
@@ -27,7 +27,11 @@ export class AuthNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private menuResizeObserver?: ResizeObserver;
 
-  constructor(private router: Router, private ar: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private ar: ActivatedRoute,
+    private viewportScroller: ViewportScroller
+  ) { }
 
   ngOnInit() {
     // Update inicial (cubre refresh)
@@ -83,7 +87,7 @@ export class AuthNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     const deepest = this.getDeepest(this.router.routerState.root);
     const data = deepest?.snapshot?.data ?? {};
     this.currentLabel = data['title'] ?? 'Home';
-    this.currentIcon  = data['icon']  ?? 'home';
+    this.currentIcon = data['icon'] ?? 'home';
     this.currentUrl = this.router.url.split('?')[0].split('#')[0];
 
     // Reposiciona tras pintar
@@ -120,5 +124,43 @@ export class AuthNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   onMenuToggled(open: boolean) {
     this.isMenuOpen = open;
     setTimeout(() => this.updateIndicatorPosition(), 50);
+  }
+
+   scrollToSection(sectionId: string, event?: Event) {
+    event?.preventDefault(); // Previene la navegación del routerLink
+    
+    const currentPath = this.router.url.split('?')[0].split('#')[0];
+    
+    // Si ya estamos en la página principal, solo hacemos scroll
+    if (currentPath === '/') {
+      this.performScroll(sectionId);
+    } else {
+      // Si estamos en otra página, navegamos primero y luego hacemos scroll
+      this.router.navigate(['/'], { fragment: sectionId }).then(() => {
+        // Pequeño delay para asegurar que el DOM se actualice
+        setTimeout(() => this.performScroll(sectionId), 100);
+      });
+    }
+  }
+
+   private performScroll(sectionId: string) {
+    // Intentar scroll directo primero
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+    } else {
+      // Fallback con ViewportScroller si el elemento no se encuentra inmediatamente
+      setTimeout(() => {
+        this.viewportScroller.scrollToAnchor(sectionId);
+      }, 100);
+    }
+  }
+
+  scrollTo(sectionId: string) {
+    this.viewportScroller.scrollToAnchor(sectionId);
   }
 }

@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../Models/api-response.models';
 import { UserMeDto } from '../../Models/security/user-me.models';
-import { PersonCreate } from '../../Models/security/person.models';
+import { PersonCreate, PersonList } from '../../Models/security/person.models';
 
 @Injectable({
   providedIn: 'root'
@@ -34,13 +34,13 @@ export class VerificationCredencials {
   // }
 
   // Obtener perfil completo con datos de persona (UserProfileDto)
-  public getProfile(): Observable<ApiResponse<UserMeDto>> {
-    return this.http.get<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`);
+  public getProfile(): Observable<ApiResponse<PersonList>> {
+    return this.http.get<ApiResponse<PersonList>>(`${this.urlBase}api/Person/me/person`);
   }
 
   //  Actualizar datos del perfil (Persona asociada al User)
-  public updateProfile(user: UserMeDto): Observable<ApiResponse<UserMeDto>> {
-    return this.http.put<ApiResponse<UserMeDto>>(`${this.urlBase}/profile`, user);
+  public updateProfile(user: PersonCreate): Observable<ApiResponse<PersonCreate>> {
+    return this.http.put<ApiResponse<PersonCreate>>(`${this.urlBase}api /Person/update`, user);
   }
 
   public changePassword(

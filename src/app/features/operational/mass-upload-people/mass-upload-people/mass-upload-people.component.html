@@ -1,0 +1,74 @@
+<div class="page-container mat-elevation-z2">
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-container">
+      <mat-icon class="loading-icon" color="accent">
+        {{ loadingMessages[loadingStep].icon }}
+      </mat-icon>
+      <p class="loading-text">
+        {{ loadingMessages[loadingStep].text }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Configuración previa -->
+  <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+
+  <!-- Bloque de carga -->
+  <app-file-upload
+    (fileSelected)="onFileSelected($event)"
+    (fileUploaded)="uploadToBackend()">
+  </app-file-upload>
+
+  <!-- src/app/pages/import-batches/import-batches.component.html -->
+  <app-generic-table
+    [title]="'Historial de cargas masivas'"
+    [displayedColumns]="displayedColumns"
+    [columns]="columns"
+    [dataSourceInput]="records"
+    [customTemplates]="{
+      startedAt: startedAtTemplate,
+      endedAt: endedAtTemplate,
+      successCount: successTemplate,
+      errorCount: errorTemplate,
+      startedByUserName: userTemplate,
+      actions: actionsTemplate
+    }"
+    [buttonSave]="false">
+  </app-generic-table>
+
+  <!-- Templates -->
+  <ng-template #startedAtTemplate let-item>
+    <span *ngIf="item.startedAt !== '0001-01-01T05:00:00Z'; else pending">
+      {{ item.startedAt | date:'dd/MM/yyyy HH:mm' }}
+    </span>
+    <ng-template #pending><i>Pendiente</i></ng-template>
+  </ng-template>
+
+  <ng-template #endedAtTemplate let-item>
+    <span>{{ item.endedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+  </ng-template>
+
+  <ng-template #successTemplate let-item>
+    <mat-chip color="primary" selected>{{ item.successCount }}</mat-chip>
+  </ng-template>
+
+  <ng-template #errorTemplate let-item>
+    <mat-chip [color]="item.errorCount > 0 ? 'warn' : 'accent'" selected>
+      {{ item.errorCount }}
+    </mat-chip>
+  </ng-template>
+
+  <ng-template #userTemplate let-item>
+    <span *ngIf="item.startedByUserName; else noUser">
+      {{ item.startedByUserName }}
+    </span>
+    <ng-template #noUser><i>Desconocido</i></ng-template>
+  </ng-template>
+
+  <!-- Acciones personalizadas aquí -->
+  <ng-template #actionsTemplate let-item>
+    <button mat-icon-button (click)="verDetalles(item)"
+      matTooltip="Ver detalles">
+      <mat-icon>visibility</mat-icon>
+    </button>
+  </ng-template>

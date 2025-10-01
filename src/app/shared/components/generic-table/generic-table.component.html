@@ -40,21 +40,22 @@
             <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
             <mat-cell *matCellDef="let item">
               <div class="action-buttons">
-                <!-- Botón extra si existe template personalizado -->
-                <ng-container *ngIf="customTemplates?.['actions-extra']">
+                <!-- Si existe un template de acciones personalizado -->
+                <ng-container *ngIf="customTemplates?.['actions']; else defaultActions">
                   <ng-container
-                    *ngTemplateOutlet="customTemplates['actions-extra']; context: { $implicit: item }">
+                    *ngTemplateOutlet="customTemplates['actions']; context: { $implicit: item }">
                   </ng-container>
                 </ng-container>
 
-                <button mat-icon-button (click)="emitEdit(item)"
-                  matTooltip="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button (click)="emitDelete(item)"
-                  matTooltip="Eliminar">
-                  <mat-icon>delete</mat-icon>
-                </button>
+                <!-- Acciones por defecto (editar/eliminar) -->
+                <ng-template #defaultActions>
+                  <button mat-icon-button (click)="emitEdit(item)" matTooltip="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="emitDelete(item)" matTooltip="Eliminar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </ng-template>
               </div>
             </mat-cell>
           </ng-container>

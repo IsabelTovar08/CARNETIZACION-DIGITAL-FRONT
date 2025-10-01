@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, Signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationStateService } from '../../../core/Services/navigation-state/navigation-state.service';
 import { GenericNotificationComponent } from '../../../shared/components/generic-notification/generic-notification.component';
 import { Router } from '@angular/router';
+import { UserStoreService } from '../../../core/Services/auth/user-store.service';
+import { UserMe } from '../../../core/Models/security/user.models';
+import Swal from 'sweetalert2';
+import { TokenService } from '../../../core/Services/token/token.service';
 
 @Component({
   selector: 'app-header',
@@ -16,6 +20,9 @@ export class HeaderComponent implements OnInit {
   breadcrumbPath: string[] = [];
   moduleName: string = '';
   submoduleName: string = '';
+
+  user!: Signal<UserMe | null>;
+  isLoggedIn!: Signal<boolean>;
 
   @Input() tipoUsuario: string = '';
   @Input() isMobile: boolean = false;
@@ -29,11 +36,21 @@ export class HeaderComponent implements OnInit {
 
   @ViewChild('notificationTrigger') notificationTrigger!: ElementRef;
 
-  constructor(private router: Router,private navState: NavigationStateService) { }
+  constructor(
+    private router: Router,
+    private navState: NavigationStateService,
+    private store: UserStoreService,
+    private authService: TokenService
+  ) {}
+
+
 
   ngOnInit(): void {
     this.navState.pathTitles$.subscribe(path => {
       this.breadcrumbPath = path;
+      this.user = this.store.user;
+      this.isLoggedIn = this.store.isLoggedIn;
+      console.log(this.user());
     });
   }
 
@@ -56,8 +73,8 @@ export class HeaderComponent implements OnInit {
   }
 
   goToProfile() {
-  this.router.navigate(['/dashboard/perfil/me']);
-}
+    this.router.navigate(['/dashboard/perfil/me']);
+  }
 
   closeNotifications() {
     this.showNotifications = false;
@@ -79,5 +96,23 @@ export class HeaderComponent implements OnInit {
     if (this.showNotifications) {
       this.closeNotifications();
     }
+  }
+
+  onLogout() {
+    Swal.fire({
+      title: '¿Cerrar sesión?',
+      text: 'Tu sesión se cerrará y deberás iniciar de nuevo.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, cerrar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout(); // 👉 lógica de cerrar sesión
+        Swal.fire('Sesión cerrada', 'Has salido correctamente.', 'success');
+      }
+    });
   }
 }

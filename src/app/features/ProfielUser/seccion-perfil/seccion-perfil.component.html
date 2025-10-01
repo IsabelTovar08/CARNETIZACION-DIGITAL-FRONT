@@ -10,67 +10,104 @@
 
     <p class="form-description">Actualiza tu información personal</p>
 
-    <!-- Formulario -->
     <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()" [class.disabled-form]="!isEditable">
 
-      <!-- Nombre y Primer Apellido -->
+      <!-- Nombres -->
       <div class="form-row">
         <div class="form-group">
-          <label for="nombre">Nombre *</label>
-          <input id="nombre" type="text" formControlName="nombre"
-            [class.error]="perfilForm.get('nombre')?.invalid && perfilForm.get('nombre')?.touched"
+          <label for="firstName">Primer Nombre *</label>
+          <input id="firstName" type="text" formControlName="firstName"
             placeholder="Ingresa tu nombre" />
-          <div class="error-message" *ngIf="getFieldError('nombre')">
-            {{ getFieldError('nombre') }}
-          </div>
         </div>
 
         <div class="form-group">
-          <label for="primerApellido">Primer Apellido *</label>
-          <input id="primerApellido" type="text" formControlName="primerApellido"
-            [class.error]="perfilForm.get('primerApellido')?.invalid && perfilForm.get('primerApellido')?.touched"
-            placeholder="Ingresa tu primer apellido" />
-          <div class="error-message" *ngIf="getFieldError('primerApellido')">
-            {{ getFieldError('primerApellido') }}
-          </div>
+          <label for="middleName">Segundo Nombre</label>
+          <input id="middleName" type="text" formControlName="middleName"
+            placeholder="Ingresa tu segundo nombre (opcional)" />
         </div>
       </div>
 
-      <!-- Segundo Apellido -->
-      <div class="form-group">
-        <label for="segundoApellido">Segundo Apellido</label>
-        <input id="segundoApellido" type="text" formControlName="segundoApellido"
-          placeholder="Ingresa tu segundo apellido (opcional)" />
+      <!-- Apellidos -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="lastName">Primer Apellido *</label>
+          <input id="lastName" type="text" formControlName="lastName"
+            placeholder="Ingresa tu primer apellido" />
+        </div>
+
+        <div class="form-group">
+          <label for="secondLastName">Segundo Apellido</label>
+          <input id="secondLastName" type="text" formControlName="secondLastName"
+            placeholder="Ingresa tu segundo apellido (opcional)" />
+        </div>
       </div>
 
-      <!-- Email y Teléfono -->
+      <!-- Documento -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="documentTypeId">Tipo Documento *</label>
+          <select id="documentTypeId" formControlName="documentTypeId">
+            <option [value]="1">Cédula de Ciudadanía</option>
+            <option [value]="2">Cédula de Extranjería</option>
+            <option [value]="3">Pasaporte</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="documentNumber">Número Documento *</label>
+          <input id="documentNumber" type="text" formControlName="documentNumber"
+            placeholder="Ingresa tu documento" />
+        </div>
+      </div>
+
+      <!-- Tipo de sangre -->
+      <div class="form-group">
+        <label for="bloodTypeId">Tipo de Sangre</label>
+        <select id="bloodTypeId" formControlName="bloodTypeId">
+          <option [value]="1">A+</option>
+          <option [value]="2">A-</option>
+          <option [value]="3">B+</option>
+          <option [value]="4">B-</option>
+          <option [value]="5">O+</option>
+          <option [value]="6">O-</option>
+          <option [value]="7">AB+</option>
+          <option [value]="8">AB-</option>
+        </select>
+      </div>
+
+      <!-- Contacto -->
       <div class="form-row">
         <div class="form-group">
           <label for="email">Correo Electrónico *</label>
-          <input id="email" type="email" formControlName="email"
-            [class.error]="perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched"
-            placeholder="correo@ejemplo.com" />
-          <div class="error-message" *ngIf="getFieldError('email')">
-            {{ getFieldError('email') }}
-          </div>
+          <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
         </div>
 
         <div class="form-group">
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" type="tel" formControlName="telefono"
-            [class.error]="perfilForm.get('telefono')?.invalid && perfilForm.get('telefono')?.touched"
-            placeholder="+57 301 234 5678" />
-          <div class="error-message" *ngIf="getFieldError('telefono')">
-            {{ getFieldError('telefono') }}
-          </div>
+          <label for="phone">Teléfono</label>
+          <input id="phone" type="tel" formControlName="phone" placeholder="+57 301 234 5678" />
         </div>
+      </div>
+
+      <!-- Dirección -->
+      <div class="form-group">
+        <label for="address">Dirección</label>
+        <input id="address" type="text" formControlName="address" placeholder="Ingresa tu dirección" />
+      </div>
+
+      <!-- Ciudad -->
+      <div class="form-group">
+        <label for="cityId">Ciudad *</label>
+        <select id="cityId" formControlName="cityId">
+          <option [value]="1">Bogotá</option>
+          <option [value]="2">Medellín</option>
+          <option [value]="3">Cali</option>
+          <!-- Estas opciones idealmente vienen de tu API -->
+        </select>
       </div>
 
       <!-- Botones -->
       <div class="form-actions">
-        <button type="button" class="reset-btn" (click)="resetForm()">
-          Cancelar
-        </button>
+        <button type="button" class="reset-btn" (click)="resetForm()">Cancelar</button>
         <button type="submit" class="submit-btn" [disabled]="perfilForm.invalid || !isEditable">
           Actualizar Perfil
         </button>
@@ -78,6 +115,7 @@
     </form>
   </div>
 </div>
+
 
 <!-- Modal para validación de credenciales -->
 <app-generic-credincials 

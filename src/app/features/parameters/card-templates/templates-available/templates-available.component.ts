@@ -22,19 +22,19 @@ export class TemplatesAvailableComponent {
     {
       title: 'Diseño Corporativo A',
       content: 'Diseño elegante y minimalista',
-      imageUrl: '/assets/tipos-carnet/diseñoA.jpeg',
+      imageUrl: '/assets/tipos-carnet/administradorFrontal.png',
       route: '/sucursales'
     },
     {
       title: 'Diseño Corporativo B',
       content: 'Estilo contemporáneo y vibrante',
-      imageUrl: '/assets/tipos-carnet/diseñoB.jpeg',
+      imageUrl: '/assets/tipos-carnet/carnet1Frontal.png',
       route: '/unidades-organizativas'
     },
     {
       title: 'Diseño Corporativo C',
       content: 'Adaptable a cualquier evento',
-      imageUrl: '/assets/tipos-carnet/diseñoC.jpeg',
+      imageUrl: '/assets/tipos-carnet/carnet2Frontal.png',
       route: 'divisiones-internas'
     }
   ];
