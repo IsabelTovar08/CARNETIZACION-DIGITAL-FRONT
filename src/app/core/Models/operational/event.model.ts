@@ -1,52 +1,56 @@
 import { GenericModel } from "../security/generic.model";
 
+// Modelo principal de Event
 export interface Event extends GenericModel {
-   code: string;
-  scheduleDate?: Date;
-  scheduleTime?: Date;
-  eventStart?: Date;
-  eventEnd?: Date;
+  code: string;
+  // description?: string;
+  scheduleDate: Date | string;
+  scheduleTime: Date | string;
   sheduleId?: number;
   eventTypeId: number;
-  eventTypeName: string;
-  isPublic: boolean;
+  eventTypeName?: string;
+  Ispublic: boolean;  
   statusId: number;
-  statusName: string; // Nombre del estado
+  statusName?: string;
+  days?: string[];
 }
-export interface EventType extends GenericModel {}
 
+// EventType (si lo necesitas)
+export interface EventType extends GenericModel {
+  // description?: string;
+}
+
+// Para los selects (Profiles, Units, Divisions)
 export interface SelectOption {
   id: number;
   name: string;
 }
 
+// AccessPoint DTO
 export interface AccessPointDto {
   id: number;
   name: string;
   description?: string;
   typeId: number;
-  // isDeleted: boolean;
 }
 
+// Request para crear evento
 export interface CreateEventRequest {
   event: {
-    id?: number;           // 0 o no enviado
+    id?: number;
     name: string;
-    code: string;          // requerido por tu backend
+    code: string;
     description?: string;
-    scheduleDate?: Date | string;
-    scheduleTime?: Date | string;
-    sheduleId?: number;
+    scheduleDate: string | null;   
+    scheduleTime: string | null;   
+    scheduleId?: number | null;    
     eventTypeId: number;
-    isPublic?: boolean;    // el binder suele ser case-insensitive
+    Ispublic: boolean;
     statusId: number;
-    eventStart?: Date;
-    eventEnd?: Date;
+    days?: string[];            
   };
-
   accessPoints: AccessPointDto[];
-  profileIds: number[]; 
+  profileIds: number[];
   organizationalUnitIds: number[];
   internalDivisionIds: number[];
 }
-

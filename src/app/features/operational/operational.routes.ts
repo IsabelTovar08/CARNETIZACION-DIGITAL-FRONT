@@ -19,6 +19,7 @@ export const operationalRoutes: Routes = [
     ]
   },
   { path : 'card-issuance', component: MassUploadPeopleComponent},
-  { path : 'import-batches/:id/details', component: DetailsPeopleImportComponent}
+  { path : 'import-batches/:id/details', component: DetailsPeopleImportComponent},
+
 
 ];

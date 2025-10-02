@@ -26,29 +26,44 @@
             </div>
           </div>
 
+          <!-- En la sección "Información del evento", después del campo Descripción -->
           <div class="form-row">
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Fecha y hora de Inicio</mat-label>
-                <input matInput [matDatepicker]="startPicker" formControlName="eventStart" placeholder="MM / DD / YYYY">
-                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-                <mat-datepicker #startPicker></mat-datepicker>
+                <mat-label>Tipo de Evento</mat-label>
+                <mat-select formControlName="eventTypeId" required>
+                  <mat-option *ngFor="let type of eventTypeOptions" [value]="type.id">
+                    {{ type.name }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
             </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Fecha y hora Fin</mat-label>
-                <input matInput [matDatepicker]="endPicker" formControlName="eventEnd" placeholder="Select end date and time">
-                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-                <mat-datepicker #endPicker></mat-datepicker>
+                <mat-label>Fecha de programación</mat-label>
+                <input matInput [matDatepicker]="scheduleDatePicker" formControlName="scheduleDate"
+                  placeholder="MM / DD / YYYY">
+                <mat-datepicker-toggle matSuffix [for]="scheduleDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #scheduleDatePicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <div class="form-group">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Hora de programación</mat-label>
+                <input matInput type="time" formControlName="scheduleTime">
               </mat-form-field>
             </div>
           </div>
 
 
-          <mat-form-field>
+
+          <!-- <mat-form-field>
             <mat-label>Toppings</mat-label>
-            <mat-select  multiple>
+            <mat-select multiple>
               <mat-option *ngFor="let topping of toppingList" [value]="topping.name">
                 <div class="option-content">
                   <span class="option-title">{{ topping.name }}</span>
@@ -56,14 +71,24 @@
                 </div>
               </mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field> -->
 
 
           <div class="form-row">
             <div class="form-group toggle-group">
               <div class="toggle-field">
-                <span class="toggle-label">Múltiples Jornadas</span>
-                <mat-slide-toggle formControlName="multipleJornadas"></mat-slide-toggle>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Seleccione Jornada</mat-label>
+                  <mat-select formControlName="scheduleId" required>
+                    <mat-option *ngFor="let s of listSchedule" [value]="s.id">
+                      {{ s.name }} ({{ s.startTime }} - {{ s.endTime }})
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button mat-stroked-button color="primary" type="button" (click)="openModal()">
+                  <span class="material-icons">add</span>
+                </button>
               </div>
             </div>
             <div class="form-group toggle-group">
@@ -112,6 +137,7 @@
         <div class="filters-card">
           <h3 class="card-title">Filtros Avanzados</h3>
 
+
           <div class="form-row">
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">
@@ -157,14 +183,14 @@
           </div>
 
           <!-- Campos ocultos para mantener compatibilidad -->
-          <div style="display: none;">
+          <!-- <div style="display: none;">
             <mat-form-field>
               <input matInput formControlName="eventTypeId" [value]="1">
             </mat-form-field>
             <mat-form-field>
-              <input matInput formControlName="sheduleId" [value]="1">
+              <input matInput formControlName="scheduleId" [value]="1">
             </mat-form-field>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -214,18 +240,20 @@
                 </mat-form-field>
               </div>
             </div>
+
             <div class="form-row">
               <div class="form-group">
                 <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Tipo</mat-label>
-                  <mat-select formControlName="apTypeId" placeholder="Seleccionar tipo">
-                    <mat-option [value]="1">Entrance</mat-option>
-                    <mat-option [value]="2">Exit</mat-option>
-                    <mat-option [value]="3">Both</mat-option>
+                  <mat-label>Tipo de Punto de Acceso</mat-label>
+                  <mat-select formControlName="apTypeId" required>
+                    <mat-option [value]="1">Entrada</mat-option>
+                    <mat-option [value]="2">Salida</mat-option>
+                    <mat-option [value]="3">Mixto</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
             </div>
+
             <div class="form-row">
               <div class="form-group">
                 <mat-form-field appearance="outline" class="full-width">
@@ -234,6 +262,7 @@
                 </mat-form-field>
               </div>
             </div>
+
             <div class="form-actions-mini">
               <button mat-button type="button" (click)="cancelAddAccessPoint()">Cancelar</button>
               <button mat-raised-button color="primary" type="button" (click)="addAccessPointManual()">
@@ -252,7 +281,7 @@
       </button>
     </div>
 
-    <mat-button-toggle-group multiple appearance="legacy">
+    <!-- <mat-button-toggle-group multiple appearance="legacy">
   <mat-button-toggle value="lunes">Lunes</mat-button-toggle>
   <mat-button-toggle value="martes">Martes</mat-button-toggle>
   <mat-button-toggle value="miercoles">Miércoles</mat-button-toggle>
@@ -260,6 +289,6 @@
   <mat-button-toggle value="viernes">Viernes</mat-button-toggle>
   <mat-button-toggle value="sabado">Sábado</mat-button-toggle>
   <mat-button-toggle value="domingo">Domingo</mat-button-toggle>
-</mat-button-toggle-group>
+</mat-button-toggle-group> -->
   </form>
 </div>

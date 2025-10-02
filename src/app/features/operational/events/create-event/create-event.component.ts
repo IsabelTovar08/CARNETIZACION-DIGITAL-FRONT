@@ -12,6 +12,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatDialog } from '@angular/material/dialog';
 
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
 import { EventService } from '../../../../core/Services/api/event/event.service';
@@ -20,13 +22,11 @@ import {
   SelectOption,
   AccessPointDto
 } from '../../../../core/Models/operational/event.model';
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { ScheduleCreate, ScheduleList } from '../../../../core/Models/organization/schedules.models';
 import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
 import { fromApiTime } from '../../../../core/utils/time-only';
 import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
 import { ApiService } from '../../../../core/Services/api/api.service';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-event',
@@ -40,42 +40,31 @@ import { MatDialog } from '@angular/material/dialog';
     MatDatepickerModule, MatNativeDateModule,
     MatSlideToggleModule, MatButtonModule, MatIconModule, MatRadioModule,
     MatButtonToggleModule
-],
+  ],
   templateUrl: './create-event.component.html',
   styleUrls: ['./create-event.component.css']
 })
 export class CreateEventComponent {
   eventForm!: FormGroup;
   showAddForm = false;
-  listSchedule!: ScheduleList[];
+  listSchedule: ScheduleList[] = [];
   displayedColumns: string[] = ['name', 'startTime', 'endTime', 'isDeleted', 'actions'];
-  listDays: string[] = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-  toppingList = [
-    { name: 'Extra cheese', description: 'Mozzarella rallada fresca' },
-    { name: 'Mushroom', description: 'Hongos frescos laminados' },
-    { name: 'Pepperoni', description: 'Rodajas finas de salami picante' }
-  ];
-
-  // Catálogo disponible por sucursal (para ayudar a elegir/replicar)
-  availableAccessPoints: Array<{ id: number; name: string; typeId?: number; type?: string; description?: string }> = [];
-
-  // Lista que REALMENTE se enviará para crear (nuevos APs)
   accessPoints: AccessPointDto[] = [];
 
-  // catálogos de audiencias
   profilesOptions: SelectOption[] = [];
   organizationalUnitOptions: SelectOption[] = [];
   internalDivisionOptions: SelectOption[] = [];
+  eventTypeOptions: any[] = [];
 
-  // Tipos de access point
   accessPointTypes = [
     { id: 1, name: 'Entrada' },
     { id: 2, name: 'Exit' },
     { id: 3, name: 'Mixto' }
   ];
 
-  constructor(private apiService: ApiService<ScheduleCreate, ScheduleList>,
+  constructor(
+    private apiService: ApiService<ScheduleCreate, ScheduleList>,
     private fb: FormBuilder,
     private eventService: EventService,
     private useservice: SnackbarService,
@@ -84,53 +73,159 @@ export class CreateEventComponent {
     private router: Router,
   ) {
     this.eventForm = this.fb.group({
-      name: ['', Validators.required],
-      code: [''],
-      description: [''],
-      eventStart: [''],
-      eventEnd: [''],
-      scheduleDate: [''],
-      scheduleTime: [''],
-      multipleJornadas: [false],
-      repeatEvent: [false],
-      sheduleId: [1, Validators.required],
-      eventTypeId: [1, Validators.required],
-      accessType: ['public'],
-      profiles: [[]],
-      organizationalUnits: [[]],
-      divisions: [[]],
-      branchId: [1],
+       name: ['', Validators.required],
+  code: [''],
+  description: [''],
 
-      // mini formularios para agregar los nuevos puntos de acceso
-      apName: [''],
-      apDescription: [''],
-      apTypeId: [null]
+
+  eventStart: [''],
+  eventEnd: [''],
+
+  scheduleDate: ['', Validators.required],   
+  scheduleTime: ['', Validators.required],    
+
+  multipleJornadas: [false],
+  repeatEvent: [false],
+
+  scheduleId: [null, Validators.required],   
+  eventTypeId: [null, Validators.required],
+  accessType: ['public'],
+  statusId: [1],
+
+  // DÍAS del evento (lista)
+  days: [[]],                                 
+
+  // Audiencia
+  profiles: [[]],
+  organizationalUnits: [[]],
+  divisions: [[]],
+  branchId: [1],
+
+  // Mini-form AP
+  apName: [''],
+  apDescription: [''],
+  apTypeId: [null]
     });
   }
 
   ngOnInit(): void {
-    this.eventForm.get('branchId')?.valueChanges.subscribe(branchId => {
-      if (branchId) {
-        this.loadAccessPoints(branchId);
-      }
-    });
-
+    this.cargarJornadas();
+    this.cargarTiposEvento();
     this.loadAudienceOptions();
   }
 
-   cargarData(reload: boolean) {
-    this.apiService.ObtenerTodo('Schedule').subscribe(data =>
-      this.listSchedule = data.data
-    );
+  cargarJornadas(): void {
+    this.apiService.ObtenerTodo('Schedule').subscribe({
+      next: (res) => {
+        this.listSchedule = res.data || [];
+      },
+      error: () => this.useservice.showError('Error al cargar jornadas')
+    });
   }
 
-  recargarLista() {
-    this.cargarData(true)
+  cargarTiposEvento(): void {
+    this.apiService.ObtenerTodo('EventType').subscribe({
+      next: (res) => {
+        this.eventTypeOptions = res.data || [];
+      },
+      error: () => this.useservice.showError('Error al cargar tipos de evento')
+    });
   }
 
-  // CARGAS de los datos de perfil, unidad organizativa, divicion interna y puntos de acceso
+  //   MODAL SIMPLE PARA CREAR JORNADA
+  openModal(item?: ScheduleList): void {
+    const listDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-  loadAudienceOptions() {
+    const dialogRef = this.dialog.open(GenericFormComponent, {
+      disableClose: true,
+      width: '450px',
+      data: {
+        title: item ? 'Editar Jornada' : 'Crear Jornada',
+        item,
+        fields: [
+          {
+            name: 'name',
+            label: 'Nombre',
+            type: 'text',
+            value: item?.name || '',
+            required: true
+          },
+          {
+            name: 'startTime',
+            label: 'Hora inicio',
+            type: 'time',
+            value: fromApiTime(item?.startTime || ''),
+            required: true
+          },
+          {
+            name: 'endTime',
+            label: 'Hora fin',
+            type: 'time',
+            value: fromApiTime(item?.endTime || ''),
+            required: true
+          },
+          //Agregar los días como checkboxes individuales
+          ...listDays.map(day => ({
+            name: `day_${day}`,
+            label: day,
+            type: 'checkbox',
+            value: item?.days?.includes(day) || false,
+            checked: item?.days?.includes(day) || false
+          }))
+        ],
+        replaceBaseFields: true
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        //Extraer los días seleccionados
+        const selectedDays = listDays.filter(day => result[`day_${day}`]);
+
+        const scheduleData = {
+          name: result.name,
+          startTime: result.startTime,
+          endTime: result.endTime,
+          days: selectedDays
+        };
+
+        if (item) {
+          this.actualizarJornada(scheduleData, item.id);
+        } else {
+          this.crearJornada(scheduleData);
+        }
+      }
+    });
+  }
+
+  private toHms(time: string): string {
+  // "08:00" -> "08:00:00"
+  if (!time) return "00:00:00";
+  return time.length === 5 ? time + ":00" : time;
+}
+
+  crearJornada(data: any): void {
+    this.apiService.Crear('Schedule', data).subscribe({
+      next: () => {
+        this.cargarJornadas();
+        this.useservice.showSuccess('Jornada creada con éxito');
+      },
+      error: (err) => this.useservice.showError('Error al crear la jornada')
+    });
+  }
+
+  actualizarJornada(data: any, id: number): void {
+    const scheduleData = { ...data, id };
+    this.apiService.update('Schedule', scheduleData).subscribe({
+      next: () => {
+        this.cargarJornadas();
+        this.useservice.showSuccess('Jornada actualizada con éxito');
+      },
+      error: () => this.useservice.showError('Error al actualizar la jornada')
+    });
+  }
+
+  loadAudienceOptions(): void {
     this.eventService.getProfiles().subscribe({
       next: res => this.profilesOptions = res.data,
       error: () => this.useservice.showError('Error al cargar perfiles')
@@ -147,69 +242,7 @@ export class CreateEventComponent {
     });
   }
 
-  loadAccessPoints(branchId: number) {
-    this.eventService.getAccessPointsByBranch(branchId).subscribe({
-      next: (res) => {
-        // Esto es solo catálogo para elegir/replicar
-        this.availableAccessPoints = res.data ?? [];
-      },
-      error: () => {
-        this.useservice.showError('Error al cargar puntos de acceso');
-      }
-    });
-  }
-
-  //Jornadas y horarios
-  openModal(item?: ScheduleList) {
-      const dialogRef = this.dialog.open(GenericFormComponent, {
-        disableClose: true,
-        width: '400px',
-        data: {
-          title: item ? 'Editar' : 'Crear',
-          item,
-          fields: [
-            { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.startTime || ''), required: true },
-            { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.endTime || ''), required: true },
-            ...this.listDays.map(day => ({
-              label: day,
-              type: 'checkbox',
-              value: day
-            }))
-          ],
-          replaceBaseFields: true
-        },
-      });
-       dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (item) {
-          this.add(result, item.id);
-        } else {
-          this.add(result);
-        }
-      }
-
-      this.router.navigate(['./'], { relativeTo: this.route });
-    });
-  }
-
-  add(schedule: ScheduleCreate, id?: number) {
-    if (id) {
-      this.apiService.update('Deparment', schedule).subscribe(() => {
-        this.recargarLista();
-        this.useservice.showSuccess();
-      })
-    }
-    else {
-      this.apiService.Crear('Schedule', schedule).subscribe(() => {
-        this.recargarLista();
-        this.useservice.showSuccess();
-      })
-    }
-  }
-
-  //ACCESS POINTS
-
-  openAddAccessPointDialog() {
+  openAddAccessPointDialog(): void {
     this.showAddForm = true;
     this.eventForm.patchValue({
       apName: '',
@@ -218,9 +251,7 @@ export class CreateEventComponent {
     });
   }
 
-
-
-  cancelAddAccessPoint() {
+  cancelAddAccessPoint(): void {
     this.showAddForm = false;
     this.eventForm.patchValue({
       apName: '',
@@ -229,8 +260,7 @@ export class CreateEventComponent {
     });
   }
 
-  /** Agregar ounto de acceso desde el mini-form */
-  addAccessPointManual() {
+  addAccessPointManual(): void {
     const name = (this.eventForm.get('apName')?.value || '').trim();
     const description = (this.eventForm.get('apDescription')?.value || '').trim();
     const typeId = this.eventForm.get('apTypeId')?.value;
@@ -252,26 +282,12 @@ export class CreateEventComponent {
     };
 
     this.accessPoints.push(ap);
-
-    // limpiar mini formormulario y ocultar
     this.showAddForm = false;
     this.eventForm.patchValue({ apName: '', apDescription: '', apTypeId: null });
     this.useservice.showSuccess('Punto de acceso agregado');
   }
 
-  /** Agregar un punto de acceso tomando uno del catálogo (lo clona como NUEVO con id 0) */
-  addAccessPointFromAvailable(item: {id: number; name: string; typeId?: number; description?: string}) {
-    const ap: AccessPointDto = {
-      id: 0,
-      name: item.name,
-      description: item.description,
-      typeId: item.typeId ?? 1 // fallback si no te retorna typeId
-    };
-    this.accessPoints.push(ap);
-    this.useservice.showSuccess('Punto de acceso agregado desde catálogo');
-  }
-
-  deleteAccessPoint(index: number) {
+  deleteAccessPoint(index: number): void {
     this.accessPoints.splice(index, 1);
     this.useservice.showSuccess('Punto de acceso eliminado');
   }
@@ -281,67 +297,96 @@ export class CreateEventComponent {
     return type?.name || `Tipo ${typeId}`;
   }
 
-  // --------- SUBMIT ---------
+ private mapFormToDto(): CreateEventRequest {
+  const f = this.eventForm.value;
 
-  private mapFormToDto(): CreateEventRequest {
-    const f = this.eventForm.value;
+  // combinar fecha y hora
+  const combineDateTime = (date: any, time: string): string | null => {
+    if (!date || !time) return null;
+    const [h, m] = time.split(':').map(Number);
+    const d = new Date(date);
+    d.setHours(h, m, 0, 0);
+    return d.toISOString();
+  };
 
-    // genera un codigo si no lo llenaron
-    const code = (f.code && String(f.code).trim().length > 0) ? f.code : this.generateCode(8);
+  return {
+    event: {
+      id: 0,
+      name: f.name,
+      code: (f.code && f.code.trim()) || this.generateCode(8),
+      description: f.description || "",
+      scheduleDate: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
+      scheduleTime: combineDateTime(f.scheduleDate, f.scheduleTime),
+      scheduleId: f.scheduleId, 
+      eventTypeId: f.eventTypeId,
+      Ispublic: f.accessType === 'public',
+      statusId: 1,
+      days: f.days && f.days.length > 0 ? f.days : undefined
+    },
+    accessPoints: this.accessPoints.map(ap => ({
+      id: 0,
+      name: ap.name,
+      description: ap.description || "",
+      eventId: 0,
+      typeId: ap.typeId
+    })),
+    profileIds: f.profiles || [],
+    organizationalUnitIds: f.organizationalUnits || [],
+    internalDivisionIds: f.divisions || []
+  };
+}
 
-    return {
-      event: {
-        id: 0,
-        name: f.name,
-        code,
-        description: f.description,
-        eventStart: f.eventStart,
-        eventEnd: f.eventEnd,
-        statusId: 1,
-        isPublic: f.accessType === 'public',
-        scheduleDate: f.eventStart || f.scheduleDate || null,
-        scheduleTime: f.eventStart || f.scheduleTime || null,
-        sheduleId: f.sheduleId || 1,
-        eventTypeId: f.eventTypeId || 1
-      },
 
-      // 👇 ahora enviamos objetos, NO IDs
-      accessPoints: this.accessPoints.map(ap => ({
-        id: 0,
-        name: ap.name,
-        description: ap.description,
-        typeId: ap.typeId
-        // eventId NO es necesario
-      })),
 
-      profileIds: f.profiles || [],
-      organizationalUnitIds: f.organizationalUnits || [],
-      internalDivisionIds: f.divisions || []
-    };
-  }
+  onSubmit(): void {
+  if (!this.eventForm.valid) {
+    this.markFormGroupTouched();
 
-  onSubmit() {
-    if (!this.eventForm.valid) {
-      this.markFormGroupTouched();
-      this.useservice.showError('Por favor completa todos los campos requeridos');
+    if (!this.eventForm.get('name')?.value) {
+      this.useservice.showError('El nombre del evento es obligatorio');
       return;
     }
-
-    const dto = this.mapFormToDto();
-
-    this.eventService.createEvent(dto).subscribe({
-      next: (res) => {
-        this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
-        console.log('Nuevo evento:', res.data);
-      },
-      error: (err) => {
-        console.error('Error al crear evento:', err);
-        this.useservice.showError(err?.error?.message || 'Error al crear evento (400). Revisa el shape del JSON.');
-      }
-    });
+    if (!this.eventForm.get('eventTypeId')?.value) {
+      this.useservice.showError('Debes seleccionar un tipo de evento');
+      return;
+    }
+    if (!this.eventForm.get('scheduleId')?.value) {
+      this.useservice.showError('Debes seleccionar una jornada');
+      return;
+    }
+    if (!this.eventForm.get('scheduleDate')?.value) {
+      this.useservice.showError('Debes seleccionar una fecha de programación');
+      return;
+    }
+    if (!this.eventForm.get('scheduleTime')?.value) {
+      this.useservice.showError('Debes seleccionar una hora de programación');
+      return;
+    }
+    return;
   }
 
-  private markFormGroupTouched() {
+  if (this.accessPoints.length === 0) {
+    this.useservice.showError('Debes agregar al menos un Punto de Acceso');
+    return;
+  }
+
+  const dto = this.mapFormToDto();
+  console.log('DTO a enviar:', dto);
+
+  this.eventService.createEvent(dto).subscribe({
+    next: (res) => {
+      this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
+      console.log('Nuevo evento:', res.data);
+    },
+    error: (err) => {
+      this.useservice.showError(err?.error?.message || 'Error al crear evento');
+      console.error('Error al crear evento:', err);
+    }
+  });
+}
+
+
+  private markFormGroupTouched(): void {
     Object.keys(this.eventForm.controls).forEach(key => {
       const control = this.eventForm.get(key);
       control?.markAsTouched();
