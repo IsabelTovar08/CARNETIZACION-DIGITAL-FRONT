@@ -418,6 +418,28 @@
   color: #dc2626 !important;
 }
 
+.password-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.password-btn mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.password-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* --- 🔧 Forzar que el modal se vea encima de todo --- */
 :host ::ng-deep app-generic-credincials {
   position: fixed !important;

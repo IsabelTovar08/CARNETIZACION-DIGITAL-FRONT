@@ -10,7 +10,7 @@
         'Complete todos los pasos para registrar una nueva persona.' }}
       </mat-card-subtitle>
 
-      
+
     </mat-card-header>
 
     <div *ngIf="isEditMode && isEditableBlocked" class="lock-overlay">
@@ -20,17 +20,13 @@
       </button>
     </div>
     <mat-card-actions *ngIf="isEditMode && !isEditableBlocked">
-      <button mat-icon-button color="primary" (click)="onChangePassword()" matTooltip="Cambiar contraseña">
+      <button mat-raised-button color="primary" (click)="onChangePassword()" class="password-btn">
         <mat-icon>vpn_key</mat-icon>
+        Cambiar Contraseña
       </button>
     </mat-card-actions>
     <mat-card-content>
       <mat-stepper [linear]="isLinear" #stepper orientation="horizontal" class="custom-stepper">
-        <div *ngIf="isEditMode && !isEditableBlocked" class="change-password">
-          <button mat-stroked-button color="primary" (click)="onChangePassword()">
-            🔑 Actualizar contraseña
-          </button>
-        </div>
         <!-- Paso 1: Información Personal Básica -->
         <mat-step [stepControl]="personalInfoForm" errorMessage="Complete la información personal">
           <form [formGroup]="personalInfoForm">

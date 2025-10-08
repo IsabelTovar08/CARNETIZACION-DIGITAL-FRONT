@@ -41,7 +41,7 @@ export class VerificationCredencials {
     confirmNewPassword: string
   ): Observable<ApiResponse<any>> {
     return this.http.patch<ApiResponse<any>>(
-      `${environment.URL}/auth/change-password`,
+      `${this.urlBase}/auth/change-password`,
       {
         currentPassword,
         newPassword,
