@@ -13,43 +13,35 @@ export class VerificationCredencials {
   private http = inject(HttpClient);
 
 
-  urlBase = environment.URL + '/api/User';
+  urlBase = environment.URL + '/api';
 
   // Método para verificar contraseña
   public verifyPassword(Password: string): Observable<any> {
-    return this.http.post(`${this.urlBase}/verify-password`, { Password }, {
+    return this.http.post(`${this.urlBase}/User/verify-password`, { Password }, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
 
-  // Obtener usuario básico (UserMeDto → para topbar o info mínima)
-  // public getMe(): Observable<ApiResponse<UserMeDto>> {
-  //   return this.http.get<any>(`${this.urlBase}/me`).pipe(
-  //     map(res => ({
-  //       success: res.status,
-  //       message: res.message,
-  //       data: res.data
-  //     }))
-  //   );
-  // }
-
   // Obtener perfil completo con datos de persona (UserProfileDto)
   public getProfile(): Observable<ApiResponse<PersonList>> {
-    return this.http.get<ApiResponse<PersonList>>(`${this.urlBase}api/Person/me/person`);
+    return this.http.get<ApiResponse<PersonList>>(`${this.urlBase}/Person/me/person`);
   }
 
   //  Actualizar datos del perfil (Persona asociada al User)
   public updateProfile(user: PersonCreate): Observable<ApiResponse<PersonCreate>> {
-    return this.http.put<ApiResponse<PersonCreate>>(`${this.urlBase}api /Person/update`, user);
+    return this.http.put<ApiResponse<PersonCreate>>(`${this.urlBase}/Person/update`, user, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
+  // Cambiar contraseña
   public changePassword(
     currentPassword: string,
     newPassword: string,
     confirmNewPassword: string
   ): Observable<ApiResponse<any>> {
     return this.http.patch<ApiResponse<any>>(
-      `${environment.URL}/api/auth/change-password`,
+      `${environment.URL}/auth/change-password`,
       {
         currentPassword,
         newPassword,

@@ -75,6 +75,14 @@ export class ListService {
   return this.cities$;
 }
 
+  
+getCitiesByDepartment(id: number): Observable<CityList[]> {
+  return this.ubicationService
+    .GetCytiesByDeparment(id)
+    .pipe(map(res => res.data ?? []
+    ));
+}
+
   getSchedules(forceReload = false): Observable<ScheduleList[]> {
     if (forceReload || !this.schedules$) {
       this.schedules$ = this.scheduleService

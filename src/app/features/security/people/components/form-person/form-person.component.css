@@ -11,6 +11,57 @@
   overflow: hidden;
 }
 
+/* Contenedor del formulario */
+.lock-overlay {
+  text-align: center;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Asegurar que el modal se vea sobre todo */
+::ng-deep app-generic-credincials {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Overlay del modal */
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  gap: 20px;
+}
+
+.lock-overlay p {
+  color: white;
+  font-size: 18px;
+  text-align: center;
+}
+
+.change-password-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 20px;
+}
+
 /* Header de la tarjeta */
 .stepper-card .mat-card-header {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -77,6 +128,45 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.swal-custom-popup {
+  border-radius: 1rem !important;
+  font-family: inherit !important;
+}
+
+.swal-custom-confirm {
+  padding: 0.75rem 2rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s !important;
+}
+
+.swal-custom-confirm:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3) !important;
+}
+
+.swal-custom-cancel {
+  padding: 0.75rem 2rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+}
+
+.swal-custom-input {
+  border-radius: 0.5rem !important;
+  border: 2px solid #e5e7eb !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+}
+
+.swal-custom-input:focus {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+.swal2-popup {
+  animation: swal2-show 0.3s !important;
 }
 
 .step-title::before {
@@ -326,4 +416,23 @@
 .mat-error {
   font-size: 12px !important;
   color: #dc2626 !important;
+}
+
+/* --- 🔧 Forzar que el modal se vea encima de todo --- */
+:host ::ng-deep app-generic-credincials {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20000 !important;
+  pointer-events: auto !important;
+}
+
+/* 🔧 Evitar que el mat-card o stepper lo tape */
+:host ::ng-deep .mat-card,
+:host ::ng-deep .mat-stepper-horizontal,
+:host ::ng-deep .mat-step-content {
+  overflow: visible !important;
+  z-index: auto !important;
 }

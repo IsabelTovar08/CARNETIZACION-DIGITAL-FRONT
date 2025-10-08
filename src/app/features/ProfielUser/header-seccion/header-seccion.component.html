@@ -1,10 +1,12 @@
 <div class="profile-card">
   <!-- Banner -->
   <div class="banner">
-    
+
     <img src="/assets/fondo-perfil4.jpg" alt="Banner del perfil" class="banner-img">
     <div *ngIf="!isEditing" class="edit-icon" (click)="fileInput.click()">
-      ✏️
+      <span class="material-icons">
+        mode_edit
+      </span>
     </div>
   </div>
 
@@ -15,7 +17,7 @@
     <!-- Imagen -->
     <img [src]="user()?.photoUrl" alt="Perfil" class="perfil-img avatar">
 
-    
+
 
     <!-- Botones guardar / cancelar (solo visibles si hay edición) -->
     <div *ngIf="isEditing" class="edit-actions">

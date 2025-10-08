@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,12 +13,16 @@ import { PersonCreate, PersonList, PersonRegistrer } from '../../../../../core/M
 import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
 import { CustomTypeService } from '../../../../../core/Services/api/customType/custom-type.service';
 import { UbicationService } from '../../../../../core/Services/api/ubication/ubication.service';
-import {  CityCreate, CityList, Deparment } from '../../../../../core/Models/parameter/ubication.models';
+import { CityCreate, CityList, Deparment } from '../../../../../core/Models/parameter/ubication.models';
 import { UserCreate, UserList } from '../../../../../core/Models/security/user.models';
 import { PersonService } from '../../../../../core/Services/api/person/person.service';
 import Swal from 'sweetalert2';
 import { ListService } from '../../../../../core/Services/shared/list.service';
 import { DataService } from '../../../../../core/Services/shared/data.service';
+import { VerificationCredencials } from '../../../../../core/Services/token/verificationCredencials';
+import { GenericCredincialsComponent } from "../../../../../shared/components/generic-credincials/generic-credincials.component";
+import { MatDialog } from '@angular/material/dialog';
+import { ChangePasswordComponent } from '../../../users/components/change-password/change-password.component';
 
 @Component({
   selector: 'app-form-person',
@@ -32,13 +36,18 @@ import { DataService } from '../../../../../core/Services/shared/data.service';
     MatIconModule,
     MatCardModule,
     MatSelectModule,
-    CommonModule
+    CommonModule,
+    GenericCredincialsComponent
   ],
   templateUrl: './form-person.component.html',
   styleUrl: './form-person.component.css'
 })
 export class FormPErsonComponent {
+  @Input() mode: 'create' | 'edit' = 'create'; //define el modo
+  isEditMode = false;
   isLinear = true;
+  isEditableBlocked = false;
+  isModalOpen = false;
 
   hidePassword = true;
   hideConfirmPassword = true;
@@ -51,9 +60,7 @@ export class FormPErsonComponent {
 
   // Datos para los selectores
   documentTypes: CustomTypeSpecific[] = [];
-
   bloodTypes: CustomTypeSpecific[] = [];
-
   cities: CityCreate[] = [];
   deparments: Deparment[] = [];
 
@@ -61,11 +68,10 @@ export class FormPErsonComponent {
   constructor(private formBuilder: FormBuilder,
     private personService: PersonService,
     private userService: ApiService<UserCreate, UserList>,
-
+    private verificationService: VerificationCredencials,
     private listService: ListService,
     private ubicationService: UbicationService,
-
-
+    private dialog: MatDialog,
 
   ) {
     // Inicializar formularios
@@ -86,7 +92,7 @@ export class FormPErsonComponent {
     this.contactForm = this.formBuilder.group({
       phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      address: ['', Validators.minLength(10)],
+      address: ['', Validators.minLength(5)],
       deparmentId: [null, Validators.required],
       cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]]
     });
@@ -94,31 +100,131 @@ export class FormPErsonComponent {
     this.userForm = this.formBuilder.group({
       personId: [''],
       username: ['', [Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit(): void {
-    this.getData()
+    this.isEditMode = this.mode === 'edit';
+
+    this.getData();
+
+    // Si es modo edición, cargamos datos del usuario actual
+    if (this.isEditMode) {
+      this.loadCurrentProfile();
+      this.isEditableBlocked = true; // bloquea edición inicialmente
+      this.disableAllForms();
+    }
+
+    // cambio dinámico de departamentos
     this.contactForm.get('deparmentId')?.valueChanges.subscribe(departmentId => {
       if (departmentId) {
-        this.getCytie(departmentId);
+        this.getCitie(departmentId);
         this.contactForm.get('cityId')?.enable();
       } else {
         this.cities = [];
-        this.contactForm.get('cityId')?.setValue(null);
         this.contactForm.get('cityId')?.disable();
       }
     });
-
-
   }
 
-  getData(){
+  // Deshabilitar todos los formularios
+  disableAllForms(): void {
+    this.personalInfoForm.disable();
+    this.documentForm.disable();
+    this.contactForm.disable();
+    this.userForm.disable();
+  }
+
+  // Cargar datos para los selectores
+
+  getData() {
     this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
     this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
     this.listService.getdeparments().subscribe(data => this.deparments = data);
+  }
+
+  // Cargar datos del perfil actual
+  loadCurrentProfile() {
+    this.verificationService.getProfile().subscribe({
+      next: (res) => {
+        const person = res.data;
+        this.patchFormValues(person);
+        this.userForm.disable(); // el usuario no puede cambiar user/password aquí
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo cargar la información del perfil.', 'error');
+      }
+    });
+  }
+
+  private patchFormValues(person: PersonList): void {
+    this.personalInfoForm.patchValue({
+      id: person.id,
+      firstName: person.firstName,
+      middleName: person.middleName,
+      lastName: person.lastName,
+      secondLastName: person.secondLastName
+    });
+    this.documentForm.patchValue({
+      documentTypeId: person.documentTypeId,
+      documentNumber: person.documentNumber,
+      bloodTypeId: person.bloodTypeId
+    });
+    this.contactForm.patchValue({
+      phone: person.phone,
+      email: person.email,
+      address: person.address,
+      // deparmentId: person.deparmentId,
+      cityId: person.cityId
+    });
+  }
+
+  abrirModal() {
+     console.log('🟢 Abriendo modal...');
+    this.isModalOpen = true;
+  }
+
+  cerrarModal() {
+     console.log('🔴 Cerrando modal...');
+    this.isModalOpen = false;
+  }
+
+  onValidacionExitosa(password: string) {
+    this.verificationService.verifyPassword(password).subscribe({
+      next: (res) => {
+        if (res.status) {
+          this.isEditableBlocked = false;
+          this.enableAllForms();
+          Swal.fire('Verificado', 'Puedes editar tu información.', 'success');
+        } else {
+          Swal.fire('Error', 'Contraseña incorrecta.', 'error');
+        }
+        this.isModalOpen = false;
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo verificar la contraseña.', 'error');
+        this.isModalOpen = false;
+      }
+    });
+  }
+
+  // Habilitar todos los formularios
+  enableAllForms(): void {
+    this.personalInfoForm.enable();
+    this.documentForm.enable();
+    this.contactForm.enable();
+    // userForm no, porque solo se usa en modo crear
+  }
+
+
+  // Método para abrir el diálogo de cambio de contraseña
+  onChangePassword() {
+    this.dialog.open(ChangePasswordComponent, {
+      width: '400px',
+      data: { email: this.contactForm.get('email')?.value }
+    });
   }
 
   get isCityDisabled(): boolean {
@@ -129,10 +235,11 @@ export class FormPErsonComponent {
     return this.contactForm?.get('email')?.value;
   }
 
-  getCytie(id: number) {
-    this.ubicationService.GetCytiesByDeparment(id).subscribe((data) => {
-      this.cities = data.data;
-    })
+  getCitie(id: number) {
+    this.ubicationService.GetCytiesByDeparment(id).subscribe((res: any) => {
+      // si viene con data.data → úsalo, si no, usa el arreglo directo
+      this.cities = Array.isArray(res.data) ? res.data : res;
+    });
   }
 
 
@@ -150,7 +257,6 @@ export class FormPErsonComponent {
     if (confirmPassword?.hasError('passwordMismatch')) {
       confirmPassword.setErrors(null);
     }
-
     return null;
   }
 
@@ -184,15 +290,17 @@ export class FormPErsonComponent {
 
   // Verificar si todo el formulario es válido
   isFormValid(): boolean {
-    return this.personalInfoForm.valid &&
-      this.documentForm.valid &&
-      this.contactForm.valid
+    if (this.isEditMode) {
+      return this.personalInfoForm.valid && this.documentForm.valid && this.contactForm.valid;
+    }
+    return this.personalInfoForm.valid && this.documentForm.valid && this.contactForm.valid && this.userForm.valid;
   }
 
-  // Recopilar todos los datos del formulario
+
+  // Recopilar datos del formulario
   getFormData(): PersonCreate {
     return {
-      id: 0,
+      id: this.personalInfoForm.get('id')?.value || 0,
       firstName: this.personalInfoForm.get('firstName')?.value || '',
       middleName: this.personalInfoForm.get('middleName')?.value || '',
       lastName: this.personalInfoForm.get('lastName')?.value || '',
@@ -206,47 +314,41 @@ export class FormPErsonComponent {
       cityId: this.contactForm.get('cityId')?.value || 0
     };
   }
-  getDataUser() : UserCreate {
+
+  // Recopilar datos del usuario
+  getDataUser(): UserCreate {
     return {
       userName: this.userForm.get('username')?.value || "null",
       password: this.userForm.get('password')?.value || '',
-      personId: this.personalInfoForm.get('id')?.value || 0
+      personId: this.personalInfoForm.get('id')?.value || 1
     }
   }
 
   // Método para enviar el formulario
   submitForm(): void {
-    if (this.isFormValid()) {
-      const formData = this.getFormData();
-      var peronRegistrer: PersonRegistrer = {
+    if (!this.isFormValid()) {
+      Swal.fire('Formulario inválido', 'Complete los campos requeridos', 'warning');
+      return;
+    }
+
+    const formData = this.getFormData();
+
+    if (this.isEditMode) {
+      // 🔁 Actualiza perfil
+      this.verificationService.updateProfile(formData).subscribe({
+        next: () => Swal.fire('Actualizado', 'Tu información fue actualizada exitosamente', 'success'),
+        error: () => Swal.fire('Error', 'No se pudo actualizar la información', 'error')
+      });
+    } else {
+      // 🆕 Crea nueva persona + usuario
+      const personRegister: PersonRegistrer = {
         person: formData,
         user: this.getDataUser()
-      }
-
-
-      // Aquí puedes llamar a tu servicio para guardar los datos
-      console.log('Datos del formulario:', peronRegistrer);
-
-      this.personService.SavePersonWithUser(peronRegistrer).subscribe({
-        next: (personaResponse) => {
-          // Guardar el ID de la persona en el formulario
-
-          console.log('Persona creada exitosamente:', personaResponse);
-          Swal.fire({
-            title: 'Persona creada exitosamente'
-          })
-
-        },
-        error: (personaError) => {
-          console.error('Error al crear persona:', personaError);
-          this.showErrorMessage(); // puedes personalizar con mensaje específico para "persona"
-        }
+      };
+      this.personService.SavePersonWithUser(personRegister).subscribe({
+        next: () => Swal.fire('Éxito', 'Persona creada correctamente', 'success'),
+        error: () => Swal.fire('Error', 'No se pudo crear la persona', 'error')
       });
-
-    } else {
-      // Marcar todos los campos como tocados para mostrar errores
-      this.markAllFieldsAsTouched();
-      alert('Por favor complete todos los campos requeridos correctamente.');
     }
   }
 
