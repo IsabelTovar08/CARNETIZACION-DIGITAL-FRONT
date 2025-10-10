@@ -1,4 +1,4 @@
- <div class="login-container">
+<div class="login-container">
   <div class="login-card">
     <!-- Imagen -->
     <div class="illustration-section">
@@ -13,15 +13,32 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <h4>Correo electrónico</h4>
-        <input type="email" formControlName="email" class="form-input" placeholder="example@gmail.com">
+        <input 
+          type="email" 
+          formControlName="email" 
+          class="form-input" 
+          placeholder="example@gmail.com">
+
         <h4>Contraseña</h4>
-        <input type="password" formControlName="password" class="form-input" placeholder="********">
+        <div class="password-container">
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password" 
+            class="form-input" 
+            placeholder="********">
+
+          <span class="material-icons visibility-icon" (click)="togglePassword()">
+            {{ showPassword ? 'visibility_off' : 'visibility' }}
+          </span>
+        </div>
 
         <div class="forgot-password">
           <a (click)="goToForgotPassword()" style="cursor: pointer">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <button type="submit" class="login-button">Ingresar</button>
+        <button type="submit" class="login-button" [disabled]="isLoading">
+          {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
+        </button>
       </form>
     </div>
   </div>

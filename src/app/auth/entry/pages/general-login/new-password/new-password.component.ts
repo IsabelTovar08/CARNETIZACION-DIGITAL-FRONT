@@ -7,10 +7,13 @@ import {
   FormBuilder, FormGroup, ReactiveFormsModule, Validators,
   AbstractControl, ValidationErrors, FormControl
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, take, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../../../core/Services/auth/auth-service.service';
+import { TokenService } from '../../../../../core/Services/token/token.service';
+import { VerificationCredencials } from '../../../../../core/Services/token/verificationCredencials';
+import Swal from 'sweetalert2';
 
 type PasswordForm = FormGroup<{
   newPassword: FormControl<string>;
@@ -36,23 +39,36 @@ export class NewPasswordComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
+    private router: Router, // Inyectar Router para navegación
+     private route: ActivatedRoute, // Inyectar ActivatedRoute para capturar parámetros
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private verificationCredencial: VerificationCredencials,
+    private tokenService: TokenService
+  ) { }
 
-  ngOnInit(): void {
-    this.passwordForm = this.fb.group({
-      newPassword: this.fb.control('', {
-        validators: [Validators.required, Validators.minLength(6)],
-        nonNullable: true
-      }),
-      confirmPassword: this.fb.control('', {
-        validators: [Validators.required, Validators.minLength(6)],
-        nonNullable: true
-      })
-    }, { validators: this.passwordMatchValidator });
-  }
+ ngOnInit(): void {
+  // Capturar los parámetros de la URL
+  this.route.queryParams.subscribe(params => {
+    this.token = params['token'];
+    this.email = params['email'];
+
+    console.log('Token recibido:', this.token);
+    console.log('Email recibido:', this.email);
+  });
+
+  // Crear el formulario
+  this.passwordForm = this.fb.group({
+    newPassword: this.fb.control('', {
+      validators: [Validators.required, Validators.minLength(6)],
+      nonNullable: true
+    }),
+    confirmPassword: this.fb.control('', {
+      validators: [Validators.required, Validators.minLength(6)],
+      nonNullable: true
+    })
+  }, { validators: this.passwordMatchValidator });
+}
 
   ngAfterViewInit(): void {
     queueMicrotask(() => this.passwordInput?.nativeElement?.focus());
@@ -114,24 +130,52 @@ export class NewPasswordComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    const formData = {
-      // normalmente enviarías ambas y/o token de recuperación
-      newPassword: this.passwordForm.controls.newPassword.value
-    };
+    const newPassword = this.passwordForm.controls.newPassword.value;
 
-    // TODO: sustituye por updatePassword en tu AuthService
-    this.authService.login(formData as any).pipe(
-      take(1),
-      finalize(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe({
-      next: () => this.goToConfirmNewPassword(),
-      error: (err: any) => {
-        console.error('Error al actualizar la contraseña', err);
-      }
-    });
+    this.verificationCredencial.resetPassword(this.email, this.token, newPassword)
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (res: any) => {
+          if (res.success) {
+            // ✅ Limpia todos los tokens de sesión activos
+            this.tokenService.removeAll();
+
+            // ✅ Mensaje elegante de confirmación
+            Swal.fire({
+              icon: 'success',
+              title: 'Contraseña actualizada',
+              text: 'Tu contraseña se cambió exitosamente. Por seguridad, inicia sesión nuevamente.',
+              confirmButtonText: 'Ir al inicio de sesión',
+              confirmButtonColor: '#2e7d32'
+            }).then(() => {
+              this.router.navigate(['/auth/login']);
+            });
+          } else {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Atención',
+              text: res.message || 'No se pudo actualizar la contraseña.'
+            });
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un problema al cambiar la contraseña. Intenta nuevamente.'
+          });
+        }
+      });
   }
+
+  email: string = '';
+  token: string = '';
 }

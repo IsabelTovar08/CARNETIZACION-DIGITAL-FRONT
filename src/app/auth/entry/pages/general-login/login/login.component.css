@@ -71,6 +71,31 @@
   font-size: 1rem;
   outline: none;
 }
+ 
+/* Contenedor para el campo de contraseña y el icono */
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container .form-input {
+  width: 100%;
+  padding-right: 40px; /* espacio para el icono */
+}
+
+.visibility-icon {
+  position: absolute;
+  top: 2vh;
+  right: 10px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.visibility-icon:hover {
+  color: #1a73e8; /* azul agradable */
+}
 
 .form-input::placeholder {
   color: #323537;

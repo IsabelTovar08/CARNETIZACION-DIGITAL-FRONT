@@ -51,4 +51,30 @@ export class VerificationCredencials {
     );
   }
 
+  /** Envía el correo de recuperación */
+  public forgotPassword(email: string): Observable<ApiResponse<object>> {
+    return this.http.post<ApiResponse<object>>(
+      `${this.urlBase}/auth/forgot-password`,
+      { email },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  /** Cambia la contraseña a una nueva */
+  public resetPassword(email: string, token: string, newPassword: string): Observable<ApiResponse<object>> {
+    return this.http.post<ApiResponse<object>>(
+      `${this.urlBase}/auth/reset-password`,
+      { email, token, newPassword },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  /** Reenvía el código de verificación */
+  public resendCode(userId: number): Observable<ApiResponse<object>> {
+    return this.http.post<ApiResponse<object>>(
+      `${this.urlBase}/auth/resend-code`,
+      { userId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

@@ -130,6 +130,7 @@
   gap: 8px;
 }
 
+ /* Estilos personalizados para SweetAlert2 */
 .swal-custom-popup {
   border-radius: 1rem !important;
   font-family: inherit !important;
@@ -418,6 +419,8 @@
   color: #dc2626 !important;
 }
 
+/* Botón de cambiar contraseña */
+
 .password-btn {
   display: flex;
   align-items: center;
@@ -434,7 +437,7 @@
   height: 20px;
   width: 20px;
 }
-
+ 
 .password-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -450,6 +453,7 @@
   z-index: 20000 !important;
   pointer-events: auto !important;
 }
+
 
 /* 🔧 Evitar que el mat-card o stepper lo tape */
 :host ::ng-deep .mat-card,

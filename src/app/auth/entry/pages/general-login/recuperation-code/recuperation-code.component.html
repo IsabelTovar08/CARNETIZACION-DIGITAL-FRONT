@@ -15,14 +15,12 @@
         </div>
 
         <p class="instruction">
-          Digite los 5 dígitos que se enviaron al correo, para continuar con la recuperación de su contraseña
-          <strong>"examplegmail.com"</strong>:
+          Revisa tu correo electrónico para verificar tu cuenta.
+          <strong>{{ email }}</strong>
         </p>
-
-       
-
-       
-        <button class="resend-btn" (click)="reenviarCodigo()">Reenviar</button>
+        <!-- <button class="resend-btn" (click)="reenviarCodigo()" [disabled]="cooldown > 0">
+          {{ cooldown > 0 ? 'Reenviar (' + cooldown + 's)' : 'Reenviar' }}
+        </button> -->
       </div>
     </div>
   </div>
