@@ -97,6 +97,8 @@ export class FormPErsonComponent {
       cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]]
     });
 
+    
+    // Formulario para crear usuario (solo en modo creación)
     this.userForm = this.formBuilder.group({
       personId: [''],
       username: ['', [Validators.minLength(3)]],
@@ -159,6 +161,7 @@ export class FormPErsonComponent {
     });
   }
 
+  // Rellenar formularios con datos existentes
   private patchFormValues(person: PersonList): void {
     this.personalInfoForm.patchValue({
       id: person.id,
@@ -182,15 +185,14 @@ export class FormPErsonComponent {
   }
 
   abrirModal() {
-     console.log('🟢 Abriendo modal...');
     this.isModalOpen = true;
   }
 
   cerrarModal() {
-     console.log('🔴 Cerrando modal...');
     this.isModalOpen = false;
   }
 
+  //validación en el modal
   onValidacionExitosa(password: string) {
     this.verificationService.verifyPassword(password).subscribe({
       next: (res) => {
@@ -290,9 +292,11 @@ export class FormPErsonComponent {
 
   // Verificar si todo el formulario es válido
   isFormValid(): boolean {
+    // 
     if (this.isEditMode) {
       return this.personalInfoForm.valid && this.documentForm.valid && this.contactForm.valid;
     }
+    //
     return this.personalInfoForm.valid && this.documentForm.valid && this.contactForm.valid && this.userForm.valid;
   }
 
@@ -334,13 +338,13 @@ export class FormPErsonComponent {
     const formData = this.getFormData();
 
     if (this.isEditMode) {
-      // 🔁 Actualiza perfil
+      // Actualiza perfil
       this.verificationService.updateProfile(formData).subscribe({
         next: () => Swal.fire('Actualizado', 'Tu información fue actualizada exitosamente', 'success'),
         error: () => Swal.fire('Error', 'No se pudo actualizar la información', 'error')
       });
     } else {
-      // 🆕 Crea nueva persona + usuario
+      // Crea nueva persona + usuario
       const personRegister: PersonRegistrer = {
         person: formData,
         user: this.getDataUser()
@@ -351,26 +355,6 @@ export class FormPErsonComponent {
       });
     }
   }
-
-  // Marcar todos los campos como tocados para mostrar errores
-  private markAllFieldsAsTouched(): void {
-    Object.keys(this.personalInfoForm.controls).forEach(key => {
-      this.personalInfoForm.get(key)?.markAsTouched();
-    });
-
-    Object.keys(this.documentForm.controls).forEach(key => {
-      this.documentForm.get(key)?.markAsTouched();
-    });
-
-    Object.keys(this.contactForm.controls).forEach(key => {
-      this.contactForm.get(key)?.markAsTouched();
-    });
-
-    Object.keys(this.userForm.controls).forEach(key => {
-      this.userForm.get(key)?.markAsTouched();
-    });
-  }
-
   // Método para limpiar todos los formularios
   resetAllForms(): void {
     this.personalInfoForm.reset();
@@ -389,14 +373,5 @@ export class FormPErsonComponent {
     });
   }
 
-  // Métodos opcionales para mostrar mensajes (puedes usar Angular Material Snackbar)
-  private showSuccessMessage(): void {
-    // Implementar con MatSnackBar o tu sistema de notificaciones preferido
-    console.log('Mostrar mensaje de éxito');
-  }
-
-  private showErrorMessage(): void {
-    // Implementar con MatSnackBar o tu sistema de notificaciones preferido
-    console.log('Mostrar mensaje de error');
-  }
+  
 }

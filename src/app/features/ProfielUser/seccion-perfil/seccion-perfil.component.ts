@@ -8,14 +8,24 @@ import { VerificationCredencials } from '../../../core/Services/token/verificati
 import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
 import { UserMeDto } from '../../../core/Models/security/user-me.models';
 import { ApiResponse } from '../../../core/Models/api-response.models';
-import { PersonCreate } from '../../../core/Models/security/person.models';
+import { PersonCreate, PersonRegistrer } from '../../../core/Models/security/person.models';
 import { ApiService } from '../../../core/Services/api/api.service';
+import { MatInputModule } from "@angular/material/input";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { CityCreate, Deparment } from '../../../core/Models/parameter/ubication.models';
+import { ListService } from '../../../core/Services/shared/list.service';
+import { UbicationService } from '../../../core/Services/api/ubication/ubication.service';
+import { CustomTypeSpecific } from '../../../core/Models/parameter/custom-type.models';
+import { MatDialog } from '@angular/material/dialog';
+import { PersonService } from '../../../core/Services/api/person/person.service';
+import Swal from 'sweetalert2';
+import { UserCreate } from '../../../core/Models/security/user.models';
 
 
 @Component({
   selector: 'app-seccion-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent, MatInputModule, MatAutocompleteModule],
   templateUrl: './seccion-perfil.component.html',
   styleUrls: ['./seccion-perfil.component.css']
 })
@@ -30,22 +40,34 @@ export class SeccionPerfilComponent implements OnInit {
   meData?: UserMeDto;
   perfilForm: FormGroup;
 
+  documentTypes: CustomTypeSpecific[] = [];
+  bloodTypes: CustomTypeSpecific[] = [];
+  cities: CityCreate[] = [];
+  deparments: Deparment[] = [];
+
   constructor(
+    private formBuilder: FormBuilder,
     private snackbarService: SnackbarService,
+    private listService: ListService,
+    private ubicationService: UbicationService,
+    private dialog: MatDialog,
+    private personService: PersonService,
   ) {
 
     this.perfilForm = this.fb.group({
-      firstName: ['', Validators.required],
+      id: [''],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
       middleName: [''],
-      lastName: ['', Validators.required],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
       secondLastName: [''],
-      documentTypeId: [null, Validators.required],
-      documentNumber: ['', Validators.required],
-      bloodTypeId: [null],
-      phone: ['', [Validators.pattern(/^\+?[\d\s-()]+$/)]], 
+      documentTypeId: [0, [Validators.required, Validators.min(1)]],
+      documentNumber: ['', [Validators.required, Validators.minLength(6)]],
+      bloodTypeId: [0, [Validators.required, Validators.min(1)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]+$/)]],
       email: ['', [Validators.required, Validators.email]],
-      address: [''],
-      cityId: [null, Validators.required]
+      address: ['', Validators.minLength(5)],
+      deparmentId: [null, Validators.required],
+      cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]]
     });
 
     // al inicio el form queda bloqueado
@@ -53,59 +75,117 @@ export class SeccionPerfilComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cargarDatosUsuario();
-  }
+    this.getData();
 
-  cargarDatosUsuario(): void {
-    this.userService.getProfile().subscribe({
-      next: (res) => {
-        if (res.success && res.data) {
-          // 👇 Aquí cargas el form directamente
-          this.perfilForm.patchValue(res.data);
-        }
-      },
-      error: (err) => {
-        console.error('Error al cargar usuario', err);
-        this.snackbarService.showError('No se pudieron cargar los datos del usuario.');
+    // cambio dinámico de departamentos
+    this.perfilForm.get('deparmentId')?.valueChanges.subscribe(departmentId => {
+      if (departmentId) {
+        this.getCitie(departmentId);
+        this.perfilForm.get('cityId')?.enable();
+      } else {
+        this.cities = [];
+        this.perfilForm.get('cityId')?.disable();
       }
     });
   }
 
+  getData() {
+    this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
+    this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
+    this.listService.getdeparments().subscribe(data => this.deparments = data);
+  }
 
-  onSubmit() {
-    if (this.perfilForm.valid) {
-      const updatedData = this.perfilForm.value;
+  get isCityDisabled(): boolean {
+    return this.perfilForm?.get('cityId')?.disabled ?? true;
+  }
 
-      this.userService.updateProfile(updatedData).subscribe({
-        next: (res) => {
-          if (res.success && res.data) {
-            this.snackbarService.showSuccess('Perfil actualizado exitosamente');
-            // recargas el form con lo que viene del backend 
-            this.perfilForm.patchValue(res.data);
-            this.isEditable = false;
-            this.perfilForm.disable();
-          } else {
-            this.snackbarService.showError(res.message || 'Error al actualizar perfil');
-          }
-        },
-        error: (err) => {
-          console.error('Error al actualizar perfil', err);
-          this.snackbarService.showError('Hubo un problema al actualizar el perfil');
-        }
-      });
-    } else {
-      this.snackbarService.showError('Formulario inválido, revisa los campos');
-      this.markAllFieldsAsTouched();
+  get getEmail() {
+    return this.perfilForm?.get('email')?.value;
+  }
+
+  getCitie(id: number) {
+    this.ubicationService.GetCytiesByDeparment(id).subscribe((res: any) => {
+      // si viene con data.data → úsalo, si no, usa el arreglo directo
+      this.cities = Array.isArray(res.data) ? res.data : res;
+    });
+  }
+
+  // Métodos para obtener nombres de los selectores
+  getDocumentTypeName(): string {
+    const docTypeId = this.perfilForm.get('documentTypeId')?.value;
+    const docType = this.documentTypes.find(dt => dt.id === docTypeId);
+    return docType ? docType.name : '';
+  }
+
+  getBloodTypeName(): string {
+    const bloodTypeId = this.perfilForm.get('bloodTypeId')?.value;
+    const bloodType = this.bloodTypes.find(bt => bt.id === bloodTypeId);
+    return bloodType ? bloodType.name : '';
+  }
+
+  getCityName(): string {
+    const cityId = this.perfilForm.get('cityId')?.value;
+    const city = this.cities.find(c => c.id === cityId);
+    return city ? city.name : '';
+  }
+
+  getFullName(): string {
+    const firstName = this.perfilForm.get('firstName')?.value || '';
+    const middleName = this.perfilForm.get('middleName')?.value || '';
+    const lastName = this.perfilForm.get('lastName')?.value || '';
+    const secondLastName = this.perfilForm.get('secondLastName')?.value || '';
+
+    return `${firstName} ${middleName} ${lastName} ${secondLastName}`.replace(/\s+/g, ' ').trim();
+  }
+
+  // Verificar si todo el formulario es válido
+  isFormValid(): boolean {
+    return this.perfilForm.valid && this.perfilForm.valid && this.perfilForm.valid && this.perfilForm.valid;
+  }
+  // Recopilar datos del formulario
+  getFormData(): PersonCreate {
+    return {
+      id: this.perfilForm.get('id')?.value || 0,
+      firstName: this.perfilForm.get('firstName')?.value || '',
+      middleName: this.perfilForm.get('middleName')?.value || '',
+      lastName: this.perfilForm.get('lastName')?.value || '',
+      secondLastName: this.perfilForm.get('secondLastName')?.value || '',
+      documentTypeId: this.perfilForm.get('documentTypeId')?.value || 0,
+      documentNumber: this.perfilForm.get('documentNumber')?.value || '',
+      bloodTypeId: this.perfilForm.get('bloodTypeId')?.value || 0,
+      phone: this.perfilForm.get('phone')?.value || '',
+      email: this.perfilForm.get('email')?.value || '',
+      address: this.perfilForm.get('address')?.value || '',
+      cityId: this.perfilForm.get('cityId')?.value || 0
+    };
+  }
+
+  // Recopilar datos del usuario
+  getDataUser(): UserCreate {
+    return {
+      userName: this.perfilForm.get('username')?.value || "null",
+      password: this.perfilForm.get('password')?.value || '',
+      personId: this.perfilForm.get('id')?.value || 1
     }
   }
 
-  abrirModal() {
-    this.isModalOpen = true;
-  }
-
-  cerrarModal() {
-    this.isModalOpen = false;
-  }
+  // Método para enviar el formulario
+    submitForm(): void {
+      if (!this.isFormValid()) {
+        Swal.fire('Formulario inválido', 'Complete los campos requeridos', 'warning');
+        return;
+      }
+  const formData = this.getFormData();
+        
+        const personRegister: PersonRegistrer = {
+          person: formData,
+          user: this.getDataUser()
+        };
+        this.personService.SavePersonWithUser(personRegister).subscribe({
+          next: () => Swal.fire('Éxito', 'Persona creada correctamente', 'success'),
+          error: () => Swal.fire('Error', 'No se pudo crear la persona', 'error')
+        });
+    }
 
   onValidacionExitosa(password: string) {
     this.userService.verifyPassword(password).subscribe({
@@ -144,8 +224,6 @@ export class SeccionPerfilComponent implements OnInit {
   }
 
   resetForm() {
-    this.cargarDatosUsuario(); //llama al servicio de nuevo
-    this.isEditable = false;
     this.perfilForm.disable();
   }
 }

@@ -2,24 +2,18 @@
 
   <!-- Header fijo -->
   <mat-card-header>
-    <img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'" alt="Perfil" class="perfil-img">
+ 
     <mat-card-title>
       Información Personal
       <!-- Botón editar solo aparece si requiere validación y no está en modo edición -->
-      <button *ngIf="showEditButton()" 
-              mat-icon-button 
-              class="edit-button" 
-              (click)="onEdit()"
-              title="Editar información">
-        <mat-icon>edit</mat-icon>
-      </button>
+      
     </mat-card-title>
     <mat-card-subtitle>Gestiona tu información personal</mat-card-subtitle>
   </mat-card-header>
 
   <!-- Contenido con scroll -->
   <mat-card-content class="scroll-content">
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-grid" [class.disabled-form]="!isEditable">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-grid" >
 
       <!-- Sección: Datos personales -->
       <h3 class="section-title">Datos personales</h3>
@@ -87,10 +81,6 @@
           <mat-label>Email</mat-label>
           <input matInput formControlName="email">
         </mat-form-field>
-
-        <button mat-stroked-button color="primary" type="button" (click)="onChangePassword()">
-          🔑 Actualizar contraseña
-        </button>
       </div>
 
       <!-- Mensaje informativo -->
@@ -138,12 +128,3 @@
   </mat-card-actions>
 
 </mat-card>
-
-<!-- Modal para validación de credenciales (solo aparece si requirePasswordValidation = true) -->
-<app-generic-credincials 
-  *ngIf="isModalOpen && requirePasswordValidation" 
-  [isOpen]="isModalOpen" 
-  [userEmail]="profileForm.get('email')?.value || ''"
-  (closeModal)="cerrarModal()" 
-  (validationSuccess)="onValidacionExitosa($event)">
-</app-generic-credincials>

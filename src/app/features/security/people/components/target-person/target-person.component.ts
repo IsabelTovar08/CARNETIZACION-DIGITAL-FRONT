@@ -1,5 +1,5 @@
 import { ApiService } from './../../../../../core/Services/api/api.service';
-import { Component, Inject, Input, Optional, Signal } from '@angular/core';
+import { Component, Inject, Input, Optional, Signal, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from "@angular/material/card";
 import { MatInputModule } from "@angular/material/input";
@@ -43,11 +43,12 @@ import { UserStoreService } from '../../../../../core/Services/auth/user-store.s
   styleUrl: './target-person.component.css'
 })
 export class TargetPersonComponent {
-
-  
-
+  // Input para recibir datos de la empresa si es necesario
+  @Input() companyData: any;
   // Input para controlar si requiere validación de contraseña
   @Input() requirePasswordValidation = false;
+
+  @Output() formSubmitted = new EventEmitter<any>();
 
   profileForm!: FormGroup;
   documentTypes: CustomTypeSpecific[] = [];
@@ -190,10 +191,14 @@ export class TargetPersonComponent {
   onSubmit() {
     if (this.profileForm.valid) {
       console.log('Datos enviados:', this.profileForm.value);
+
+      // Emitir el evento con los datos del formulario
+      this.formSubmitted.emit(this.profileForm.value);
+
       this.apiServicePerson.update('Person', this.profileForm.value).subscribe((data) => {
         console.log(data);
         this.snackbarService.showSuccess('Persona actualizada con éxito');
-        
+
         // Si requiere validación, desactivar edición después de guardar
         if (this.requirePasswordValidation) {
           this.originalFormData = this.profileForm.value;
