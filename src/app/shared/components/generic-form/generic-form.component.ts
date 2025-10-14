@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from "@angular/material/divider";
 import { ActionButtonsComponent } from "../action-buttons/action-buttons.component";
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-generic-form',
@@ -20,6 +21,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatDividerModule,
     ActionButtonsComponent,
     MatCheckboxModule
+
   ],
   templateUrl: './generic-form.component.html',
   styleUrl: './generic-form.component.css'
@@ -34,6 +36,7 @@ export class GenericFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<GenericFormComponent>,
+    private snackbarService: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) { }
 
@@ -86,11 +89,13 @@ export class GenericFormComponent implements OnInit {
     this.extras.removeAt(index);
   }
 
-  save() {
-    if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
-    }
+ save() {
+  if (this.form.valid) {
+    this.dialogRef.close(this.form.value); 
+  } else {
+    this.snackbarService.showError('Completa los campos obligatorios');
   }
+}
 
   cancel() {
     this.dialogRef.close(null);

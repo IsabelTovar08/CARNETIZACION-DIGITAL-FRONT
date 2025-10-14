@@ -2,26 +2,21 @@
   <div class="form-card">
     <div class="perfil-Title">
       <h2>Mi Perfil</h2>
-      <button class="edit" (click)="abrirModal()">
-        <mat-icon>edit</mat-icon>
-        <span>Editar</span>
-      </button>
     </div>
 
     <p class="form-description">Actualiza tu información personal</p>
 
-    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()" [class.disabled-form]="!isEditable">
+    <form [formGroup]="perfilForm" >
 
       <!-- Nombres -->
       <div class="form-row">
         <div class="form-group">
           <label for="firstName">Primer Nombre *</label>
-          <input id="firstName" type="text" formControlName="firstName"
-            placeholder="Ingresa tu nombre" />
+          <input id="firstName" type="text" formControlName="firstName" placeholder="Ingresa tu nombre" />
         </div>
 
         <div class="form-group">
-          <label for="middleName">Segundo Nombre</label>
+          <label for="middleName">Segundo Nombre (Opcional)</label>
           <input id="middleName" type="text" formControlName="middleName"
             placeholder="Ingresa tu segundo nombre (opcional)" />
         </div>
@@ -31,8 +26,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="lastName">Primer Apellido *</label>
-          <input id="lastName" type="text" formControlName="lastName"
-            placeholder="Ingresa tu primer apellido" />
+          <input id="lastName" type="text" formControlName="lastName" placeholder="Ingresa tu primer apellido" />
         </div>
 
         <div class="form-group">
@@ -43,42 +37,52 @@
       </div>
 
       <!-- Documento -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="documentTypeId">Tipo Documento *</label>
-          <select id="documentTypeId" formControlName="documentTypeId">
-            <option [value]="1">Cédula de Ciudadanía</option>
-            <option [value]="2">Cédula de Extranjería</option>
-            <option [value]="3">Pasaporte</option>
-          </select>
-        </div>
+      <div class="step-content">
+              <h3 class="step-title">Información de Identificación</h3>
 
-        <div class="form-group">
-          <label for="documentNumber">Número Documento *</label>
-          <input id="documentNumber" type="text" formControlName="documentNumber"
-            placeholder="Ingresa tu documento" />
-        </div>
-      </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Tipo de Documento</mat-label>
+                  <mat-select formControlName="documentTypeId" required>
+                    <mat-option *ngFor="let docType of documentTypes" [value]="docType.id">
+                      {{docType.name}} - {{docType.description}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>badge</mat-icon>
+                  <mat-error *ngIf="perfilForm.get('documentTypeId')?.hasError('required')">
+                    Seleccione un tipo de documento
+                  </mat-error>
+                </mat-form-field>
 
-      <!-- Tipo de sangre -->
-      <div class="form-group">
-        <label for="bloodTypeId">Tipo de Sangre</label>
-        <select id="bloodTypeId" formControlName="bloodTypeId">
-          <option [value]="1">A+</option>
-          <option [value]="2">A-</option>
-          <option [value]="3">B+</option>
-          <option [value]="4">B-</option>
-          <option [value]="5">O+</option>
-          <option [value]="6">O-</option>
-          <option [value]="7">AB+</option>
-          <option [value]="8">AB-</option>
-        </select>
-      </div>
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Número de Identificación</mat-label>
+                  <input matInput placeholder="Número de documento" formControlName="documentNumber" required>
+                  <mat-error *ngIf="perfilForm.get('documentNumber')?.hasError('required')">
+                    El número de identificación es requerido
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Tipo de Sangre</mat-label>
+                  <mat-select formControlName="bloodTypeId" required>
+                    <mat-option *ngFor="let bloodType of bloodTypes" [value]="bloodType.id">
+                      {{bloodType.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>bloodtype</mat-icon>
+                  <mat-error *ngIf="perfilForm.get('bloodTypeId')?.hasError('required')">
+                    Seleccione un tipo de sangre
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
 
       <!-- Contacto -->
       <div class="form-row">
         <div class="form-group">
-          <label for="email">Correo Electrónico *</label>
+          <label for="email">Correo Electrónico Personal*</label>
           <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" />
         </div>
 
@@ -95,14 +99,30 @@
       </div>
 
       <!-- Ciudad -->
-      <div class="form-group">
-        <label for="cityId">Ciudad *</label>
-        <select id="cityId" formControlName="cityId">
-          <option [value]="1">Bogotá</option>
-          <option [value]="2">Medellín</option>
-          <option [value]="3">Cali</option>
-          <!-- Estas opciones idealmente vienen de tu API -->
-        </select>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Departamento</mat-label>
+          <mat-select formControlName="deparmentId" required>
+            <mat-option *ngFor="let deparment of deparments" [value]="deparment.id">
+              {{deparment.name}}
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>location_deparment</mat-icon>
+          <mat-error *ngIf="perfilForm.get('deparmentId')?.hasError('required')">
+            Seleccione un deparmento
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ciudad</mat-label>
+          <mat-select formControlName="cityId" required>
+            <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
+          </mat-select>
+          <mat-icon matSuffix>location_city</mat-icon>
+          <mat-error *ngIf="perfilForm.get('cityId')?.hasError('required')">
+            Seleccione una ciudad
+          </mat-error>
+        </mat-form-field>
+
       </div>
 
       <!-- Botones -->
@@ -116,12 +136,3 @@
   </div>
 </div>
 
-
-<!-- Modal para validación de credenciales -->
-<app-generic-credincials 
-  *ngIf="isModalOpen" 
-  [isOpen]="isModalOpen" 
-  [userEmail]="meData?.email || ''"
-  (closeModal)="cerrarModal()" 
-  (validationSuccess)="onValidacionExitosa($event)">
-</app-generic-credincials>

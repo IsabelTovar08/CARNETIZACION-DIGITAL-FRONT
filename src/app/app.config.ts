@@ -6,9 +6,11 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from './core/interceptors/token.interceptor';
 import { AuthBootstrap } from './core/auth/auth.bootstrap';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

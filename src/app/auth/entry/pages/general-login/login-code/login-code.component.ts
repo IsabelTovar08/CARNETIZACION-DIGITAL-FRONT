@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { RequestCode } from '../../../../../core/Models/auth.models';
 import { MenuCreateService } from '../../../../../core/Services/shared/menu-create.service';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
+import { VerificationCredencials } from '../../../../../core/Services/token/verificationCredencials';
 
 
 @Component({
@@ -16,6 +18,9 @@ import { MenuCreateService } from '../../../../../core/Services/shared/menu-crea
   styleUrl: './login-code.component.css'
 })
 export class LoginCodeComponent implements OnInit {
+
+  cooldown: number = 0;
+  private cooldownTimer: any;
   codeInputs = signal([
     { value: '' },
     { value: '' },
@@ -29,6 +34,8 @@ export class LoginCodeComponent implements OnInit {
   constructor(private router: Router,
     private authService: AuthService,
     private menu: MenuCreateService,
+    private snackbarService: SnackbarService,
+    private verificartion: VerificationCredencials
 
   ) {
     // Effect para monitorear cambios en el código completo
@@ -158,14 +165,6 @@ export class LoginCodeComponent implements OnInit {
       });
     }
   }
-
-  reenviarCodigo() {
-    Swal.fire("Reenvio exitoso! prueba el nuevo codigo");
-  }
-
-
-
-
   onResend(): void {
     // Limpiar todos los inputs
     this.codeInputs.set([
@@ -184,5 +183,47 @@ export class LoginCodeComponent implements OnInit {
       const firstInput = document.querySelector('.code-digit') as HTMLInputElement;
       if (firstInput) firstInput.focus();
     }, 100);
+  }
+
+  reenviarCodigo(): void {
+    const userId = Number(this.authService.getPendingUserId());
+
+    if (!userId) {
+      this.snackbarService.showError('No se encontró el usuario para reenviar el código.');
+      return;
+    }
+
+    // Evitar reenvíos rápidos
+    if (this.cooldown > 0) {
+      this.snackbarService.showWarning(`Espera ${this.cooldown}s antes de reenviar nuevamente.`);
+      return;
+    }
+
+    this.verificartion.resendCode(userId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.snackbarService.showSuccess('Código reenviado correctamente.');
+
+          // activar cooldown de 60 segundos
+          this.cooldown = 60;
+          this.cooldownTimer = setInterval(() => {
+            this.cooldown--;
+            if (this.cooldown <= 0) clearInterval(this.cooldownTimer);
+          }, 1000);
+        } else {
+          this.snackbarService.showWarning(response.message || 'No se pudo reenviar el código.');
+        }
+      },
+      error: (err) => {
+        // Respuesta del backend con 429 TooManyRequests (máximo alcanzado)
+        if (err.status === 429) {
+          this.snackbarService.showWarning(
+            err.error?.message || 'Has alcanzado el máximo de 5 reenvíos por hora. Intenta más tarde.'
+          );
+        } else {
+          this.snackbarService.showError('Error al reenviar el código. Intenta nuevamente.');
+        }
+      }
+    });
   }
 }

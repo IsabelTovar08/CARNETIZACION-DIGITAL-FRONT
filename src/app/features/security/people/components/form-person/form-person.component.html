@@ -2,20 +2,33 @@
   <mat-card class="stepper-card">
     <mat-card-header>
       <mat-card-title>
-        <mat-icon>person_add</mat-icon>
-        Registro de Persona
+        <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+        {{ isEditMode ? 'Editar mi información' : 'Registro de Persona' }}
       </mat-card-title>
-      <mat-card-subtitle>Complete todos los pasos para registrar una nueva
-        persona</mat-card-subtitle>
+      <mat-card-subtitle>
+        {{ isEditMode ? 'Actualiza tus datos personales registrados en el sistema.' :
+        'Complete todos los pasos para registrar una nueva persona.' }}
+      </mat-card-subtitle>
+
+
     </mat-card-header>
 
+    <div *ngIf="isEditMode && isEditableBlocked" class="lock-overlay">
+      <p>🔒 Debes verificar tu contraseña para editar tus datos.</p>
+      <button mat-raised-button color="primary" (click)="abrirModal()">
+        Verificar contraseña
+      </button>
+    </div>
+    <mat-card-actions *ngIf="isEditMode && !isEditableBlocked">
+      <button mat-raised-button color="primary" (click)="onChangePassword()" class="password-btn">
+        <mat-icon>vpn_key</mat-icon>
+        Cambiar Contraseña
+      </button>
+    </mat-card-actions>
     <mat-card-content>
-      <mat-stepper [linear]="isLinear" #stepper orientation="horizontal"
-        class="custom-stepper">
-
+      <mat-stepper [linear]="isLinear" #stepper orientation="horizontal" class="custom-stepper">
         <!-- Paso 1: Información Personal Básica -->
-        <mat-step [stepControl]="personalInfoForm"
-          errorMessage="Complete la información personal">
+        <mat-step [stepControl]="personalInfoForm" errorMessage="Complete la información personal">
           <form [formGroup]="personalInfoForm">
             <ng-template matStepLabel>Información Personal</ng-template>
 
@@ -23,31 +36,29 @@
               <h3 class="step-title">Datos Personales</h3>
 
               <div class="form-row">
+
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Primer Nombre</mat-label>
-                  <input matInput placeholder="Ingrese su primer nombre"
-                    formControlName="firstName" required>
+                  <input matInput placeholder="Ingrese su primer nombre" formControlName="firstName" required>
                   <mat-icon matSuffix>person</mat-icon>
-                  <mat-error
-                    *ngIf="personalInfoForm.get('firstName')?.hasError('required')">
+                  <mat-error *ngIf="personalInfoForm.get('firstName')?.hasError('required')">
                     El primer nombre es requerido
                   </mat-error>
                 </mat-form-field>
               </div>
 
+
               <div class="form-row">
+
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Segundo Nombre</mat-label>
-                  <input matInput placeholder="Segundo nombre (opcional)"
-                    formControlName="middleName">
+                  <input matInput placeholder="Segundo nombre (opcional)" formControlName="middleName">
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Primer Apellido</mat-label>
-                  <input matInput placeholder="Primer apellido"
-                    formControlName="lastName" required>
-                  <mat-error
-                    *ngIf="personalInfoForm.get('lastName')?.hasError('required')">
+                  <input matInput placeholder="Primer apellido" formControlName="lastName" required>
+                  <mat-error *ngIf="personalInfoForm.get('lastName')?.hasError('required')">
                     El apellido es requerido
                   </mat-error>
                 </mat-form-field>
@@ -56,15 +67,13 @@
               <div class="form-row">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Segundo Apellido</mat-label>
-                  <input matInput placeholder="Segundo apellido (opcional)"
-                    formControlName="secondLastName">
+                  <input matInput placeholder="Segundo apellido (opcional)" formControlName="secondLastName">
                 </mat-form-field>
               </div>
             </div>
 
             <div class="step-actions">
-              <button mat-raised-button color="primary" matStepperNext
-                [disabled]="!personalInfoForm.valid">
+              <button mat-raised-button color="primary" matStepperNext [disabled]="!personalInfoForm.valid">
                 <mat-icon>navigate_next</mat-icon>
                 Siguiente
               </button>
@@ -73,8 +82,7 @@
         </mat-step>
 
         <!-- Paso 2: Documentación -->
-        <mat-step [stepControl]="documentForm"
-          errorMessage="Complete la información de documentación">
+        <mat-step [stepControl]="documentForm" errorMessage="Complete la información de documentación">
           <form [formGroup]="documentForm">
             <ng-template matStepLabel>Documentación</ng-template>
 
@@ -85,24 +93,20 @@
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Tipo de Documento</mat-label>
                   <mat-select formControlName="documentTypeId" required>
-                    <mat-option *ngFor="let docType of documentTypes"
-                      [value]="docType.id">
+                    <mat-option *ngFor="let docType of documentTypes" [value]="docType.id">
                       {{docType.name}} - {{docType.description}}
                     </mat-option>
                   </mat-select>
                   <mat-icon matSuffix>badge</mat-icon>
-                  <mat-error
-                    *ngIf="documentForm.get('documentTypeId')?.hasError('required')">
+                  <mat-error *ngIf="documentForm.get('documentTypeId')?.hasError('required')">
                     Seleccione un tipo de documento
                   </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Número de Identificación</mat-label>
-                  <input matInput placeholder="Número de documento"
-                    formControlName="documentNumber" required>
-                  <mat-error
-                    *ngIf="documentForm.get('documentNumber')?.hasError('required')">
+                  <input matInput placeholder="Número de documento" formControlName="documentNumber" required>
+                  <mat-error *ngIf="documentForm.get('documentNumber')?.hasError('required')">
                     El número de identificación es requerido
                   </mat-error>
                 </mat-form-field>
@@ -112,14 +116,12 @@
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Tipo de Sangre</mat-label>
                   <mat-select formControlName="bloodTypeId" required>
-                    <mat-option *ngFor="let bloodType of bloodTypes"
-                      [value]="bloodType.id">
+                    <mat-option *ngFor="let bloodType of bloodTypes" [value]="bloodType.id">
                       {{bloodType.name}}
                     </mat-option>
                   </mat-select>
                   <mat-icon matSuffix>bloodtype</mat-icon>
-                  <mat-error
-                    *ngIf="documentForm.get('bloodTypeId')?.hasError('required')">
+                  <mat-error *ngIf="documentForm.get('bloodTypeId')?.hasError('required')">
                     Seleccione un tipo de sangre
                   </mat-error>
                 </mat-form-field>
@@ -131,8 +133,7 @@
                 <mat-icon>navigate_before</mat-icon>
                 Anterior
               </button>
-              <button mat-raised-button color="primary" matStepperNext
-                [disabled]="!documentForm.valid">
+              <button mat-raised-button color="primary" matStepperNext [disabled]="!documentForm.valid">
                 <mat-icon>navigate_next</mat-icon>
                 Siguiente
               </button>
@@ -141,8 +142,7 @@
         </mat-step>
 
         <!-- Paso 3: Información de Contacto -->
-        <mat-step [stepControl]="contactForm"
-          errorMessage="Complete la información de contacto">
+        <mat-step [stepControl]="contactForm" errorMessage="Complete la información de contacto">
           <form [formGroup]="contactForm">
             <ng-template matStepLabel>Información de Contacto</ng-template>
 
@@ -152,30 +152,24 @@
               <div class="form-row">
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Teléfono</mat-label>
-                  <input matInput placeholder="Número de teléfono"
-                    formControlName="phone" required>
+                  <input matInput placeholder="Número de teléfono" formControlName="phone" required>
                   <mat-icon matSuffix>phone</mat-icon>
-                  <mat-error
-                    *ngIf="contactForm.get('phone')?.hasError('required')">
+                  <mat-error *ngIf="contactForm.get('phone')?.hasError('required')">
                     El teléfono es requerido
                   </mat-error>
-                  <mat-error
-                    *ngIf="contactForm.get('phone')?.hasError('pattern')">
+                  <mat-error *ngIf="contactForm.get('phone')?.hasError('pattern')">
                     Formato de teléfono inválido
                   </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Correo Electrónico</mat-label>
-                  <input matInput placeholder="correo@ejemplo.com"
-                    formControlName="email" required>
+                  <input matInput placeholder="correo@ejemplo.com" formControlName="email" required>
                   <mat-icon matSuffix>email</mat-icon>
-                  <mat-error
-                    *ngIf="contactForm.get('email')?.hasError('required')">
+                  <mat-error *ngIf="contactForm.get('email')?.hasError('required')">
                     El correo electrónico es requerido
                   </mat-error>
-                  <mat-error
-                    *ngIf="contactForm.get('email')?.hasError('email')">
+                  <mat-error *ngIf="contactForm.get('email')?.hasError('email')">
                     Formato de correo inválido
                   </mat-error>
                 </mat-form-field>
@@ -184,8 +178,7 @@
               <div class="form-row">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Dirección</mat-label>
-                  <textarea matInput placeholder="Dirección completa"
-                    formControlName="address" rows="3"></textarea>
+                  <textarea matInput placeholder="Dirección completa" formControlName="address" rows="3"></textarea>
                   <mat-icon matSuffix>home</mat-icon>
                 </mat-form-field>
               </div>
@@ -194,28 +187,22 @@
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Departamento</mat-label>
                   <mat-select formControlName="deparmentId" required>
-                    <mat-option *ngFor="let deparment of deparments"
-                      [value]="deparment.id">
+                    <mat-option *ngFor="let deparment of deparments" [value]="deparment.id">
                       {{deparment.name}}
                     </mat-option>
                   </mat-select>
                   <mat-icon matSuffix>location_deparment</mat-icon>
-                  <mat-error
-                    *ngIf="contactForm.get('deparmentId')?.hasError('required')">
+                  <mat-error *ngIf="contactForm.get('deparmentId')?.hasError('required')">
                     Seleccione un deparmento
                   </mat-error>
                 </mat-form-field>
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Ciudad</mat-label>
-                  <mat-select formControlName="cityId" required
-                    [disabled]="isCityDisabled">
-                    <mat-option *ngFor="let city of cities" [value]="city.id">
-                      {{ city.name }}
-                    </mat-option>
+                  <mat-select formControlName="cityId" required>
+                    <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
                   </mat-select>
                   <mat-icon matSuffix>location_city</mat-icon>
-                  <mat-error
-                    *ngIf="contactForm.get('cityId')?.hasError('required')">
+                  <mat-error *ngIf="contactForm.get('cityId')?.hasError('required')">
                     Seleccione una ciudad
                   </mat-error>
                 </mat-form-field>
@@ -228,8 +215,7 @@
                 <mat-icon>navigate_before</mat-icon>
                 Anterior
               </button>
-              <button mat-raised-button color="primary" matStepperNext
-                [disabled]="!contactForm.valid">
+              <button mat-raised-button color="primary" matStepperNext [disabled]="!contactForm.valid">
                 <mat-icon>navigate_next</mat-icon>
                 Siguiente
               </button>
@@ -238,8 +224,7 @@
         </mat-step>
 
         <!-- Paso 4: Usuario -->
-        <mat-step [stepControl]="userForm"
-          errorMessage="Complete la información de usuario">
+        <mat-step [stepControl]="userForm" errorMessage="Complete la información de usuario">
           <form [formGroup]="userForm">
             <ng-template matStepLabel>Usuario</ng-template>
             <div class="step-content">
@@ -254,13 +239,11 @@
               <div class="form-row">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Nombre de Usuario (Opciona)</mat-label>
-                  <input matInput placeholder="Nombre de usuario único"
-                    formControlName="username">
+                  <input matInput placeholder="Nombre de usuario único" formControlName="username">
                   <mat-icon matSuffix>account_circle</mat-icon>
                   <mat-hint>El nombre de usuario debe ser único en el
                     sistema</mat-hint>
-                  <mat-error
-                    *ngIf="userForm.get('username')?.hasError('minlength')">
+                  <mat-error *ngIf="userForm.get('username')?.hasError('minlength')">
                     Mínimo 3 caracteres
                   </mat-error>
                 </mat-form-field>
@@ -269,40 +252,34 @@
               <div class="form-row">
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Contraseña</mat-label>
-                  <input matInput [type]="hidePassword ? 'password' : 'text'"
-                    formControlName="password" required>
-                  <button mat-icon-button matSuffix
-                    (click)="hidePassword = !hidePassword" type="button">
-                    <mat-icon>{{hidePassword ? 'visibility_off' :
-                      'visibility'}}</mat-icon>
+                  <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+                  <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                   </button>
-                  <mat-error
-                    *ngIf="userForm.get('password')?.hasError('required')">
+                  <mat-error *ngIf="userForm.get('password')?.hasError('required')">
                     La contraseña es requerida
                   </mat-error>
-                  <mat-error
-                    *ngIf="userForm.get('password')?.hasError('minlength')">
+                  <mat-error *ngIf="userForm.get('password')?.hasError('minlength')">
                     Mínimo 6 caracteres
                   </mat-error>
+                  <mat-error *ngIf="userForm.get('password')?.hasError('strongPassword')">
+                    Debe contener: mayúscula, minúscula, número y carácter especial
+                  </mat-error>
+                  <mat-hint>Debe incluir: mayúscula, minúscula, número y carácter especial</mat-hint>
+
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="half-width">
                   <mat-label>Confirmar Contraseña</mat-label>
-                  <input matInput
-                    [type]="hideConfirmPassword ? 'password' : 'text'"
-                    formControlName="confirmPassword" required>
-                  <button mat-icon-button matSuffix
-                    (click)="hideConfirmPassword = !hideConfirmPassword"
-                    type="button">
-                    <mat-icon>{{hideConfirmPassword ? 'visibility_off' :
-                      'visibility'}}</mat-icon>
+                  <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword"
+                    required>
+                  <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+                    <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                   </button>
-                  <mat-error
-                    *ngIf="userForm.get('confirmPassword')?.hasError('required')">
+                  <mat-error *ngIf="userForm.get('confirmPassword')?.hasError('required')">
                     Confirme la contraseña
                   </mat-error>
-                  <mat-error
-                    *ngIf="userForm.get('confirmPassword')?.hasError('passwordMismatch')">
+                  <mat-error *ngIf="userForm.get('confirmPassword')?.hasError('passwordMismatch')">
                     Las contraseñas no coinciden
                   </mat-error>
                 </mat-form-field>
@@ -314,8 +291,7 @@
                 <mat-icon>navigate_before</mat-icon>
                 Anterior
               </button>
-              <button mat-raised-button color="primary" matStepperNext
-                [disabled]="!userForm.valid">
+              <button mat-raised-button color="primary" matStepperNext [disabled]="!userForm.valid">
                 <mat-icon>navigate_next</mat-icon>
                 Siguiente
               </button>
@@ -382,20 +358,30 @@
               <mat-icon>navigate_before</mat-icon>
               Anterior
             </button>
-            <button mat-stroked-button (click)="stepper.reset()"
-              class="reset-btn">
+            <button mat-stroked-button (click)="stepper.reset()" class="reset-btn">
               <mat-icon>refresh</mat-icon>
               Reiniciar
             </button>
-            <button mat-raised-button color="primary" (click)="submitForm()"
-              [disabled]="!isFormValid()">
-              <mat-icon>save</mat-icon>
-              Guardar Persona
+            <button mat-raised-button color="primary" (click)="submitForm()" [disabled]="!isFormValid()">
+              <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+              {{ isEditMode ? 'Actualizar mis datos' : 'Registrar Persona' }}
             </button>
           </div>
         </mat-step>
-
+        <div *ngIf="isEditMode && isEditableBlocked" class="lock-overlay">
+          <p>🔒 Debes verificar tu contraseña para editar tus datos.</p>
+          <button mat-raised-button color="primary" (click)="abrirModal()">
+            Verificar contraseña
+          </button>
+        </div>
       </mat-stepper>
     </mat-card-content>
   </mat-card>
+
+
+  <!-- ✅ Modal para validación de credenciales -->
+  <app-generic-credincials *ngIf="isModalOpen" [isOpen]="isModalOpen"
+    [userEmail]="contactForm.get('email')?.value || ''" (closeModal)="cerrarModal()"
+    (validationSuccess)="onValidacionExitosa($event)">
+  </app-generic-credincials>
 </div>

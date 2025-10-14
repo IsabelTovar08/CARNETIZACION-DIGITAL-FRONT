@@ -1,6 +1,9 @@
 import { GenericModel } from "./generic.model";
 
-export interface ScheduleCreate extends GenericModel {
+export interface ScheduleCreate {
+    id?: number;
+    name: string;
+    description?: string;
     startTime: string;
     endTime: string;
     // organizationId: number;
@@ -10,6 +13,7 @@ export interface ScheduleCreate extends GenericModel {
 export interface ScheduleList extends GenericModel {
     startTime: string;
     endTime: string;
+    days?: string[];
     // organizationId: number;
     // organizationName?: string | null;
 }

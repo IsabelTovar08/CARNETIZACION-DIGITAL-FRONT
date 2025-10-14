@@ -211,139 +211,80 @@
 
     <!-- Sección de Contacto (añade tu contenido aquí) -->
     <!-- contacto.component.html -->
-<section id="contacto" class="section-contact">
-  <mat-card class="contact-card">
-    <div class="contact-header">
-      <h1>Contáctanos</h1>
-      <p>Completa el formulario para que uno de nuestros asesores te contacte.</p>
-    </div>
-    
-    <mat-card-content class="contact-form">
-      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
-        <!-- Primera fila: Nombre del Asesor y Empresa -->
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Nombre del Asesor Interesado *</mat-label>
-            <input matInput 
-                   formControlName="advisorName" 
-                   placeholder="Ej. Juan Pérez"
-                   required>
-            <mat-error *ngIf="contactForm.get('advisorName')?.hasError('required')">
-              Este campo es requerido
-            </mat-error>
-            <mat-error *ngIf="contactForm.get('advisorName')?.hasError('minlength')">
-              Mínimo 2 caracteres
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Nombre de la Empresa *</mat-label>
-            <input matInput 
-                   formControlName="companyName" 
-                   placeholder="Ej. Soluciones Empresariales S.A."
-                   required>
-            <mat-error *ngIf="contactForm.get('companyName')?.hasError('required')">
-              Este campo es requerido
-            </mat-error>
-          </mat-form-field>
-        </div>
+    <section id="contacto" class="section-contact">
+      <mat-stepper [linear]="isLinear" #stepper orientation="horizontal" class="custom-stepper">
+        <!-- Paso 1: Formulario de Contacto de Empresa -->
+        <mat-step>
+          <ng-template matStepLabel>Información de Empresa</ng-template>
+          <div class="step-content">
+            <h3 class="step-title">Datos de Contacto Empresarial</h3>
+            <app-form-contact (formSubmitted)="onCompanySubmitted($event)"></app-form-contact>
+          </div>
+        </mat-step>
 
-        <!-- Segunda fila: Email -->
-        <div class="form-row single">
-          <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Correo Electrónico *</mat-label>
-            <input matInput 
-                   type="email"
-                   formControlName="email" 
-                   placeholder="Ej. contacto@empresa.com"
-                   required>
-            <mat-error *ngIf="contactForm.get('email')?.hasError('required')">
-              Este campo es requerido
-            </mat-error>
-            <mat-error *ngIf="contactForm.get('email')?.hasError('email')">
-              Ingresa un email válido
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Paso 2: Formulario de Persona -->
+        <mat-step>
+          <ng-template matStepLabel>Información Personal</ng-template>
+          <div class="step-content">
+            <h3 class="step-title">Datos Personales</h3>
+            <app-target-person [companyData]="companyData" (formSubmitted)="onPersonSubmitted($event)"></app-target-person>
+          </div>
+        </mat-step>
 
-        <!-- Tercera fila: Teléfono y Cargo -->
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Número Telefónico *</mat-label>
-            <input matInput 
-                   type="tel"
-                   formControlName="phone" 
-                   placeholder="+57 300 123 4567"
-                   required>
-            <mat-error *ngIf="contactForm.get('phone')?.hasError('required')">
-              Este campo es requerido
-            </mat-error>
-            <mat-error *ngIf="contactForm.get('phone')?.hasError('pattern')">
-              Formato de teléfono inválido
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Cargo del Asesor</mat-label>
-            <input matInput 
-                   formControlName="position" 
-                   placeholder="Ej. Gerente de Ventas">
-          </mat-form-field>
-        </div>
+        <!-- Paso 3: Confirmación -->
+        <mat-step>
+          <ng-template matStepLabel>Confirmación</ng-template>
+          <div class="step-content confirmation-step">
+            <div class="success-icon">
+              <mat-icon color="primary">check_circle</mat-icon>
+            </div>
+            <h3 class="step-title">¡Registro Completado!</h3>
+            <p class="confirmation-message">
+              Se ha completado exitosamente el registro de la empresa y la persona.
+              Revise la información a continuación antes de finalizar.
+            </p>
 
-        <!-- Cuarta fila: Cantidad de Carnets
-        <div class="form-row single">
-          <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Cantidad Aproximada de Carnets Requeridos</mat-label>
-            <mat-select formControlName="quantity" placeholder="Seleccionar cantidad">
-              <mat-option value="1-50">1-50</mat-option>
-              <mat-option value="51-100">51-100</mat-option>
-              <mat-option value="101-250">101-250</mat-option>
-              <mat-option value="251-500">251-500</mat-option>
-              <mat-option value="501-1000">501-1000</mat-option>
-              <mat-option value="1000+">Más de 1000</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div> -->
+            <!-- Resumen de datos -->
+            <mat-card class="summary-card" *ngIf="companyData && personData">
+              <mat-card-header>
+                <mat-card-title>Resumen de Información</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="summary-section">
+                  <h4><mat-icon>business</mat-icon> Información Empresarial</h4>
+                  <p><strong>Empresa:</strong> {{companyData.companyName}}</p>
+                  <p><strong>Asesor:</strong> {{companyData.advisorName}}</p>
+                  <p><strong>Email:</strong> {{companyData.email}}</p>
+                  <p><strong>Teléfono:</strong> {{companyData.phone}}</p>
+                </div>
 
-        <!-- Quinta fila: Mensaje -->
-        <div class="form-row single">
-          <mat-form-field appearance="outline" class="form-field full-width">
-            <mat-label>Mensaje o Comentarios</mat-label>
-            <textarea matInput 
-                      formControlName="message"
-                      placeholder="Compártenos más detalles sobre tu proyecto o necesidades específicas..."
-                      rows="4"
-                      cdkTextareaAutosize
-                      #autosize="cdkTextareaAutosize"
-                      cdkAutosizeMinRows="4"
-                      cdkAutosizeMaxRows="8">
-            </textarea>
-          </mat-form-field>
-        </div>
+                <div class="summary-section">
+                  <h4><mat-icon>person</mat-icon> Información Personal</h4>
+                  <p><strong>Nombre:</strong> {{personData.firstName}} {{personData.lastName}}</p>
+                  <p><strong>Email:</strong> {{personData.email}}</p>
+                  <p><strong>Teléfono:</strong> {{personData.phone}}</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
 
-        <!-- Botón de envío -->
-        <div class="submit-section">
-          <button mat-raised-button 
-                  type="submit" 
-                  class="submit-button"
-                  [disabled]="!contactForm.valid || isSubmitting"
-                  [class.submitting]="isSubmitting">
-            <mat-icon *ngIf="!isSubmitting">email</mat-icon>
-            <mat-icon *ngIf="isSubmitting">check_circle</mat-icon>
-            <span>{{ isSubmitting ? '¡Enviado con éxito!' : 'Enviar Solicitud' }}</span>
-            <mat-progress-spinner 
-              *ngIf="isSubmitting" 
-              diameter="20" 
-              mode="indeterminate"
-              class="spinner">
-            </mat-progress-spinner>
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</section>
+          <div class="step-actions final-actions">
+            <button mat-stroked-button matStepperPrevious>
+              <mat-icon>navigate_before</mat-icon>
+              Anterior
+            </button>
+            <button mat-stroked-button (click)="stepper.reset()" class="reset-btn">
+              <mat-icon>refresh</mat-icon>
+              Reiniciar
+            </button>
+            <button mat-raised-button color="primary" (click)="onFinalSubmit()" [disabled]="!companyData || !personData">
+              <mat-icon>done_all</mat-icon>
+              Finalizar Registro
+            </button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </section>
 
   </div>
 </div>

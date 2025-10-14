@@ -22,7 +22,6 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   showPassword = false;
   error = '';
   isValidating = false;
-  // validationSuccess = false; // Comentado hasta tener el servicio
 
   ngOnInit() {
     if (this.isOpen) {
@@ -54,23 +53,19 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
     }
 
     if(this.password.length >= 100) {
-      this.error = 'La contraseña alconzo el maximo de 100 caracteres';
+      this.error = 'La contraseña alcanzó el máximo de 100 caracteres';
       return;
     }
 
     this.isValidating = true;
     this.error = '';
 
-    // Simular un pequeño delay para mostrar el loading
     setTimeout(() => {
       this.isValidating = false;
-      
-      // Por ahora simplemente emitimos el evento con la contraseña ingresada
-      // Cuando tengas el servicio, aquí harías la validación real
       this.validationSuccess.emit(this.password);
       this.handleClose();
       this.resetModal();
-    }, 1000); // Delay de 1 segundo para mostrar el spinner
+    }, 1000);
   }
 
   togglePasswordVisibility() {
@@ -97,7 +92,6 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   private resetModal() {
     this.password = '';
     this.error = '';
-    // this.validationSuccess = false; // Comentado hasta tener el servicio
     this.isValidating = false;
     this.showPassword = false;
     document.body.style.overflow = 'auto';

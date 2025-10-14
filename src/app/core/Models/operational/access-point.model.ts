@@ -1,0 +1,30 @@
+// access-point.model.ts
+
+import { GenericModel } from "../security/generic.model";
+
+ // Ajusta la ruta según tu estructura
+
+// Para crear/actualizar AccessPoints
+export interface AccessPointCreate extends GenericModel {
+//   description?: string | null;
+  eventId: number;
+  typeId: number;
+}
+
+// Para listar/mostrar AccessPoints
+export interface AccessPointList extends GenericModel {
+//   description?: string | null;
+  eventId: number;
+  eventName?: string | null;
+  typeId: number;
+  type?: string | null;
+  qrCode?: string | null;
+}
+
+// DTO simplificado para enviar al crear evento
+export interface AccessPointDto {
+  id: number;
+  name: string;
+  description?: string | null;
+  typeId: number;
+}

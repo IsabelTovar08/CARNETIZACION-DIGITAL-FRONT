@@ -1,11 +1,13 @@
 import { Component, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { RequestCode } from '../../../../../core/Models/auth.models';
 import { AuthService } from '../../../../../core/Services/auth/auth-service.service';
 import { MenuCreateService } from '../../../../../core/Services/shared/menu-create.service';
+import { SnackbarService } from '../../../../../core/Services/snackbar/snackbar.service';
+import { VerificationCredencials } from '../../../../../core/Services/token/verificationCredencials';
 
 
 @Component({
@@ -16,7 +18,10 @@ import { MenuCreateService } from '../../../../../core/Services/shared/menu-crea
   styleUrl: `./recuperation-code.component.css`
 })
 export class RecuperationCodeComponent {
-   codeInputs = signal([
+
+  cooldown: number = 0;
+  private cooldownTimer: any;
+  codeInputs = signal([
     { value: '' },
     { value: '' },
     { value: '' },
@@ -24,16 +29,17 @@ export class RecuperationCodeComponent {
     { value: '' }
   ]);
 
-    constructor(private router: Router,
+  constructor(private route: ActivatedRoute,
     private authService: AuthService,
+    private verificartion: VerificationCredencials,
     private menu: MenuCreateService,
-    ) {
-    // Effect para monitorear cambios en el código completo
-    effect(() => {
-      if (this.isCodeComplete()) {
-        console.log('Código completo:', this.fullCode());
-      }
+    private routers: Router,
+    private snackbarService: SnackbarService
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.email = params['email'];
     });
+
   }
 
   // Señal computada para verificar si el código está completo
@@ -41,7 +47,7 @@ export class RecuperationCodeComponent {
     return this.codeInputs().every(input => input.value.length === 1);
   });
 
-
+  email: string = '';
 
   // Señal computada para obtener el código completo
   fullCode = computed(() => {
@@ -132,32 +138,70 @@ export class RecuperationCodeComponent {
       this.authService.verifiCode(requestCode).subscribe({
         next: (response) => {
           if (response) {
-            // ✅ Caso exitoso
+            //Caso exitoso
             this.menu.reload();
-            this.router.navigate(['dashboard']);
+            this.routers.navigate(['dashboard']);
 
             // Opcional: mostrar notificación
             console.log(response.message);
           } else {
-            // ❌ La API respondió 200 pero con error lógico
+            // La API respondió 200 pero con error lógico
             console.warn('Login fallido:', response);
             // alert(response.message);
           }
         },
         error: (error) => {
-          // ❌ Error de red o statusCode >= 400
+          // Error de red o statusCode >= 400
           console.error('Error al iniciar sesión:', error);
           // alert('Ocurrió un error inesperado, intenta de nuevo.');
         }
       });
       console.log('Verificando código:', this.fullCode());
-      this.router.navigate(['/auth/new-password']);
+      this.routers.navigate(['/auth/new-password']);
       alert(`Código ingresado: ${this.fullCode()}`);
     }
   }
-  reenviarCodigo() {
-      Swal.fire("Reenvio exitoso! prueba el nuevo codigo");
+  reenviarCodigo(): void {
+    const userId = Number(this.authService.getPendingUserId());
+
+    if (!userId) {
+      this.snackbarService.showError('No se encontró el usuario para reenviar el código.');
+      return;
     }
+
+    // Evitar reenvíos rápidos
+    if (this.cooldown > 0) {
+      this.snackbarService.showWarning(`Espera ${this.cooldown}s antes de reenviar nuevamente.`);
+      return;
+    }
+
+    this.verificartion.resendCode(userId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.snackbarService.showSuccess('Código reenviado correctamente.');
+
+          // activar cooldown de 60 segundos
+          this.cooldown = 60;
+          this.cooldownTimer = setInterval(() => {
+            this.cooldown--;
+            if (this.cooldown <= 0) clearInterval(this.cooldownTimer);
+          }, 1000);
+        } else {
+          this.snackbarService.showWarning(response.message || 'No se pudo reenviar el código.');
+        }
+      },
+      error: (err) => {
+        // Respuesta del backend con 429 TooManyRequests (máximo alcanzado)
+        if (err.status === 429) {
+          this.snackbarService.showWarning(
+            err.error?.message || 'Has alcanzado el máximo de 5 reenvíos por hora. Intenta más tarde.'
+          );
+        } else {
+          this.snackbarService.showError('Error al reenviar el código. Intenta nuevamente.');
+        }
+      }
+    });
+  }
 
   onResend(): void {
     // Limpiar todos los inputs

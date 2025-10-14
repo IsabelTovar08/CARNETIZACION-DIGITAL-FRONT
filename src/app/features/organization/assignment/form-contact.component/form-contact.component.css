@@ -1,0 +1,162 @@
+
+/* Contacto */
+.section-contact {
+  background-color: #f8f9fa;
+  text-align: center;
+   max-width: 100%;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 80px) clamp(20px, 5vw, 60px);
+}
+
+.contact-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  padding: 0 !important;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.contact-header {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .1) 20%, transparent 20%),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, .08) 15%, transparent 20%);
+  padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px);
+  color: rgb(9, 103, 170);
+}
+
+.contact-header h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.contact-header p {
+  font-size: clamp(14px, 2.5vw, 16px);
+  opacity: 0.9;
+  line-height: 1.4;
+  margin: 0;
+}
+
+
+.contact-form {
+  padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 32px) !important;
+}
+
+.form-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 8px;
+  grid-template-columns: 1fr;
+}
+
+.form-row:not(.single) {
+  grid-template-columns: 1fr 1fr;
+}
+
+
+.contact-content h1 {
+  color: #000000;
+  font-size: clamp(24px, 4vw, 36px);
+  margin-bottom: 16px;
+}
+
+.contact-content p {
+  color: #666;
+  font-size: clamp(14px, 2.5vw, 18px);
+}
+
+.form-field {
+  width: 100%;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+/* Personalización de mat-form-field */
+::ng-deep .form-field .mat-mdc-form-field {
+  width: 100%;
+}
+
+::ng-deep .form-field .mat-mdc-text-field-wrapper {
+  background-color: #fafafa;
+  border-radius: 6px;
+}
+
+::ng-deep .form-field .mat-mdc-form-field-focus-overlay {
+  background-color: transparent;
+}
+
+::ng-deep .form-field .mat-mdc-form-field-subscript-wrapper {
+  margin-top: 4px;
+}
+
+/* Personalización del outline */
+::ng-deep .form-field.mat-form-field-appearance-outline .mat-mdc-form-field-outline {
+  color: #e0e0e0;
+}
+
+::ng-deep .form-field.mat-form-field-appearance-outline.mat-focused .mat-mdc-form-field-outline-thick {
+  color: #1976d2;
+}
+
+/* Estilos del botón de envío */
+.submit-section {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%) !important;
+  color: white !important;
+  width: 100%;
+  height: 48px;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.submit-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4) !important;
+}
+
+.submit-button.submitting {
+  background: #4caf50 !important;
+}
+
+.submit-button:disabled {
+  opacity: 0.6 !important;
+}
+
+.spinner {
+  position: absolute;
+  right: 16px;
+}
+
+::ng-deep .submit-button .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

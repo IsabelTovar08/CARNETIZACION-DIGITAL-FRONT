@@ -20,7 +20,12 @@ export const operationalRoutes: Routes = [
       { path: 'crear', component: CreateEventComponent }
     ]
   },
+
   { path: 'card-issuance', component: MassUploadPeopleComponent },
   { path: 'import-batches/:id/details', component: DetailsPeopleImportComponent },
-  { path: 'attendance', component: AttendanceComponent }
+  { path: 'attendance', component: AttendanceComponent },
+  { path : 'card-issuance', component: MassUploadPeopleComponent},
+  { path : 'import-batches/:id/details', component: DetailsPeopleImportComponent},
+
+
 ];
