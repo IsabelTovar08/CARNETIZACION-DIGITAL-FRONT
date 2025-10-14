@@ -1,89 +1,188 @@
-.map-wrapper {
+/* === CONTENEDOR PRINCIPAL === */
+.page-container {
   position: relative;
   width: 100%;
-  max-width: 900px;
-  margin: auto;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f7f9fc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* === BARRA DE BÚSQUEDA === */
+.search-bar {
+  position: absolute;
+  top: 15px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  background: #ffffffd9;
+  backdrop-filter: blur(8px);
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  align-items: center;
+}
+
+.search-bar input {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 280px;
+  outline: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-bar input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+.search-bar button {
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.search-bar button:hover {
+  background: #0056b3;
+}
+
+.reload-btn {
+  background-color: #17a2b8 !important;
+}
+
+.reload-btn:hover {
+  background-color: #0d8ca3 !important;
+}
+
+/* === MAPA === */
+.map-wrapper {
+  width: 100%;
+  height: 100%;
 }
 
 .map-container {
-  position: relative;
   width: 100%;
-}
-
-.map-image {
-  width: 100%;
-  display: block;
-  pointer-events: none;          /* evita que la imagen bloquee los clics */
-}
-
-.marker-container {
-  position: absolute;
-  cursor: pointer;
-  z-index: 10;                   /* queda por encima del mapa */
-}
-
-.marker-icon {
-  width: 100px;                  /* tus medidas */
-  height: 80px;                  /* tus medidas */
-}
-
-/* Posiciones individuales (las tuyas) */
-.marker-norte { top: 20%; left: 77%; }
-.marker-centro { top: 50%; left: 40%; }
-.marker-sur   { top: 25%; left: 55%; }
-
-/* Modal tipo tooltip sobre el icono */
-.marker-modal {
-  position: absolute;
-  z-index: 20;
-  transform: translate(-50%, -110%); /* centra horizontal y sube el modal encima del icono */
-  pointer-events: auto;
-}
-
-.modal-content {
-  background: #fff;
+  height: 100%;
   border-radius: 8px;
-  padding: 10px 12px 12px;
-  width: 240px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+/* === MODAL DE INFORMACIÓN === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.25s ease-in;
+}
+
+.modal-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  width: 360px;
+  max-width: 90%;
+  animation: slideUp 0.35s ease-out;
   position: relative;
+}
+
+.modal-card h2 {
+  color: #007bff;
+  margin-bottom: 12px;
   text-align: center;
 }
 
-.modal-title {
-  margin: 0 0 6px 0;
-  font-size: 14px;
-}
-
-.modal-text {
-  margin: 4px 0;
-  font-size: 12px;
-}
-
-.sucursal-img {
-  width: 100%;
-  border-radius: 6px;
-  margin: 6px 0 8px;
+.modal-card p {
+  margin: 6px 0;
+  font-size: 15px;
 }
 
 .close {
   position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 18px;
-  line-height: 18px;
-  background: transparent;
-  border: 0;
+  top: 10px;
+  right: 14px;
+  font-size: 22px;
   cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
 }
 
-.modal-arrow {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -8px;
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid #fff;    /* flechita que apunta al icono */
+.close:hover {
+  color: #007bff;
+}
+
+.modal-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.guardar-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.25s;
+}
+
+.guardar-btn:hover {
+  background-color: #0056b3;
+}
+
+/* === ANIMACIONES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    width: 90%;
+  }
+
+  .search-bar input {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .search-bar button {
+    width: 100%;
+  }
 }

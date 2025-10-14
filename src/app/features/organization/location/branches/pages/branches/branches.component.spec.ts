@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SucursalComponent } from './branches.component'; // nombre correcto
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { SucursalComponent } from './branches.component';
 
 describe('SucursalComponent', () => {
   let component: SucursalComponent;
@@ -7,9 +8,10 @@ describe('SucursalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-     
-      imports: [SucursalComponent],
-
+      imports: [
+        HttpClientTestingModule, // para evitar errores de HttpClient
+        SucursalComponent         // standalone component
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SucursalComponent);
