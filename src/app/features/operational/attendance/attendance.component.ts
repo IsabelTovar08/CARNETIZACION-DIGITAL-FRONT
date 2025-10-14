@@ -1,53 +1,51 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { GenericListCardComponent } from '../../../shared/components/generic-list-card/generic-list-card.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [CommonModule, GenericListCardComponent],
+  imports: [CommonModule, MatIconModule, MatCardModule],
   templateUrl: './attendance.component.html',
   styleUrls: ['./attendance.component.css']
 })
 export class AttendanceComponent {
-  attendances = [
+  constructor(private router: Router) {}
+
+  events = [
     {
-      name: 'Asistencia General',
-      subtitle: 'Evento principal',
-      dateLabel: '01/10/2025',
-      description: 'Control de asistencia masiva',
-      tags: ['obligatorio', 'activo'],
-      isLocked: false,
-      isDeleted: false
+      id: 1,
+      title: 'Reunión de equipo',
+      description: 'Discusión de estrategia de marketing',
+      icon: 'groups',
+      image: 'https://picsum.photos/600/300?random=1',
+      isLocked: false
     },
     {
-      name: 'Asistencia Taller',
-      subtitle: 'Robótica',
-      dateLabel: '03/10/2025',
-      description: 'Ingreso restringido',
-      tags: ['cupos limitados'],
-      isLocked: true,
-      isDeleted: false
+      id: 2,
+      title: 'Taller de diseño',
+      description: 'Explorando nuevas tendencias de diseño',
+      icon: 'palette',
+      image: 'https://picsum.photos/600/300?random=2',
+      isLocked: false
+    },
+    {
+      id: 3,
+      title: 'Conferencia de Robótica',
+      description: 'Certificado de Google',
+      icon: 'lock',
+      image: 'https://picsum.photos/600/300?random=3',
+      isLocked: true
     }
   ];
 
-  onAdd() {
-    alert('Agregar nueva asistencia');
-  }
-
-  onView(item: any) {
-    alert('Ver detalle: ' + item.name);
-  }
-
-  onEdit(item: any) {
-    alert('Editar: ' + item.name);
-  }
-
-  onDelete(item: any) {
-    alert('Eliminar: ' + item.name);
-  }
-
-  onToggle(item: any) {
-    alert(`Estado cambiado: ${item.name} → ${item.isDeleted ? 'Inactivo' : 'Activo'}`);
+  onCardClick(event: any) {
+    if (event.isLocked) {
+      alert('Este evento está bloqueado');
+    } else {
+      this.router.navigate([`/dashboard/operational/attendance/${event.id}/people`]);
+    }
   }
 }

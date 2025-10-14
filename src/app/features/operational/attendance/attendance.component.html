@@ -1,13 +1,24 @@
-<section class="p-6 bg-gray-50 min-h-screen">
-  <app-generic-list-card
-    title="Listado de Asistencias"
-    [buttonSave]="true"
-    [dataSourceInput]="attendances"
-    [pageSize]="6"
-    (onCreate)="onAdd()"
-    (onView)="onView($event)"
-    (onEdit)="onEdit($event)"
-    (onDelete)="onDelete($event)"
-    (onToggleStatus)="onToggle($event)">
-  </app-generic-list-card>
-</section>
+<div class="attendance-container">
+  <h2 class="page-title">Eventos</h2>
+
+  <div class="events-grid">
+    <mat-card
+      *ngFor="let ev of events"
+      class="event-card"
+      [ngClass]="{ 'locked': ev.isLocked }"
+      (click)="onCardClick(ev)"
+    >
+      <!-- Imagen del evento -->
+      <img mat-card-image [src]="ev.image" alt="Imagen del evento" class="event-image" />
+
+      <mat-card-header>
+        <mat-card-title>{{ ev.title }}</mat-card-title>
+        <mat-icon class="event-icon">{{ ev.icon }}</mat-icon>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ ev.description }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

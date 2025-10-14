@@ -1,0 +1,56 @@
+.attendance-container {
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #000000;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.event-card {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: #fff;
+  overflow: hidden;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.event-card.locked {
+  background: #f3f4f6;
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.event-image {
+  height: 160px;
+  object-fit: cover;
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-icon {
+  font-size: 28px;
+  color: #1e40af;
+}
+
+mat-card-content {
+  margin-top: 8px;
+  color: #4b5563;
+}

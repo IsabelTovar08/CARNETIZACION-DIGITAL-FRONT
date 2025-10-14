@@ -65,7 +65,7 @@ export const menuAdmin: MenuItem[] = [
           { "id": "tipos-evento", "title": "Tipos de Evento", "type": "item", "classes": "nav-item", "url": "/dashboard/operational/event-types", "icon": "category" },
           { "id": "audiencias-objetivo", "title": "Audiencias Objetivo", "type": "item", "classes": "nav-item", "url": "/dashboard/operational/event-target-audience", "icon": "group" },
           { "id": "puntos-acceso", "title": "Puntos de Acceso", "type": "item", "classes": "nav-item", "url": "/dashboard/operational/access-points", "icon": "sensor_door" },
-          { "id": "asistencias", "title": "Asistencias", "type": "item", "classes": "nav-item", "url": "/dashboard/operational/attendance", "icon": "how_to_reg" }
+          { "id": "asistencias", "title": "Asistencias", "type": "item", "classes": "nav-item", "url": "/dashboard/operational/asistencias", "icon": "how_to_reg" }
         ]
       }
     ]
