@@ -26,8 +26,8 @@
         #notificationTrigger>
         <mat-icon>notifications</mat-icon>
         <!-- Badge opcional para contador -->
-        <span class="notification-badge" *ngIf="notificationCount > 0">{{
-          notificationCount }}</span>
+        <span class="notification-badge" *ngIf="unreadNotifications > 0">{{
+          unreadNotifications }}</span>
       </div>
 
       <div class="perfil" (click)="goToProfile()">
@@ -36,10 +36,10 @@
             }}</span>
           <span class="perfil-subname">{{ user()?.currentProfile?.profileName
             }}</span>
-             </div><img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'" alt="Perfil" class="perfil-img">
-        </div>
-        
-     
+        </div><img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'"
+          alt="Perfil" class="perfil-img">
+      </div>
+
       <button mat-icon-button>
         <mat-icon (click)="onLogout()">logout</mat-icon>
       </button>
@@ -68,6 +68,7 @@
   <!-- Componente de notificaciones genérico -->
   <app-generic-notification
     [visible]="showNotifications"
-    (close)="closeNotifications()">
+    (close)="closeNotifications()"
+    (unreadCountChange)="onUnreadCountChange($event)">
   </app-generic-notification>
 </div>

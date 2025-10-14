@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 export class FileUploadComponent {
   selectedFile: File | null = null;
   fileForm: FormGroup;
+  isDragOver = false;
 
   @Output() fileSelected = new EventEmitter<File>();
   @Output() fileUploaded = new EventEmitter<File>();
@@ -28,16 +29,25 @@ export class FileUploadComponent {
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.isDragOver = true;
+  }
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver = false;
   }
 
   onFileDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.isDragOver = false;
 
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       this.setFile(files[0]);
     }
+  }
+  removeFile(): void {
+    this.selectedFile = null;
   }
 
   importFile() {
@@ -63,4 +73,6 @@ export class FileUploadComponent {
       this.fileUploaded.emit(this.selectedFile);
     }
   }
+
+
 }

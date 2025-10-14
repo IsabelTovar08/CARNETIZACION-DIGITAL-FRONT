@@ -30,7 +30,7 @@ export class ApiService<T, D> {
   public Crear(entidad: string, objeto: T) {
     return this.wrapper.handleRequest(this.http.post<ApiResponse<D>>(`${this.urlBase}/${entidad}`, objeto));
   }
-  public update(entidad: string, data: T) : Observable<ApiResponse<D>>{
+  public update(entidad: string, data: T): Observable<ApiResponse<D>> {
     return this.wrapper.handleRequest(this.http.put<ApiResponse<D>>(`${this.urlBase}/${entidad}/update/`, data));
   }
   public delete(entidad: string, id: number) {
@@ -48,9 +48,9 @@ export class ApiService<T, D> {
   }
 
 
-    /**
-   * Sube archivo con configuración al backend
-   */
+  /**
+ * Sube archivo con configuración al backend
+ */
   uploadImport(formData: FormData): Observable<any> {
     return this.http.post(`${this.urlBase}/excel/import/people`, formData);
   }

@@ -15,11 +15,13 @@ import { TemplateSelectorDialogComponent } from '../template-selector-dialog/tem
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
+
 @Component({
   selector: 'app-config-form',
   imports: [MatInputModule,
     MatButtonModule,
-    MatDatepickerModule, MatSelectModule, MatCardModule, CommonModule, MatAutocompleteModule, ReactiveFormsModule, MatIconModule],
+    MatDatepickerModule,
+    MatSelectModule, MatCardModule, CommonModule, MatAutocompleteModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './config-form.component.html',
   styleUrl: './config-form.component.css'
 })
@@ -105,11 +107,12 @@ export class ConfigFormComponent implements OnInit {
   }
 
   getDivisions() {
-    this.divissionService.ObtenerTodo('InternalDivision').subscribe(data =>
-      this.divisions = data.data
-    );
+  this.divissionService.ObtenerTodo('InternalDivision').subscribe(data => {
+    this.divisions = data.data;
+    this.filteredDivisions = this.divisions.slice(); // ✅ refresca la lista inicial
+  });
+}
 
-  }
   getProfiles() {
     this.profileService.ObtenerTodo('Profile').subscribe(data =>
       this.profiles = data.data

@@ -1,48 +1,46 @@
 <mat-card>
-  <mat-card-title>Configuración de Carnet</mat-card-title>
+  <mat-card-title>1. Configuración previa</mat-card-title>
   <mat-card-content>
-    <form class="form-grid">
+    <p class="section-description text-muted">
+      Seleccione la plantilla, división interna, perfil y vigencia antes de cargar un archivo.
+    </p>
 
-      <mat-form-field>
+    <form class="form-grid">
+      <!-- Plantilla -->
+      <mat-form-field appearance="outline">
         <mat-label>Plantilla de Carnet</mat-label>
         <input matInput [value]="selectedTemplate?.name" readonly placeholder="Seleccione una plantilla">
         <button type="button" mat-icon-button matSuffix (click)="openTemplateSelector()">
           <mat-icon>collections</mat-icon>
         </button>
+        <mat-hint>Escoja el diseño del carnet</mat-hint>
       </mat-form-field>
 
-
-      <!-- Campo con Autocomplete -->
-      <form class="example-form">
-        <mat-form-field class="example-full-width" appearance="fill">
-          <mat-label>División Interna</mat-label>
-          <input #input
-              type="text"
-              placeholder="Seleccione una división"
-              matInput
-              [formControl]="divisionControl"
-              [matAutocomplete]="auto"
-              (input)="filter()"
-              (focus)="filter()">
-
+      <!-- División -->
+      <mat-form-field appearance="outline">
+        <mat-label>División Interna</mat-label>
+        <input matInput type="text"
+               placeholder="Seleccione una división"
+               [formControl]="divisionControl"
+               [matAutocomplete]="auto"
+               (input)="filter()" (focus)="filter()">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayDivision" (optionSelected)="emitConfig()">
-          <mat-option *ngFor="let div of filteredDivisions" [value]="div">
-            {{ div.name }}
-          </mat-option>
+          <mat-option *ngFor="let div of filteredDivisions" [value]="div">{{ div.name }}</mat-option>
         </mat-autocomplete>
+        <mat-hint>Área o división donde se asignará</mat-hint>
+      </mat-form-field>
 
-        </mat-form-field>
-      </form>
-
-
-      <mat-form-field>
+      <!-- Perfil -->
+      <mat-form-field appearance="outline">
         <mat-label>Perfil</mat-label>
         <mat-select>
           <mat-option *ngFor="let profile of profiles" [value]="profile.id">{{ profile.name }}</mat-option>
         </mat-select>
+        <mat-hint>Seleccione el perfil asociado</mat-hint>
       </mat-form-field>
 
-      <mat-form-field>
+      <!-- Vigencia -->
+      <mat-form-field appearance="outline">
         <mat-label>Vigencia (Desde - Hasta)</mat-label>
         <mat-date-range-input [formGroup]="validityForm" [rangePicker]="picker">
           <input matStartDate formControlName="ValidFrom" placeholder="Desde" (dateChange)="emitConfig()">
@@ -50,9 +48,8 @@
         </mat-date-range-input>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
+        <mat-hint>Periodo de validez del carnet</mat-hint>
       </mat-form-field>
-
-
     </form>
   </mat-card-content>
 </mat-card>

@@ -1,4 +1,5 @@
 <div class="page-container mat-elevation-z2">
+  <!-- Capa de carga -->
   <div class="loading-overlay" *ngIf="loading">
     <div class="loading-container">
       <mat-icon class="loading-icon" color="accent">
@@ -10,31 +11,54 @@
     </div>
   </div>
 
-  <!-- Configuración previa -->
-  <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+  <!-- Título y contexto -->
+  <div class="page-header">
+    <h1>Gestión de Cargas Masivas</h1>
+    <p class="page-description">
+      Desde esta sección puede configurar la importación de carnets,
+      subir sus archivos de datos y consultar el historial de procesos realizados.
+      Siga los pasos en orden para garantizar una carga exitosa.
+    </p>
+  </div>
 
-  <!-- Bloque de carga -->
-  <app-file-upload
-    (fileSelected)="onFileSelected($event)"
-    (fileUploaded)="uploadToBackend()">
-  </app-file-upload>
+  <!-- Paso 1: Configuración -->
+  <section class="section-block">
+    <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+  </section>
 
-  <!-- src/app/pages/import-batches/import-batches.component.html -->
-  <app-generic-table
-    [title]="'Historial de cargas masivas'"
-    [displayedColumns]="displayedColumns"
-    [columns]="columns"
-    [dataSourceInput]="records"
-    [customTemplates]="{
-      startedAt: startedAtTemplate,
-      endedAt: endedAtTemplate,
-      successCount: successTemplate,
-      errorCount: errorTemplate,
-      startedByUserName: userTemplate,
-      actions: actionsTemplate
-    }"
-    [buttonSave]="false">
-  </app-generic-table>
+  <!-- Paso 2: Cargar archivo -->
+  <section class="section-block">
+    <app-file-upload
+      (fileSelected)="onFileSelected($event)"
+      (fileUploaded)="uploadToBackend()">
+    </app-file-upload>
+  </section>
+
+
+</div>
+<!-- Paso 3: Historial -->
+  <section class="section-block">
+    <h2 class="section-title">Historial de cargas</h2>
+    <p class="section-description">
+      Aquí puede consultar las cargas realizadas anteriormente,
+      su estado y la cantidad de registros exitosos o con errores.
+    </p>
+    <app-generic-table
+      [title]="'Historial de cargas masivas'"
+      [displayedColumns]="displayedColumns"
+      [columns]="columns"
+      [dataSourceInput]="records"
+      [customTemplates]="{
+        startedAt: startedAtTemplate,
+        endedAt: endedAtTemplate,
+        successCount: successTemplate,
+        errorCount: errorTemplate,
+        startedByUserName: userTemplate,
+        actions: actionsTemplate
+      }"
+      [buttonSave]="false">
+    </app-generic-table>
+  </section>
 
   <!-- Templates -->
   <ng-template #startedAtTemplate let-item>
@@ -65,7 +89,7 @@
     <ng-template #noUser><i>Desconocido</i></ng-template>
   </ng-template>
 
-  <!-- Acciones personalizadas aquí -->
+  <!-- Acciones -->
   <ng-template #actionsTemplate let-item>
     <button mat-icon-button (click)="verDetalles(item)"
       matTooltip="Ver detalles">

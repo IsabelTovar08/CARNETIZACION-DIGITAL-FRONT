@@ -8,6 +8,7 @@ import { NotificationDto } from '../../../core/Models/notifications/notification
 import { NotificationsService } from '../../../core/Services/api/notifications/notifications.service';
 import { ApiResponse } from '../../../core/Models/api-response.models';
 import { DateHelperService } from '../../../core/helpers/Date/date-helper.service';
+import { NotificationWService } from '../../../core/Services/WebSocket/Notification/notification.service';
 
 export interface Notification {
   id: string;
@@ -24,7 +25,7 @@ export interface Notification {
 
 @Component({
   selector: 'app-generic-notification',
-  imports: [ CommonModule,MatIconModule,MatButtonModule,MatDividerModule,MatBadgeModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDividerModule, MatBadgeModule],
   templateUrl: './generic-notification.component.html',
   styleUrl: './generic-notification.component.css'
 })
@@ -33,13 +34,17 @@ export class GenericNotificationComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() notificationAction = new EventEmitter<Notification>();
 
-  notifications: Notification[] = []; // 👈 ya no usamos backendNotifications
+  notifications: Notification[] = [];
   hasMoreNotifications: boolean = false;
+
+  // Output para emitir la cantidad de notificaciones
+  @Output() unreadCountChange = new EventEmitter<number>();
 
   constructor(
     private notificationService: NotificationsService,
-    private dateHelper: DateHelperService
-  ) {}
+    private dateHelper: DateHelperService,
+    private notificationServiceWebsocket: NotificationWService
+  ) { }
 
   get unreadCount(): number {
     return this.notifications.filter(n => !n.read).length;
@@ -47,6 +52,14 @@ export class GenericNotificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadNotifications();
+    // Conexión al WebSocket
+    this.notificationServiceWebsocket.connect();
+    this.notificationServiceWebsocket.onNotifications()
+      .subscribe(n => {
+        this.notifications.push(n);
+        this.emitUnreadCount(); // cada vez que llega una nueva, emitimos
+      });
+
   }
 
   loadNotifications(): void {
@@ -54,10 +67,12 @@ export class GenericNotificationComponent implements OnInit {
       next: (response: ApiResponse<NotificationDto[]>) => {
         const dtos = response.data ?? [];
         this.notifications = dtos.map(dto => this.mapDtoToNotification(dto));
+        this.emitUnreadCount(); // al cargar, también emitimos
       },
       error: (err: unknown) => {
         console.error('Error loading notifications:', err);
         this.notifications = [];
+        this.emitUnreadCount(); // emitimos aunque esté vacío
       }
     });
   }
@@ -84,18 +99,27 @@ export class GenericNotificationComponent implements OnInit {
 
   markAllAsRead(): void {
     this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+    this.emitUnreadCount(); // cuando se marcan todas, actualizamos
   }
 
   clearAll(): void {
     this.notifications = [];
+    this.emitUnreadCount(); // al limpiar, también
   }
 
   toggleRead(notification: Notification): void {
     notification.read = !notification.read;
+    this.emitUnreadCount(); // al cambiar el estado de una
   }
 
   deleteNotification(id: string): void {
     this.notifications = this.notifications.filter(n => n.id !== id);
+    this.emitUnreadCount();
+  }
+
+  // 👇 Método central para emitir
+  private emitUnreadCount(): void {
+    this.unreadCountChange.emit(this.unreadCount);
   }
 
   onNotificationAction(notification: Notification): void {
@@ -121,21 +145,21 @@ export class GenericNotificationComponent implements OnInit {
   }
 
   readonly messageCharThreshold: number = 160; // cantidad a partir de la cual mostramos "Ver más"
-private expandedIds = new Set<string>();     // ids expandidos
+  private expandedIds = new Set<string>();     // ids expandidos
 
-/** Determina si un item está expandido en UI */
-isExpanded(id: string): boolean {
-  return this.expandedIds.has(id);
-}
+  /** Determina si un item está expandido en UI */
+  isExpanded(id: string): boolean {
+    return this.expandedIds.has(id);
+  }
 
-/** Alterna expandir/contraer el mensaje */
-toggleExpand(id: string): void {
-  if (this.expandedIds.has(id)) this.expandedIds.delete(id);
-  else this.expandedIds.add(id);
-}
+  /** Alterna expandir/contraer el mensaje */
+  toggleExpand(id: string): void {
+    if (this.expandedIds.has(id)) this.expandedIds.delete(id);
+    else this.expandedIds.add(id);
+  }
 
-/** Muestra "Ver más" si el mensaje supera el umbral */
-shouldShowReadMore(n: Notification): boolean {
-  return (n.message?.length || 0) > this.messageCharThreshold;
-}
+  /** Muestra "Ver más" si el mensaje supera el umbral */
+  shouldShowReadMore(n: Notification): boolean {
+    return (n.message?.length || 0) > this.messageCharThreshold;
+  }
 }
