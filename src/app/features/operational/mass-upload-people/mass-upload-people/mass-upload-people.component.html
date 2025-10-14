@@ -19,7 +19,6 @@
     (fileUploaded)="uploadToBackend()">
   </app-file-upload>
 
-  <!-- src/app/pages/import-batches/import-batches.component.html -->
   <app-generic-table
     [title]="'Historial de cargas masivas'"
     [displayedColumns]="displayedColumns"
@@ -65,9 +64,12 @@
     <ng-template #noUser><i>Desconocido</i></ng-template>
   </ng-template>
 
-  <!-- Acciones personalizadas aquí -->
+  <!-- Acciones personalizadas -->
   <ng-template #actionsTemplate let-item>
-    <button mat-icon-button (click)="verDetalles(item)"
+    <button
+      *ngIf="item.successCount > 0"
+      mat-icon-button
+      (click)="verDetalles(item)"
       matTooltip="Ver detalles">
       <mat-icon>visibility</mat-icon>
     </button>
