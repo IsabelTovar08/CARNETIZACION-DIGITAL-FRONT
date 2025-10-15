@@ -5,6 +5,9 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../../../environments/environment';
+import { fromApiTime } from '../../../../../../core/utils/time-only';
+import { GenericFormComponent } from '../../../../../../shared/components/generic-form/generic-form.component';
+import { MatDialog } from '@angular/material/dialog';
 
 interface BranchFromApi {
   id: number;
@@ -13,6 +16,8 @@ interface BranchFromApi {
   location: string;     // "lat,lon"
   zone?: string | null;
   schedule?: string | null;
+  phone?: string | null;
+  email?: string | null;
 }
 
 @Component({
@@ -33,6 +38,8 @@ export class SucursalComponent implements AfterViewInit {
   searchQuery: string = '';
   sucursalSeleccionada: any = null;
 
+  constructor(private dialog: MatDialog) {}
+
   /** 🌍 Sucursales locales (fijas) */
   private localBranches: BranchFromApi[] = [
     {
@@ -41,7 +48,9 @@ export class SucursalComponent implements AfterViewInit {
       address: 'Calle 18 #67-45 Oriente',
       schedule: '05:00 AM - 04:00 PM',
       location: '4.690,-74.080',
-      zone: 'Norte'
+      zone: 'Norte',
+      phone: '3001234567',
+      email: 'norte@empresa.com'
     },
     {
       id: 0,
@@ -49,7 +58,9 @@ export class SucursalComponent implements AfterViewInit {
       address: 'Av Siempre Viva #742',
       schedule: '08:00 AM - 05:00 PM',
       location: '4.6097,-74.0817',
-      zone: 'Centro'
+      zone: 'Centro',
+      phone: '3009876543',
+      email: 'centro@empresa.com'
     },
     {
       id: 0,
@@ -57,7 +68,9 @@ export class SucursalComponent implements AfterViewInit {
       address: 'Cra 10 #23-45 Centro',
       schedule: '09:00 AM - 06:00 PM',
       location: '4.530,-74.100',
-      zone: 'Sur'
+      zone: 'Sur',
+      phone: '3011122334',
+      email: 'sur@empresa.com'
     }
   ];
 
@@ -73,7 +86,6 @@ export class SucursalComponent implements AfterViewInit {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
-    // Locales + Backend (sin cerrar ningún Swal)
     this.loadLocalBranches();
     this.loadBranchesFromApi({ showAlert: false, closeLoader: false });
 
@@ -85,19 +97,23 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 📍 Cargar locales */
+  /** 📍 Cargar sucursales locales */
   private loadLocalBranches() {
     this.localBranches.forEach((b: BranchFromApi) => {
       const [lat, lon] = b.location.split(',').map(Number);
       this.addBranchMarker({
-        id: b.id, name: b.name, address: b.address,
-        latitude: lat, longitude: lon,
-        zone: b.zone ?? 'Sin zona', schedule: b.schedule ?? 'No definido'
+        id: b.id,
+        name: b.name,
+        address: b.address,
+        latitude: lat,
+        longitude: lon,
+        zone: b.zone ?? 'Sin zona',
+        schedule: b.schedule ?? 'No definido'
       });
     });
   }
 
-  /** 🔄 Botón Recargar (con loader controlado) */
+  /** 🔄 Botón Recargar */
   recargarSucursales() {
     Swal.fire({
       title: '🔄 Recargando sucursales...',
@@ -105,22 +121,14 @@ export class SucursalComponent implements AfterViewInit {
       didOpen: () => Swal.showLoading()
     });
 
-    // Limpia todos los pines
     this.allMarkers.forEach(m => this.map.removeLayer(m));
     this.allMarkers = [];
 
-    // Vuelve a pintar locales
     this.loadLocalBranches();
-
-    // Ahora backend y cuando termine cierra el loader y muestra resumen
     this.loadBranchesFromApi({ showAlert: true, closeLoader: true });
   }
 
-  /**
-   * 🌐 Carga sucursales del backend
-   * - showAlert: muestra resumen al terminar
-   * - closeLoader: cierra el Swal que esté abierto (solo lo uso en Recargar)
-   */
+  /** 🌐 Cargar sucursales del backend */
   private loadBranchesFromApi(opts: { showAlert: boolean; closeLoader: boolean }) {
     const url = `${environment.URL}/api/Branch`;
 
@@ -167,7 +175,7 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 🔵 Pin azul y popup */
+  /** 🔵 Agregar marcador azul */
   private addBranchMarker(branch: {
     id: number; name: string; address: string;
     latitude: number; longitude: number;
@@ -194,7 +202,7 @@ export class SucursalComponent implements AfterViewInit {
     this.allMarkers.push(marker);
   }
 
-  /** 🟢 Pin temporal de búsqueda */
+  /** 🟢 Marcador temporal */
   private setSearchMarker(lat: number, lng: number) {
     if (this.marker) this.map.removeLayer(this.marker);
     const greenIcon = L.icon({
@@ -248,70 +256,72 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 🏢 Modal de registro */
+  /** 🏢 Abrir modal de registro */
   private askToRegisterBranch(address: string, lat: number, lon: number) {
-    Swal.fire({
-      title: 'Registrar nueva sucursal',
-      html: `
-        <input id="sw-name" class="swal2-input" placeholder="Nombre de la sucursal">
-        <input id="sw-phone" class="swal2-input" placeholder="Teléfono">
-        <input id="sw-email" class="swal2-input" placeholder="Correo electrónico">
-        <input id="sw-address" class="swal2-input" value="${address}" placeholder="Dirección">
-        <select id="sw-zone" class="swal2-input">
-          <option value="">Seleccionar zona</option>
-          <option value="Norte">Zona Norte</option>
-          <option value="Sur">Zona Sur</option>
-          <option value="Oriente">Zona Oriente</option>
-          <option value="Occidente">Zona Occidente</option>
-        </select>
-        <div style="display:flex; gap:8px; justify-content:center;">
-          <input id="sw-open" type="time" class="swal2-input" style="width:45%;" placeholder="Hora apertura">
-          <input id="sw-close" type="time" class="swal2-input" style="width:45%;" placeholder="Hora cierre">
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Registrar',
-      cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,
-      focusConfirm: false,
-      preConfirm: () => {
-        const name = (document.getElementById('sw-name') as HTMLInputElement).value.trim();
-        const phone = (document.getElementById('sw-phone') as HTMLInputElement).value.trim();
-        const email = (document.getElementById('sw-email') as HTMLInputElement).value.trim();
-        const addressVal = (document.getElementById('sw-address') as HTMLInputElement).value.trim();
-        const zone = (document.getElementById('sw-zone') as HTMLSelectElement).value;
-        const open = (document.getElementById('sw-open') as HTMLInputElement).value;
-        const close = (document.getElementById('sw-close') as HTMLInputElement).value;
+    const item: BranchFromApi = {
+      id: 0,
+      name: '',
+      address: address,
+      location: `${lat},${lon}`,
+      zone: '',
+      phone: '',
+      email: ''
+    };
+    this.openModal(item);
+  }
 
-        if (!name || !phone || !email || !zone) {
-          Swal.showValidationMessage('Completa todos los campos obligatorios');
-          return false; // ⬅️ NO cerrar el modal
+  /** 📋 Modal genérico */
+  openModal(item?: BranchFromApi) {
+    const isEditing = !!item?.id && !!item?.name;
+
+    const dialogRef = this.dialog.open(GenericFormComponent, {
+      disableClose: true,
+      width: window.innerWidth < 768 ? '95vw' : '400px',
+      maxHeight: '95vh',
+      data: {
+        title: isEditing ? 'Editar Sucursal' : 'Crear Sucursal',
+        item,
+        fields: [
+          { name: 'name', label: 'Nombre', type: 'text', value: item?.name || '', required: true },
+          { name: 'address', label: 'Dirección', type: 'text', value: item?.address || '', required: true, readonly: true },
+          { name: 'phone', label: 'Teléfono', type: 'text', value: item?.phone || '', required: true, readonly: isEditing },
+          { name: 'email', label: 'Correo electrónico', type: 'email', value: item?.email || '', required: true, readonly: isEditing },
+          { name: 'zone', label: 'Zona', type: 'text', value: item?.zone || '', required: true, readonly: isEditing },
+          { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.schedule || ''), required: true },
+          { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.schedule || ''), required: true },
+        ],
+        replaceBaseFields: true
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (isEditing) {
+          console.log('✏️ Editar sucursal:', result);
+          // Aquí puedes implementar PUT si el backend lo soporta
+        } else {
+          const [lat, lon] = (item?.location ?? '0,0').split(',').map(Number);
+
+          const data = {
+            id: 0,
+            name: result.name,
+            address: result.address,
+            phone: result.phone,
+            email: result.email,
+            zone: result.zone,
+            schedule: `Abre: ${result.startTime} - Cierra: ${result.endTime}`,
+            location: `${lat},${lon}`,
+            cityId: 1,
+            organizationId: 1
+          };
+          console.log('📦 Enviando al backend:', data);
+          this.registerBranch(data, lat, lon);
         }
-
-        const schedule = open && close ? `Abre: ${open} - Cierra: ${close}` : 'Horario no definido';
-        return { name, phone, email, address: addressVal, zone, schedule };
-      }
-    }).then((res) => {
-      if (res.isConfirmed && res.value) {
-        const data: BranchFromApi & { cityId: number; organizationId: number } = {
-          id: 0,
-          name: res.value.name,
-          location: `${lat},${lon}`,
-          phone: res.value.phone,
-          email: res.value.email,
-          address: res.value.address,
-          cityId: 1,
-          organizationId: 1,
-          zone: res.value.zone,
-          schedule: res.value.schedule
-        } as any;
-
-        this.registerBranch(data, lat, lon);
       }
     });
   }
 
-  /** 💾 POST al backend (con loader propio) */
+  /** 💾 POST al backend */
   private registerBranch(data: any, lat: number, lon: number) {
     const url = `${environment.URL}/api/Branch`;
 
@@ -335,8 +345,9 @@ export class SucursalComponent implements AfterViewInit {
           schedule: data.schedule ?? 'No definido'
         });
       },
-      error: () => {
+      error: (err) => {
         Swal.close();
+        console.error('❌ Error al registrar sucursal:', err);
         Swal.fire('Error', 'No se pudo registrar la sucursal', 'error');
       }
     });
@@ -346,10 +357,11 @@ export class SucursalComponent implements AfterViewInit {
     this.sucursalSeleccionada = null;
   }
 
+  /** 🌍 Reverse Geocoding */
   private reverseGeocode(lat: number, lon: number) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
     this.http.get<any>(url).subscribe({
-      next: (data) => console.log('📍 Dirección:', data.display_name),
+      next: (data) => console.log('📍 Dirección detectada:', data.display_name),
       error: () => console.warn('No se pudo obtener la dirección automáticamente.')
     });
   }

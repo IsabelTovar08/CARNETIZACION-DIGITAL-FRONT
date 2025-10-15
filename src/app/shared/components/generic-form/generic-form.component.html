@@ -2,7 +2,9 @@
 <p class="mat-subheading-1" *ngIf="subTitle">{{ subTitle }}</p>
 <mat-divider></mat-divider>
 <br>
-<div mat-dialog-content>
+
+<!-- 🔹 Contenedor con scroll -->
+<div mat-dialog-content class="form-scroll-area">
   <form [formGroup]="form">
 
     <ng-container *ngFor="let field of fields">
@@ -18,22 +20,28 @@
         <mat-form-field class="w-100" appearance="outline"
           *ngIf="field.type !== 'textarea' && field.type !== 'select' && field.type !== 'checkbox'">
           <mat-label>{{ field.label }}</mat-label>
-          <input matInput [formControlName]="field.name"
-            [type]="field.type || 'text'" />
+          <input matInput 
+            [formControlName]="field.name"
+            [type]="field.type || 'text'"
+            [readonly]="field.readonly || false" />
         </mat-form-field>
 
         <!-- Textarea -->
         <mat-form-field class="w-100" appearance="outline"
           *ngIf="field.type === 'textarea'">
           <mat-label>{{ field.label }}</mat-label>
-          <textarea matInput [formControlName]="field.name"></textarea>
+          <textarea matInput 
+            [formControlName]="field.name"
+            [readonly]="field.readonly || false"></textarea>
         </mat-form-field>
 
         <!-- Select -->
         <mat-form-field class="w-100" appearance="outline"
           *ngIf="field.type === 'select'">
           <mat-label>{{ field.label }}</mat-label>
-          <mat-select [formControlName]="field.name">
+          <mat-select 
+            [formControlName]="field.name"
+            [disabled]="field.readonly || false">
             <mat-option *ngFor="let opt of field.options" [value]="opt.value">
               {{ opt.label }}
             </mat-option>
