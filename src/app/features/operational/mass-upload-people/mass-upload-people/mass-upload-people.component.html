@@ -1,4 +1,5 @@
 <div class="page-container mat-elevation-z2">
+  <!-- Capa de carga -->
   <div class="loading-overlay" *ngIf="loading">
     <div class="loading-container">
       <mat-icon class="loading-icon" color="accent">
@@ -10,8 +11,20 @@
     </div>
   </div>
 
-  <!-- Configuración previa -->
-  <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+  <!-- Título y contexto -->
+  <div class="page-header">
+    <h1>Gestión de Cargas Masivas</h1>
+    <p class="page-description">
+      Desde esta sección puede configurar la importación de carnets,
+      subir sus archivos de datos y consultar el historial de procesos realizados.
+      Siga los pasos en orden para garantizar una carga exitosa.
+    </p>
+  </div>
+
+  <!-- Paso 1: Configuración -->
+  <section class="section-block">
+    <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+  </section>
 
   <!-- Bloque de carga -->
   <app-file-upload
