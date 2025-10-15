@@ -33,14 +33,14 @@ export class SucursalComponent implements AfterViewInit {
   private map!: L.Map;
   private marker!: L.Marker;
   private http = inject(HttpClient);
-  private allMarkers: L.Marker[] = [];
+  private allMarkers: { id: number; marker: L.Marker }[] = [];
 
   searchQuery: string = '';
   sucursalSeleccionada: any = null;
 
   constructor(private dialog: MatDialog) {}
 
-  /** 🌍 Sucursales locales (fijas) */
+  /**  Sucursales locales (fijas) */
   private localBranches: BranchFromApi[] = [
     {
       id: 0,
@@ -78,7 +78,7 @@ export class SucursalComponent implements AfterViewInit {
     this.initMap();
   }
 
-  /** 🗺️ Inicializa mapa */
+  /**  Inicializa mapa */
   private initMap() {
     this.map = L.map(this.mapContainer.nativeElement).setView([4.5709, -74.2973], 6);
 
@@ -97,7 +97,7 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 📍 Cargar sucursales locales */
+  /**  Cargar sucursales locales */
   private loadLocalBranches() {
     this.localBranches.forEach((b: BranchFromApi) => {
       const [lat, lon] = b.location.split(',').map(Number);
@@ -113,7 +113,7 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 🔄 Botón Recargar */
+  /**  Botón Recargar */
   recargarSucursales() {
     Swal.fire({
       title: '🔄 Recargando sucursales...',
@@ -121,14 +121,14 @@ export class SucursalComponent implements AfterViewInit {
       didOpen: () => Swal.showLoading()
     });
 
-    this.allMarkers.forEach(m => this.map.removeLayer(m));
+    this.allMarkers.forEach(m => this.map.removeLayer(m.marker));
     this.allMarkers = [];
 
     this.loadLocalBranches();
     this.loadBranchesFromApi({ showAlert: true, closeLoader: true });
   }
 
-  /** 🌐 Cargar sucursales del backend */
+  /** Cargar sucursales del backend */
   private loadBranchesFromApi(opts: { showAlert: boolean; closeLoader: boolean }) {
     const url = `${environment.URL}/api/Branch`;
 
@@ -152,7 +152,7 @@ export class SucursalComponent implements AfterViewInit {
           const [lat, lon] = clean.split(',').map(parseFloat);
           if (isNaN(lat) || isNaN(lon)) return;
 
-          this.addBranchMarker({
+          const marker = this.addBranchMarker({
             id: b.id,
             name: b.name,
             address: b.address,
@@ -161,6 +161,28 @@ export class SucursalComponent implements AfterViewInit {
             zone: b.zone ?? 'Sin zona',
             schedule: b.schedule ?? 'No definido'
           });
+
+          // Agregar botón editar al popup
+          marker.on('popupopen', () => {
+            const popupContent = `
+              <div style="text-align:left;">
+                <b>${b.name}</b><br>
+                ${b.address}<br>
+                <b>Teléfono:</b> ${b.phone ?? ''}<br>
+                <b>Correo:</b> ${b.email ?? ''}<br><br>
+                <button id="edit-${b.id}" 
+                  style="background:#2563eb;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;">
+                  ✏️ Editar
+                </button>
+              </div>`;
+            marker.setPopupContent(popupContent);
+
+            setTimeout(() => {
+              const btn = document.getElementById(`edit-${b.id}`);
+              if (btn) btn.addEventListener('click', () => this.openModal(b));
+            }, 50);
+          });
+
           added++;
         });
 
@@ -175,7 +197,7 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 🔵 Agregar marcador azul */
+  /**  Agregar marcador azul */
   private addBranchMarker(branch: {
     id: number; name: string; address: string;
     latitude: number; longitude: number;
@@ -199,10 +221,11 @@ export class SucursalComponent implements AfterViewInit {
       `);
 
     marker.on('click', () => (this.sucursalSeleccionada = branch));
-    this.allMarkers.push(marker);
+    this.allMarkers.push({ id: branch.id, marker });
+    return marker;
   }
 
-  /** 🟢 Marcador temporal */
+  /**  Marcador temporal */
   private setSearchMarker(lat: number, lng: number) {
     if (this.marker) this.map.removeLayer(this.marker);
     const greenIcon = L.icon({
@@ -215,7 +238,7 @@ export class SucursalComponent implements AfterViewInit {
     this.marker = L.marker([lat, lng], { icon: greenIcon }).addTo(this.map);
   }
 
-  /** 🔍 Buscar dirección */
+  /** Buscar dirección */
   buscarDireccion(): void {
     if (!this.searchQuery.trim()) {
       Swal.fire('Campo vacío', 'Por favor escribe una dirección o ciudad', 'warning');
@@ -256,7 +279,7 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
-  /** 🏢 Abrir modal de registro */
+  /**  Abrir modal de registro */
   private askToRegisterBranch(address: string, lat: number, lon: number) {
     const item: BranchFromApi = {
       id: 0,
@@ -270,7 +293,7 @@ export class SucursalComponent implements AfterViewInit {
     this.openModal(item);
   }
 
-  /** 📋 Modal genérico */
+  /**  Modal genérico */
   openModal(item?: BranchFromApi) {
     const isEditing = !!item?.id && !!item?.name;
 
@@ -284,11 +307,11 @@ export class SucursalComponent implements AfterViewInit {
         fields: [
           { name: 'name', label: 'Nombre', type: 'text', value: item?.name || '', required: true },
           { name: 'address', label: 'Dirección', type: 'text', value: item?.address || '', required: true, readonly: true },
-          { name: 'phone', label: 'Teléfono', type: 'text', value: item?.phone || '', required: true, readonly: isEditing },
-          { name: 'email', label: 'Correo electrónico', type: 'email', value: item?.email || '', required: true, readonly: isEditing },
-          { name: 'zone', label: 'Zona', type: 'text', value: item?.zone || '', required: true, readonly: isEditing },
-          { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.schedule || ''), required: true },
-          { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.schedule || ''), required: true },
+          { name: 'phone', label: 'Teléfono', type: 'text', value: item?.phone || '', required: true },
+          { name: 'email', label: 'Correo electrónico', type: 'email', value: item?.email || '', required: true },
+          { name: 'zone', label: 'Zona', type: 'text', value: item?.zone || '', required: false },
+          { name: 'startTime', label: 'Hora inicio', type: 'time', value: fromApiTime(item?.schedule || ''), required: false },
+          { name: 'endTime', label: 'Hora fin', type: 'time', value: fromApiTime(item?.schedule || ''), required: false },
         ],
         replaceBaseFields: true
       },
@@ -296,25 +319,20 @@ export class SucursalComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (isEditing) {
-          console.log('✏️ Editar sucursal:', result);
-          // Aquí puedes implementar PUT si el backend lo soporta
+        if (isEditing && item) {
+          this.updateBranch(item, result);
         } else {
           const [lat, lon] = (item?.location ?? '0,0').split(',').map(Number);
-
           const data = {
             id: 0,
             name: result.name,
             address: result.address,
             phone: result.phone,
             email: result.email,
-            zone: result.zone,
-            schedule: `Abre: ${result.startTime} - Cierra: ${result.endTime}`,
             location: `${lat},${lon}`,
             cityId: 1,
             organizationId: 1
           };
-          console.log('📦 Enviando al backend:', data);
           this.registerBranch(data, lat, lon);
         }
       }
@@ -335,15 +353,7 @@ export class SucursalComponent implements AfterViewInit {
       next: () => {
         Swal.close();
         Swal.fire('✅ Registrada', 'Sucursal registrada exitosamente', 'success');
-        this.addBranchMarker({
-          id: 0,
-          name: data.name,
-          address: data.address,
-          latitude: lat,
-          longitude: lon,
-          zone: data.zone ?? 'Sin zona',
-          schedule: data.schedule ?? 'No definido'
-        });
+        this.loadBranchesFromApi({ showAlert: false, closeLoader: false });
       },
       error: (err) => {
         Swal.close();
@@ -353,15 +363,62 @@ export class SucursalComponent implements AfterViewInit {
     });
   }
 
+  /** PUT actualizar sucursal (API + mapa) */
+  private updateBranch(item: BranchFromApi, result: any) {
+    const url = `${environment.URL}/api/Branch/update`; //  ruta correcta
+
+    const [lat, lon] = (item.location ?? '0,0').split(',').map(Number);
+
+    const updated = {
+      id: item.id,
+      name: result.name ?? item.name,
+      phone: result.phone ?? '',
+      email: result.email ?? '',
+      address: item.address ?? '',
+      location: `${lat},${lon}`,
+      cityId: 1,
+      organizationId: 1
+    };
+
+    Swal.fire({
+      title: 'Actualizando sucursal...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.http.put(url, updated).subscribe({
+      next: () => {
+        Swal.close();
+        Swal.fire('✅ Actualizada', 'Sucursal actualizada correctamente', 'success');
+
+        // 🔹 Actualizar popup sin recargar
+        const found = this.allMarkers.find(m => m.id === item.id);
+        if (found) {
+          found.marker.setPopupContent(`
+            <b>${updated.name}</b><br>
+            ${updated.address}<br>
+            <b>Teléfono:</b> ${updated.phone}<br>
+            <b>Correo:</b> ${updated.email}
+          `);
+        }
+      },
+      error: (err) => {
+        Swal.close();
+        console.error(' Error al actualizar sucursal:', err);
+        Swal.fire('Error', err.error?.message || 'No se pudo actualizar la sucursal', 'error');
+      }
+    });
+  }
+
   cerrarModal() {
     this.sucursalSeleccionada = null;
   }
 
-  /** 🌍 Reverse Geocoding */
+  /**  Reverse Geocoding */
   private reverseGeocode(lat: number, lon: number) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
     this.http.get<any>(url).subscribe({
-      next: (data) => console.log('📍 Dirección detectada:', data.display_name),
+      next: (data) => console.log(' Dirección detectada:', data.display_name),
       error: () => console.warn('No se pudo obtener la dirección automáticamente.')
     });
   }
