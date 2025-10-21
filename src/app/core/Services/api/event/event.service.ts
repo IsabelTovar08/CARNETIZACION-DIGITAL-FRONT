@@ -59,4 +59,18 @@ getInternalDivisions(): Observable<ApiResponse<SelectOption[]>> {
   return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/InternalDivision`);
 }
 
+// Actualizar evento
+public updateEvent(eventData: any): Observable<ApiResponse<{id: number}>> {
+  return this.http.put<ApiResponse<{id: number}>>(
+    `${this.urlBase}/Event/Update`,
+    eventData,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+}
+
+// Eliminar evento
+public deleteEvent(id: number): Observable<ApiResponse<any>> {
+  return this.http.delete<ApiResponse<any>>(`${this.urlBase}/Event/${id}`);
+}
+
 }

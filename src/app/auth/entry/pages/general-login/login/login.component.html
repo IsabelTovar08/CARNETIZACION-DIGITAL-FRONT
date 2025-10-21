@@ -13,30 +13,38 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
         <h4>Correo electrónico</h4>
-        <input 
-          type="email" 
-          formControlName="email" 
-          class="form-input" 
+        <input
+          type="email"
+          formControlName="email"
+          class="form-input"
           placeholder="example@gmail.com">
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
+          <span *ngIf="loginForm.get('email')?.hasError('required')">El correo electrónico es obligatorio</span>
+          <span *ngIf="loginForm.get('email')?.hasError('email')">Ingresa un correo electrónico válido</span>
+        </div>
 
         <h4>Contraseña</h4>
         <div class="password-container">
-          <input 
-            [type]="showPassword ? 'text' : 'password'" 
-            formControlName="password" 
-            class="form-input" 
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            class="form-input"
             placeholder="********">
 
           <span class="material-icons visibility-icon" (click)="togglePassword()">
             {{ showPassword ? 'visibility_off' : 'visibility' }}
           </span>
         </div>
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+          <span *ngIf="loginForm.get('password')?.hasError('required')">La contraseña es obligatoria</span>
+          <span *ngIf="loginForm.get('password')?.hasError('minlength')">La contraseña debe tener al menos 8 caracteres</span>
+        </div>
 
         <div class="forgot-password">
           <a (click)="goToForgotPassword()" style="cursor: pointer">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <button type="submit" class="login-button" [disabled]="isLoading">
+        <button type="submit" class="login-button" [disabled]="isLoading || loginForm.invalid">
           {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
         </button>
       </form>

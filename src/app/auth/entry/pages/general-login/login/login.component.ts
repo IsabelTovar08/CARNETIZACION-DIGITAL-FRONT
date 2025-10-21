@@ -55,13 +55,13 @@ export class LoginComponent {
           // Opcional: mostrar notificación
           console.log(response.message);
         } else {
-          // ❌ La API respondió 200 pero con error lógico
+          // La API respondió 200 pero con error lógico
           console.warn('Login fallido:', response.message);
           alert(response.message); // o tu propio servicio de toast
         }
       },
       error: (error) => {
-        // ❌ Error de red o statusCode >= 400
+        //  Error de red o statusCode >= 400
         console.error('Error al iniciar sesión:', error);
         // alert('Ocurrió un error inesperado, intenta de nuevo.');
       }

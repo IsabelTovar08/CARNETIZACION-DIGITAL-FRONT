@@ -39,7 +39,7 @@
               id="password"
               [type]="showPassword ? 'text' : 'password'"
               [(ngModel)]="password"
-              maxlength="100" 
+              maxlength="100"
               (input)="clearError()"
               (keyup.enter)="handleSubmit()"
               [class]="getInputClasses()"
@@ -62,7 +62,7 @@
               </svg>
             </button>
           </div>
-          
+
           <div *ngIf="error" class="modal-error">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10"></circle>

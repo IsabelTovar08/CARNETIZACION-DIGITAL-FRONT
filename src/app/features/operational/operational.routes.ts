@@ -9,7 +9,6 @@ import { DetailsPeopleImportComponent } from './mass-upload-people/details-peopl
 
 export const operationalRoutes: Routes = [
   { path: 'event-types', component: ListEventTypesComponent },
-  { path: 'events', component: ListEventsComponent },
   { path: 'access-points', component: ListAccessPointComponent },
   {
     path: 'events',
