@@ -1,35 +1,33 @@
-<div class="map-wrapper" #mapContainer>
-  <div class="map-container">
-    <img src="assets/mapa.png" alt="Mapa" class="map-image">
+<div class="page-container">
+  <!-- 🔍 Barra de búsqueda flotante -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="🔍 Buscar dirección o ciudad en Colombia..."
+      (keyup.enter)="buscarDireccion()"
+    />
+    <button (click)="buscarDireccion()">Buscar</button>
+    <button class="reload-btn" (click)="recargarSucursales()">Recargar</button>
+  </div>
 
-    <!-- Marcadores -->
-    <div class="marker-container marker-norte" (click)="mostrarInfo(sucursalNorte, $event)">
-      <img src="assets/marker.png" alt="Norte" class="marker-icon">
-    </div>
+  <!-- 🗺️ Contenedor del mapa -->
+  <div class="map-wrapper">
+    <div #mapContainer id="map" class="map-container"></div>
+  </div>
 
-    <div class="marker-container marker-centro" (click)="mostrarInfo(sucursalCentro, $event)">
-      <img src="assets/marker.png" alt="Centro" class="marker-icon">
-    </div>
+  <!-- 📍 Modal con info de sucursal seleccionada -->
+  <div class="modal-overlay" *ngIf="sucursalSeleccionada" (click)="cerrarModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <span class="close" (click)="cerrarModal()">&times;</span>
 
-    <div class="marker-container marker-sur" (click)="mostrarInfo(sucursalSur, $event)">
-      <img src="assets/marker.png" alt="Sur" class="marker-icon">
-    </div>
+      <h2>{{ sucursalSeleccionada.name }}</h2>
+      <p><strong>Dirección:</strong> {{ sucursalSeleccionada.address }}</p>
+      <p><strong>Zona:</strong> {{ sucursalSeleccionada.zone }}</p>
+      <p><strong>Horario:</strong> {{ sucursalSeleccionada.schedule }}</p>
 
-    <div class="marker-container marker-sur" (click)="mostrarInfo(sucursalSur, $event)">
-      <img src="assets/marker.png" alt="Sur" class="marker-icon">
-    </div>
-
-    <div class="marker-container marker-sur" (click)="mostrarInfo(sucursalSur, $event)">
-      <img src="assets/marker.png" alt="Sur" class="marker-icon">
-    </div>
-    <!-- Modal -->
-    <div class="modal" *ngIf="sucursalSeleccionada">
-      <div class="modal-content">
-        <span class="close" (click)="cerrarModal()">&times;</span>
-        <h2>{{ sucursalSeleccionada.nombre }}</h2>
-        <p><strong>Dirección:</strong> {{ sucursalSeleccionada.direccion }}</p>
-        <p><strong>Horario:</strong> {{ sucursalSeleccionada.horario }}</p>
-        <img [src]="sucursalSeleccionada.imagen" alt="Sucursal" class="sucursal-img">
+      <div class="modal-actions">
+        <button class="guardar-btn" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   </div>

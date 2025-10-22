@@ -46,3 +46,32 @@ mat-form-field {
 .mat-form-field-appearance-fill.mat-form-field-invalid .mat-form-field-flex {
   border-color: #ef4444;
 }
+/* === SCROLL INTERNO PARA EL FORMULARIO === */
+.form-scroll-area {
+  max-height: calc(90vh - 160px); /* espacio dinámico para pantallas grandes */
+  overflow-y: auto;
+  padding-right: 8px; /* espacio para que no se tape el scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6; /* gris suave */
+}
+
+/* Scrollbar personalizado (solo WebKit, opcional) */
+.form-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-scroll-area::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 4px;
+}
+
+.form-scroll-area::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-height: 700px) {
+  .form-scroll-area {
+    max-height: calc(85vh - 140px);
+  }
+}
