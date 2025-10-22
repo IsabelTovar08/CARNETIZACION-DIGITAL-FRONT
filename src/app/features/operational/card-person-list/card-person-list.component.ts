@@ -1,3 +1,4 @@
+import { ApiService } from './../../../core/Services/api/api.service';
 import { Component, signal } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
@@ -50,24 +51,24 @@ export class CardPersonListComponent {
   /// </summary>
   columns = [
     { key: 'photoUrl', label: 'Foto' },
-    { key: 'fullName', label: 'Nombre completo' },
+    { key: 'personName', label: 'Nombre completo' },
     { key: 'email', label: 'Correo electrónico' },
     { key: 'organizationalUnit', label: 'Unidad organizacional' },
-    { key: 'division', label: 'División interna' },
-    { key: 'profile', label: 'Perfil' },
-    { key: 'cardStatus', label: 'Estado del carnet' },
+    { key: 'divisionName', label: 'División interna' },
+    { key: 'profileName', label: 'Perfil' },
+    { key: 'isCurrentlySelected', label: 'Estado del carnet' },
     { key: 'expirationDate', label: 'Vencimiento' }
 
   ];
 
   displayedColumns = [
     'photoUrl',
-    'fullName',
+    'personName',
     'email',
     'organizationalUnit',
-    'division',
-    'profile',
-    'cardStatus',
+    'divisionName',
+    'profileName',
+    'isCurrentlySelected',
     'expirationDate',
     'actions'
   ];
@@ -118,7 +119,9 @@ export class CardPersonListComponent {
     }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder,
+    private issuedCardService: ApiService<any, any>
+  ) {}
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
@@ -129,6 +132,16 @@ export class CardPersonListComponent {
     });
 
     this.dataSource.set(this.peopleMock);
+
+    this.issuedCardService.ObtenerTodo('IssuedCard').subscribe({
+      next: (result) => {
+        this.peopleMock = result.data;
+        this.dataSource.set(this.peopleMock)
+      },
+      error: (err) => {
+        console.error('Error fetching issued cards:', err);
+      }
+    });
   }
 
   /// <summary>

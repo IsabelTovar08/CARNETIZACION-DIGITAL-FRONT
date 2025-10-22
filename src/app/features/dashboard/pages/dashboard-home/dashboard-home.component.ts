@@ -154,10 +154,10 @@ export class DashboardHomeComponent implements OnInit {
   /// Fetch upcoming events count
   /// </summary>
   getTotalEvents(): void {
-    this.eventService.GetAvailableEventsCount().subscribe({
-      next: (result) => this.nextEvents = result.data ?? 0,
-      error: (err) => console.error('Error fetching total events:', err)
-    });
+    // this.eventService.GetAvailableEventsCount().subscribe({
+    //   next: (result) => this.nextEvents = result.data ?? 0,
+    //   error: (err) => console.error('Error fetching total events:', err)
+    // });
   }
 
   /// <summary>

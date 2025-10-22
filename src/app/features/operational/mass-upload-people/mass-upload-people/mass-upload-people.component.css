@@ -215,6 +215,8 @@ mat-form-field {
   justify-content: center;
   align-items: center;
   z-index: 50000;
+  width: 100%;
+  height: 100vh;
 }
 
 .loading-container {
