@@ -80,7 +80,6 @@
   <!-- Acciones personalizadas -->
   <ng-template #actionsTemplate let-item>
     <button
-      *ngIf="item.successCount > 0"
       mat-icon-button
       (click)="verDetalles(item)"
       matTooltip="Ver detalles">

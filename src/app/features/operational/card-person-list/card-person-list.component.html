@@ -1,0 +1,94 @@
+<div class="toolbar">
+  <h2>Gestión de personas</h2>
+
+  <!-- Filtros -->
+  <form [formGroup]="filterForm" (ngSubmit)="loadData()" class="filter-bar">
+
+    <!-- Campo de búsqueda -->
+    <mat-form-field appearance="outline" class="input-field">
+      <mat-label>Buscar</mat-label>
+      <input matInput placeholder="Nombre o correo" formControlName="search" />
+    </mat-form-field>
+
+    <!-- Unidad organizacional -->
+    <mat-form-field appearance="outline" class="input-field">
+      <mat-label>Unidad organizacional</mat-label>
+      <mat-select formControlName="organizationalUnit">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let u of unidadesOrganizacionales" [value]="u">{{ u }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- División interna -->
+    <mat-form-field appearance="outline" class="input-field">
+      <mat-label>División interna</mat-label>
+      <mat-select formControlName="division">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let d of divisionesInternas" [value]="d">{{ d }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Perfil -->
+    <mat-form-field appearance="outline" class="input-field">
+      <mat-label>Perfil</mat-label>
+      <mat-select formControlName="profile">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let p of perfiles" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Checkbox -->
+    <mat-checkbox formControlName="onlyActive">Solo activos</mat-checkbox>
+
+    <!-- Botones -->
+    <button mat-flat-button color="primary" type="submit">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
+
+    <button mat-stroked-button type="button" (click)="resetFilters()">
+      <mat-icon>refresh</mat-icon>
+      Limpiar
+    </button>
+  </form>
+</div>
+
+<!-- Tabla genérica -->
+<app-generic-table
+  [title]="'Listado de personas'"
+  [columns]="columns"
+  [displayedColumns]="displayedColumns"
+  [dataSourceInput]="dataSource()"
+  [buttonSave]="false"
+  [customTemplates]="{
+    photoUrl: photoTemplate,
+    expirationDate: dateTemplate,
+    actions: actionsTemplate
+  }">
+</app-generic-table>
+
+<!-- Templates personalizados -->
+<ng-template #photoTemplate let-item>
+  <img
+    [src]="item.photoUrl || '/assets/images/default-avatar.png'"
+    alt="foto"
+    width="45"
+    height="45"
+    style="border-radius: 50%; object-fit: cover;"
+  />
+</ng-template>
+
+<ng-template #dateTemplate let-item let-key="key">
+  <span>{{ item[key] | date: 'dd/MM/yyyy' }}</span>
+</ng-template>
+
+<!-- Template para acciones -->
+<ng-template #actionsTemplate let-item>
+  <button
+    mat-icon-button
+    color="primary"
+    [disabled]="!item.pdfUrl"
+    matTooltip="Ver carnet PDF">
+    <mat-icon>picture_as_pdf</mat-icon>
+  </button>
+</ng-template>

@@ -207,14 +207,14 @@ mat-form-field {
 
 /* ⏳ Loading overlay */
 .loading-overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.348);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5000;
+  z-index: 50000;
 }
 
 .loading-container {
@@ -233,6 +233,7 @@ mat-form-field {
   height: 56px;
   animation: pulse 1.8s ease-in-out infinite;
   filter: drop-shadow(0 0 20px currentColor);
+  color: #f1f5f9;
 }
 
 .loading-text {
