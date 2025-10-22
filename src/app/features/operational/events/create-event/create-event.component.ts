@@ -47,6 +47,8 @@ import { ApiService } from '../../../../core/Services/api/api.service';
 export class CreateEventComponent {
   eventForm!: FormGroup;
   showAddForm = false;
+  isEdit = false;
+  editingEventId: number | null = null;
   listSchedule: ScheduleList[] = [];
   displayedColumns: string[] = ['name', 'startTime', 'endTime', 'isDeleted', 'actions'];
 
@@ -112,6 +114,14 @@ export class CreateEventComponent {
     this.cargarJornadas();
     this.cargarTiposEvento();
     this.loadAudienceOptions();
+
+    this.route.queryParams.subscribe(params => {
+      if (params['id']) {
+        this.isEdit = true;
+        this.editingEventId = +params['id'];
+        // Metodo para editar evento
+      }
+    });
   }
 
   cargarJornadas(): void {
@@ -339,51 +349,67 @@ export class CreateEventComponent {
 
 
   onSubmit(): void {
-  if (!this.eventForm.valid) {
-    this.markFormGroupTouched();
+   if (!this.eventForm.valid) {
+     this.markFormGroupTouched();
 
-    if (!this.eventForm.get('name')?.value) {
-      this.useservice.showError('El nombre del evento es obligatorio');
-      return;
-    }
-    if (!this.eventForm.get('eventTypeId')?.value) {
-      this.useservice.showError('Debes seleccionar un tipo de evento');
-      return;
-    }
-    if (!this.eventForm.get('scheduleId')?.value) {
-      this.useservice.showError('Debes seleccionar una jornada');
-      return;
-    }
-    if (!this.eventForm.get('scheduleDate')?.value) {
-      this.useservice.showError('Debes seleccionar una fecha de programación');
-      return;
-    }
-    if (!this.eventForm.get('scheduleTime')?.value) {
-      this.useservice.showError('Debes seleccionar una hora de programación');
-      return;
-    }
-    return;
-  }
+     if (!this.eventForm.get('name')?.value) {
+       this.useservice.showError('El nombre del evento es obligatorio');
+       return;
+     }
+     if (!this.eventForm.get('eventTypeId')?.value) {
+       this.useservice.showError('Debes seleccionar un tipo de evento');
+       return;
+     }
+     if (!this.eventForm.get('scheduleId')?.value) {
+       this.useservice.showError('Debes seleccionar una jornada');
+       return;
+     }
+     if (!this.eventForm.get('scheduleDate')?.value) {
+       this.useservice.showError('Debes seleccionar una fecha de programación');
+       return;
+     }
+     if (!this.eventForm.get('scheduleTime')?.value) {
+       this.useservice.showError('Debes seleccionar una hora de programación');
+       return;
+     }
+     return;
+   }
 
-  if (this.accessPoints.length === 0) {
-    this.useservice.showError('Debes agregar al menos un Punto de Acceso');
-    return;
-  }
+   if (this.accessPoints.length === 0) {
+     this.useservice.showError('Debes agregar al menos un Punto de Acceso');
+     return;
+   }
 
-  const dto = this.mapFormToDto();
-  console.log('DTO a enviar:', dto);
+   const dto = this.mapFormToDto();
+   console.log('DTO a enviar:', dto);
 
-  this.eventService.createEvent(dto).subscribe({
-    next: (res) => {
-      this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
-      console.log('Nuevo evento:', res.data);
-    },
-    error: (err) => {
-      this.useservice.showError(err?.error?.message || 'Error al crear evento');
-      console.error('Error al crear evento:', err);
-    }
-  });
-}
+   if (this.isEdit && this.editingEventId) {
+     dto.event.id = this.editingEventId;
+     this.eventService.updateEvent(dto.event).subscribe({
+       next: (res) => {
+         this.useservice.showSuccess(res.message || 'Evento actualizado exitosamente');
+         console.log('Evento actualizado:', res.data);
+         this.router.navigate(['../'], { relativeTo: this.route });
+       },
+       error: (err) => {
+         this.useservice.showError(err?.error?.message || 'Error al actualizar evento');
+         console.error('Error al actualizar evento:', err);
+       }
+     });
+   } else {
+     this.eventService.createEvent(dto).subscribe({
+       next: (res) => {
+         this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
+         console.log('Nuevo evento:', res.data);
+         this.router.navigate(['../'], { relativeTo: this.route });
+       },
+       error: (err) => {
+         this.useservice.showError(err?.error?.message || 'Error al crear evento');
+         console.error('Error al crear evento:', err);
+       }
+     });
+   }
+ }
 
 
   private markFormGroupTouched(): void {

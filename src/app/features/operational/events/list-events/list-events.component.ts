@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../core/Services/api/api.service';
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
 import { Event } from '../../../../core/Models/operational/event.model';
+import { EventService } from '../../../../core/Services/api/event/event.service';
 
 @Component({
   selector: 'app-list-events',
@@ -23,15 +24,20 @@ export class ListEventsComponent implements OnInit {
    */
   constructor(
     private apiService: ApiService<Event, Event>,
+    private eventService: EventService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
     private snackbarService: SnackbarService,
-    
+
   ) {
 
   }
   ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  private loadEvents(): void {
     this.apiService.ObtenerTodo('Event').subscribe((data) => {
       this.listEvents = data.data as Event[];
       this.listEvents = this.listEvents.map(this.toCardItem);
@@ -68,11 +74,40 @@ export class ListEventsComponent implements OnInit {
   };
 
   create() {
-  this.router.navigate(['crear'], { relativeTo: this.route });
-}
-  view(e: any) { }
-  edit(e: any) { }
-  remove(e: any) { }
-  toggle(e: any) { }
+    this.router.navigate(['crear'], { relativeTo: this.route });
+  }
+
+  view(e: any) {
+   // Implementa la vista de los eventos
+  }
+
+  edit(e: any) {
+    // Implemente la  logica para editar el evento
+    this.router.navigate(['crear'], { relativeTo: this.route, queryParams: { id: e.id } });
+  }
+
+  remove(e: any) {
+    this.eventService.deleteEvent(e.id).subscribe({
+      next: () => {
+        this.snackbarService.showSuccess('Evento eliminado exitosamente');
+        this.loadEvents();
+      },
+      error: (err) => {
+        this.snackbarService.showError('Error al eliminar el evento');
+      }
+    });
+  }
+
+  toggle(e: any) {
+    this.apiService.deleteLogic('Event', e.id).subscribe({
+      next: () => {
+        this.snackbarService.showSuccess(`Evento ${e.isDeleted ? 'activado' : 'desactivado'} exitosamente`);
+        this.loadEvents();
+      },
+      error: (err) => {
+        this.snackbarService.showError('Error al cambiar el estado del evento');
+      }
+    });
+  }
 
 }

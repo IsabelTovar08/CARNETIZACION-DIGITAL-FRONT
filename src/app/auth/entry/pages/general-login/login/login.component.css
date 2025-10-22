@@ -107,6 +107,13 @@
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
 }
 
+.error-message {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
 /* Botón - MEJORADO */
 .login-button {
   width: 50%;
@@ -122,9 +129,16 @@
   align-self: center; /* Centra el botón */
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .forgot-password {

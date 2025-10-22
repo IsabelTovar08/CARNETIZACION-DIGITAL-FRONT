@@ -12,7 +12,6 @@ import { CardPersonListComponent } from './card-person-list/card-person-list.com
 
 export const operationalRoutes: Routes = [
   { path: 'event-types', component: ListEventTypesComponent },
-  { path: 'events', component: ListEventsComponent },
   { path: 'access-points', component: ListAccessPointComponent },
   {
     path: 'events',
