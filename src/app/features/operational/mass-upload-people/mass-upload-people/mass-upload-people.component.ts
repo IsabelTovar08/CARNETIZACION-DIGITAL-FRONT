@@ -63,6 +63,10 @@ export class MassUploadPeopleComponent {
   intervalId: any;
 
   ngOnInit(): void {
+    this.getImportBatches();
+  }
+
+  getImportBatches() {
     this.importBatchService.getAll().subscribe({
       next: (data) => {
         this.records = data.data;
@@ -71,7 +75,6 @@ export class MassUploadPeopleComponent {
       error: (err) => console.error('Error cargando filas:', err)
     });
   }
-
 
   onEdit(item: ImportBatchRowTable) {
     console.log('Editar:', item);
@@ -136,6 +139,7 @@ export class MassUploadPeopleComponent {
       next: () => {
         this.stopLoading();
         Swal.fire('Éxito', 'Carnets generados correctamente', 'success');
+        this.getImportBatches();
       },
       error: () => {
         this.stopLoading();

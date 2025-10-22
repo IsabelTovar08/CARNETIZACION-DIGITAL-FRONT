@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Crear Evento</h2>
+  <h2>{{ isEdit ? 'Editar Evento' : 'Crear Evento' }}</h2>
 
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
     <div class="main-layout">
@@ -274,10 +274,10 @@
       </div>
     </div>
 
-    <!-- Botón crear evento -->
+    <!-- Botón crear/actualizar evento -->
     <div class="form-actions">
       <button mat-raised-button color="primary" type="submit" class="create-btn">
-        Crear Evento
+        {{ isEdit ? 'Actualizar Evento' : 'Crear Evento' }}
       </button>
     </div>
 

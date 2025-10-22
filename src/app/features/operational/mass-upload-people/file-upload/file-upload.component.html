@@ -1,46 +1,84 @@
 <mat-card class="upload-box">
+  <mat-card-title>2. Subida de archivo</mat-card-title>
   <mat-card-content>
-    <h3>Cargar Archivo</h3>
+    <p class="section-description">
+      Cargue el archivo Excel con la información de las personas a registrar.
+    </p>
 
-    <!-- Stepper -->
     <mat-horizontal-stepper [linear]="true" #stepper>
 
-      <!-- Paso 1: Seleccionar archivo -->
+      <!-- Paso 1: Selección de archivo -->
       <mat-step [stepControl]="fileForm">
         <form [formGroup]="fileForm">
-          <ng-template matStepLabel>Subir archivo</ng-template>
+          <ng-template matStepLabel>Seleccionar archivo</ng-template>
 
           <div class="drop-zone"
-               (drop)="onFileDrop($event)"
-               (dragover)="onDragOver($event)">
-            <p>Arrastra y suelta un archivo o haz clic para importar</p>
-            <p class="formats">Formatos compatibles: CSV, XLSX</p>
-            <button mat-raised-button color="primary" (click)="importFile()">
-              Seleccionar Archivo
-            </button>
+            [class.dragover]="isDragOver"
+            (drop)="onFileDrop($event)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (click)="!selectedFile && importFile()">
+
+            <!-- Si no hay archivo cargado -->
+            <ng-container *ngIf="!selectedFile; else filePreview">
+              <mat-icon>cloud_upload</mat-icon>
+              <p>Arrastra tu archivo aquí</p>
+              <p>o haz clic para seleccionarlo</p>
+              <span class="formats">Formatos permitidos: CSV, XLSX</span>
+              <span class="formats">Tamaño máximo: 10 MB</span>
+              <button mat-raised-button color="primary" type="button">
+                Seleccionar Archivo
+              </button>
+            </ng-container>
+
+            <!-- Si ya hay archivo -->
+            <ng-template #filePreview>
+              <div class="file-info">
+                <div class="file-meta">
+                  <mat-icon>insert_drive_file</mat-icon>
+                  <div>
+                    <strong>{{ selectedFile?.name }}</strong>
+                    <p class="details">
+                      {{ selectedFile ? (selectedFile.size / 1024 | number:'1.0-0') : '0' }} KB •
+                      {{ selectedFile?.type || 'Formato desconocido' }}
+                    </p>
+                  </div>
+                </div>
+                <button mat-stroked-button color="warn" type="button" (click)="removeFile()">
+                  Quitar
+                </button>
+              </div>
+
+              <!-- Texto más directo al tener archivo -->
+              <div class="context-info">
+                <p>Confirma si este es el archivo correcto o quítalo para cargar otro.</p>
+              </div>
+            </ng-template>
           </div>
 
-          <p *ngIf="selectedFile" class="file-info">
-            Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
-          </p>
-
           <div class="step-actions">
-            <button mat-button matStepperNext [disabled]="!selectedFile">Siguiente</button>
+            <button mat-button type="button">Cancelar</button>
+            <button mat-flat-button color="primary" matStepperNext [disabled]="!selectedFile">
+              Continuar
+            </button>
           </div>
         </form>
       </mat-step>
 
-      <!-- Paso 2: Confirmar carga -->
+      <!-- Paso 2: Confirmación -->
       <mat-step>
-        <ng-template matStepLabel>Confirmar carga</ng-template>
+        <ng-template matStepLabel>Confirmar</ng-template>
         <div class="confirm-box">
-          <mat-icon>description</mat-icon>
-          <p *ngIf="selectedFile">Archivo listo: <strong>{{ selectedFile.name }}</strong></p>
+          <mat-icon>check_circle</mat-icon>
+          <p>Archivo listo para subir:</p>
+          <p><strong>{{ selectedFile?.name }}</strong></p>
         </div>
 
         <div class="step-actions">
           <button mat-button matStepperPrevious>Anterior</button>
-          <button mat-flat-button color="primary" (click)="uploadFile()">Cargar datos</button>
+          <button mat-flat-button color="primary" (click)="uploadFile()">
+            Subir Archivo
+          </button>
         </div>
       </mat-step>
 

@@ -9,6 +9,8 @@ import { UserStoreService } from '../../../core/Services/auth/user-store.service
 import { UserMe } from '../../../core/Models/security/user.models';
 import Swal from 'sweetalert2';
 import { TokenService } from '../../../core/Services/token/token.service';
+import { NotificationWService } from '../../../core/Services/WebSocket/Notification/notification.service';
+import { SnackbarService } from '../../../core/Services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-header',
@@ -32,7 +34,7 @@ export class HeaderComponent implements OnInit {
 
   // Variables para las notificaciones
   showNotifications: boolean = false;
-  notificationCount: number = 4; // Ejemplo: número de notificaciones
+  unreadNotifications: number = 0;
 
   @ViewChild('notificationTrigger') notificationTrigger!: ElementRef;
 
@@ -40,8 +42,10 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private navState: NavigationStateService,
     private store: UserStoreService,
-    private authService: TokenService
-  ) {}
+    private authService: TokenService,
+    private notificaionWService: NotificationWService,
+    private snackbarService: SnackbarService
+  ) { }
 
 
 
@@ -51,6 +55,16 @@ export class HeaderComponent implements OnInit {
       this.user = this.store.user;
       this.isLoggedIn = this.store.isLoggedIn;
       console.log(this.user());
+    });
+
+    this.notificaionWService.connect();
+    this.notificaionWService.onNotifications()
+      .subscribe(n => {
+        // this.notifications.push(n);
+      });
+    // Escuchar cambios de cantidad
+    this.notificaionWService.onUnreadCount().subscribe(count => {
+      this.unreadNotifications = count;
     });
   }
 
@@ -114,5 +128,11 @@ export class HeaderComponent implements OnInit {
         Swal.fire('Sesión cerrada', 'Has salido correctamente.', 'success');
       }
     });
+  }
+
+
+  onUnreadCountChange(count: number): void {
+    this.unreadNotifications = count;
+    console.log('🔔 Cantidad actual de no leídas:', count);
   }
 }
