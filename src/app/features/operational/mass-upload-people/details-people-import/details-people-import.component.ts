@@ -5,10 +5,12 @@ import { ImportBatchRowTable } from '../../../../core/Models/operational/import-
 import Swal from 'sweetalert2';
 import { ImportBatchService } from '../../../../core/Services/import-banch/import-banch.service';
 import { ActivatedRoute } from '@angular/router';
+import { CdkNoDataRow } from "@angular/cdk/table";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-details-people-import',
-  imports: [GenericTableComponent, MatChipsModule],
+  imports: [GenericTableComponent, MatChipsModule, CdkNoDataRow, CommonModule],
   templateUrl: './details-people-import.component.html',
   styleUrl: './details-people-import.component.css'
 })
@@ -18,14 +20,13 @@ export class DetailsPeopleImportComponent {
     private route: ActivatedRoute
   ) { }
 
-  displayedColumns = ['photo', 'name', 'org', 'division', 'state', 'actions'];
+  displayedColumns: string[] = ['rowNumber', 'status', 'message'];
 
+  // ✅ Configuración de columnas
   columns = [
-    { key: 'photo', label: 'Foto' },
-    { key: 'name', label: 'Nombre' },
-    { key: 'org', label: 'Unidad Organizativa' },
-    { key: 'division', label: 'División Interna' },
-    { key: 'state', label: 'Estado' }
+    { key: 'rowNumber', label: 'Fila' },
+    { key: 'status', label: 'Estado' },
+    { key: 'message', label: 'Mensaje' }
   ];
   records: ImportBatchRowTable[] = [];
   importBatchId!: number;

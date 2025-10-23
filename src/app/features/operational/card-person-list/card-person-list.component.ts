@@ -52,8 +52,6 @@ export class CardPersonListComponent {
   columns = [
     { key: 'photoUrl', label: 'Foto' },
     { key: 'personName', label: 'Nombre completo' },
-    { key: 'email', label: 'Correo electrónico' },
-    { key: 'organizationalUnit', label: 'Unidad organizacional' },
     { key: 'divisionName', label: 'División interna' },
     { key: 'profileName', label: 'Perfil' },
     { key: 'isCurrentlySelected', label: 'Estado del carnet' },
@@ -64,8 +62,6 @@ export class CardPersonListComponent {
   displayedColumns = [
     'photoUrl',
     'personName',
-    'email',
-    'organizationalUnit',
     'divisionName',
     'profileName',
     'isCurrentlySelected',
@@ -178,4 +174,31 @@ export class CardPersonListComponent {
     this.filterForm.reset({ onlyActive: true });
     this.dataSource.set(this.peopleMock);
   }
+
+    /// <summary>
+  /// Abre un archivo PDF desde una cadena Base64 en una nueva pestaña del navegador
+  /// </summary>
+  openPdf(base64Data: string): void {
+    try {
+      // Convierte la cadena base64 en un Blob
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+      // Crea una URL temporal para el Blob
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Abre el PDF en una nueva pestaña
+      window.open(blobUrl, '_blank');
+    } catch (error) {
+      console.error('Error opening PDF:', error);
+    }
+  }
+
 }

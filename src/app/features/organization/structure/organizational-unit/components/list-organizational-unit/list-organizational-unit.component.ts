@@ -32,34 +32,35 @@ export class ListOrganizationalUnitComponent implements OnInit {
     this.apiService.ObtenerTodo('OrganizationalUnit').subscribe((resp) => {
       const data = (resp?.data ?? []) as OrganizationalUnitList[];
       this.listUnits = data.map(this.toCardItem);
+      console.log(this.listUnits);
     });
   }
 
   private toCardItem = (e: OrganizationalUnitList): any => {
     const { id, name, description, isDeleted, ...rest } = e;
-    
-    const divisionsCount = e.divisionsCount ?? 0;
-    const branchesCount = e.branchesCount ?? 0;
+
+    // const divisionsCount = e.divisionsCount ?? 0;
+    // const branchesCount = e.branchesCount ?? 0;
 
     return {
       ...rest,
       id,
-      title: name ?? 'Unidad Organizativa',
-      subtitle: `${divisionsCount} División${divisionsCount === 1 ? '' : 'es'}, ${branchesCount} Sucursal${branchesCount === 1 ? '' : 'es'}`,
+      name: name ?? 'Unidad Organizativa',
+      // subtitle: `${divisionsCount} División${divisionsCount === 1 ? '' : 'es'}, ${branchesCount} Sucursal${branchesCount === 1 ? '' : 'es'}`,
       description: description ?? 'Sin descripción.',
-      tags: ['Sin estado', 'General'],
+      tags: isDeleted ? ['Inactivo'] : [],
       imageUrl: 'https://www.anahuac.mx/mexico/sites/default/files/styles/webp/public/noticias/Empresas-mas-innovadores-en-el-mundo.jpg.webp?itok=jy4fPHsa',
       isDeleted: !!isDeleted,
     };
   };
 
   create() { }
-  
+
   view(e: any): void {
   // Opción absoluta (incluye 'dashboard' si es tu layout padre):
   this.router.navigate(['/dashboard/organizational/structure/unit', e.id, 'internal-division']);
-  
-  
+
+
 }
   edit(e: any) { }
   remove(e: any) { }

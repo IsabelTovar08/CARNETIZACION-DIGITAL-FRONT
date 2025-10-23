@@ -46,3 +46,17 @@
   object-fit: cover;
   border: 2px solid #e0e0e0;
 }
+
+/* Fila o mensaje con error */
+.error-row {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* Avatar o cualquier imagen */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}

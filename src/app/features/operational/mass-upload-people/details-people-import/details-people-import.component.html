@@ -1,27 +1,27 @@
-  <app-generic-table
-    [title]="'Últimos registros generados'"
-    [displayedColumns]="displayedColumns"
-    [columns]="columns"
-    [dataSourceInput]="records"
-    [customTemplates]="{
-      photo: photoTemplate,
-      state: stateTemplate,
-      'actions-extra': actionsTemplate
-    }"
+<app-generic-table
+  [title]="'Últimos registros generados'"
+  [displayedColumns]="displayedColumns"
+  [columns]="columns"
+  [dataSourceInput]="records || []"
+  [customTemplates]="{
+    status: statusTemplate,
+    message: messageTemplate
+  }"
   [buttonSave]="false">
-  </app-generic-table>
+</app-generic-table>
 
-  <!-- Templates personalizados -->
-  <ng-template #photoTemplate let-item>
-    <img [src]="item.photo" alt="Foto" class="avatar">
-  </ng-template>
+<!-- Template para mostrar el estado (success/fail) -->
+<ng-template #statusTemplate let-item>
+  <mat-chip
+    [color]="item.success ? 'primary' : 'warn'"
+    selected>
+    {{ item.success ? 'Éxito' : 'Error' }}
+  </mat-chip>
+</ng-template>
 
-  <ng-template #stateTemplate let-item>
-    <mat-chip color="primary" selected>{{ item.state }}</mat-chip>
-  </ng-template>
-
-  <ng-template #actionsTemplate let-item>
-    <button mat-stroked-button color="accent" (click)="viewCard(item)">
-      Ver carnet
-    </button>
-  </ng-template>
+<!-- Template para mensaje dinámico -->
+<ng-template #messageTemplate let-item>
+  <div [ngClass]="{'error-row': !item.success}">
+    {{ item.message }}
+  </div>
+</ng-template>
