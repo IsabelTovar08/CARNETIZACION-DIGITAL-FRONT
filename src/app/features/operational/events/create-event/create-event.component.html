@@ -1,5 +1,21 @@
 <div class="container">
-  <h2>{{ isEdit ? 'Editar Evento' : 'Crear Evento' }}</h2>
+  <div class="header-section">
+    <h2>{{ isEdit ? 'Editar Evento' : 'Crear Evento' }}</h2>
+    <p class="header-description">Complete la información necesaria para {{ isEdit ? 'actualizar' : 'crear' }} su evento</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+    </div>
+    <div class="progress-steps">
+      <span class="step" [class.active]="currentStep >= 1">1</span>
+      <span class="step" [class.active]="currentStep >= 2">2</span>
+      <span class="step" [class.active]="currentStep >= 3">3</span>
+      <span class="step" [class.active]="currentStep >= 4">4</span>
+    </div>
+  </div>
 
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
     <div class="main-layout">
@@ -8,7 +24,10 @@
 
         <!-- Información del evento -->
         <div class="info-card">
-          <h3 class="card-title">Información del evento</h3>
+          <div class="card-header">
+            <mat-icon class="card-icon">event</mat-icon>
+            <h3 class="card-title">Información del evento</h3>
+          </div>
 
           <div class="form-row">
             <div class="form-group">
@@ -43,18 +62,21 @@
           <div class="form-row">
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Fecha de programación</mat-label>
-                <input matInput [matDatepicker]="scheduleDatePicker" formControlName="scheduleDate"
+                <mat-label>Fecha de inicio</mat-label>
+                <input matInput [matDatepicker]="startDatePicker" formControlName="scheduleDate"
                   placeholder="MM / DD / YYYY">
-                <mat-datepicker-toggle matSuffix [for]="scheduleDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #scheduleDatePicker></mat-datepicker>
+                <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatePicker></mat-datepicker>
               </mat-form-field>
             </div>
 
             <div class="form-group">
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Hora de programación</mat-label>
-                <input matInput type="time" formControlName="scheduleTime">
+                <mat-label>Fecha de finalización</mat-label>
+                <input matInput [matDatepicker]="endDatePicker" formControlName="endDate"
+                  placeholder="MM / DD / YYYY">
+                <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatePicker></mat-datepicker>
               </mat-form-field>
             </div>
           </div>
@@ -102,7 +124,10 @@
 
         <!-- Acceso al Evento -->
         <div class="access-card">
-          <h3 class="card-title">Acceso al Evento</h3>
+          <div class="card-header">
+            <mat-icon class="card-icon">security</mat-icon>
+            <h3 class="card-title">Acceso al Evento</h3>
+          </div>
 
           <div class="access-options">
             <mat-radio-group formControlName="accessType" class="access-radio-group">
@@ -135,7 +160,10 @@
 
         <!-- Filtros Avanzados -->
         <div class="filters-card">
-          <h3 class="card-title">Filtros Avanzados</h3>
+          <div class="card-header">
+            <mat-icon class="card-icon">filter_list</mat-icon>
+            <h3 class="card-title">Filtros Avanzados</h3>
+          </div>
 
 
           <div class="form-row">
@@ -199,7 +227,10 @@
         <!-- Puntos de Acceso -->
         <div class="access-points-card">
           <div class="access-points-header">
-            <h3 class="card-title">Puntos de Acceso</h3>
+            <div class="card-header">
+              <mat-icon class="card-icon">location_on</mat-icon>
+              <h3 class="card-title">Puntos de Acceso</h3>
+            </div>
             <button mat-raised-button color="primary" class="add-btn" (click)="openAddAccessPointDialog()">
               <mat-icon>add</mat-icon> Agregar
             </button>
@@ -277,6 +308,7 @@
     <!-- Botón crear/actualizar evento -->
     <div class="form-actions">
       <button mat-raised-button color="primary" type="submit" class="create-btn">
+        <mat-icon>{{ isEdit ? 'update' : 'add_circle' }}</mat-icon>
         {{ isEdit ? 'Actualizar Evento' : 'Crear Evento' }}
       </button>
     </div>

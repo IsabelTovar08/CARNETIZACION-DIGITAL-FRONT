@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -59,6 +59,10 @@ export class CreateEventComponent {
   internalDivisionOptions: SelectOption[] = [];
   eventTypeOptions: any[] = [];
 
+  // Progress tracking
+  progressPercentage = 0;
+  currentStep = 1;
+
   accessPointTypes = [
     { id: 1, name: 'Entrada' },
     { id: 2, name: 'Exit' },
@@ -75,39 +79,38 @@ export class CreateEventComponent {
     private router: Router,
   ) {
     this.eventForm = this.fb.group({
-       name: ['', Validators.required],
-  code: [''],
-  description: [''],
+        name: ['', Validators.required],
+   code: [''],
+   description: [''],
 
+   eventStart: [''],
+   eventEnd: [''],
 
-  eventStart: [''],
-  eventEnd: [''],
+   scheduleDate: ['', Validators.required],
+   endDate: ['', Validators.required],
 
-  scheduleDate: ['', Validators.required],   
-  scheduleTime: ['', Validators.required],    
+   multipleJornadas: [false],
+   repeatEvent: [false],
 
-  multipleJornadas: [false],
-  repeatEvent: [false],
+   scheduleId: [null, Validators.required],
+   eventTypeId: [null, Validators.required],
+   accessType: ['public'],
+   statusId: [1],
 
-  scheduleId: [null, Validators.required],   
-  eventTypeId: [null, Validators.required],
-  accessType: ['public'],
-  statusId: [1],
+   // DÍAS del evento (lista)
+   days: [[]],
 
-  // DÍAS del evento (lista)
-  days: [[]],                                 
+   // Audiencia
+   profiles: [[]],
+   organizationalUnits: [[]],
+   divisions: [[]],
+   branchId: [1],
 
-  // Audiencia
-  profiles: [[]],
-  organizationalUnits: [[]],
-  divisions: [[]],
-  branchId: [1],
-
-  // Mini-form AP
-  apName: [''],
-  apDescription: [''],
-  apTypeId: [null]
-    });
+   // Mini-form AP
+   apName: [''],
+   apDescription: [''],
+   apTypeId: [null]
+     }, { validators: this.dateRangeValidator });
   }
 
   ngOnInit(): void {
@@ -121,6 +124,11 @@ export class CreateEventComponent {
         this.editingEventId = +params['id'];
         // Metodo para editar evento
       }
+    });
+
+    // Initialize progress tracking
+    this.eventForm.valueChanges.subscribe(() => {
+      this.updateProgress();
     });
   }
 
@@ -310,15 +318,6 @@ export class CreateEventComponent {
  private mapFormToDto(): CreateEventRequest {
   const f = this.eventForm.value;
 
-  // combinar fecha y hora
-  const combineDateTime = (date: any, time: string): string | null => {
-    if (!date || !time) return null;
-    const [h, m] = time.split(':').map(Number);
-    const d = new Date(date);
-    d.setHours(h, m, 0, 0);
-    return d.toISOString();
-  };
-
   return {
     event: {
       id: 0,
@@ -326,8 +325,8 @@ export class CreateEventComponent {
       code: (f.code && f.code.trim()) || this.generateCode(8),
       description: f.description || "",
       scheduleDate: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
-      scheduleTime: combineDateTime(f.scheduleDate, f.scheduleTime),
-      scheduleId: f.scheduleId, 
+      endDate: f.endDate ? new Date(f.endDate).toISOString() : null,
+      scheduleId: f.scheduleId,
       eventTypeId: f.eventTypeId,
       Ispublic: f.accessType === 'public',
       statusId: 1,
@@ -368,8 +367,14 @@ export class CreateEventComponent {
        this.useservice.showError('Debes seleccionar una fecha de programación');
        return;
      }
-     if (!this.eventForm.get('scheduleTime')?.value) {
-       this.useservice.showError('Debes seleccionar una hora de programación');
+     if (!this.eventForm.get('endDate')?.value) {
+       this.useservice.showError('Debes seleccionar una fecha de finalización');
+       return;
+     }
+
+     // Validar que la fecha de fin sea posterior a la fecha de inicio
+     if (this.eventForm.hasError('dateRangeInvalid')) {
+       this.useservice.showError('La fecha de finalización debe ser posterior o igual a la fecha de inicio');
        return;
      }
      return;
@@ -424,5 +429,89 @@ export class CreateEventComponent {
     let out = '';
     for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
     return out;
+  }
+
+  // Validador personalizado para rango de fechas
+  dateRangeValidator(control: AbstractControl): ValidationErrors | null {
+    const startDate = control.get('scheduleDate')?.value;
+    const endDate = control.get('endDate')?.value;
+
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Normalizar las fechas para comparar solo día, mes y año
+      const startNormalized = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const endNormalized = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+      if (endNormalized < startNormalized) {
+        return { dateRangeInvalid: true };
+      }
+    }
+
+    return null;
+  }
+
+  // Progress tracking methods
+  updateProgress(): void {
+    const form = this.eventForm;
+    let completedFields = 0;
+    const totalFields = 12; // Total number of fields to track
+
+    // Basic info (Step 1)
+    if (form.get('name')?.value) completedFields++;
+    if (form.get('description')?.value) completedFields++;
+    if (form.get('eventTypeId')?.value) completedFields++;
+
+    // Dates (Step 2)
+    if (form.get('scheduleDate')?.value) completedFields++;
+    if (form.get('endDate')?.value) completedFields++;
+    if (form.get('scheduleId')?.value) completedFields++;
+
+    // Access (Step 3)
+    if (form.get('accessType')?.value) completedFields++;
+    if (this.accessPoints.length > 0) completedFields++;
+
+    // Filters (Step 4)
+    if (form.get('profiles')?.value?.length > 0) completedFields++;
+    if (form.get('organizationalUnits')?.value?.length > 0) completedFields++;
+    if (form.get('divisions')?.value?.length > 0) completedFields++;
+    if (form.get('code')?.value) completedFields++;
+
+    this.progressPercentage = Math.round((completedFields / totalFields) * 100);
+    this.updateCurrentStep();
+  }
+
+  updateCurrentStep(): void {
+    const form = this.eventForm;
+
+    // Step 1: Basic info
+    if (!form.get('name')?.value || !form.get('eventTypeId')?.value) {
+      this.currentStep = 1;
+      return;
+    }
+
+    // Step 2: Dates and schedule
+    if (!form.get('scheduleDate')?.value || !form.get('endDate')?.value || !form.get('scheduleId')?.value) {
+      this.currentStep = 2;
+      return;
+    }
+
+    // Step 3: Access points
+    if (!form.get('accessType')?.value || this.accessPoints.length === 0) {
+      this.currentStep = 3;
+      return;
+    }
+
+    // Step 4: Filters (optional, but if any are filled, consider it step 4)
+    this.currentStep = 4;
+  }
+
+  getProgressPercentage(): number {
+    return this.progressPercentage;
+  }
+
+  isStepActive(step: number): boolean {
+    return this.currentStep >= step;
   }
 }

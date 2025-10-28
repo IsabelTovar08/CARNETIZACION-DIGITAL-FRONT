@@ -10,16 +10,83 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
-  background: transparent;
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-height: 100vh;
 }
 
-h2 {
+.header-section {
+  margin-bottom: 32px;
+}
+
+.header-section h2 {
   color: #1a202c;
   font-size: 28px;
   font-weight: 600;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   text-align: left;
+}
+
+.header-description {
+  color: #718096;
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Progress Bar Styles */
+.progress-container {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
 /* Layout principal */
@@ -64,24 +131,44 @@ h2 {
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s ease;
+}
+
+.info-card:hover,
+.access-card:hover,
+.filters-card:hover,
+.access-points-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  margin-right: 12px;
+  color: #3182ce;
+  font-size: 24px;
 }
 
 .card-title {
   font-size: 16px;
   font-weight: 600;
   color: #2d3748;
-  margin: 0 0 20px 0;
+  margin: 0;
 }
 
 /* Access Points Header */
 .access-points-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
 }
 
-.access-points-header .card-title {
+.access-points-header .card-header {
   margin-bottom: 0;
 }
 
@@ -337,10 +424,17 @@ h2 {
   transition: all 0.2s ease;
   text-transform: none;
   letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .create-btn:hover {
   background: #2c5282 !important;
+}
+
+.create-btn mat-icon {
+  font-size: 18px;
 }
 
 /* Material form field customization */
@@ -350,10 +444,12 @@ h2 {
     border-radius: 6px;
     border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
+    min-height: 40px;
   }
 
   .mat-mdc-form-field-flex:hover {
     border-color: #3182ce;
+    box-shadow: 0 2px 4px rgba(49, 130, 206, 0.1);
   }
 
   .mat-mdc-form-field-focused .mat-mdc-form-field-flex {
@@ -378,7 +474,7 @@ h2 {
   .mat-mdc-form-field-label {
     color: #718096 !important;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .mat-mdc-input-element::placeholder {
@@ -394,11 +490,12 @@ h2 {
     border-radius: 6px;
     border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
-    min-height: 48px;
+    min-height: 40px;
   }
 
   .mat-mdc-select-trigger:hover {
     border-color: #3182ce;
+    box-shadow: 0 2px 4px rgba(49, 130, 206, 0.1);
   }
 
   .mat-mdc-select-value-text {

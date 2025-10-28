@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { ContactComponent } from "./entry/pages/contact/contact.component";
+import { FormContactComponent } from "../features/organization/assignment/form-contact.component/form-contact.component";
 import { EntryNavComponent } from "./entry/pages/entry-nav/entry-nav.component";
 import { StartComponent } from "./entry/pages/start/start.component";
 
@@ -10,7 +10,7 @@ export const landingRoutes: Routes = [
     component: EntryNavComponent,
     children: [
       { path: '', component: StartComponent,  data: { title: 'Inicio', icon: 'home' }},
-      { path: 'contact', component: ContactComponent, data: { title: 'Contacto', icon: 'call' } },
+      { path: 'contact', component: FormContactComponent, data: { title: 'Contacto', icon: 'call' } },
      
       {
         path: 'auth', loadChildren: () =>
