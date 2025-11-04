@@ -8,5 +8,5 @@
 /// </summary>
 export const environment = {
   production: true,
- API_BASE_URL: 'http://carnetizacion-digital-api-develop:5100'
-};
+   API_BASE_URL: 'localhost:5100'
+}
