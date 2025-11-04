@@ -1,16 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
   carnetizacion-digital-front-prod:
-    container_name: qa-carnetizacion-digital-front
+    container_name: carnetizacion-digital-front-prod
     build:
       context: ../../
       dockerfile: Dockerfile
       args:
-        - ENVIRONMENT=${ENVIRONMENT}
-        - API_URL=${API_URL}
+        NODE_ENV: prod
+        API_BASE_URL: ${API_BASE_URL}
     ports:
-      - "${PORT}:80"
-    env_file:
-      - .env
+      - "4300:80"
+    environment:
+      NODE_ENV: prod
+      API_BASE_URL: ${API_BASE_URL}
     restart: always
+    networks:
+      - network_prod
+
+networks:
+  network_prod:
