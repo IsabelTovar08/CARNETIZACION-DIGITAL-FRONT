@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  carnetizacion-digital-front-qa:
+    container_name: qa-carnetizacion-digital-front
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+      args:
+        - ENVIRONMENT=${ENVIRONMENT}
+        - API_URL=${API_URL}
+    ports:
+      - "${PORT}:80"
+    env_file:
+      - .env
+    restart: always
