@@ -25,8 +25,8 @@ ENV API_BASE_URL=${API_BASE_URL}
 
 
 RUN echo "🔧 Inyectando API_BASE_URL=${API_BASE_URL} en env.js..." && \
-    sed -i "s|\${API_BASE_URL}|${API_BASE_URL}|g" ./src/env.js && \
-    cat ./src/env.js
+    sed -i "s|\${API_BASE_URL}|${API_BASE_URL}|g" ./src/assets/env.js && \
+    cat ./src/assets/env.js
 
 
 RUN npx ng build --configuration production --base-href / --deploy-url /
