@@ -25,7 +25,7 @@ export class AuthService {
   ) { }
 
 
-  urlBase = environment.URL + '/api';
+  urlBase = environment.API_BASE_URL + '/api';
 
   // Auth
   public login(credentials: RequestLogin) {

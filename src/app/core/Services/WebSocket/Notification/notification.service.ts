@@ -13,7 +13,7 @@ export class NotificationWService {
   private notifications$ = new Subject<any>();
   private unreadCount$ = new BehaviorSubject<number>(0); // 👈 estado centralizado
 
-  private hubUrl = environment.URL + '/hubs/notifications';
+  private hubUrl = environment.API_BASE_URL + '/hubs/notifications';
 
   constructor(
     private wsService: WebSocketService,

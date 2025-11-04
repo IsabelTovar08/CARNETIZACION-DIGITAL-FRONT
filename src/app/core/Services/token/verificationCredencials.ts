@@ -13,7 +13,7 @@ export class VerificationCredencials {
   private http = inject(HttpClient);
 
 
-  urlBase = environment.URL + '/api';
+  urlBase = environment.API_BASE_URL + '/api';
 
   // Método para verificar contraseña
   public verifyPassword(Password: string): Observable<any> {

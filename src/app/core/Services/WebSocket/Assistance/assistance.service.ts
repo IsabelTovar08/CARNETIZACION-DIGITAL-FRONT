@@ -8,7 +8,7 @@ import { WebSocketService } from '../web-socket.service';
 })
 export class AssistanceService {
   private eventAssistance$ = new Subject<any>();
-  private hubUrl = environment.URL + 'assistanceHub';
+  private hubUrl = environment.API_BASE_URL + 'assistanceHub';
 
   constructor(private wsService: WebSocketService) {}
 

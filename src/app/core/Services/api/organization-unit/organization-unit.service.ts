@@ -11,7 +11,7 @@ export class OrganizationalUnitService {
 
   constructor(protected http: HttpClient) { }
 
-  urlBase = environment.URL + '/api';
+  urlBase = environment.API_BASE_URL + '/api';
 
   /** Número de divisiones de la unidad organizativa */
   public GetOrganizationUnit() {

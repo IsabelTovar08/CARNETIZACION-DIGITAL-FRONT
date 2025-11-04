@@ -15,7 +15,7 @@ export class ApiService<T, D> {
     protected http: HttpClient,
     protected wrapper: HttpServiceWrapperService
   ) { }
-  urlBase = environment.URL + '/api';
+  urlBase = environment.API_BASE_URL + '/api';
 
   public ObtenerTodo(entidad: string): Observable<ApiResponse<D[]>> {
     return this.wrapper.handleRequest(this.http.get<ApiResponse<D[]>>(`${this.urlBase}/${entidad}`));

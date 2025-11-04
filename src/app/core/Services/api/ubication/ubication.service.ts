@@ -14,7 +14,7 @@ export class UbicationService {
   constructor(
     protected http: HttpClient,
   ) { }
-  urlBase = environment.URL + '/api';
+  urlBase = environment.API_BASE_URL + '/api';
 
   public GetDeparments(){
     return this.http.get<ApiResponse<Deparment[]>>(`${this.urlBase}/Deparment`);

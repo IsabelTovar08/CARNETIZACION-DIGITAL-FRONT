@@ -3,7 +3,10 @@
 //   // URL: 'http://192.168.137.1:8008'
 // };
 
+/// <summary>
+/// Configuración global de entorno Angular.
+/// </summary>
 export const environment = {
   production: true,
-  URL: (window as any)['env']?.API_BASE_URL,
+  API_BASE_URL: (window as any)['env']?.API_BASE_URL || ''
 };

@@ -13,7 +13,7 @@ import { ApiResponse } from '../../Models/api-response.models';
 })
 export class ImportBatchService {
   /** Endpoint base para el API de ImportBatch */
-  private baseUrl = environment.URL + '/api/importbatch';
+  private baseUrl = environment.API_BASE_URL + '/api/importbatch';
 
   constructor(private http: HttpClient) {}
 

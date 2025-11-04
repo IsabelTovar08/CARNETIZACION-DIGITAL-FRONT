@@ -11,7 +11,7 @@ import { CreateEventRequest, SelectOption } from '../../../Models/operational/ev
 })
 export class EventService {
   private http = inject(HttpClient);
-  private urlBase = environment.URL + '/api';
+  private urlBase = environment.API_BASE_URL + '/api';
 
   // Crear evento con accesos y audiencias
   public createEvent(dto: CreateEventRequest): Observable<ApiResponse<{id: number}>> {
@@ -25,13 +25,13 @@ export class EventService {
   // Obtener puntos de acceso por sucursal (Branch)
   public getAccessPointsByBranch(branchId: number): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<any>>(
-      `${environment.URL}/api/AccessPoint/by-branch/${branchId}`
+      `${environment.API_BASE_URL}/api/AccessPoint/by-branch/${branchId}`
     );
   }
 
   getAccessPointTypes() {
   return this.http.get<ApiResponse<SelectOption[]>>(
-    `${environment.URL}/api/AccessPoint`
+    `${environment.API_BASE_URL}/api/AccessPoint`
   );
 }
 

@@ -130,7 +130,7 @@ export class SucursalComponent implements AfterViewInit {
 
   /** 🌐 Cargar sucursales del backend */
   private loadBranchesFromApi(opts: { showAlert: boolean; closeLoader: boolean }) {
-    const url = `${environment.URL}/api/Branch`;
+    const url = `${environment.API_BASE_URL}/api/Branch`;
 
     this.http.get<any>(url).subscribe({
       next: (response) => {
@@ -323,7 +323,7 @@ export class SucursalComponent implements AfterViewInit {
 
   /** 💾 POST al backend */
   private registerBranch(data: any, lat: number, lon: number) {
-    const url = `${environment.URL}/api/Branch`;
+    const url = `${environment.API_BASE_URL}/api/Branch`;
 
     Swal.fire({
       title: 'Guardando sucursal...',
