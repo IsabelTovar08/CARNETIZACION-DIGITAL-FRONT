@@ -54,7 +54,7 @@ pipeline {
                     env."ENVIRONMENT" = environmentLine.split("=")[1].trim()
                     env."ENV_DIR" = "devops/${env.ENVIRONMENT}"
                     env."ENV_FILE" = "${env.ENV_DIR}/.env"
-                    env."COMPOSE_FILE" = "${env.ENV_DIR}/docker-compose.yml"
+                    env."COMPOSE_FILE" = "${env.ENV_DIR}/docker-compose.yaml"
                     env."IMAGE_NAME" = "appointments-front-${env.ENVIRONMENT}"
 
                     echo """
