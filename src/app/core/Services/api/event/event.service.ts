@@ -62,7 +62,7 @@ getInternalDivisions(): Observable<ApiResponse<SelectOption[]>> {
 // Actualizar evento
 public updateEvent(eventData: any): Observable<ApiResponse<{id: number}>> {
   return this.http.put<ApiResponse<{id: number}>>(
-    `${this.urlBase}/Event/Update`,
+    `${this.urlBase}/Event/update-full`,
     eventData,
     { headers: { 'Content-Type': 'application/json' } }
   );

@@ -106,7 +106,7 @@ export class HeaderComponent implements OnInit {
 
   // Cerrar con tecla Escape
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapeKey(event: KeyboardEvent) {
+  onEscapeKey(event: Event) {
     if (this.showNotifications) {
       this.closeNotifications();
     }

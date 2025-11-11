@@ -124,6 +124,7 @@ export class CardPersonListComponent {
       search: [''],
       organizationalUnit: [''],
       division: [''],
+      profile: [''],  
       onlyActive: [true]
     });
 

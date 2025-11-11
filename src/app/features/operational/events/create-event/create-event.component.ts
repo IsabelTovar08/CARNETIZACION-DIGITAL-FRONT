@@ -327,11 +327,15 @@ export class CreateEventComponent {
       description: f.description || "",
       scheduleDate: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
       scheduleTime: combineDateTime(f.scheduleDate, f.scheduleTime),
-      scheduleId: f.scheduleId, 
+      scheduleId: f.scheduleId,
       eventTypeId: f.eventTypeId,
-      Ispublic: f.accessType === 'public',
+      ispublic: f.accessType === 'public',
       statusId: 1,
-      days: f.days && f.days.length > 0 ? f.days : undefined
+      days: f.days && f.days.length > 0 ? f.days : undefined,
+      accessPoints: this.accessPoints.map(ap => ap.id),
+      profileIds: f.profiles || [],
+      organizationalUnitIds: f.organizationalUnits || [],
+      internalDivisionIds: f.divisions || []
     },
     accessPoints: this.accessPoints.map(ap => ({
       id: 0,

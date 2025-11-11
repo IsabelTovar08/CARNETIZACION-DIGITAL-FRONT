@@ -11,6 +11,7 @@ import { ApiResponse } from '../../../core/Models/api-response.models';
 import { PersonCreate, PersonRegistrer } from '../../../core/Models/security/person.models';
 import { ApiService } from '../../../core/Services/api/api.service';
 import { MatInputModule } from "@angular/material/input";
+import { MatOptionModule } from '@angular/material/core'; 
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { CityCreate, Deparment } from '../../../core/Models/parameter/ubication.models';
 import { ListService } from '../../../core/Services/shared/list.service';
@@ -20,12 +21,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { PersonService } from '../../../core/Services/api/person/person.service';
 import Swal from 'sweetalert2';
 import { UserCreate } from '../../../core/Models/security/user.models';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @Component({
   selector: 'app-seccion-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent, MatInputModule, MatAutocompleteModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, GenericCredincialsComponent, MatInputModule, MatAutocompleteModule, MatOptionModule, MatSelectModule,MatFormFieldModule],
   templateUrl: './seccion-perfil.component.html',
   styleUrls: ['./seccion-perfil.component.css']
 })

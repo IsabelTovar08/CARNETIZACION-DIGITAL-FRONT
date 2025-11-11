@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common'; // 👈 Agregá esto
 import { Component } from '@angular/core';
 import { ApiService } from '../../../../core/Services/api/api.service';
 import { Template } from '../../../../core/Models/operational/card-template.model';
@@ -5,12 +6,13 @@ import { TemplateRendererComponent } from "../template-renderer/template-rendere
 
 @Component({
   selector: 'app-template-list',
-  imports: [TemplateRendererComponent],
+  standalone: true,
+  imports: [CommonModule, TemplateRendererComponent], // ✅ Importá CommonModule acá
   templateUrl: './template-list.component.html',
   styleUrl: './template-list.component.css'
 })
 export class TemplateListComponent {
-templates: Template[] = [];
+  templates: Template[] = [];
 
   constructor(private templateService: ApiService<Template, Template>) {}
 

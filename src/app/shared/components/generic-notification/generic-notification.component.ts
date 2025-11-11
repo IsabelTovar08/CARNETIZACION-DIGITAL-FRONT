@@ -19,7 +19,7 @@ export interface Notification {
   read: boolean;
   actionText?: string;
   actionIcon?: string;
-  sendDate: string;         // Fecha en que fue enviada
+  sendDate: string;        
 
 }
 
