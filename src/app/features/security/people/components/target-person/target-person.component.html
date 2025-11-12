@@ -4,11 +4,9 @@
   <mat-card-header>
  
     <mat-card-title>
-      Información Personal
-      <!-- Botón editar solo aparece si requiere validación y no está en modo edición -->
-      
+      Crear Nueva Persona
     </mat-card-title>
-    <mat-card-subtitle>Gestiona tu información personal</mat-card-subtitle>
+    <mat-card-subtitle>Ingresa los datos de la nueva persona</mat-card-subtitle>
   </mat-card-header>
 
   <!-- Contenido con scroll -->
@@ -22,7 +20,7 @@
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Primer nombre</mat-label>
         <input matInput formControlName="firstName">
-      </mat-form-field>
+      </mat-form-field> 
 
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Segundo nombre</mat-label>
@@ -75,18 +73,10 @@
         <input matInput formControlName="phone">
       </mat-form-field>
 
-      <!-- Email con botón para actualizar contraseña -->
-      <div class="email-password-container">
-        <mat-form-field appearance="outline" class="email-field">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email">
-        </mat-form-field>
-      </div>
-
-      <!-- Mensaje informativo -->
-      <mat-hint class="hint-text">
-        Al cambiar la contraseña, se enviará un correo de notificación a la dirección registrada.
-      </mat-hint>
+      <mat-form-field appearance="outline" class="half-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email">
+      </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Dirección</mat-label>
@@ -121,7 +111,7 @@
   <!-- Footer fijo -->
   <mat-card-actions class="footer">
     <app-action-buttons
-      [disableSave]="profileForm.invalid || !isEditable"
+      [disableSave]="profileForm.invalid"
       (cancel)="onCancel()"
       (save)="onSubmit()">
     </app-action-buttons>

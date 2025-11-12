@@ -34,3 +34,23 @@ export enum NotificationStatus {
   Read = 3,      // Leída
   Archived = 4   // Archivada
 }
+
+
+//* DTO para crear y enviar una notificación.
+export interface ModificationRequestDtoRequest {
+  userId: number;
+  field: number;       // enum en backend (ModificationField)
+  oldValue: string;
+  newValue: string;
+}
+
+export interface ModificationRequestDtoResponse {
+  id: number;
+  userId: number;
+  requestDate: string;
+  fieldId: number;
+  fieldName: string;
+  oldValue: string;
+  newValue: string;
+  status: string;
+}
