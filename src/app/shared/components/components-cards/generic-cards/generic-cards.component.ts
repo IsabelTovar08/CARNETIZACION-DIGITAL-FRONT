@@ -24,8 +24,11 @@ export class GenericCardsComponent {
   @Input() showHeader = true;   
   @Input() showContent = true;   
   @Input() showActions = true;    
+  @Input() tags: Array<{ label: string; color: string }> = [];
+  @Input() showMoreCount: number = 0;
 
-  @Output() cardClick = new EventEmitter<void>();    
+  @Output() cardClick = new EventEmitter<void>(); 
+  @Output() moreTagsClick = new EventEmitter<void>();   
 
   @ContentChild('header') headerTemplate?: TemplateRef<any>;   
   @ContentChild('actions') actionsTemplate?: TemplateRef<any>;    
@@ -51,6 +54,11 @@ export class GenericCardsComponent {
   get hasContent(): boolean {     
     return !!this.headerTemplate;   
   }    
+
+  onMoreTagsClick(event: Event) {
+  event.stopPropagation();
+  this.moreTagsClick.emit();
+  }
 
   onCardClick(): void {     
     if (this.clickable) {       

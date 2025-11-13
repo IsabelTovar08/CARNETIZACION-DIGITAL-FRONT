@@ -195,6 +195,10 @@ body {
   width: 100%;
 }
 
+.full-width-espacio {
+  width: 203%;
+}
+
 /* Toggle styling */
 .toggle-field {
   display: flex;

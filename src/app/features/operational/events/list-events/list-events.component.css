@@ -1,0 +1,36 @@
+.custom-tags-container {
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.custom-tags-container mat-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.custom-tags-container mat-chip {
+  font-size: 11px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 11px;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  cursor: default;
+  padding: 0 8px;
+}
+
+.custom-tags-container .more-chip {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffb74d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-tags-container .more-chip:hover {
+  background-color: #ffe0b2;
+  color: #e65100;
+  transform: scale(1.05);
+}

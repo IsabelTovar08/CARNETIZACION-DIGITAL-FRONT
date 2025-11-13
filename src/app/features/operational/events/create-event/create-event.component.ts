@@ -16,12 +16,9 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatDialog } from '@angular/material/dialog';
 
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
-import { EventService } from '../../../../core/Services/api/event/event.service';
+import { EventService,  } from '../../../../core/Services/api/event/event.service';
 import {
-  CreateEventRequest,
-  SelectOption,
-  AccessPointDto
-} from '../../../../core/Models/operational/event.model';
+  CreateEventRequest,SelectOption,AccessPointDto,EventDtoRequest} from '../../../../core/Models/operational/event.model';
 import { ScheduleCreate, ScheduleList } from '../../../../core/Models/organization/schedules.models';
 import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
 import { fromApiTime } from '../../../../core/utils/time-only';
@@ -82,7 +79,6 @@ export class CreateEventComponent {
       description: [''],
 
       scheduleDate: ['', Validators.required],
-      scheduleTime: ['', Validators.required],
       endDate: [''],
 
       scheduleId: [null, Validators.required],
@@ -116,6 +112,14 @@ export class CreateEventComponent {
       }
     });
 
+    // Apply conditional validation for event start date
+    if (this.isEdit) {
+      this.eventForm.get('scheduleDate')?.setValidators([Validators.required]);
+    } else {
+      this.eventForm.get('scheduleDate')?.setValidators([Validators.required, this.eventStartValidator.bind(this)]);
+    }
+    this.eventForm.get('scheduleDate')?.updateValueAndValidity();
+
     // Initialize progress tracking
     this.eventForm.valueChanges.subscribe(() => {
       this.updateProgress();
@@ -145,30 +149,35 @@ export class CreateEventComponent {
     this.eventService.getEventDetails(id).subscribe({
       next: (res: any) => {
         const event = res.data;
+
         this.eventForm.patchValue({
           name: event.name,
           code: event.code,
           description: event.description,
-          scheduleDate: new Date(event.scheduleDate),
-          scheduleTime: event.scheduleTime ? new Date(event.scheduleTime).toTimeString().substring(0, 5) : '',
-          endDate: event.endDate ? new Date(event.endDate) : '',
-          scheduleId: event.scheduleId,
+          scheduleDate: event.eventStart ? new Date(event.eventStart) : '',
+          endDate: event.eventEnd ? new Date(event.eventEnd) : '',
+          scheduleId: event.scheduleId || event.scheduleId,
           eventTypeId: event.eventTypeId,
           accessType: event.ispublic ? 'public' : 'private',
           profiles: event.profileIds || [],
           organizationalUnits: event.organizationalUnitIds || [],
           divisions: event.internalDivisionIds || []
         });
-        // After patching, update filter controls
-        this.updateFilterControls();
-        // Load access points if any
         if (event.accessPoints) {
-          this.accessPoints = event.accessPoints.map((ap: any) => ({ id: ap.id, name: ap.name, description: ap.description, typeId: ap.typeId }));
-        }
-      },
-      error: () => this.useservice.showError('Error al cargar evento')
-    });
-  }
+        this.accessPoints = event.accessPoints.map((ap: any) => ({
+          id: ap.id,
+          name: ap.name,
+          description: ap.description,
+          typeId: ap.typeId
+        }));
+      }
+    },
+    error: (err) => {
+      this.useservice.showError('Error al cargar el evento');
+      console.error('Error al cargar evento:', err);
+    }
+  });
+}
 
   cargarJornadas(): void {
     this.apiService.ObtenerTodo('Schedule').subscribe({
@@ -353,136 +362,136 @@ export class CreateEventComponent {
     return type?.name || `Tipo ${typeId}`;
   }
 
-  private mapFormToDto(): CreateEventRequest {
-    const f = this.eventForm.value;
+ // Mapear para CREAR evento (con objetos anidados)
+private mapFormToCreateDto(): CreateEventRequest {
+  const f = this.eventForm.value;
 
-    return {
-      event: {
-        id: 0,
-        name: f.name,
-        code: (f.code && f.code.trim()) || this.generateCode(8),
-        description: f.description || "",
-        scheduleDate: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
-        scheduleTime: f.scheduleTime
-          ? new Date(`1970-01-01T${f.scheduleTime}:00Z`).toISOString()
-          : null,
-        scheduleId: f.scheduleId,
-        eventTypeId: f.eventTypeId,
-        ispublic: f.accessType === 'public',
-        statusId: 1,
-        accessPoints: this.accessPoints.map(ap => ap.id),
-        profileIds: f.profiles || [],
-        organizationalUnitIds: f.organizationalUnits || [],
-        internalDivisionIds: f.divisions || []
-      },
-      accessPoints: this.accessPoints.map(ap => ({
-        id: 0,
-        name: ap.name,
-        description: ap.description || "",
-        eventId: 0,
-        typeId: ap.typeId
-      })),
-      profileIds: f.profiles || [],
-      organizationalUnitIds: f.organizationalUnits || [],
-      internalDivisionIds: f.divisions || []
-    };
-  }
+  return {
+    event: {
+      name: f.name,
+      code: (f.code && f.code.trim()) || this.generateCode(8),
+      description: f.description || "",
+      eventStart: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
+      eventEnd: f.endDate ? new Date(f.endDate).toISOString() : null,
+      scheduleId: f.scheduleId,
+      eventTypeId: f.eventTypeId,
+      ispublic: f.accessType === 'public',
+      statusId: 1
+    },
+    accessPoints: this.accessPoints.map(ap => ({
+      name: ap.name,
+      description: ap.description || "",
+      typeId: ap.typeId
+    })),
+    profileIds: f.profiles || [],
+    organizationalUnitIds: f.organizationalUnits || [],
+    internalDivisionIds: f.divisions || []
+  };
+}
 
+// Mapear para ACTUALIZAR evento (objeto plano con IDs)
+private mapFormToUpdateDto(): EventDtoRequest {
+  const f = this.eventForm.value;
+
+  return {
+    id: this.editingEventId!,
+    name: f.name,
+    code: (f.code && f.code.trim()) || this.generateCode(8),
+    description: f.description || "",
+    eventStart: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
+    eventEnd: f.endDate ? new Date(f.endDate).toISOString() : null,
+    scheduleId: f.scheduleId,
+    eventTypeId: f.eventTypeId,
+    eventName: f.name,
+    ispublic: f.accessType === 'public',
+    statusId: 1,
+    accessPoints: this.accessPoints.map(ap => ap.id).filter(id => id > 0),
+    profileIds: f.profiles || [],
+    organizationalUnitIds: f.organizationalUnits || [],
+    internalDivisionIds: f.divisions || []
+  };
+}
 
 
 
 
   onSubmit(): void {
-    if (!this.eventForm.valid) {
-      this.markFormGroupTouched();
+  if (!this.eventForm.valid) {
+    this.markFormGroupTouched();
 
-      if (!this.eventForm.get('name')?.value) {
-        this.useservice.showError('El nombre del evento es obligatorio');
-        return;
-      }
-      if (!this.eventForm.get('eventTypeId')?.value) {
-        this.useservice.showError('Debes seleccionar un tipo de evento');
-        return;
-      }
-      if (!this.eventForm.get('scheduleId')?.value) {
-        this.useservice.showError('Debes seleccionar una jornada');
-        return;
-      }
-      if (!this.eventForm.get('scheduleDate')?.value) {
-        this.useservice.showError('Debes seleccionar una fecha de programación');
-        return;
-      }
-      if (!this.eventForm.get('endDate')?.value) {
-        this.useservice.showError('Debes seleccionar una fecha de finalización');
-        return;
-      }
-
-      if (!this.eventForm.get('scheduleTime')?.value) {
-        this.useservice.showError('Debes seleccionar una hora de programación');
-        return;
-      }
-
-
-      // Validar que la fecha de fin sea posterior a la fecha de inicio
-      if (this.eventForm.hasError('dateRangeInvalid')) {
-        this.useservice.showError('La fecha de finalización debe ser posterior o igual a la fecha de inicio');
-        return;
-      }
+    if (!this.eventForm.get('name')?.value) {
+      this.useservice.showError('El nombre del evento es obligatorio');
+      return;
+    }
+    if (!this.eventForm.get('eventTypeId')?.value) {
+      this.useservice.showError('Debes seleccionar un tipo de evento');
+      return;
+    }
+    if (!this.eventForm.get('scheduleId')?.value) {
+      this.useservice.showError('Debes seleccionar una jornada');
+      return;
+    }
+    if (!this.eventForm.get('scheduleDate')?.value) {
+      this.useservice.showError('Debes seleccionar una fecha de programación');
+      return;
+    }
+    if (!this.eventForm.get('endDate')?.value) {
+      this.useservice.showError('Debes seleccionar una fecha de finalización');
       return;
     }
 
-    if (this.accessPoints.length === 0) {
-      this.useservice.showError('Debes agregar al menos un Punto de Acceso');
+    if (this.eventForm.hasError('dateRangeInvalid')) {
+      this.useservice.showError('La fecha de finalización debe ser posterior o igual a la fecha de inicio');
       return;
     }
 
-    const dto = this.mapFormToDto();
-    console.log('DTO a enviar:', dto);
-
-    if (this.isEdit && this.editingEventId) {
-      // 🔹 Armamos el objeto plano (EventDtoRequest)
-      const updateDto = {
-        id: this.editingEventId,
-        name: dto.event.name,
-        code: dto.event.code,
-        description: dto.event.description,
-        scheduleDate: dto.event.scheduleDate,
-        scheduleTime: dto.event.scheduleTime,
-        scheduleId: dto.event.scheduleId,
-        eventTypeId: dto.event.eventTypeId,
-        ispublic: dto.event.ispublic,
-        statusId: dto.event.statusId,
-        accessPoints: this.accessPoints.map(ap => ap.id),
-        profileIds: dto.profileIds,
-        organizationalUnitIds: dto.organizationalUnitIds,
-        internalDivisionIds: dto.internalDivisionIds
-      };
-
-      this.eventService.updateEvent(updateDto).subscribe({
-        next: (res) => {
-          this.useservice.showSuccess(res.message || 'Evento actualizado exitosamente');
-          console.log('Evento actualizado:', res.data);
-          this.router.navigate(['../'], { relativeTo: this.route });
-        },
-        error: (err) => {
-          this.useservice.showError(err?.error?.message || 'Error al actualizar evento');
-          console.error('Error al actualizar evento:', err);
-        }
-      });
-    } else {
-      this.eventService.createEvent(dto).subscribe({
-        next: (res) => {
-          this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
-          console.log('Nuevo evento:', res.data);
-          this.router.navigate(['../'], { relativeTo: this.route });
-        },
-        error: (err) => {
-          this.useservice.showError(err?.error?.message || 'Error al crear evento');
-          console.error('Error al crear evento:', err);
-        }
-      });
+    if (this.eventForm.get('scheduleDate')?.hasError('eventStartPast')) {
+      this.useservice.showError('La fecha de inicio del evento no puede ser anterior a la fecha actual');
+      return;
     }
+
+    return;
   }
+
+  if (this.accessPoints.length === 0) {
+    this.useservice.showError('Debes agregar al menos un Punto de Acceso');
+    return;
+  }
+
+  if (this.isEdit && this.editingEventId) {
+    // ACTUALIZAR: usa mapFormToUpdateDto (objeto plano con IDs de AP)
+    const updateDto = this.mapFormToUpdateDto();
+    console.log('DTO UPDATE a enviar:', updateDto);
+
+    this.eventService.updateEvent(updateDto).subscribe({
+      next: (res) => {
+        this.useservice.showSuccess(res.message || 'Evento actualizado exitosamente');
+        console.log('Evento actualizado:', res.data);
+        this.router.navigate(['../'], { relativeTo: this.route });
+      },
+      error: (err) => {
+        this.useservice.showError(err?.error?.message || 'Error al actualizar evento');
+        console.error('Error al actualizar evento:', err);
+      }
+    });
+  } else {
+    // CREAR: usa mapFormToCreateDto (con objetos anidados de AP completos)
+    const createDto = this.mapFormToCreateDto();
+    console.log('DTO CREATE a enviar:', createDto);
+
+    this.eventService.createEvent(createDto).subscribe({
+      next: (res) => {
+        this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
+        console.log('Nuevo evento:', res.data);
+        this.router.navigate(['../'], { relativeTo: this.route });
+      },
+      error: (err) => {
+        this.useservice.showError(err?.error?.message || 'Error al crear evento');
+        console.error('Error al crear evento:', err);
+      }
+    });
+  }
+}
 
 
   private markFormGroupTouched(): void {
@@ -514,6 +523,26 @@ export class CreateEventComponent {
 
       if (endNormalized < startNormalized) {
         return { dateRangeInvalid: true };
+      }
+    }
+
+    return null;
+  }
+
+  // Validador personalizado para fecha de inicio no pasada
+  eventStartValidator(control: AbstractControl): ValidationErrors | null {
+    const startDate = control.value;
+
+    if (startDate) {
+      const start = new Date(startDate);
+      const today = new Date();
+
+      // Normalizar ambas fechas a medianoche para comparar solo día, mes y año
+      const startNormalized = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      if (startNormalized < todayNormalized) {
+        return { eventStartPast: true };
       }
     }
 

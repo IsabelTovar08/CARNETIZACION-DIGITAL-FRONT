@@ -176,6 +176,35 @@
   margin-top: 0;
 }
 
+/* Tagss para las tarjetas  */
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.tag-more {
+  background: #334155;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.tag-more:hover {
+  opacity: 1;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .card--large {

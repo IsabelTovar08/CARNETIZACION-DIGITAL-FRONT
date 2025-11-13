@@ -1,6 +1,8 @@
 import { Component, ContentChild, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
 import { GenericCardsComponent, CardVariant, CardSize } from '../generic-cards/generic-cards.component';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { EventTagsModalComponent } from '../../event-tags-modal/event-tags-modal.component';
 
 // Interfaz actualizada con soporte para variant individual
 export interface CardItem {
@@ -9,8 +11,13 @@ export interface CardItem {
   content?: string;
   imageUrl?: string;
   imageAlt?: string;
-  variant?: CardVariant; // Nueva propiedad para variant individual
+  variant?: CardVariant;
+
+  tags?: Array<{ label: string; color: string }>;   
+  showMoreCount?: number;                           
+  fullTags?: Array<{ label: string; color: string }>; 
 }
+
 
 @Component({
   selector: 'app-generic-list-cards',
@@ -35,7 +42,18 @@ export class GenericListCardsComponent {
 
   currentPage = 1;
   pagedItems: CardItem[] = [];
+  
+ constructor(private dialog: MatDialog) {}
 
+  openTagsModal(item: CardItem) {
+  this.dialog.open(EventTagsModalComponent, {
+    width: '420px',
+    data: {
+      title: item.title ?? 'Etiquetas del evento',
+      tags: item.fullTags
+    }
+  });
+}
   ngOnInit() {
     this.updatePagedItems();
   }

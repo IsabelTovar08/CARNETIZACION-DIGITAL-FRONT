@@ -16,10 +16,15 @@
           [content]="item.content"
           [imageUrl]="item.imageUrl"
           [imageAlt]="item.imageAlt"
+          [tags]="item.tags || []"
+          [showMoreCount]="item.showMoreCount || 0"
           [variant]="getCardVariant(item)"
           [size]="size"
           [clickable]="clickable"
-          (cardClick)="onCardClicked(item)">
+          (cardClick)="onCardClicked(item)"
+          (moreTagsClick)="openTagsModal(item)">
+
+
           
           <ng-container *ngIf="customCardTemplate" [ngTemplateOutlet]="customCardTemplate" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
         </app-generic-cards>

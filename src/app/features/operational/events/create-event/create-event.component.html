@@ -47,8 +47,8 @@
 
           <!-- En la sección "Información del evento", después del campo Descripción -->
           <div class="form-row">
-            <div class="form-group">
-              <mat-form-field appearance="outline" class="full-width">
+            <div class="form-group ">
+              <mat-form-field appearance="outline" class="full-width-espacio">
                 <mat-label>Tipo de Evento</mat-label>
                 <mat-select formControlName="eventTypeId" required>
                   <mat-option *ngFor="let type of eventTypeOptions" [value]="type.id">
@@ -61,7 +61,7 @@
 
           <div class="form-row">
             <div class="form-group">
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="full-width-espacio">
                 <mat-label>Fecha de inicio</mat-label>
                 <input matInput [matDatepicker]="startDatePicker" formControlName="scheduleDate"
                   placeholder="MM / DD / YYYY">
@@ -69,18 +69,11 @@
                 <mat-datepicker #startDatePicker></mat-datepicker>
               </mat-form-field>
             </div>
-
-            <div class="form-group">
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Hora de inicio</mat-label>
-                <input matInput type="time" formControlName="scheduleTime" placeholder="HH:MM">
-              </mat-form-field>
-            </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="full-width-espacio">
                 <mat-label>Fecha de finalización</mat-label>
                 <input matInput [matDatepicker]="endDatePicker" formControlName="endDate"
                   placeholder="MM / DD / YYYY">
@@ -120,12 +113,6 @@
                 <button mat-stroked-button color="primary" type="button" (click)="openModal()">
                   <span class="material-icons">add</span>
                 </button>
-              </div>
-            </div>
-            <div class="form-group toggle-group">
-              <div class="toggle-field">
-                <span class="toggle-label">Repetir Evento</span>
-                <mat-slide-toggle formControlName="repeatEvent"></mat-slide-toggle>
               </div>
             </div>
           </div>

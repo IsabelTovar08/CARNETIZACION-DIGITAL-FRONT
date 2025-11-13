@@ -13,7 +13,6 @@
   (onDelete)="remove($event)"
   (onToggleStatus)="toggle($event)">
 </app-generic-list-card>
-
 <!-- Meta personalizada: ciudad | fecha -->
 <ng-template #metaTpl let-e>
   <span>{{ e.city }} | {{ e.dateLabel }}</span>
@@ -21,6 +20,19 @@
 
 <!-- Acciones personalizadas -->
 <ng-template #actionsTpl let-e>
+  <!-- Tags estilizadas -->
+  <div class="custom-tags-container">
+    <mat-chip-set>
+      <mat-chip *ngFor="let t of e.tags">{{ t }}</mat-chip>
+      <mat-chip
+        *ngIf="e.showMoreCount && e.showMoreCount > 0"
+        class="more-chip"
+        (click)="openTagsModal(e)">
+        +{{ e.showMoreCount }} más
+      </mat-chip>
+    </mat-chip-set>
+  </div>
+
   <!-- Botón principal adaptable según bloqueo -->
   <button mat-stroked-button (click)="view(e)" [disabled]="e.isLocked">
     {{ e.isLocked ? 'Acceso Restringido' : 'Ver Más Información' }}

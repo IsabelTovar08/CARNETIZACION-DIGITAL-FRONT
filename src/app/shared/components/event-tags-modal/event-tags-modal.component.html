@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<div class="tags-container">
+  <div *ngFor="let tag of data.tags" class="tag-item" [style.background]="tag.color">
+    {{ tag.label }}
+  </div>
+</div>
+
+<div class="footer">
+  <button mat-stroked-button color="primary" (click)="close()">Cerrar</button>
+</div>

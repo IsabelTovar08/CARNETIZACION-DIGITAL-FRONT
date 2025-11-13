@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatChipsModule } from "@angular/material/chips";
 import { GenericCardsComponent } from "../../../../shared/components/components-cards/generic-cards/generic-cards.component";
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatButtonModule } from '@angular/material/button';
@@ -10,10 +11,11 @@ import { ApiService } from '../../../../core/Services/api/api.service';
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
 import { Event } from '../../../../core/Models/operational/event.model';
 import { EventService } from '../../../../core/Services/api/event/event.service';
+import { EventTagsModalComponent } from '../../../../shared/components/event-tags-modal/event-tags-modal.component';
 
 @Component({
   selector: 'app-list-events',
-  imports: [MatIconModule, MatMenuModule, GenericListCardComponent, MatButtonModule],
+  imports: [MatIconModule, MatMenuModule, MatChipsModule, GenericListCardComponent, MatButtonModule],
   templateUrl: './list-events.component.html',
   styleUrl: './list-events.component.css'
 })
@@ -37,52 +39,107 @@ export class ListEventsComponent implements OnInit {
     this.loadEvents();
   }
 
-  private loadEvents(): void {
-    this.apiService.ObtenerTodo('Event').subscribe((data) => {
-      this.listEvents = data.data as Event[];
-      this.listEvents = this.listEvents.map(this.toCardItem);
-    })
+  
+  openTagsModal(e: any) {
+    this.dialog.open(EventTagsModalComponent, {
+      width: '420px',
+      data: {
+        title: e.title ?? e.name ?? 'Etiquetas del evento',
+        tags: e.fullTags ?? []              // 👈 usamos lo que armamos en toCardItem
+      }
+    });
   }
 
-  private toCardItem = (e: any): any => {
-    const eventStart = e.eventStart ? new Date(e.eventStart) : undefined;
-    const eventEnd = e.eventEnd ? new Date(e.eventEnd) : undefined;
-    const scheduleDate = e.scheduleDate ? new Date(e.scheduleDate) : undefined;
-    const scheduleTime = e.scheduleTime ? new Date(e.scheduleTime) : undefined;
+  private loadEvents(): void {
+  this.eventService.getAllEventsFull().subscribe({
+    next: (res) => {
+      console.log("🚀 Datos crudos del servicio:", res.data);
 
-    const dateLabel =
-      eventStart && eventEnd
-        ? `${eventStart.toLocaleDateString()} – ${eventEnd.toLocaleDateString()}`
-        : scheduleDate
-          ? scheduleTime
-            ? `${scheduleDate.toLocaleDateString()} ${scheduleTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : scheduleDate.toLocaleDateString()
-          : undefined;
+      const events = res.data;
+      this.listEvents = events.map((e: any) => {
+        const card = this.toCardItem(e);
+        console.log("🟦 Tarjeta generada:", card);
+        return card;
+      });
+    },
+    error: () => {
+      this.snackbarService.showError("Error al cargar los eventos completos");
+    }
+  });
+}
 
-    return {
-      id: e.id ?? e.code,
-      title: e.name ?? e.code ?? 'Evento',
-      subtitle: e.eventTypeName ?? 'Evento',
-      dateLabel,
-      imageUrl: e.imageUrl ?? 'https://www.avilatinoamerica.com/images/stories/AVI/users/rsanta/16_tecnologias_basicas_para_un_auditorio.jpg',
-      description: e.description ?? 'Sin descripción.',
-      tags: [(e.statusName ?? 'Sin estado'), (e.eventTypeName ?? 'General')].filter(Boolean),
-      isLocked: !(e.isPublic ?? e.ispublic ?? true),
-      isDeleted: !!e.isDeleted,
-      ...e
-    };
+
+private toCardItem = (e: any): any => {
+  const eventStart = e.eventStart ? new Date(e.eventStart) : undefined;
+  const eventEnd = e.eventEnd ? new Date(e.eventEnd) : undefined;
+
+  const dateLabel =
+    eventStart && eventEnd
+      ? `${eventStart.toLocaleDateString()} – ${eventEnd.toLocaleDateString()}`
+      : eventStart?.toLocaleDateString();
+
+  // ---------- Construimos tags como OBJETOS ----------
+  const tagObjects: Array<{ label: string; color: string }> = [];
+
+  // Estado
+  if (e.statusName) {
+    tagObjects.push({ label: e.statusName, color: '#2196F3' });
+  }
+
+  // Tipo
+  if (e.eventTypeName) {
+    tagObjects.push({ label: e.eventTypeName, color: '#9E9E9E' });
+  }
+
+  // Audiencias (perfil / unidad / división)
+  (e.audiences ?? []).forEach((a: any) => {
+    switch (a.typeId) {
+      case 1:
+        tagObjects.push({ label: a.referenceName, color: '#4CAF50' }); // Perfil
+        break;
+      case 2:
+        tagObjects.push({ label: a.referenceName, color: '#8E24AA' }); // Unidad organizativa
+        break;
+      case 3:
+        tagObjects.push({ label: a.referenceName, color: '#FB8C00' }); // División interna
+        break;
+    }
+  });
+
+  // ---------- Separamos visibles y extra ----------
+  const visibles = tagObjects.slice(0, 3);
+  const extras = tagObjects.length > 3 ? tagObjects.slice(3) : [];
+
+  return {
+    id: e.id,
+    title: e.name ?? e.code ?? 'Evento',
+    subtitle: e.eventTypeName,
+    dateLabel,
+    description: e.description ?? 'Sin descripción.',
+    imageUrl:
+      e.imageUrl ??
+      'https://www.avilatinoamerica.com/images/stories/AVI/users/rsanta/16_tecnologias_basicas_para_un_auditorio.jpg',
+
+    tags: visibles.map(t => t.label),    
+    
+    fullTags: tagObjects,                  
+    showMoreCount: extras.length,
+
+    ...e
   };
+};
+
 
   create() {
     this.router.navigate(['crear'], { relativeTo: this.route });
   }
 
   view(e: any) {
-   // Implementa la vista de los eventos
+   
   }
 
   edit(e: any) {
-    // Implemente la  logica para editar el evento
+   
     this.router.navigate(['crear'], { relativeTo: this.route, queryParams: { id: e.id } });
   }
 

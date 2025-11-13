@@ -31,24 +31,41 @@ export interface AccessPointDto {
 
 export interface CreateEventRequest {
   event: {
-    id?: number;
     name: string;
     code: string;
     description?: string;
-    scheduleDate: string | null;
-    scheduleTime?: string | null;
+    eventStart: string | null;
+    eventEnd: string | null;
     scheduleId?: number | null;
     eventTypeId: number;
     ispublic: boolean;
     statusId: number;
-    accessPoints?: number[];
-    profileIds?: number[];
-    organizationalUnitIds?: number[];
-    internalDivisionIds?: number[];
   };
-  accessPoints: AccessPointDto[];
+  accessPoints: {
+    name: string;
+    description?: string;
+    typeId: number;
+  }[];
   profileIds: number[];
   organizationalUnitIds: number[];
   internalDivisionIds: number[];
+}
+
+export interface EventDtoRequest {
+  id: number;
+  name: string;
+  code: string;
+  description?: string;
+  eventStart: string | null;
+  eventEnd: string | null;
+  scheduleId?: number | null;
+  eventTypeId: number;
+  eventName?: string;
+  ispublic: boolean;
+  statusId: number;
+  accessPoints?: number[];
+  profileIds?: number[];
+  organizationalUnitIds?: number[];
+  internalDivisionIds?: number[];
 }
 

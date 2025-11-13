@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../Models/api-response.models';
-import { CreateEventRequest, SelectOption } from '../../../Models/operational/event.model';
+import { CreateEventRequest, EventDtoRequest, SelectOption } from '../../../Models/operational/event.model';
 
 
 @Injectable({
@@ -14,13 +14,41 @@ export class EventService {
   private urlBase = environment.API_BASE_URL + '/api';
 
   // Crear evento con accesos y audiencias
-  public createEvent(dto: CreateEventRequest): Observable<ApiResponse<{id: number}>> {
-    return this.http.post<ApiResponse<{id: number}>>(
+  public createEvent(dto: CreateEventRequest): Observable<ApiResponse<{ id: number }>> {
+    return this.http.post<ApiResponse<{ id: number }>>(
       `${this.urlBase}/Event/create-with-access-points`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
+
+  // Actualizar evento
+  public updateEvent(dto: EventDtoRequest): Observable<ApiResponse<{ id: number }>> {
+    return this.http.put<ApiResponse<{ id: number }>>(
+      `${this.urlBase}/Event/update-full`,
+      dto,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+  
+// Eliminar evento
+  public deleteEvent(id: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.urlBase}/Event/${id}`);
+  }
+
+
+// Obtener todos los eventos con información completa (audiencias, accesos, etc.)
+public getAllEventsFull(): Observable<ApiResponse<any>> {
+  return this.http.get<ApiResponse<any>>(
+    `${this.urlBase}/Event/list-full`,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+}
+
+
+
+
+
 
   // Obtener puntos de acceso por sucursal (Branch)
   public getAccessPointsByBranch(branchId: number): Observable<ApiResponse<any>> {
@@ -29,48 +57,40 @@ export class EventService {
     );
   }
 
+  // Obtener tipos de puntos de acceso
   getAccessPointTypes() {
-  return this.http.get<ApiResponse<SelectOption[]>>(
-    `${environment.API_BASE_URL}/api/AccessPoint`
-  );
-}
+    return this.http.get<ApiResponse<SelectOption[]>>(
+      `${environment.API_BASE_URL}/api/AccessPoint`
+    );
+  }
 
   // Obtener detalles completos de un evento
-  public getEventDetails(eventId: number): Observable<ApiResponse<any>> {
+  public getEventDetails(id: number): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<any>>(
-      `${this.urlBase}/details/${eventId}`
+      `${this.urlBase}/Event/details/${id}`,
+      { headers: { 'Content-Type': 'application/json' } }
     );
   }
 
   // Gets para buscar el perfil, unidad organizativa y diviciones internas
 
- // Obtener perfiles disponibles
-getProfiles(): Observable<ApiResponse<SelectOption[]>> {
-  return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/Profile`);
-}
+  // Obtener perfiles disponibles
+  getProfiles(): Observable<ApiResponse<SelectOption[]>> {
+    return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/Profile`);
+  }
 
-// Obtener unidades organizativas
-getOrganizationalUnits(): Observable<ApiResponse<SelectOption[]>> {
-  return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/OrganizationalUnit`);
-}
+  // Obtener unidades organizativas
+  getOrganizationalUnits(): Observable<ApiResponse<SelectOption[]>> {
+    return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/OrganizationalUnit`);
+  }
 
-// Obtener divisiones internas
-getInternalDivisions(): Observable<ApiResponse<SelectOption[]>> {
-  return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/InternalDivision`);
-}
+  // Obtener divisiones internas
+  getInternalDivisions(): Observable<ApiResponse<SelectOption[]>> {
+    return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/InternalDivision`);
+  }
 
-// Actualizar evento
-public updateEvent(eventData: any): Observable<ApiResponse<{id: number}>> {
-  return this.http.put<ApiResponse<{id: number}>>(
-    `${this.urlBase}/Event/update-full`,
-    eventData,
-    { headers: { 'Content-Type': 'application/json' } }
-  );
-}
 
-// Eliminar evento
-public deleteEvent(id: number): Observable<ApiResponse<any>> {
-  return this.http.delete<ApiResponse<any>>(`${this.urlBase}/Event/${id}`);
-}
+
+  
 
 }

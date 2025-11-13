@@ -17,6 +17,24 @@
         </div>
       </div>
 
+            <!-- TAGS -->
+      <div class="card-tags" *ngIf="tags && tags.length > 0">
+        <ng-container *ngFor="let tag of tags">
+          <span class="tag" [style.background]="tag.color">
+            {{ tag.label }}
+          </span>
+        </ng-container>
+
+        <!-- Botón de "más" -->
+        <span 
+          class="tag tag-more"
+          *ngIf="showMoreCount && showMoreCount > 0"
+          (click)="onMoreTagsClick($event)">
+          +{{ showMoreCount }} más
+        </span>
+      </div>
+
+
       <!-- Parte de la imagen  -->
       <div class="card-image" *ngIf="imageUrl">
         <img [src]="imageUrl" [alt]="imageAlt || title || 'Card image'" />
