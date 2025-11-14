@@ -1,11 +1,64 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 
-<div class="tags-container">
-  <div *ngFor="let tag of data.tags" class="tag-item" [style.background]="tag.color">
-    {{ tag.label }}
-  </div>
-</div>
+<mat-dialog-content class="modal-content">
 
-<div class="footer">
-  <button mat-stroked-button color="primary" (click)="close()">Cerrar</button>
-</div>
+  <!-- DESCRIPCIÓN -->
+  <section class="section-block" *ngIf="data.description">
+    <h3 class="section-title">Descripción</h3>
+    <p class="section-text">{{ data.description }}</p>
+  </section>
+
+  <!-- FECHA / TIPO -->
+  <section class="section-block">
+    <h3 class="section-title">Detalles</h3>
+
+    <div class="detail-row">
+      <strong>Tipo:</strong> {{ data.eventType }}
+    </div>
+
+    <div class="detail-row" *ngIf="data.dateLabel">
+      <strong>Fecha:</strong> {{ data.dateLabel }}
+    </div>
+  </section>
+
+  <!-- TAGS -->
+  <section class="section-block" *ngIf="data.tags?.length">
+    <h3 class="section-title">Etiquetas</h3>
+
+    <div class="tag-list">
+      <span
+        *ngFor="let t of data.tags"
+        class="tag-item"
+        [ngStyle]="getTagStyle(t)">
+        {{ t.label }}
+      </span>
+    </div>
+  </section>
+
+  <!-- PUNTOS DE ACCESO -->
+  <section class="section-block" *ngIf="data.accessPoints?.length">
+    <h3 class="section-title">Puntos de acceso</h3>
+
+    <div class="ap-card" *ngFor="let ap of data.accessPoints">
+      <div class="ap-title">
+        <mat-icon class="ap-icon">location_on</mat-icon>
+        {{ ap.name }}
+      </div>
+
+      <div class="ap-detail">
+        <strong>Tipo:</strong>
+        {{ getAccessPointType(ap.typeId) }}
+      </div>
+
+      <div class="ap-detail" *ngIf="ap.description">
+        <strong>Descripción:</strong>
+        {{ ap.description }}
+      </div>
+    </div>
+  </section>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>

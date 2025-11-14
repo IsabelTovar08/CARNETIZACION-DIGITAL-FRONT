@@ -13,9 +13,9 @@ export interface CardItem {
   imageAlt?: string;
   variant?: CardVariant;
 
-  tags?: Array<{ label: string; color: string }>;   
-  showMoreCount?: number;                           
-  fullTags?: Array<{ label: string; color: string }>; 
+  tags?: Array<{ label: string; color: string }>;
+  showMoreCount?: number;
+  fullTags?: Array<{ label: string; color: string }>;
 }
 
 
@@ -33,7 +33,7 @@ export class GenericListCardsComponent {
   @Input() gridClass?: string;
   @Input() showSkeleton = true;
   @Input() showPagination = true;
-  @Input() variant: CardVariant = 'default'; 
+  @Input() variant: CardVariant = 'default';
   @Input() size: CardSize = 'medium';
   @Input() clickable = false;
 
@@ -42,18 +42,19 @@ export class GenericListCardsComponent {
 
   currentPage = 1;
   pagedItems: CardItem[] = [];
-  
- constructor(private dialog: MatDialog) {}
+
+  constructor(private dialog: MatDialog) { }
 
   openTagsModal(item: CardItem) {
-  this.dialog.open(EventTagsModalComponent, {
-    width: '420px',
-    data: {
-      title: item.title ?? 'Etiquetas del evento',
-      tags: item.fullTags
-    }
-  });
-}
+    this.dialog.open(EventTagsModalComponent, {
+      width: '420px',
+      data: {
+        title: item.title ?? 'Etiquetas del evento',
+        tags: item.fullTags
+      }
+    });
+  }
+
   ngOnInit() {
     this.updatePagedItems();
   }

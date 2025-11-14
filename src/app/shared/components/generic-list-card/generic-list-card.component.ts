@@ -29,6 +29,7 @@ export class GenericListCardComponent {
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
   @Output() onToggleStatus = new EventEmitter<any>();
+  @Output() onMoreTags = new EventEmitter<any>();
 
   // Paginación simple
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -48,4 +49,8 @@ export class GenericListCardComponent {
   // Helpers para estados
   isLocked(item: any) { return !!item.isLocked; }
   isInactive(item: any) { return !!item.isDeleted; }
+
+  emitMoreTags(item: any) {
+    this.onMoreTags.emit(item);
+  }
 }

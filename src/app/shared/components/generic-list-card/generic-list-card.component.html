@@ -11,8 +11,7 @@
 
 <!-- GRID DE CARDS -->
 <div class="cards-grid">
-  <mat-card class="event-card" *ngFor="let item of items | slice:0:pageSize"
-            [class.inactive]="isInactive(item)">
+  <mat-card class="event-card" *ngFor="let item of items | slice:0:pageSize" [class.inactive]="isInactive(item)">
     <!-- Media / Imagen -->
     <div class="card-media">
       <ng-container *ngIf="customTemplates['media']; else defaultMedia">
@@ -66,11 +65,25 @@
       </ng-container>
 
       <!-- Tags -->
-      <div class="tags" *ngIf="!customTemplates['tags'] && item.tags?.length">
+      <!-- Tags Avanzados -->
+      <div class="tags">
         <mat-chip-set>
-          <mat-chip *ngFor="let t of item.tags">{{ t }}</mat-chip>
+          <mat-chip *ngFor="let t of (item.tags || [])">
+            {{ t.label || t }}
+          </mat-chip>
+
+          <!-- Botón de ver más -->
+          <mat-chip *ngIf="item.showMoreCount && item.showMoreCount > 0" class="more-chip" (click)="emitMoreTags(item)">
+            +{{ item.showMoreCount }} más
+          </mat-chip>
+<!-- 
+          <mat-chip *ngIf="item.showMoreCount > 0" class="more-chip" (click)="emitMoreTags(item)">
+            +{{ item.showMoreCount }} más
+          </mat-chip> -->
+
         </mat-chip-set>
       </div>
+
       <ng-container *ngIf="customTemplates['tags']">
         <ng-container *ngTemplateOutlet="customTemplates['tags']; context: { $implicit: item }"></ng-container>
       </ng-container>
@@ -99,9 +112,7 @@
           <mat-icon>delete</mat-icon>
         </button>
 
-        <button mat-icon-button
-                [matTooltip]="isInactive(item) ? 'Activar' : 'Desactivar'"
-                (click)="emitToggle(item)">
+        <button mat-icon-button [matTooltip]="isInactive(item) ? 'Activar' : 'Desactivar'" (click)="emitToggle(item)">
           <mat-icon>{{ isInactive(item) ? 'toggle_off' : 'toggle_on' }}</mat-icon>
         </button>
       </ng-template>
@@ -117,8 +128,6 @@
 
 <!-- Paginador simple (si quieres más, podemos integrar virtual scroll) -->
 <div class="paginator-wrap" *ngIf="items.length > pageSize">
-  <mat-paginator [length]="items.length"
-                 [pageSize]="pageSize"
-                 [pageSizeOptions]="[6, 9, 12, 18]">
+  <mat-paginator [length]="items.length" [pageSize]="pageSize" [pageSizeOptions]="[6, 9, 12, 18]">
   </mat-paginator>
 </div>

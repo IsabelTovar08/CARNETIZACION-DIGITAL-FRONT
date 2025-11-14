@@ -1,3 +1,14 @@
+<!-- Encabezado -->
+<div class="events-header">
+  <h2>Eventos</h2>
+
+  <button mat-raised-button color="primary" (click)="create()">
+    <mat-icon>add</mat-icon>
+    Crear evento
+  </button>
+</div>
+
+<!-- LISTA DE TARJETAS (usa tu componente real) -->
 <app-generic-list-card
   [title]="'Eventos'"
   [buttonSave]="true"
@@ -11,21 +22,28 @@
   (onView)="view($event)"
   (onEdit)="edit($event)"
   (onDelete)="remove($event)"
-  (onToggleStatus)="toggle($event)">
+  (onToggleStatus)="toggle($event)"
+  (onMoreTags)="openTagsModal($event)">
 </app-generic-list-card>
-<!-- Meta personalizada: ciudad | fecha -->
+
 <ng-template #metaTpl let-e>
-  <span>{{ e.city }} | {{ e.dateLabel }}</span>
+  <span>{{ e.city || 'Sede principal' }} | {{ e.dateLabel }}</span>
 </ng-template>
 
-<!-- Acciones personalizadas -->
 <ng-template #actionsTpl let-e>
-  <!-- Tags estilizadas -->
+
+  <!-- Etiquetas -->
   <div class="custom-tags-container">
     <mat-chip-set>
-      <mat-chip *ngFor="let t of e.tags">{{ t }}</mat-chip>
+
+      <!-- Tags visibles -->
+      <mat-chip *ngFor="let t of e.tags">
+        {{ t.label || t }}
+      </mat-chip>
+
+      <!-- Botón +más -->
       <mat-chip
-        *ngIf="e.showMoreCount && e.showMoreCount > 0"
+        *ngIf="e.showMoreCount > 0"
         class="more-chip"
         (click)="openTagsModal(e)">
         +{{ e.showMoreCount }} más
@@ -33,23 +51,31 @@
     </mat-chip-set>
   </div>
 
-  <!-- Botón principal adaptable según bloqueo -->
+  <!-- Botón principal -->
   <button mat-stroked-button (click)="view(e)" [disabled]="e.isLocked">
     {{ e.isLocked ? 'Acceso Restringido' : 'Ver Más Información' }}
   </button>
 
   <span class="spacer"></span>
 
-  <!-- Menú compacto de acciones -->
+  <!-- Menú acciones -->
   <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más acciones">
     <mat-icon>more_vert</mat-icon>
   </button>
+
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="edit(e)"><mat-icon>edit</mat-icon>Editar</button>
-    <button mat-menu-item (click)="remove(e)"><mat-icon>delete</mat-icon>Eliminar</button>
+    <button mat-menu-item (click)="edit(e)">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    <button mat-menu-item (click)="remove(e)">
+      <mat-icon>delete</mat-icon>
+      Eliminar
+    </button>
     <button mat-menu-item (click)="toggle(e)">
       <mat-icon>{{ e.isDeleted ? 'toggle_on' : 'toggle_off' }}</mat-icon>
       {{ e.isDeleted ? 'Activar' : 'Desactivar' }}
     </button>
   </mat-menu>
+
 </ng-template>
