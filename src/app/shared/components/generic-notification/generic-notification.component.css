@@ -716,3 +716,72 @@
   text-transform: none;  /* mantiene “Ver más” con mayúsculas/minúsculas normales */
   line-height: 1;
 }
+
+.icon-System { background:#dbeafe; color:#1d4ed8; }
+.icon-Info { background:#e0f2fe; color:#0284c7; }
+.icon-Warning { background:#fef3c7; color:#d97706; }
+.icon-Reminder { background:#dcfce7; color:#16a34a; }
+
+.notification-select-panel {
+  position: absolute !important;
+  z-index: 9999 !important;
+}
+/* Contenedor */
+.custom-select-container {
+  position: relative;
+  width: 180px;
+  font-family: inherit;
+}
+
+/* Trigger (lo que se ve siempre) */
+.custom-select-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all .2s ease;
+}
+
+.custom-select-trigger:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+}
+
+/* Panel desplegable */
+.custom-select-panel {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  z-index: 9999; /* NO overlay global */
+  animation: fadeInDown .15s ease-out;
+}
+
+/* Opciones */
+.custom-option {
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #374151;
+  transition: background .15s ease;
+}
+
+.custom-option:hover {
+  background: #f3f4f6;
+}
+
+/* Animación */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

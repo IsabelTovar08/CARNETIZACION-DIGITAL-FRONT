@@ -26,12 +26,20 @@ export class NotificationsService extends ApiService<any, any> {
     return this.http.get<ApiResponse<NotificationDto[]>>(`${this.urlBase}/Notifications/user`);
   }
 
-   /** Crear y enviar una notificación */
+  /** Crear y enviar una notificación */
   createAndSendNotification(dto: ContactOrganizationRequest): Observable<ApiResponse<any>> {
     return this.wrapper.handleRequest(
       this.http.post<ApiResponse<any>>(`${this.urlBase}/ContactOrganization/send-request`, dto)
     );
   }
+
+  public markAsRead(notificationId?: number) {
+    return this.http.put<any>(
+      `${this.urlBase}/NotificationReceived/mark-as-read/${notificationId}`,
+      {}
+    );
+  }
+
 
   //  /** Crea una nueva solicitud de modificación. */
   // createModificationRequest(dto: ModificationRequestDtoRequest): Observable<ApiResponse<ModificationRequestDtoResponse>> {
@@ -45,8 +53,8 @@ export class NotificationsService extends ApiService<any, any> {
   //   return this.wrapper.handleRequest(
   //     this.http.get<ApiResponse<ModificationRequestDtoResponse[]>>(`${this.urlBase}/ModificationRequest`)
   //   );
-  // }  
+  // }
 
 
-  
+
 }

@@ -11,7 +11,7 @@
     <!-- Header -->
     <div class="sidebar-header">
       <h2 class="logo">
-        <img src="../../../../assets/icons/logo.png" alt="" width="40">
+        <img src="../../../../assets/icons/logo.png" alt width="40">
         <span class="logo-text">CarnetGo</span>
       </h2>
     </div>
@@ -110,6 +110,27 @@
         </ng-template>
 
       </nav>
+    </div>
+    <!-- Company Info -->
+    <div class="company-info-compact">
+      <img
+        [src]="'data:image/png;base64,' + user?.currentProfile?.logoUrl"
+        alt="Logo"
+        class="company-logo-sm" />
+
+      <div class="company-text">
+        <strong class="company-title">
+          {{ user?.currentProfile?.companyName }}
+        </strong>
+
+        <small class="company-sub">
+          {{ user?.currentProfile?.branchName }}
+        </small>
+
+        <small class="company-sub">
+          {{ user?.currentProfile?.branchAddress }}
+        </small>
+      </div>
     </div>
   </mat-sidenav>
 

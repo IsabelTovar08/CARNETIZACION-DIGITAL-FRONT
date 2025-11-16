@@ -1,0 +1,22 @@
+<mat-dialog-content>
+  <div class="modal-header">
+    <mat-icon>{{ notification.icon }}</mat-icon>
+    <h3>{{ notification.title }}</h3>
+  </div>
+
+  <div class="modal-body">
+    <p>{{ notification.message }}</p>
+    <small>{{ notification.sendDate | date:'medium' }}</small>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <div class="modal-footer">
+    <button mat-button (click)="close()">Cerrar</button>
+
+    <button *ngIf="notification.RedirectUrl"
+      mat-raised-button color="primary"
+      (click)="dialogRef.close('redirect')">
+      Ver más
+    </button>
+  </div>
+</mat-dialog-actions>

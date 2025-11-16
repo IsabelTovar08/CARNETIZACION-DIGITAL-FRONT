@@ -20,6 +20,7 @@ export class DashboardHomeComponent implements OnInit {
   /// Main KPI values
   /// </summary>
   totalCards: number = 0;
+  totalCardsCondigurations: number = 0;
   nextEvents: number = 0;
   currentDate: Date = new Date();
 
@@ -134,6 +135,7 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   ngOnInit(): void {
     this.getTotalCards();
+    this.getTotalCardsConfigurations();
     this.getTotalEvents();
     this.loadUnitData();
     this.loadShiftData();
@@ -146,6 +148,13 @@ export class DashboardHomeComponent implements OnInit {
   getTotalCards(): void {
     this.cardsService.GetTotalNumberOfIDCardsAsync().subscribe({
       next: (result) => this.totalCards = result.data ?? 0,
+      error: (err) => console.error('Error fetching total cards:', err)
+    });
+  }
+
+  getTotalCardsConfigurations(): void {
+    this.cardsService.GetTotalNumberOfIDCardConfigurationsAsync().subscribe({
+      next: (result) => this.totalCardsCondigurations = result.data ?? 0,
       error: (err) => console.error('Error fetching total cards:', err)
     });
   }

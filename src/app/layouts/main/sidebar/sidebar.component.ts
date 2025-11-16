@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MenuCreateService } from '../../../core/Services/shared/menu-create.service';
 import { Observable, take } from 'rxjs';
+import { UserMe } from '../../../core/Models/security/user.models';
+import { UserStoreService } from '../../../core/Services/auth/user-store.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +19,7 @@ export class SidebarComponent implements OnInit {
 
   // ✅ Arreglo normal para tu lógica interna
   menuItems: MenuItem[] = [];
+  user: UserMe | null = null;
 
   loading = true;
   @Output() itemSelected = new EventEmitter<{ module: string; submodule?: string }>();
@@ -28,6 +31,7 @@ export class SidebarComponent implements OnInit {
   constructor(
     private router: Router,
     private menu: MenuCreateService,
+    private userStore: UserStoreService
   ) {
     this.checkScreenSize();
   }
@@ -35,6 +39,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.checkScreenSize();
     this.loadMenuItems();
+    this.user = this.userStore.user();
   }
 
   // # Cargar menú desde el servicio, guardar en el arreglo normal

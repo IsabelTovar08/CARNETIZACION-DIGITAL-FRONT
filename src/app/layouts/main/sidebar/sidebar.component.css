@@ -29,7 +29,7 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
 }
 
 .sidebar-header {
-  padding: 20px;
+  padding: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
   .logo {
@@ -37,11 +37,12 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
     font-size: 30px;
     font-weight: 600;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
 
     .logo-text {
       color: #2B2F42 !important;
+      justify-content: center;
     }
 
     .version {
@@ -56,7 +57,7 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
 }
 
 .sidebar-content {
-  padding: 20px 0;
+  padding: 20px 0 0;
 }
 
 .navigation-menu {
@@ -327,3 +328,39 @@ mat-sidenav-container.mat-drawer-container.mat-sidenav-container.sidebar-contain
   outline: 2px solid rgba(145, 200, 228, 0.6);
   outline-offset: 2px;
 }
+
+/* --- Compact company info block --- */
+.company-info-compact {
+  padding: 12px 10px;
+  text-align: center;
+  opacity: 0.75;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.company-logo-sm {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.company-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.company-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.company-sub {
+  font-size: 11px;
+  color: #6b7280;
+}
+

@@ -1,13 +1,8 @@
 <div class="profile-card">
   <!-- Banner -->
   <div class="banner">
-
-    <img src="/assets/fondo-perfil4.jpg" alt="Banner del perfil" class="banner-img">
-    <div *ngIf="!isEditing" class="edit-icon" (click)="fileInput.click()">
-      <span class="material-icons">
-        mode_edit
-      </span>
-    </div>
+    <img src="/assets/fondo-perfil4.jpg" alt="Banner del perfil"
+      class="banner-img">
   </div>
 
   <!-- Avatar centrado y sobresaliente -->
@@ -17,19 +12,20 @@
     <!-- Imagen -->
     <img [src]="user()?.photoUrl" alt="Perfil" class="perfil-img avatar">
 
+    <!-- Ícono de editar pegado a la foto -->
+    <div *ngIf="!isEditing" class="edit-photo-icon" (click)="fileInput.click()">
+      <span class="material-icons">mode_edit</span>
+    </div>
 
-
-    <!-- Botones guardar / cancelar (solo visibles si hay edición) -->
+    <!-- Botones editar -->
     <div *ngIf="isEditing" class="edit-actions">
       <button class="btn-save" (click)="saveImage()">Guardar</button>
       <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
     </div>
 
-    <!-- Input oculto -->
-    <input type="file" accept="image/*" #fileInput (change)="onFileSelected($event)" hidden>
+    <input type="file" accept="image/*" #fileInput
+      (change)="onFileSelected($event)" hidden>
   </div>
-
-
 
   <!-- Contenido -->
   <div class="content">
@@ -40,19 +36,20 @@
         <div class="header-subtitle subtitle">
           <p class="left-text">Administra tu información personal</p>
           <span class="text-icon-group">
-            <mat-icon class="icons" matTooltip="Nombre de la organización">domain</mat-icon>
+            <mat-icon class="icons"
+              matTooltip="Nombre de la organización">domain</mat-icon>
             <span>Sena</span>
-            <mat-icon class="icons" matTooltip="Perfil del usuario">accessibility_new</mat-icon>
+            <mat-icon class="icons"
+              matTooltip="Perfil del usuario">accessibility_new</mat-icon>
             <span>Administrador</span>
           </span>
         </div>
-        <!-- Ícono editar (solo visible si NO estamos editando) -->
 
       </div>
 
-
       <nav class="tab-navigation">
-        <button *ngFor="let tab of tabs" class="tab-button" [class.active]="activeTab === tab.key"
+        <button *ngFor="let tab of tabs" class="tab-button"
+          [class.active]="activeTab === tab.key"
           (click)="selectTab(tab.key, tab.route)">
           {{ tab.label }}
         </button>
