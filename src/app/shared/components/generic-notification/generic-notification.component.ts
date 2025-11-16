@@ -9,6 +9,15 @@ import { NotificationsService } from '../../../core/Services/api/notifications/n
 import { ApiResponse } from '../../../core/Models/api-response.models';
 import { DateHelperService } from '../../../core/helpers/Date/date-helper.service';
 import { NotificationWService } from '../../../core/Services/WebSocket/Notification/notification.service';
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationDetailComponent } from '../notification-detail/notification-detail.component';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatMenuModule } from "@angular/material/menu";
 
 export interface Notification {
   id: string;
@@ -17,33 +26,72 @@ export interface Notification {
   type: 'info' | 'warning' | 'error' | 'success';
   timestamp: Date;
   read: boolean;
-  actionText?: string;
-  actionIcon?: string;
-  sendDate: string;        
+  sendDate: string;
 
+  notificationTypeId: number;
+  notificationTypeName: string;
+  redirectUrl?: string | null;
+  notificationReceivedId?: number;
 }
 
 @Component({
   selector: 'app-generic-notification',
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDividerModule, MatBadgeModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatBadgeModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonToggleModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatMenuModule
+],
   templateUrl: './generic-notification.component.html',
   styleUrl: './generic-notification.component.css'
 })
 export class GenericNotificationComponent implements OnInit {
+debugClick() {
+  console.log('CLICK LLEGÓ AL SELECT');
+}
+
+debugOpened() {
+  console.log('SELECT ABIERTO');
+}
+
+debugClosed() {
+  console.log('SELECT CERRADO');
+}
+typeDropdownOpen = false;
+
+toggleTypeDropdown() {
+  this.typeDropdownOpen = !this.typeDropdownOpen;
+}
+
+selectType(type: string) {
+  this.selectedType = type;
+  this.typeDropdownOpen = false;
+  this.filterNotifications();
+}
+
   @Input() visible: boolean = false;
   @Output() close = new EventEmitter<void>();
-  @Output() notificationAction = new EventEmitter<Notification>();
+  @Output() unreadCountChange = new EventEmitter<number>();
 
   notifications: Notification[] = [];
-  hasMoreNotifications: boolean = false;
+  filteredNotifications: Notification[] = [];
 
-  // Output para emitir la cantidad de notificaciones
-  @Output() unreadCountChange = new EventEmitter<number>();
+  selectedType: string = '';
+  selectedRead: string = '';
 
   constructor(
     private notificationService: NotificationsService,
     private dateHelper: DateHelperService,
-    private notificationServiceWebsocket: NotificationWService
+    private wsService: NotificationWService,
+    private router: Router,
+    private dialog: MatDialog,
   ) { }
 
   get unreadCount(): number {
@@ -52,28 +100,55 @@ export class GenericNotificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadNotifications();
-    // Conexión al WebSocket
-    this.notificationServiceWebsocket.connect();
-    this.notificationServiceWebsocket.onNotifications()
-      .subscribe(n => {
-        this.notifications.push(n);
-        this.emitUnreadCount(); // cada vez que llega una nueva, emitimos
-      });
+    this.wsService.connect();
 
+    this.wsService.onNotifications().subscribe(n => {
+      const mapped = this.mapDtoToNotification(n);
+      this.notifications.push(mapped);
+      this.filterNotifications();
+      this.emitUnreadCount();
+    });
   }
 
   loadNotifications(): void {
     this.notificationService.getMyNotifications().subscribe({
-      next: (response: ApiResponse<NotificationDto[]>) => {
-        const dtos = response.data ?? [];
+      next: (res: ApiResponse<NotificationDto[]>) => {
+        const dtos = res.data ?? [];
         this.notifications = dtos.map(dto => this.mapDtoToNotification(dto));
-        this.emitUnreadCount(); // al cargar, también emitimos
+        this.filterNotifications();
+        this.emitUnreadCount();
       },
-      error: (err: unknown) => {
-        console.error('Error loading notifications:', err);
+      error: () => {
         this.notifications = [];
-        this.emitUnreadCount(); // emitimos aunque esté vacío
+        this.filterNotifications();
+        this.emitUnreadCount();
       }
+    });
+  }
+
+  onTypeFilterChange(value: string) {
+    this.selectedType = value;
+    this.filterNotifications();
+  }
+
+  onReadFilterChange(value: string) {
+    this.selectedRead = value;
+    this.filterNotifications();
+  }
+
+  filterNotifications(): void {
+    this.filteredNotifications = this.notifications.filter(n => {
+
+      const typeOk = this.selectedType
+        ? n.notificationTypeName.toLowerCase().includes(this.selectedType.toLowerCase())
+        : true;
+
+      const readOk =
+        this.selectedRead === 'read' ? n.read :
+          this.selectedRead === 'unread' ? !n.read :
+            true;
+
+      return typeOk && readOk;
     });
   }
 
@@ -84,56 +159,83 @@ export class GenericNotificationComponent implements OnInit {
       message: dto.message,
       type: this.mapTypeNameToUiType(dto.notificationTypeName),
       timestamp: new Date(dto.creationDate),
-      read: false,
-      sendDate: dto.sendDate
+      read: dto.readDate != null,
+
+      notificationTypeId: dto.notificationTypeId,
+      notificationTypeName: dto.notificationTypeName,
+      redirectUrl: dto.redirectUrl ?? null,
+
+      sendDate: dto.sendDate,
+      notificationReceivedId: dto.notificationReceivedId
     };
   }
 
-  private mapTypeNameToUiType(typeName?: string): 'info' | 'warning' | 'error' | 'success' {
-    const name = (typeName ?? '').toLowerCase();
-    if (name.includes('warn') || name.includes('advert')) return 'warning';
-    if (name.includes('error') || name.includes('fail') || name.includes('danger')) return 'error';
-    if (name.includes('success') || name.includes('ok') || name.includes('done')) return 'success';
+  private mapTypeNameToUiType(name?: string): 'info' | 'warning' | 'error' | 'success' {
+    const n = (name ?? '').toLowerCase();
+    if (n.includes('advert')) return 'warning';
+    if (n.includes('error') || n.includes('fail')) return 'error';
+    if (n.includes('success')) return 'success';
     return 'info';
   }
 
+  async onNotificationClick(notification: Notification): Promise<void> {
+    if (notification.redirectUrl) {
+      this.router.navigateByUrl(notification.redirectUrl);
+    }
+    if (!notification.read) {
+      this.notificationService.markAsRead(notification.notificationReceivedId).subscribe();
+      await this.markAsRead(notification);
+    }
+    this.close.emit();
+    this.openModal(notification);
+  }
+
+  async markAsRead(notification: Notification): Promise<void> {
+    try {
+      notification.read = true;
+      this.filterNotifications();
+      this.emitUnreadCount();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   markAllAsRead(): void {
-    this.notifications = this.notifications.map(n => ({ ...n, read: true }));
-    this.emitUnreadCount(); // cuando se marcan todas, actualizamos
+    this.notifications.forEach(n => n.read = true);
+    this.filterNotifications();
+    this.emitUnreadCount();
   }
 
   clearAll(): void {
     this.notifications = [];
-    this.emitUnreadCount(); // al limpiar, también
+    this.filterNotifications();
+    this.emitUnreadCount();
   }
 
-  toggleRead(notification: Notification): void {
-    notification.read = !notification.read;
-    this.emitUnreadCount(); // al cambiar el estado de una
+  toggleRead(not: Notification): void {
+    not.read = !not.read;
+    this.filterNotifications();
+    this.emitUnreadCount();
   }
 
   deleteNotification(id: string): void {
     this.notifications = this.notifications.filter(n => n.id !== id);
+    this.filterNotifications();
     this.emitUnreadCount();
   }
 
-  // 👇 Método central para emitir
-  private emitUnreadCount(): void {
+  private emitUnreadCount() {
     this.unreadCountChange.emit(this.unreadCount);
   }
 
-  onNotificationAction(notification: Notification): void {
-    this.notificationAction.emit(notification);
-  }
-
-  getNotificationIcon(type: string): string {
-    const icons = {
-      info: 'info',
-      warning: 'warning',
-      error: 'error',
-      success: 'check_circle'
-    };
-    return icons[type as keyof typeof icons] || 'notifications';
+  // UI Helpers
+  getNotificationIcon(typeName: string): string {
+    const n = (typeName ?? '').toLowerCase();
+    if (n.includes('sistema')) return 'settings';
+    if (n.includes('información') || n.includes('info')) return 'info';
+    if (n.includes('advert')) return 'warning';
+    if (n.includes('recordatorio')) return 'notifications_active';
+    return 'notifications';
   }
 
   trackByFn(index: number, item: Notification): string {
@@ -144,22 +246,35 @@ export class GenericNotificationComponent implements OnInit {
     return this.dateHelper.timeAgo(date);
   }
 
-  readonly messageCharThreshold: number = 160; // cantidad a partir de la cual mostramos "Ver más"
-  private expandedIds = new Set<string>();     // ids expandidos
+  readonly messageCharThreshold: number = 160;
+  private expandedIds = new Set<string>();
 
-  /** Determina si un item está expandido en UI */
   isExpanded(id: string): boolean {
     return this.expandedIds.has(id);
   }
 
-  /** Alterna expandir/contraer el mensaje */
   toggleExpand(id: string): void {
     if (this.expandedIds.has(id)) this.expandedIds.delete(id);
     else this.expandedIds.add(id);
   }
 
-  /** Muestra "Ver más" si el mensaje supera el umbral */
   shouldShowReadMore(n: Notification): boolean {
-    return (n.message?.length || 0) > this.messageCharThreshold;
+    return (n.message?.length ?? 0) > this.messageCharThreshold;
   }
+
+  openModal(notification: Notification): void {
+    const dialogRef = this.dialog.open(NotificationDetailComponent, {
+      width: '400px',
+      data: notification,
+      autoFocus: false,
+      restoreFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'redirect' && notification.redirectUrl) {
+        this.router.navigateByUrl(notification.redirectUrl);
+      }
+    });
+  }
+
 }

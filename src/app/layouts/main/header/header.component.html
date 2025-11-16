@@ -32,10 +32,9 @@
 
       <div class="perfil" (click)="goToProfile()">
         <div class="perfil-text">
-          <span class="perfil-name">{{ user()?.currentProfile?.personName
+          <span class="perfil-name">{{ user()?.currentProfile?.name
             }}</span>
-          <span class="perfil-subname">{{ user()?.currentProfile?.profileName
-            }}</span>
+          <span class="perfil-subname">{{ user()?.currentProfile?.profile }}</span>
         </div><img [src]="user()?.photoUrl || '/assets/perfiles/perfil.png'"
           alt="Perfil" class="perfil-img">
       </div>

@@ -10,7 +10,9 @@ export interface NotificationDto {
   notificationTypeName: string; // Nombre del tipo
   creationDate: string;      // Fecha de creación
   sendDate: string;         // Fecha en que fue enviada
-
+  readDate?: string;       // Fecha de lectura (si aplica)
+  redirectUrl?: string;   // URL de redirección (si aplica)
+  notificationReceivedId?: number; // Id del registro de recepción
 }
 // notification-received-dto.ts
 /**

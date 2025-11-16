@@ -15,23 +15,27 @@ export class CardsService extends ApiService<any, any> {
     super(http, wrapper);
   }
 
-  GetTotalNumberOfIDCardsAsync(): Observable<ApiResponse<number>> {
+  GetTotalNumberOfIDCardConfigurationsAsync(): Observable<ApiResponse<number>> {
     return this.http.get<ApiResponse<number>>(`${this.urlBase}/Card/total`);
+  }
+
+  GetTotalNumberOfIDCardsAsync(): Observable<ApiResponse<number>> {
+    return this.http.get<ApiResponse<number>>(`${this.urlBase}/IssuedCard/total`);
   }
 
   // Carnets por unidad organizativa
   getByUnit(): Observable<ApiResponse<CarnetsByUnitResponse>> {
-    return this.http.get<ApiResponse<CarnetsByUnitResponse>>(`${this.urlBase}/Card/by-unit`);
+    return this.http.get<ApiResponse<CarnetsByUnitResponse>>(`${this.urlBase}/IssuedCard/by-unit`);
   }
 
   // Carnets por jornada
   getByShedule(): Observable<ApiResponse<CarnetsByShedule[]>> {
-    return this.http.get<ApiResponse<CarnetsByShedule[]>>(`${this.urlBase}/Card/by-shedule`);
+    return this.http.get<ApiResponse<CarnetsByShedule[]>>(`${this.urlBase}/IssuedCard/by-shedule`);
   }
 
   // Carnets por división interna
   getInternalDivisionByUnit(unitId: number): Observable<ApiResponse<CarnetsByDivision[]>> {
-    return this.http.get<ApiResponse<CarnetsByDivision[]>>(`${this.urlBase}/Card/by-unit/${unitId}/divisions`);
+    return this.http.get<ApiResponse<CarnetsByDivision[]>>(`${this.urlBase}/IssuedCard/by-unit/${unitId}/divisions`);
   }
 
 }

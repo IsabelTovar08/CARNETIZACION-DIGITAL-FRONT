@@ -9,7 +9,7 @@ export class WebSocketService {
   private hubConnection!: signalR.HubConnection;
   private connectionState$ = new BehaviorSubject<boolean>(false);
 
-  public startConnection(hubUrl: string, accessToken?: string): void {
+  public startConnection(hubUrl: string, accessToken?: string): Promise<void> {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
         accessTokenFactory: () => accessToken || ''
@@ -18,16 +18,22 @@ export class WebSocketService {
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    this.hubConnection.start()
-      .then(() => {
-        console.log('✅ Conectado al hub:', hubUrl);
-        this.connectionState$.next(true);
-      })
-      .catch(err => {
-        console.error('❌ Error al conectar con SignalR:', err);
-        this.connectionState$.next(false);
-      });
+    return new Promise<void>((resolve, reject) => {
+      this.hubConnection
+        .start()
+        .then(() => {
+          console.log('✅ Conectado al hub:', hubUrl);
+          this.connectionState$.next(true);
+          resolve(); // 🔥 aseguras que await espere
+        })
+        .catch(err => {
+          console.error('❌ Error al conectar con SignalR:', err);
+          this.connectionState$.next(false);
+          reject(err);
+        });
+    });
   }
+
 
   public getConnectionState() {
     return this.connectionState$.asObservable();

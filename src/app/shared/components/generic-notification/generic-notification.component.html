@@ -1,89 +1,90 @@
+<div class="notifications-actions" (click)="$event.stopPropagation()">
+  <div class="custom-select-container">
+
+    <div class="custom-select-trigger" (click)="toggleTypeDropdown()">
+      <span>{{ selectedType || 'Todos' }}</span>
+      <mat-icon>expand_more</mat-icon>
+    </div>
+
+    <div class="custom-select-panel" *ngIf="typeDropdownOpen">
+      <div class="custom-option" (click)="selectType('')">Todos</div>
+      <div class="custom-option" (click)="selectType('Sistema')">Sistema</div>
+      <div class="custom-option"
+        (click)="selectType('Información')">Información</div>
+      <div class="custom-option"
+        (click)="selectType('Advertencia')">Advertencia</div>
+      <div class="custom-option"
+        (click)="selectType('Recordatorio')">Recordatorio</div>
+    </div>
+  </div>
+
+  <!-- FILTRO LEÍDO / NO LEÍDO -->
+  <mat-button-toggle-group (change)="onReadFilterChange($event.value)">
+    <mat-button-toggle [value]="''">Todos</mat-button-toggle>
+    <mat-button-toggle value="unread">No leídos</mat-button-toggle>
+    <mat-button-toggle value="read">Leídos</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
 <div class="notification-content">
-  <!-- Empty state -->
-  <div class="empty-state" *ngIf="notifications.length === 0">
+  <div class="empty-state" *ngIf="filteredNotifications.length === 0">
     <mat-icon class="empty-icon">notifications_none</mat-icon>
     <h3>No tienes notificaciones</h3>
     <p>Cuando tengas nuevas notificaciones aparecerán aquí</p>
   </div>
 
-  <!-- Notifications list -->
-  <div class="notifications-list" *ngIf="notifications.length > 0">
-    <!-- Actions header -->
-    <div class="notifications-actions">
-      <button mat-button class="mark-all-btn" (click)="markAllAsRead()"
-        *ngIf="unreadCount > 0">
+  <div class="notifications-list" *ngIf="filteredNotifications.length > 0">
+
+    <!-- <div class="notifications-actions">
+      <button mat-button class="mark-all-btn"
+              (click)="markAllAsRead()"
+              *ngIf="unreadCount > 0">
         <mat-icon>done_all</mat-icon>
         Marcar todas como leídas
       </button>
-      <button mat-button class="clear-all-btn" (click)="clearAll()">
+
+      <button mat-button class="clear-all-btn"
+              (click)="clearAll()">
         <mat-icon>clear_all</mat-icon>
         Limpiar todo
       </button>
-    </div>
+    </div> -->
 
-    <!-- Notification items -->
+    <!-- ITEMS -->
     <div class="notification-item"
-      *ngFor="let notification of notifications; trackBy: trackByFn"
+      *ngFor="let notification of filteredNotifications; trackBy: trackByFn"
+      (click)="onNotificationClick(notification)"
       [class.unread]="!notification.read"
       [class.read]="notification.read">
 
-      <!-- Notification icon based on type -->
-      <div class="notification-icon" [ngClass]="'icon-' + notification.type">
-        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+      <!-- ICON -->
+      <div class="notification-icon"
+        [ngClass]="'icon-' + notification.type">
+        <mat-icon>{{ getNotificationIcon(notification.notificationTypeName)
+          }}</mat-icon>
       </div>
 
-      <!-- Notification content -->
+      <!-- BODY -->
       <div class="notification-body">
-  <div class="notification-header">
-    <h4 class="notification-title">{{ notification.title }}</h4>
-    <span class="notification-time">{{ getTimeAgo(notification.sendDate) }}</span>
-  </div>
+        <div class="notification-header">
+          <h4 class="notification-title">{{ notification.title }}</h4>
+          <span class="notification-time">{{ getTimeAgo(notification.sendDate)
+            }}</span>
+        </div>
 
-  <!-- Mensaje con clamp de líneas y expand/collapse -->
-  <p class="notification-message"
-     [class.expanded]="isExpanded(notification.id)">
-    {{ notification.message }}
-  </p>
+        <p class="notification-message"
+          [class.expanded]="isExpanded(notification.id)">
+          {{ notification.message }}
+        </p>
 
-  <!-- Botón "Ver más / Ver menos" solo si el texto es largo -->
-  <div class="read-more" *ngIf="shouldShowReadMore(notification)">
-    <button mat-button class="read-more-btn" (click)="toggleExpand(notification.id)">
-      {{ isExpanded(notification.id) ? 'Ver menos' : 'Ver más' }}
-    </button>
-  </div>
-
-  <!-- (Opcional) Acción original si existe -->
-  <div class="notification-actions" *ngIf="notification.actionText">
-    <button mat-button class="action-btn" (click)="onNotificationAction(notification)">
-      <mat-icon *ngIf="notification.actionIcon">{{ notification.actionIcon }}</mat-icon>
-      {{ notification.actionText }}
-    </button>
-  </div>
-</div>
-
-      <!-- Read/Unread toggle and delete -->
-      <div class="notification-controls">
-        <button mat-icon-button class="control-btn"
-          (click)="toggleRead(notification)"
-          [title]="notification.read ? 'Marcar como no leída' : 'Marcar como leída'">
-          <mat-icon>{{ notification.read ? 'mark_email_unread' :
-            'mark_email_read' }}</mat-icon>
-        </button>
-
-        <button mat-icon-button class="control-btn delete-btn"
-          (click)="deleteNotification(notification.id)"
-          title="Eliminar notificación">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <div class="read-more"
+          *ngIf="shouldShowReadMore(notification)">
+          <button mat-button class="read-more-btn"
+            (click)="toggleExpand(notification.id); $event.stopPropagation()">
+            {{ isExpanded(notification.id) ? 'Ver menos' : 'Ver más' }}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Load more button -->
-  <div class="load-more" *ngIf="hasMoreNotifications">
-    <button mat-button class="load-more-btn">
-      <mat-icon>expand_more</mat-icon>
-      Cargar más notificaciones
-    </button>
   </div>
 </div>
