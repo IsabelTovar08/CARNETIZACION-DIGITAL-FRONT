@@ -51,9 +51,12 @@ export class HeaderSeccionComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.store.user;
     this.isLoggedIn = this.store.isLoggedIn;
-    if (this.user()?.photoUrl) {
-      this.profileImage = this.user()!.photoUrl!;
-    }
+    this.updateProfileImage();
+  }
+
+  private updateProfileImage(): void {
+    // Siempre usar la imagen del usuario si existe, sino usar la predeterminada
+    this.profileImage = this.user()?.photoUrl || '/assets/perfiles/perfil.png';
   }
 
   selectTab(tabKey: string, route: string) {
@@ -80,8 +83,10 @@ export class HeaderSeccionComponent implements OnInit {
     if (this.selectedFile) {
       this.PersonService.SavePhoto(this.selectedFile).subscribe({
         next: (response) => {
-      
+
           this.store.updateUserPhoto(this.tempImage!);
+          // Actualizar la imagen de perfil localmente
+          this.updateProfileImage();
 
           this.snackbarService.showSuccess('Imagen actualizada con éxito');
           this.tempImage = null;
@@ -100,6 +105,14 @@ export class HeaderSeccionComponent implements OnInit {
     this.tempImage = null;
     this.selectedFile = null;
     this.isEditing = false;
+  }
+
+  onImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    // Si la imagen falla al cargar, usar la imagen predeterminada
+    if (imgElement.src !== '/assets/perfiles/perfil.png') {
+      imgElement.src = '/assets/perfiles/perfil.png';
+    }
   }
 
 }

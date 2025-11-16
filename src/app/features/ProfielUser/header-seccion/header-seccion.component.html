@@ -15,7 +15,7 @@
   <div class="profile-container">
 
     <!-- Imagen -->
-    <img [src]="user()?.photoUrl" alt="Perfil" class="perfil-img avatar">
+    <img [src]="profileImage" alt="Perfil" class="perfil-img avatar" (error)="onImageError($event)">
 
 
 

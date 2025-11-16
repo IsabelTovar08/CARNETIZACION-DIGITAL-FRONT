@@ -147,7 +147,7 @@ private toCardItem = (e: any): any => {
   }
 
   view(e: any) {
-   
+    this.openTagsModal(e);
   }
 
   edit(e: any) {
