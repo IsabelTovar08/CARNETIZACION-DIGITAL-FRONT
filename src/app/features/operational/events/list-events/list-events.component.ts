@@ -12,6 +12,7 @@ import { EventTagsModalComponent } from '../../../../shared/components/event-tag
 import { CardItem, GenericListCardsComponent } from '../../../../shared/components/components-cards/generic-list-cards/generic-list-cards.component';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatChip, MatChipSet } from "@angular/material/chips";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-list-events',
@@ -50,7 +51,8 @@ export class ListEventsComponent implements OnInit {
       dateLabel: e.dateLabel,
       eventType: e.eventTypeName,
       tags: e.fullTags ?? [],
-      accessPoints: e.accessPoints ?? []
+      accessPoints: e.accessPoints ?? [],
+      schedules: e.schedules ?? []
     }
   });
 }
@@ -154,13 +156,26 @@ private toCardItem = (e: any): any => {
   }
 
   remove(e: any) {
-    this.eventService.deleteEvent(e.id).subscribe({
-      next: () => {
-        this.snackbarService.showSuccess('Evento eliminado exitosamente');
-        this.loadEvents();
-      },
-      error: (err) => {
-        this.snackbarService.showError('Error al eliminar el evento');
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `¿Deseas eliminar el evento "${e.title || e.name}"? Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eventService.deleteEvent(e.id).subscribe({
+          next: () => {
+            this.snackbarService.showSuccess('Evento eliminado exitosamente');
+            this.loadEvents();
+          },
+          error: (err) => {
+            this.snackbarService.showError('Error al eliminar el evento');
+          }
+        });
       }
     });
   }

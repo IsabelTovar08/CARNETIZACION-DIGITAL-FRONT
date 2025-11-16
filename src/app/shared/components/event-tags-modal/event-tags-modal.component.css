@@ -98,3 +98,29 @@ button[mat-dialog-close]:hover {
   font-size: 14px;
   margin-bottom: 4px;
 }
+
+.schedule-card {
+  padding: 10px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  margin-bottom: 10px;
+}
+
+.schedule-title {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.schedule-icon {
+  font-size: 20px;
+  color: #3f51b5;
+}
+
+.schedule-detail {
+  font-size: 14px;
+  margin-bottom: 4px;
+}

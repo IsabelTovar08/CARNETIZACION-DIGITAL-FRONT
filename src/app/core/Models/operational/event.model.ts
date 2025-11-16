@@ -41,6 +41,7 @@ export interface CreateEventRequest {
     ispublic: boolean;
     statusId: number;
   };
+  scheduleIds: number[];
   accessPoints: {
     name: string;
     description?: string;
@@ -59,6 +60,7 @@ export interface EventDtoRequest {
   eventStart: string | null;
   eventEnd: string | null;
   scheduleId?: number | null;
+  scheduleIds?: number[];
   eventTypeId: number;
   eventName?: string;
   ispublic: boolean;

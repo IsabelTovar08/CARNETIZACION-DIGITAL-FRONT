@@ -102,9 +102,9 @@
             <div class="form-group toggle-group">
               <div class="toggle-field">
                 <mat-form-field appearance="outline" class="full-width">
-                  <mat-label>Seleccione Jornada</mat-label>
-                  <mat-select formControlName="scheduleId" required>
-                    <mat-option *ngFor="let s of listSchedule" [value]="s.id">
+                  <mat-label>Seleccione Jornadas</mat-label>
+                  <mat-select formControlName="schedules" multiple required>
+                    <mat-option *ngFor="let s of listSchedule" [value]="s">
                       {{ s.name }} ({{ s.startTime }} - {{ s.endTime }})
                     </mat-option>
                   </mat-select>
@@ -227,31 +227,33 @@
               <mat-icon class="card-icon">location_on</mat-icon>
               <h3 class="card-title">Puntos de Acceso</h3>
             </div>
-            <button mat-raised-button color="primary" class="add-btn" (click)="openAddAccessPointDialog()">
-              <mat-icon>add</mat-icon> Agregar
+            <button mat-raised-button color="primary" class="add-btn" type="button" (click)="openAddAccessPointDialog()">
+      <mat-icon>add</mat-icon> Agregar  
             </button>
           </div>
 
           <!-- Lista de puntos de acceso seleccionados -->
-          <div class="access-points-table" *ngIf="accessPoints.length > 0">
-            <div class="table-header">
-              <span class="header-cell">NOMBRE</span>
-              <span class="header-cell">TIPO</span>
-              <span class="header-cell">ACCIONES</span>
-            </div>
-            <div class="table-body">
-              <div *ngFor="let ap of accessPoints; let i = index" class="table-row">
-                <span class="table-cell">{{ ap.name }}</span>
-                <span class="table-cell type-cell">{{ getAccessPointTypeName(ap.typeId) }}</span>
-                <span class="action-cell">
-                  <button mat-button class="delete-btn" (click)="deleteAccessPoint(i)">Delete</button>
-                </span>
+          <div formArrayName="accessPoints">
+            <div class="access-points-table" *ngIf="accessPointsArray.length > 0">
+              <div class="table-header">
+                <span class="header-cell">NOMBRE</span>
+                <span class="header-cell">TIPO</span>
+                <span class="header-cell">ACCIONES</span>
+              </div>
+              <div class="table-body">
+                <div *ngFor="let apControl of accessPointsArray.controls; let i = index" [formGroupName]="i" class="table-row">
+                  <span class="table-cell">{{ apControl.get('name')?.value }}</span>
+                  <span class="table-cell type-cell">{{ getAccessPointTypeName(apControl.get('typeId')?.value) }}</span>
+                  <span class="action-cell">
+                    <button mat-button class="delete-btn" type="button" (click)="deleteAccessPoint(i)">Delete</button>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Estado vacío -->
-          <div class="empty-state" *ngIf="accessPoints.length === 0">
+          <div class="empty-state" *ngIf="accessPointsArray.length === 0">
             <mat-icon class="empty-icon">location_on</mat-icon>
             <p>No hay puntos de acceso agregados</p>
             <p class="empty-description">Agrega puntos de acceso para tu evento</p>
@@ -272,7 +274,7 @@
               <div class="form-group">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Tipo de Punto de Acceso</mat-label>
-                  <mat-select formControlName="apTypeId" required>
+                  <mat-select formControlName="typeId">
                     <mat-option [value]="1">Entrada</mat-option>
                     <mat-option [value]="2">Salida</mat-option>
                     <mat-option [value]="3">Mixto</mat-option>
@@ -303,20 +305,16 @@
 
     <!-- Botón crear/actualizar evento -->
     <div class="form-actions">
+      <button mat-stroked-button color="accent" type="button" class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a la lista
+      </button>
       <button mat-raised-button color="primary" type="submit" class="create-btn">
         <mat-icon>{{ isEdit ? 'update' : 'add_circle' }}</mat-icon>
         {{ isEdit ? 'Actualizar Evento' : 'Crear Evento' }}
       </button>
     </div>
 
-    <!-- <mat-button-toggle-group multiple appearance="legacy">
-  <mat-button-toggle value="lunes">Lunes</mat-button-toggle>
-  <mat-button-toggle value="martes">Martes</mat-button-toggle>
-  <mat-button-toggle value="miercoles">Miércoles</mat-button-toggle>
-  <mat-button-toggle value="jueves">Jueves</mat-button-toggle>
-  <mat-button-toggle value="viernes">Viernes</mat-button-toggle>
-  <mat-button-toggle value="sabado">Sábado</mat-button-toggle>
-  <mat-button-toggle value="domingo">Domingo</mat-button-toggle>
-</mat-button-toggle-group> -->
+  
   </form>
 </div>
