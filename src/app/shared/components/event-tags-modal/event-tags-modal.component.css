@@ -99,6 +99,18 @@ button[mat-dialog-close]:hover {
   margin-bottom: 4px;
 }
 
+.ap-qr {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.qr-image {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .schedule-card {
   padding: 10px;
   border-radius: 10px;

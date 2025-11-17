@@ -54,6 +54,15 @@
         <strong>Descripción:</strong>
         {{ ap.description }}
       </div>
+
+      <div class="ap-detail" *ngIf="ap.code">
+        <strong>Código:</strong>
+        {{ ap.code }}
+      </div>
+
+      <div class="ap-qr" *ngIf="ap.qrCode">
+        <img [src]="'data:image/png;base64,' + ap.qrCode" alt="QR Code" class="qr-image">
+      </div>
     </div>
   </section>
 

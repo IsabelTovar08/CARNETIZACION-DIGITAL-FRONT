@@ -27,6 +27,12 @@ export interface AccessPointDto {
   name: string;
   description?: string;
   typeId: number;
+  type?: string;
+  qrCode?: string;
+  code?: string;
+  isDeleted?: boolean;
+  eventId?: number;
+  eventName?: string;
 }
 
 export interface CreateEventRequest {

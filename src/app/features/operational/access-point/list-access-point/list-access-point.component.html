@@ -11,5 +11,10 @@
 </app-generic-list-card>
 
 <ng-template #metaTpl let-ap>
-  <span>{{ ap.description }}</span>
+  <div class="ap-meta">
+    <span *ngIf="ap.description">{{ ap.description }}</span>
+    <div *ngIf="ap.qrCode" class="ap-qr-small">
+      <img [src]="'data:image/png;base64,' + ap.qrCode" alt="QR" class="qr-small">
+    </div>
+  </div>
 </ng-template>
