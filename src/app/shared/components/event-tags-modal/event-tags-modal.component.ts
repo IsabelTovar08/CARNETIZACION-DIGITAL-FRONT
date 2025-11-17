@@ -1,12 +1,14 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA,MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MatIcon } from "@angular/material/icon";
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-event-tags-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIcon],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './event-tags-modal.component.html',
   styleUrl: './event-tags-modal.component.css'
 })
@@ -25,6 +27,8 @@ export class EventTagsModalComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
+
+  enlargedQr: string | null = null;
 
   private darkenColor(hex: string, percent: number): string {
     const num = parseInt(hex.replace("#", ""), 16);
@@ -54,5 +58,16 @@ export class EventTagsModalComponent {
       case 3: return 'Mixto';
     }
     return 'Desconocido';
+  }
+
+  enlargeQr(qrCode: string) {
+    this.enlargedQr = qrCode;
+  }
+
+  downloadQr(base64Data: string, filename: string) {
+    const link = document.createElement('a');
+    link.href = 'data:image/png;base64,' + base64Data;
+    link.download = filename;
+    link.click();
   }
 }

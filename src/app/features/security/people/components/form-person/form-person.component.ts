@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule, AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from "@angular/material/card";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../core/Services/api/api.service';
 import { PersonCreate, PersonList, PersonRegistrer } from '../../../../../core/Models/security/person.models';
 import { CustomTypeSpecific } from '../../../../../core/Models/parameter/custom-type.models';
@@ -42,8 +43,8 @@ import { ChangePasswordComponent } from '../../../users/components/change-passwo
   templateUrl: './form-person.component.html',
   styleUrl: './form-person.component.css'
 })
-export class FormPErsonComponent {
-  @Input() mode: 'create' | 'edit' = 'create'; //define el modo
+export class FormPErsonComponent implements OnInit {
+  mode: 'create' | 'edit' = 'create'; //define el modo
   isEditMode = false;
   isLinear = true;
   isEditableBlocked = false;
@@ -72,6 +73,7 @@ export class FormPErsonComponent {
     private listService: ListService,
     private ubicationService: UbicationService,
     private dialog: MatDialog,
+    private route: ActivatedRoute
 
   ) {
     // Inicializar formularios
@@ -97,7 +99,7 @@ export class FormPErsonComponent {
       cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]]
     });
 
-    
+
     // Formulario para crear usuario (solo en modo creación)
     this.userForm = this.formBuilder.group({
       personId: [''],
@@ -106,20 +108,19 @@ export class FormPErsonComponent {
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
   }
-
   ngOnInit(): void {
+    // Asignar el modo desde la ruta siempre que se inicializa
+    this.mode = this.route.snapshot.data['mode'] || 'create';
     this.isEditMode = this.mode === 'edit';
 
     this.getData();
 
-    // Si es modo edición, cargamos datos del usuario actual
     if (this.isEditMode) {
       this.loadCurrentProfile();
       this.isEditableBlocked = true; // bloquea edición inicialmente
       this.disableAllForms();
     }
 
-    // cambio dinámico de departamentos
     this.contactForm.get('deparmentId')?.valueChanges.subscribe(departmentId => {
       if (departmentId) {
         this.getCitie(departmentId);
@@ -130,6 +131,7 @@ export class FormPErsonComponent {
       }
     });
   }
+
 
   // Deshabilitar todos los formularios
   disableAllForms(): void {
@@ -373,5 +375,5 @@ export class FormPErsonComponent {
     });
   }
 
-  
+
 }

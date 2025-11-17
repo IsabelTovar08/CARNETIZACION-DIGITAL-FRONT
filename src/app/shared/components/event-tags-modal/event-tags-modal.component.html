@@ -62,6 +62,14 @@
 
       <div class="ap-qr" *ngIf="ap.qrCode">
         <img [src]="'data:image/png;base64,' + ap.qrCode" alt="QR Code" class="qr-image">
+        <div class="qr-actions">
+          <button mat-mini-fab color="primary" (click)="enlargeQr(ap.qrCode)" matTooltip="Ampliar QR">
+            <mat-icon>zoom_in</mat-icon>
+          </button>
+          <button mat-mini-fab color="accent" (click)="downloadQr(ap.qrCode, ap.name + '_qr.png')" matTooltip="Descargar QR">
+            <mat-icon>download</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -89,6 +97,10 @@
       </div>
     </div>
   </section>
+
+  <div *ngIf="enlargedQr" class="qr-overlay" (click)="enlargedQr = null">
+    <img [src]="'data:image/png;base64,' + enlargedQr" alt="QR Code Ampliado" class="qr-enlarged">
+  </div>
 
 </mat-dialog-content>
 

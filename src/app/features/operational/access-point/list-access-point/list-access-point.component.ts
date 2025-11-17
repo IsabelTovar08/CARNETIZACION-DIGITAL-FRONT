@@ -1,5 +1,6 @@
 import { AccessPointDto } from './../../../../core/Models/operational/event.model';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +9,7 @@ import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.ser
 
 @Component({
   selector: 'app-list-access-point',
-  imports: [GenericListCardComponent],
+  imports: [CommonModule, GenericListCardComponent],
   templateUrl: './list-access-point.component.html',
   styleUrl: './list-access-point.component.css'
 })
