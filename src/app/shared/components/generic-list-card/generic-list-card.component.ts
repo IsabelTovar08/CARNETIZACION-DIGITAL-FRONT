@@ -18,7 +18,14 @@ export class GenericListCardComponent {
   @Input() buttonSave = true;
 
   // Entrada principal
-  @Input() set dataSourceInput(data: any[]) { this.items = data || []; }
+  @Input() set dataSourceInput(data: any[]) {
+    console.log('GenericListCard: dataSourceInput cambió, nuevos items:', data?.length || 0);
+    this.items = data || [];
+    // Resetear paginador a la primera página cuando cambian los datos
+    if (this.paginator) {
+      this.paginator.pageIndex = 0;
+    }
+  }
   items: any[] = [];
 
   @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};

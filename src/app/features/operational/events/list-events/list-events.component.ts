@@ -22,7 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-list-events',
-  imports: [MatIconModule,MatTooltipModule,MatMenuModule, GenericListCardsComponent, MatButtonModule, MatSelectModule, MatFormFieldModule, GenericListCardComponent, MatChip, MatChipSet],
+  imports: [MatIconModule,MatTooltipModule,MatMenuModule, MatButtonModule, MatSelectModule, MatFormFieldModule, GenericListCardComponent, MatChip, MatChipSet],
   templateUrl: './list-events.component.html',
   styleUrl: './list-events.component.css'
 })
@@ -242,39 +242,52 @@ private toCardItem = (e: any): any => {
   }
 
   private applyFilters(): void {
+    console.log('Aplicando filtros con:', {
+      selectedStatus: this.selectedStatus,
+      selectedType: this.selectedType,
+      selectedVisibility: this.selectedVisibility
+    });
     let filtered = [...this.allEvents];
+    console.log('Eventos totales antes de filtrar:', this.allEvents.length);
 
     // Filtro por estado
     if (this.selectedStatus !== 'Todos') {
       const isActive = this.selectedStatus === 'Activo';
       filtered = filtered.filter(e => !e.isDeleted === isActive);
+      console.log('Después de filtro estado:', filtered.length);
     }
 
     // Filtro por tipo
     if (this.selectedType !== 'Todos') {
       filtered = filtered.filter(e => e.eventTypeName === this.selectedType);
+      console.log('Después de filtro tipo:', filtered.length);
     }
 
     // Filtro por visibilidad
     if (this.selectedVisibility !== 'Todos') {
       const isPublic = this.selectedVisibility === 'Público';
       filtered = filtered.filter(e => e.isLocked !== isPublic); // isLocked es lo opuesto a isPublic
+      console.log('Después de filtro visibilidad:', filtered.length);
     }
 
     this.listEvents = filtered;
+    console.log('Eventos finales después de filtros:', this.listEvents.length);
   }
 
   onStatusChange(value: string): void {
+    console.log('Filtro Estado cambiado a:', value);
     this.selectedStatus = value;
     this.applyFilters();
   }
 
   onTypeChange(value: string): void {
+    console.log('Filtro Tipo cambiado a:', value);
     this.selectedType = value;
     this.applyFilters();
   }
 
   onVisibilityChange(value: string): void {
+    console.log('Filtro Visibilidad cambiado a:', value);
     this.selectedVisibility = value;
     this.applyFilters();
   }
