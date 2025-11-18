@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,12 +47,15 @@ export class CreateEventComponent {
   listSchedule: ScheduleList[] = [];
   displayedColumns: string[] = ['name', 'startTime', 'endTime', 'isDeleted', 'actions'];
 
-  accessPoints: AccessPointDto[] = [];
+  // Removemos el array regular ya que usaremos FormArray
 
   profilesOptions: SelectOption[] = [];
   organizationalUnitOptions: SelectOption[] = [];
   internalDivisionOptions: SelectOption[] = [];
   eventTypeOptions: any[] = [];
+
+  // Almacenar datos del evento cargado para actualizar selecciones de audiencia
+  private loadedEventData: any = null;
 
   // Progress tracking
   progressPercentage = 0;
@@ -63,6 +66,11 @@ export class CreateEventComponent {
     { id: 2, name: 'Exit' },
     { id: 3, name: 'Mixto' }
   ];
+
+  // Getter para el FormArray de access points
+  get accessPointsArray(): FormArray {
+    return this.eventForm.get('accessPoints') as FormArray;
+  }
 
   constructor(
     private apiService: ApiService<ScheduleCreate, ScheduleList>,
@@ -81,7 +89,7 @@ export class CreateEventComponent {
       scheduleDate: ['', Validators.required],
       endDate: [''],
 
-      scheduleId: [null, Validators.required],
+      schedules: [[], [Validators.required, this.atLeastOneSchedule]],
       eventTypeId: [null, Validators.required],
       accessType: ['public'],
       statusId: [1],
@@ -91,11 +99,18 @@ export class CreateEventComponent {
       organizationalUnits: this.fb.control({ value: [], disabled: true }),
       divisions: this.fb.control({ value: [], disabled: true }),
 
-      // Mini-form AP
+      // Mini-form AP (controles separados para el formulario de agregar)
       apName: [''],
       apDescription: [''],
-      apTypeId: [null]
+      typeId: [null], // Sin validadores
+
+      // FormArray para puntos de acceso
+      accessPoints: this.fb.array([])
     }, { validators: this.dateRangeValidator });
+
+    // Asegurar que el control typeId no tenga validadores
+    this.eventForm.get('typeId')?.clearValidators();
+    this.eventForm.get('typeId')?.updateValueAndValidity();
 
   }
 
@@ -149,6 +164,7 @@ export class CreateEventComponent {
     this.eventService.getEventDetails(id).subscribe({
       next: (res: any) => {
         const event = res.data;
+        this.loadedEventData = event; // Almacenar los datos para usarlos después
 
         this.eventForm.patchValue({
           name: event.name,
@@ -164,13 +180,20 @@ export class CreateEventComponent {
           divisions: event.internalDivisionIds || []
         });
         if (event.accessPoints) {
-        this.accessPoints = event.accessPoints.map((ap: any) => ({
-          id: ap.id,
-          name: ap.name,
-          description: ap.description,
-          typeId: ap.typeId
-        }));
-      }
+          // Limpiar el FormArray actual
+          while (this.accessPointsArray.length !== 0) {
+            this.accessPointsArray.removeAt(0);
+          }
+
+          // Agregar cada access point al FormArray
+          event.accessPoints.forEach((ap: any) => {
+            this.accessPointsArray.push(this.fb.group({
+              name: [ap.name, Validators.required],
+              description: [ap.description || ''],
+              typeId: [ap.typeId, Validators.required]
+            }));
+          });
+        }
     },
     error: (err) => {
       this.useservice.showError('Error al cargar el evento');
@@ -292,17 +315,35 @@ export class CreateEventComponent {
 
   loadAudienceOptions(): void {
     this.eventService.getProfiles().subscribe({
-      next: res => this.profilesOptions = res.data,
+      next: res => {
+        this.profilesOptions = res.data;
+        // Si estamos editando, actualizar el form después de cargar las opciones
+        if (this.isEdit && this.editingEventId) {
+          this.updateAudienceSelections();
+        }
+      },
       error: () => this.useservice.showError('Error al cargar perfiles')
     });
 
     this.eventService.getOrganizationalUnits().subscribe({
-      next: res => this.organizationalUnitOptions = res.data,
+      next: res => {
+        this.organizationalUnitOptions = res.data;
+        // Si estamos editando, actualizar el form después de cargar las opciones
+        if (this.isEdit && this.editingEventId) {
+          this.updateAudienceSelections();
+        }
+      },
       error: () => this.useservice.showError('Error al cargar unidades organizativas')
     });
 
     this.eventService.getInternalDivisions().subscribe({
-      next: res => this.internalDivisionOptions = res.data,
+      next: res => {
+        this.internalDivisionOptions = res.data;
+        // Si estamos editando, actualizar el form después de cargar las opciones
+        if (this.isEdit && this.editingEventId) {
+          this.updateAudienceSelections();
+        }
+      },
       error: () => this.useservice.showError('Error al cargar divisiones internas')
     });
   }
@@ -312,7 +353,7 @@ export class CreateEventComponent {
     this.eventForm.patchValue({
       apName: '',
       apDescription: '',
-      apTypeId: null
+      typeId: null
     });
   }
 
@@ -321,14 +362,16 @@ export class CreateEventComponent {
     this.eventForm.patchValue({
       apName: '',
       apDescription: '',
-      apTypeId: null
+      typeId: null
     });
   }
 
   addAccessPointManual(): void {
     const name = (this.eventForm.get('apName')?.value || '').trim();
     const description = (this.eventForm.get('apDescription')?.value || '').trim();
-    const typeId = this.eventForm.get('apTypeId')?.value;
+    const typeId = this.eventForm.get('typeId')?.value;
+
+    console.log('🔍 Valores del formulario:', { name, description, typeId });
 
     if (!name) {
       this.useservice.showInfo('Ingresa un nombre para el punto de acceso');
@@ -339,21 +382,26 @@ export class CreateEventComponent {
       return;
     }
 
-    const ap: AccessPointDto = {
-      id: 0,
-      name,
-      description,
-      typeId
-    };
+    // Agregar al FormArray
+    const newAccessPointGroup = this.fb.group({
+      name: [name, Validators.required],
+      description: [description],
+      typeId: [typeId, Validators.required]
+    });
 
-    this.accessPoints.push(ap);
+    console.log('📝 Nuevo FormGroup creado:', newAccessPointGroup.value);
+    console.log('✅ FormGroup válido:', newAccessPointGroup.valid);
+
+    this.accessPointsArray.push(newAccessPointGroup);
+    console.log('📊 FormArray después de agregar:', this.accessPointsArray.value);
+
     this.showAddForm = false;
-    this.eventForm.patchValue({ apName: '', apDescription: '', apTypeId: null });
+    this.eventForm.patchValue({ apName: '', apDescription: '', typeId: null });
     this.useservice.showSuccess('Punto de acceso agregado');
   }
 
   deleteAccessPoint(index: number): void {
-    this.accessPoints.splice(index, 1);
+    this.accessPointsArray.removeAt(index);
     this.useservice.showSuccess('Punto de acceso eliminado');
   }
 
@@ -363,8 +411,8 @@ export class CreateEventComponent {
   }
 
  // Mapear para CREAR evento (con objetos anidados)
-private mapFormToCreateDto(): CreateEventRequest {
-  const f = this.eventForm.value;
+ private mapFormToCreateDto(): CreateEventRequest {
+  const f = this.eventForm.getRawValue(); // getRawValue() obtiene todos los valores incluso los disabled
 
   return {
     event: {
@@ -373,12 +421,12 @@ private mapFormToCreateDto(): CreateEventRequest {
       description: f.description || "",
       eventStart: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
       eventEnd: f.endDate ? new Date(f.endDate).toISOString() : null,
-      scheduleId: f.scheduleId,
       eventTypeId: f.eventTypeId,
       ispublic: f.accessType === 'public',
       statusId: 1
     },
-    accessPoints: this.accessPoints.map(ap => ({
+    scheduleIds: f.schedules.map((s: any) => s.id),
+    accessPoints: this.accessPointsArray.value.map((ap: any) => ({
       name: ap.name,
       description: ap.description || "",
       typeId: ap.typeId
@@ -391,7 +439,7 @@ private mapFormToCreateDto(): CreateEventRequest {
 
 // Mapear para ACTUALIZAR evento (objeto plano con IDs)
 private mapFormToUpdateDto(): EventDtoRequest {
-  const f = this.eventForm.value;
+  const f = this.eventForm.getRawValue();
 
   return {
     id: this.editingEventId!,
@@ -400,12 +448,12 @@ private mapFormToUpdateDto(): EventDtoRequest {
     description: f.description || "",
     eventStart: f.scheduleDate ? new Date(f.scheduleDate).toISOString() : null,
     eventEnd: f.endDate ? new Date(f.endDate).toISOString() : null,
-    scheduleId: f.scheduleId,
+    scheduleIds: f.schedules.map((s: any) => s.id),
     eventTypeId: f.eventTypeId,
     eventName: f.name,
     ispublic: f.accessType === 'public',
     statusId: 1,
-    accessPoints: this.accessPoints.map(ap => ap.id).filter(id => id > 0),
+    accessPoints: this.accessPointsArray.value.map((ap: any) => ap.id || 0).filter((id: number) => id > 0),
     profileIds: f.profiles || [],
     organizationalUnitIds: f.organizationalUnits || [],
     internalDivisionIds: f.divisions || []
@@ -416,9 +464,18 @@ private mapFormToUpdateDto(): EventDtoRequest {
 
 
   onSubmit(): void {
+   console.log('🔥 onSubmit llamado');
+   console.log('📋 Formulario válido?', this.eventForm.valid);
+   console.log('📊 Estado del formulario:', this.eventForm.value);
+   console.log('🎯 Puntos de acceso:', this.accessPointsArray.value);
+   console.log('🔍 Estado del control typeId:', this.eventForm.get('typeId')?.value, this.eventForm.get('typeId')?.valid, this.eventForm.get('typeId')?.errors);
+
+  // Validación del formulario
   if (!this.eventForm.valid) {
+    console.log('❌ Formulario inválido');
     this.markFormGroupTouched();
 
+    // Validaciones específicas con mensajes
     if (!this.eventForm.get('name')?.value) {
       this.useservice.showError('El nombre del evento es obligatorio');
       return;
@@ -427,8 +484,8 @@ private mapFormToUpdateDto(): EventDtoRequest {
       this.useservice.showError('Debes seleccionar un tipo de evento');
       return;
     }
-    if (!this.eventForm.get('scheduleId')?.value) {
-      this.useservice.showError('Debes seleccionar una jornada');
+    if (!this.eventForm.get('schedules')?.value || this.eventForm.get('schedules')?.value.length === 0) {
+      this.useservice.showError('Debes seleccionar al menos una jornada');
       return;
     }
     if (!this.eventForm.get('scheduleDate')?.value) {
@@ -450,44 +507,73 @@ private mapFormToUpdateDto(): EventDtoRequest {
       return;
     }
 
+    // Mostrar todos los errores del formulario
+    console.log('🚨 Errores del formulario:', this.eventForm.errors);
+    Object.keys(this.eventForm.controls).forEach(key => {
+      const control = this.eventForm.get(key);
+      if (control?.errors) {
+        console.log(`❌ Campo ${key} tiene errores:`, control.errors);
+      }
+
+      // Si es el FormArray, revisar cada FormGroup
+      if (key === 'accessPoints' && control instanceof FormArray) {
+        control.controls.forEach((group, index) => {
+          const formGroup = group as FormGroup;
+          if (formGroup.errors) {
+            console.log(`❌ FormGroup ${index} en accessPoints tiene errores:`, formGroup.errors);
+          }
+          Object.keys(formGroup.controls).forEach(groupKey => {
+            const groupControl = formGroup.get(groupKey);
+            if (groupControl?.errors) {
+              console.log(`❌ FormGroup ${index}, campo ${groupKey} tiene errores:`, groupControl.errors);
+            }
+          });
+        });
+      }
+    });
+
     return;
   }
 
-  if (this.accessPoints.length === 0) {
+  // Validación de puntos de acceso
+  if (this.accessPointsArray.length === 0) {
+    console.log('❌ No hay puntos de acceso');
     this.useservice.showError('Debes agregar al menos un Punto de Acceso');
     return;
   }
 
+  console.log('✅ Validaciones pasadas, procediendo a guardar...');
+
   if (this.isEdit && this.editingEventId) {
-    // ACTUALIZAR: usa mapFormToUpdateDto (objeto plano con IDs de AP)
+    // ACTUALIZAR
     const updateDto = this.mapFormToUpdateDto();
-    console.log('DTO UPDATE a enviar:', updateDto);
+    console.log('📤 DTO UPDATE a enviar:', updateDto);
 
     this.eventService.updateEvent(updateDto).subscribe({
       next: (res) => {
+        console.log('✅ Evento actualizado exitosamente:', res);
         this.useservice.showSuccess(res.message || 'Evento actualizado exitosamente');
-        console.log('Evento actualizado:', res.data);
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: (err) => {
+        console.error('❌ Error al actualizar evento:', err);
         this.useservice.showError(err?.error?.message || 'Error al actualizar evento');
-        console.error('Error al actualizar evento:', err);
       }
     });
   } else {
-    // CREAR: usa mapFormToCreateDto (con objetos anidados de AP completos)
+    // CREAR
     const createDto = this.mapFormToCreateDto();
-    console.log('DTO CREATE a enviar:', createDto);
+    console.log('📤 DTO CREATE a enviar:', createDto);
 
     this.eventService.createEvent(createDto).subscribe({
       next: (res) => {
+        console.log('✅ Evento creado exitosamente:', res);
         this.useservice.showSuccess(res.message || 'Evento creado exitosamente');
-        console.log('Nuevo evento:', res.data);
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: (err) => {
+        console.error('❌ Error al crear evento:', err);
         this.useservice.showError(err?.error?.message || 'Error al crear evento');
-        console.error('Error al crear evento:', err);
       }
     });
   }
@@ -549,6 +635,15 @@ private mapFormToUpdateDto(): EventDtoRequest {
     return null;
   }
 
+  // Validador para al menos una jornada
+  atLeastOneSchedule(control: AbstractControl): ValidationErrors | null {
+    const schedules = control.value;
+    if (!schedules || schedules.length === 0) {
+      return { atLeastOneSchedule: true };
+    }
+    return null;
+  }
+
   // Progress tracking methods
   updateProgress(): void {
     const form = this.eventForm;
@@ -563,11 +658,11 @@ private mapFormToUpdateDto(): EventDtoRequest {
     // Dates (Step 2)
     if (form.get('scheduleDate')?.value) completedFields++;
     if (form.get('endDate')?.value) completedFields++;
-    if (form.get('scheduleId')?.value) completedFields++;
+    if (form.get('schedules')?.value?.length > 0) completedFields++;
 
     // Access (Step 3)
     if (form.get('accessType')?.value) completedFields++;
-    if (this.accessPoints.length > 0) completedFields++;
+    if (this.accessPointsArray.length > 0) completedFields++;
 
     // Filters (Step 4)
     if (form.get('profiles')?.value?.length > 0) completedFields++;
@@ -589,13 +684,13 @@ private mapFormToUpdateDto(): EventDtoRequest {
     }
 
     // Step 2: Dates and schedule
-    if (!form.get('scheduleDate')?.value || !form.get('endDate')?.value || !form.get('scheduleId')?.value) {
+    if (!form.get('scheduleDate')?.value || !form.get('endDate')?.value || !form.get('schedules')?.value?.length) {
       this.currentStep = 2;
       return;
     }
 
     // Step 3: Access points
-    if (!form.get('accessType')?.value || this.accessPoints.length === 0) {
+    if (!form.get('accessType')?.value || this.accessPointsArray.length === 0) {
       this.currentStep = 3;
       return;
     }
@@ -610,5 +705,20 @@ private mapFormToUpdateDto(): EventDtoRequest {
 
   isStepActive(step: number): boolean {
     return this.currentStep >= step;
+  }
+
+  goBack(): void {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
+  // Actualizar las selecciones de audiencia después de cargar las opciones
+  private updateAudienceSelections(): void {
+    if (this.loadedEventData) {
+      this.eventForm.patchValue({
+        profiles: this.loadedEventData.profileIds || [],
+        organizationalUnits: this.loadedEventData.organizationalUnitIds || [],
+        divisions: this.loadedEventData.internalDivisionIds || []
+      });
+    }
   }
 }

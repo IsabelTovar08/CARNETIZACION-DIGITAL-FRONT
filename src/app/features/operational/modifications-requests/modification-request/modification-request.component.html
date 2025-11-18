@@ -1,0 +1,35 @@
+<app-generic-table
+  [title]="'Últimos registros generados'"
+  [displayedColumns]="displayedColumns"
+  [columns]="columns"
+  [dataSourceInput]="records || []"
+  [customTemplates]="{
+    statusName: statusTemplate,
+    actions: actionsTemplate
+  }"
+  [buttonSave]="false"
+  >
+</app-generic-table>
+
+<!-- Template para mostrar el estado (success/fail) -->
+<ng-template #statusTemplate let-item>
+  <mat-chip
+    mat-chip
+    appearance="outlined"
+    class="status-chip"
+    [ngClass]="getStatusClass(item.statusName)">
+
+    <mat-icon class="chip-icon">{{ getStatusIcon(item.statusName) }}</mat-icon>
+    {{ item.statusName }}
+
+  </mat-chip>
+</ng-template>
+
+
+<!-- Template para mensaje dinámico -->
+<ng-template #actionsTemplate let-item>
+ <button mat-raised-button (click)="openDetails(item)">
+    <mat-icon class="">visibility</mat-icon>
+    <span>Ver</span>
+ </button>
+</ng-template>

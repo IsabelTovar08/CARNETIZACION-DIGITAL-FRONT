@@ -23,6 +23,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private menu: MenuCreateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -46,32 +47,34 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.authService.login(this.loginForm.value).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // ✅ Caso exitoso
-          // this.menu.reload();
-          this.router.navigate(['auth/login-code']);
+      next: (r: any) => {
 
-          // Opcional: mostrar notificación
-          console.log(response.message);
-        } else {
-          // La API respondió 200 pero con error lógico
-          console.warn('Login fallido:', response.message);
-          alert(response.message); // o tu propio servicio de toast
+        if (r.twoFactor) {
+          // Requiere código
+          this.router.navigate(['auth/login-code']);
+          return;
         }
+
+        if (r.completed) {
+          // No requiere 2FA — userMe ya se guardó en el service
+          // cargar menú + dashboard
+          this.menu.reload();
+          this.router.navigate(['/dashboard']);
+          return;
+        }
+
+        console.warn("Respuesta inesperada en login", r);
       },
-      error: (error) => {
-        //  Error de red o statusCode >= 400
-        console.error('Error al iniciar sesión:', error);
-        // alert('Ocurrió un error inesperado, intenta de nuevo.');
+      error: err => {
+        console.error(err);
       }
     });
-
 
     if (this.loginForm.valid) {
       this.isLoading = true;
 
       const formData = this.loginForm.value;
+
       console.log('Datos del formulario:', formData);
 
       // Simular llamada a API
@@ -88,5 +91,5 @@ export class LoginComponent {
       });
     }
   }
-  
+
 }

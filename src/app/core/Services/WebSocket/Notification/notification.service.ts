@@ -7,6 +7,7 @@ import { NotificationsService } from '../../api/notifications/notifications.serv
 import { NotificationDto } from '../../../Models/notifications/notifications.models';
 import { ApiResponse } from '../../../Models/api-response.models';
 import { UserStoreService } from '../../auth/user-store.service';
+import { SnackbarService } from '../../snackbar/snackbar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class NotificationWService {
   constructor(
     private wsService: WebSocketService,
     private notificationApi: NotificationsService,
-    private store: UserStoreService
+    private store: UserStoreService,
+    private snackbarService: SnackbarService
   ) {}
 
   /**
@@ -46,6 +48,7 @@ export class NotificationWService {
       this.notifications$.next(data);
       this.unreadCount$.next(this.unreadCount$.value + 1);
       this.playNotificationSound();
+      this.snackbarService.showSuccess('Nueva notificación recibida: ' + data.title);
     });
 
   } catch (e) {

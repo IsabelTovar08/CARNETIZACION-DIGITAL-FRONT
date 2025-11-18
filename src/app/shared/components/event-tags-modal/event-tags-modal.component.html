@@ -57,6 +57,30 @@
     </div>
   </section>
 
+  <!-- JORNADAS -->
+  <section class="section-block" *ngIf="data.schedules?.length">
+    <h3 class="section-title">Jornadas</h3>
+
+    <div class="schedule-card" *ngFor="let s of data.schedules">
+      <div class="schedule-title">
+        <mat-icon class="schedule-icon">schedule</mat-icon>
+        {{ s.name }}
+      </div>
+
+      <div class="schedule-detail">
+        <strong>Hora inicio:</strong> {{ s.startTime }}
+      </div>
+
+      <div class="schedule-detail">
+        <strong>Hora fin:</strong> {{ s.endTime }}
+      </div>
+
+      <div class="schedule-detail" *ngIf="s.days?.length">
+        <strong>Días:</strong> {{ s.days.join(', ') }}
+      </div>
+    </div>
+  </section>
+
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
