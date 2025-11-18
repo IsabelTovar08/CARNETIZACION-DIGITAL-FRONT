@@ -133,6 +133,7 @@ export class ConfigFormComponent implements OnInit {
         console.log('Plantilla seleccionada:', this.selectedTemplate);
       }
     });
-  }
+  } 
+  
 
 }

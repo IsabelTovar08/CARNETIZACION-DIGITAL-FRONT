@@ -1,25 +1,116 @@
-.template-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+/* Estilos del diálogo */
+::ng-deep .mat-mdc-dialog-container {
+  border-radius: 16px !important;
+  padding: 0 !important;
 }
 
+/* Header del modal */
+h2[mat-dialog-title] {
+  padding: 24px 32px;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Contenido del modal */
+mat-dialog-content {
+  padding: 32px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Scrollbar personalizada */
+mat-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+mat-dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Lista de plantillas */
+.template-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  justify-items: center;
+}
+
+/* Item de plantilla */
 .template-item {
   width: 250px;
   cursor: pointer;
   text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  padding: 16px;
+  background: #ffffff;
 }
 
+.template-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.template-item:active {
+  transform: translateY(-2px);
+}
+
+/* Contenedor del renderer */
 .template-item app-template-renderer {
   display: block;
   width: 100%;
-  height: 150px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  height: 390px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
   overflow: hidden;
+  background: #fafafa;
+  transition: border-color 0.2s ease;
 }
 
+.template-item:hover app-template-renderer {
+  border-color: #3b82f6;
+}
+
+/* Nombre de la plantilla */
 .template-name {
-  margin-top: 8px;
-  font-weight: bold;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #374151;
+  letter-spacing: -0.01em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h2[mat-dialog-title] {
+    padding: 20px 24px;
+    font-size: 20px;
+  }
+
+  mat-dialog-content {
+    padding: 24px;
+  }
+
+  .template-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .template-item {
+    width: 100%;
+    max-width: 300px;
+  }
 }

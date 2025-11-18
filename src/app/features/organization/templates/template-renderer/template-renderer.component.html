@@ -1,22 +1,24 @@
 <!-- template-renderer.component.html -->
 <div class="renderer-wrapper">
-  <div class="toolbar">
-    <button type="button" class="toggle-btn" (click)="toggleSide()">
-      {{ toggleLabel }}
-    </button>
-  </div>
+  <!-- Botón flotante en la esquina -->
+  <button
+    class="floating-toggle-btn"
+    (click)="toggleSide(); $event.stopPropagation()"
+    [attr.aria-label]="toggleLabel"
+    title="{{ toggleLabel }}">
+    🔁
+  </button>
 
   <div class="template-container">
     <!-- Imagen de fondo dinámica -->
     <img [src]="currentBackgroundUrl" class="template-bg" alt="Plantilla" />
 
-    <!-- Elementos superpuestos dinámicos (frente o reverso) -->
+    <!-- Elementos superpuestos -->
     <div
       class="element"
       *ngFor="let key of (currentElements | keyvalue)"
       [ngStyle]="getPositionStyle(key.value)"
-      [attr.data-field]="key.key"
-    >
+      [attr.data-field]="key.key">
       {{ key.key }}
     </div>
   </div>
