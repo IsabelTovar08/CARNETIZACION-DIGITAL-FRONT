@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from '@angular/material/button';
@@ -15,14 +16,14 @@ import { EventTagsModalComponent } from '../../../../shared/components/event-tag
 import { AttendanceModalComponent } from '../../../../shared/components/attendance-modal/attendance-modal.component';
 import { CardItem, GenericListCardsComponent } from '../../../../shared/components/components-cards/generic-list-cards/generic-list-cards.component';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
-import { MatChip, MatChipSet } from "@angular/material/chips";
+import { MatChip, MatChipSet, MatChipsModule } from "@angular/material/chips";
 import Swal from 'sweetalert2';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-list-events',
-  imports: [MatIconModule,MatTooltipModule,MatMenuModule, MatButtonModule, MatSelectModule, MatFormFieldModule, GenericListCardComponent, MatChip, MatChipSet],
+  imports: [CommonModule, MatIconModule,MatTooltipModule,MatMenuModule, MatButtonModule, MatSelectModule, MatFormFieldModule, MatChipsModule, GenericListCardComponent, MatChip, MatChipSet],
   templateUrl: './list-events.component.html',
   styleUrl: './list-events.component.css'
 })
@@ -36,7 +37,7 @@ export class ListEventsComponent implements OnInit {
   selectedVisibility: string = 'Todos';
 
   // Opciones para filtros
-  statusOptions: string[] = ['Todos', 'Activo', 'Inactivo'];
+  statusOptions: string[] = ['Todos', 'Activo', 'En curso', 'Finalizado'];
   typeOptions: string[] = ['Todos'];
   visibilityOptions: string[] = ['Todos', 'Público', 'Privado'];
 
@@ -249,11 +250,24 @@ private toCardItem = (e: any): any => {
     });
     let filtered = [...this.allEvents];
     console.log('Eventos totales antes de filtrar:', this.allEvents.length);
+    console.log('Ejemplo de evento:', this.allEvents[0] ? {
+      title: this.allEvents[0].title,
+      statusId: this.allEvents[0].statusId,
+      eventTypeName: this.allEvents[0].eventTypeName,
+      isLocked: this.allEvents[0].isLocked
+    } : 'No hay eventos');
 
     // Filtro por estado
     if (this.selectedStatus !== 'Todos') {
-      const isActive = this.selectedStatus === 'Activo';
-      filtered = filtered.filter(e => !e.isDeleted === isActive);
+      let statusId: number;
+      if (this.selectedStatus === 'Activo') {
+        statusId = 1;
+      } else if (this.selectedStatus === 'En curso') {
+        statusId = 8;
+      } else if (this.selectedStatus === 'Finalizado') {
+        statusId = 9;
+      }
+      filtered = filtered.filter(e => e.statusId === statusId);
       console.log('Después de filtro estado:', filtered.length);
     }
 

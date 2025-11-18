@@ -72,32 +72,6 @@
         <ng-container *ngTemplateOutlet="customTemplates['description']; context: { $implicit: item }"></ng-container>
       </ng-container>
 
-      <!-- TAGS COLORIDOS -->
-      <div class="tags">
-        <mat-chip-set>
-
-          <mat-chip
-            *ngFor="let t of (item.tags || [])"
-            [style.backgroundColor]="t.color"
-            class="tag-chip">
-            {{ t.label }}
-          </mat-chip>
-
-          <!-- +más -->
-          <mat-chip
-            *ngIf="item.showMoreCount > 0"
-            class="more-chip"
-            (click)="emitMoreTags(item)">
-            +{{ item.showMoreCount }} más
-          </mat-chip>
-
-        </mat-chip-set>
-      </div>
-
-      <!-- Tags extra si vienen por template -->
-      <ng-container *ngIf="customTemplates['tags']">
-        <ng-container *ngTemplateOutlet="customTemplates['tags']; context: { $implicit: item }"></ng-container>
-      </ng-container>
 
     </mat-card-content>
 

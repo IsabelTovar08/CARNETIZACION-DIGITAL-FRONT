@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
@@ -25,8 +25,12 @@ export class GenericListCardComponent {
     if (this.paginator) {
       this.paginator.pageIndex = 0;
     }
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
   }
   items: any[] = [];
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};
 
