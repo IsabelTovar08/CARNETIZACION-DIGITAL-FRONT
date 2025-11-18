@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-generic-credincials',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './generic-credincials.component.html',
   styleUrl: './generic-credincials.component.css'
 })
@@ -18,15 +18,36 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   @Output() closeModal = new EventEmitter<void>();
   @Output() validationSuccess = new EventEmitter<string>();
 
-  password = '';
+  form!: FormGroup;
+  fields: any[] = [];
   showPassword = false;
   error = '';
   isValidating = false;
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     if (this.isOpen) {
       document.body.style.overflow = 'hidden';
     }
+
+    // Definir campos
+    this.fields = [
+      {
+        name: 'password',
+        label: 'Contraseña',
+        type: 'password',
+        required: true,
+        value: ''
+      }
+    ];
+
+    // Crear FormGroup
+    const group: any = {};
+    this.fields.forEach(field => {
+      group[field.name] = [field.value, field.required ? Validators.required : []];
+    });
+    this.form = this.fb.group(group);
   }
 
   ngOnDestroy() {
@@ -42,17 +63,18 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   }
 
   async handleSubmit() {
-    if (!this.password.trim()) {
+    const password = this.form.get('password')?.value || '';
+    if (!password.trim()) {
       this.error = 'La contraseña es requerida';
       return;
     }
 
-    if(this.password.length < 8) {
+    if(password.length < 8) {
       this.error = 'La contraseña debe tener al menos 8 caracteres';
       return;
     }
 
-    if(this.password.length >= 100) {
+    if(password.length >= 100) {
       this.error = 'La contraseña alcanzó el máximo de 100 caracteres';
       return;
     }
@@ -62,7 +84,7 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
 
     setTimeout(() => {
       this.isValidating = false;
-      this.validationSuccess.emit(this.password);
+      this.validationSuccess.emit(password);
       this.handleClose();
       this.resetModal();
     }, 1000);
@@ -90,7 +112,9 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   }
 
   private resetModal() {
-    this.password = '';
+    this.form.reset({
+      password: ''
+    });
     this.error = '';
     this.isValidating = false;
     this.showPassword = false;
@@ -106,10 +130,11 @@ export class GenericCredincialsComponent implements OnInit, OnDestroy, OnChanges
   }
 
   getButtonClasses(): string {
+    const password = this.form.get('password')?.value || '';
     const baseClasses = 'w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-200 transform';
     const disabledClasses = 'bg-gray-400 cursor-not-allowed';
     const enabledClasses = 'bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 hover:scale-105 shadow-lg hover:shadow-xl';
-    
-    return `${baseClasses} ${this.isValidating || !this.password.trim() ? disabledClasses : enabledClasses}`;
+
+    return `${baseClasses} ${this.isValidating || !password.trim() ? disabledClasses : enabledClasses}`;
   }
 }

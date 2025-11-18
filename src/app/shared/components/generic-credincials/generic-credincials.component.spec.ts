@@ -27,30 +27,30 @@ describe('GenericCredincialsComponent', () => {
     expect(component.modalTitle).toBe('Validar Credenciales');
     expect(component.modalSubtitle).toBe('Ingresa tu contraseña para continuar');
     expect(component.userEmail).toBe('');
-    expect(component.password).toBe('');
+    expect(component.form.get('password')?.value).toBe('');
     expect(component.showPassword).toBeFalse();
     expect(component.error).toBe('');
     expect(component.isValidating).toBeFalse();
   });
 
   it('should validate password length', () => {
-    component.password = '12345'; // Less than 8 characters
+    component.form.get('password')?.setValue('12345'); // Less than 8 characters
     component.handleSubmit();
     expect(component.error).toBe('La contraseña debe tener al menos 8 caracteres');
 
-    component.password = 'a'.repeat(101); // More than 100 characters
+    component.form.get('password')?.setValue('a'.repeat(101)); // More than 100 characters
     component.handleSubmit();
     expect(component.error).toBe('La contraseña alcanzó el máximo de 100 caracteres');
   });
 
   it('should require password', () => {
-    component.password = '';
+    component.form.get('password')?.setValue('');
     component.handleSubmit();
     expect(component.error).toBe('La contraseña es requerida');
   });
 
   it('should emit validationSuccess on valid password', (done) => {
-    component.password = 'validpassword123';
+    component.form.get('password')?.setValue('validpassword123');
     component.validationSuccess.subscribe((password) => {
       expect(password).toBe('validpassword123');
       done();
@@ -87,14 +87,14 @@ describe('GenericCredincialsComponent', () => {
   });
 
   it('should reset modal on close', () => {
-    component.password = 'test';
+    component.form.get('password')?.setValue('test');
     component.error = 'error';
     component.showPassword = true;
     component.isValidating = false; // Set to false so handleClose can proceed
 
     component.handleClose();
 
-    expect(component.password).toBe('');
+    expect(component.form.get('password')?.value).toBe('');
     expect(component.error).toBe('');
     expect(component.showPassword).toBeFalse();
     expect(component.isValidating).toBeFalse();
@@ -111,12 +111,12 @@ describe('GenericCredincialsComponent', () => {
   });
 
   it('should get correct button classes', () => {
-    component.password = '';
+    component.form.get('password')?.setValue('');
     component.isValidating = false;
     let classes = component.getButtonClasses();
     expect(classes).toContain('bg-gray-400');
 
-    component.password = 'password';
+    component.form.get('password')?.setValue('password');
     classes = component.getButtonClasses();
     expect(classes).toContain('bg-gradient-to-r');
   });

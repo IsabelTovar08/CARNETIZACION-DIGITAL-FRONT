@@ -1,0 +1,58 @@
+<div class="organizational-section">
+  <div class="header">
+    <h2>Información Organizacional</h2>
+    <div class="actions" *ngIf="!isEditable">
+      <button class="edit-btn" (click)="enableEdit()">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+    <div class="actions" *ngIf="isEditable">
+      <button class="save-btn" (click)="submitForm()">
+        <mat-icon>save</mat-icon>
+        Guardar
+      </button>
+      <button class="cancel-btn" (click)="resetForm()">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="organizationForm" class="organization-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre de la Organización</mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="organizationForm.get('name')?.errors?.['required']">Nombre es requerido</mat-error>
+      <mat-error *ngIf="organizationForm.get('name')?.errors?.['minlength']">Mínimo 2 caracteres</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Logo</mat-label>
+      <input matInput formControlName="logo">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de Organización</mat-label>
+      <mat-select formControlName="typeId">
+        <mat-option *ngFor="let type of organizationTypes" [value]="type.id">
+          {{ type.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="organizationForm.get('typeId')?.errors?.['required']">Tipo es requerido</mat-error>
+      <mat-error *ngIf="organizationForm.get('typeId')?.errors?.['min']">Seleccione un tipo válido</mat-error>
+    </mat-form-field>
+  </form>
+
+  <!-- Modal de validación de credenciales -->
+  <app-generic-credincials
+    *ngIf="isModalOpen"
+    (validationSuccess)="onValidacionExitosa($event)"
+    (closeModal)="isModalOpen = false">
+  </app-generic-credincials>
+</div>
