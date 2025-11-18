@@ -2,41 +2,59 @@ import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../core/Services/api/api.service';
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
 import { Event } from '../../../../core/Models/operational/event.model';
 import { EventService } from '../../../../core/Services/api/event/event.service';
+import { AttendanceService } from '../../../../core/Services/api/attendance.service/attendance.service';
 import { EventTagsModalComponent } from '../../../../shared/components/event-tags-modal/event-tags-modal.component';
+import { AttendanceModalComponent } from '../../../../shared/components/attendance-modal/attendance-modal.component';
 import { CardItem, GenericListCardsComponent } from '../../../../shared/components/components-cards/generic-list-cards/generic-list-cards.component';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatChip, MatChipSet } from "@angular/material/chips";
 import Swal from 'sweetalert2';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-list-events',
-  imports: [MatIconModule, MatMenuModule, GenericListCardsComponent, MatButtonModule, GenericListCardComponent, MatChip, MatChipSet],
+  imports: [MatIconModule,MatTooltipModule,MatMenuModule, GenericListCardsComponent, MatButtonModule, MatSelectModule, MatFormFieldModule, GenericListCardComponent, MatChip, MatChipSet],
   templateUrl: './list-events.component.html',
   styleUrl: './list-events.component.css'
 })
 export class ListEventsComponent implements OnInit {
   listEvents: any[] = [];
+  allEvents: any[] = []; // Para almacenar todos los eventos sin filtrar
+
+  // Filtros
+  selectedStatus: string = 'Todos';
+  selectedType: string = 'Todos';
+  selectedVisibility: string = 'Todos';
+
+  // Opciones para filtros
+  statusOptions: string[] = ['Todos', 'Activo', 'Inactivo'];
+  typeOptions: string[] = ['Todos'];
+  visibilityOptions: string[] = ['Todos', 'Público', 'Privado'];
 
   /**
-   *
-   */
-  constructor(
-    private apiService: ApiService<Event, Event>,
-    private eventService: EventService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private dialog: MatDialog,
-    private snackbarService: SnackbarService,
+    *
+    */
+   constructor(
+     private apiService: ApiService<Event, Event>,
+     private eventService: EventService,
+     private attendanceService: AttendanceService,
+     private route: ActivatedRoute,
+     private router: Router,
+     private dialog: MatDialog,
+     private snackbarService: SnackbarService,
 
-  ) {
+   ) {
 
-  }
+   }
   ngOnInit(): void {
     this.loadEvents();
   }
@@ -64,11 +82,17 @@ export class ListEventsComponent implements OnInit {
       console.log("🚀 Datos crudos del servicio:", res.data);
 
       const events = res.data;
-      this.listEvents = events.map((e: any) => {
+      this.allEvents = events.map((e: any) => {
         const card = this.toCardItem(e);
         console.log("🟦 Tarjeta generada:", card);
         return card;
       });
+
+      // Poblar opciones de tipo de evento
+      this.populateTypeOptions();
+
+      // Aplicar filtros iniciales
+      this.applyFilters();
     },
     error: () => {
       this.snackbarService.showError("Error al cargar los eventos completos");
@@ -190,6 +214,69 @@ private toCardItem = (e: any): any => {
         this.snackbarService.showError('Error al cambiar el estado del evento');
       }
     });
+  }
+
+  viewAttendees(e: any) {
+    this.attendanceService.searchAttendance({
+      eventId: e.id,
+      sortBy: 'TimeOfEntry',
+      sortDir: 'DESC',
+      page: 1,
+      pageSize: 20
+    }).subscribe({
+      next: (res) => {
+        this.dialog.open(AttendanceModalComponent, {
+          width: '80%',
+          data: { eventName: e.title, attendances: res.items }
+        });
+      },
+      error: () => {
+        this.snackbarService.showError('Error al cargar los asistentes');
+      }
+    });
+  }
+
+  private populateTypeOptions(): void {
+    const types = new Set(this.allEvents.map(e => e.eventTypeName).filter(t => t));
+    this.typeOptions = ['Todos', ...Array.from(types)];
+  }
+
+  private applyFilters(): void {
+    let filtered = [...this.allEvents];
+
+    // Filtro por estado
+    if (this.selectedStatus !== 'Todos') {
+      const isActive = this.selectedStatus === 'Activo';
+      filtered = filtered.filter(e => !e.isDeleted === isActive);
+    }
+
+    // Filtro por tipo
+    if (this.selectedType !== 'Todos') {
+      filtered = filtered.filter(e => e.eventTypeName === this.selectedType);
+    }
+
+    // Filtro por visibilidad
+    if (this.selectedVisibility !== 'Todos') {
+      const isPublic = this.selectedVisibility === 'Público';
+      filtered = filtered.filter(e => e.isLocked !== isPublic); // isLocked es lo opuesto a isPublic
+    }
+
+    this.listEvents = filtered;
+  }
+
+  onStatusChange(value: string): void {
+    this.selectedStatus = value;
+    this.applyFilters();
+  }
+
+  onTypeChange(value: string): void {
+    this.selectedType = value;
+    this.applyFilters();
+  }
+
+  onVisibilityChange(value: string): void {
+    this.selectedVisibility = value;
+    this.applyFilters();
   }
 
 }
