@@ -30,18 +30,55 @@ export class AuthService {
   // Auth
   public login(credentials: RequestLogin) {
 
-    return this.wrapper.handleRequest(this.http.post<any>(`${this.urlBase}/Auth/login`, credentials, {
-      context: new HttpContext().set(CHECK_AUTH, false)
-    }))
-      .pipe(
-        tap(res => {
-          // Guarda ambos tokens; refresh por defecto 7 días
-          this.cachePendingEmail(credentials.email, res.data.userId)
+    return this.wrapper.handleRequest(
+      this.http.post<ApiResponse<any>>(
+        `${this.urlBase}/Auth/login`,
+        credentials,
+        { context: new HttpContext().set(CHECK_AUTH, false) }
+      )
+    ).pipe(
 
-          // this.tokenService.setTokens(res.accessToken, res.refreshToken);
-        })
-      );
+      switchMap(res => {
+        if (!res.success) {
+          return [res];
+        }
+
+        const data = res.data;
+
+        //  Caso 1: Tiene tokens → login completo
+        if (data?.accessToken && data?.refreshToken) {
+
+          this.tokenService.setTokens(data.accessToken, data.refreshToken);
+
+          sessionStorage.removeItem('pending_login_email');
+          sessionStorage.removeItem('pending_login_id');
+
+          // Llamar user/me
+          return this.getMe().pipe(
+            tap(me => this.userStore.setUser(me.data)),
+            // devolvemos indicador al componente
+            switchMap(() => [{
+              completed: true,
+              twoFactor: false
+            }])
+          );
+        }
+
+        //  Caso 2: Requiere 2FA
+        if (data?.userId) {
+          this.cachePendingEmail(credentials.email, data.userId);
+
+          return [{
+            completed: false,
+            twoFactor: true
+          }];
+        }
+
+        return [res];
+      })
+    );
   }
+
 
   // Auth
   public verifiCode(credentials: RequestCode) {

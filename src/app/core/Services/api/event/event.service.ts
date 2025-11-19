@@ -4,14 +4,18 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../Models/api-response.models';
 import { CreateEventRequest, EventDtoRequest, SelectOption } from '../../../Models/operational/event.model';
+import { ApiService } from '../api.service';
+import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class EventService {
-  private http = inject(HttpClient);
-  private urlBase = environment.API_BASE_URL + '/api';
+export class EventService extends ApiService<any, any> {
+
+  constructor(http: HttpClient, wrapper: HttpServiceWrapperService) {
+    super(http, wrapper);
+  }
 
   // Crear evento con accesos y audiencias
   public createEvent(dto: CreateEventRequest): Observable<ApiResponse<{ id: number }>> {
@@ -30,7 +34,7 @@ export class EventService {
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
-  
+
 // Eliminar evento
   public deleteEvent(id: number): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.urlBase}/Event/${id}`);
@@ -39,10 +43,10 @@ export class EventService {
 
 // Obtener todos los eventos con información completa (audiencias, accesos, etc.)
 public getAllEventsFull(): Observable<ApiResponse<any>> {
-  return this.http.get<ApiResponse<any>>(
+  return this.wrapper.handleRequest(this.http.get<ApiResponse<any>>(
     `${this.urlBase}/Event/list-full`,
     { headers: { 'Content-Type': 'application/json' } }
-  );
+  ));
 }
 
 
@@ -91,6 +95,6 @@ public getAllEventsFull(): Observable<ApiResponse<any>> {
 
 
 
-  
+
 
 }

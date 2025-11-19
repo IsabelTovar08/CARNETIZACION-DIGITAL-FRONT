@@ -9,6 +9,7 @@ import { MassUploadPeopleComponent } from './mass-upload-people/mass-upload-peop
 import { DetailsPeopleImportComponent } from './mass-upload-people/details-people-import/details-people-import.component';
 import { AttendanceComponent } from './attendance/attendance.component';
 import { CardPersonListComponent } from './card-person-list/card-person-list.component';
+import { ModificationRequestComponent } from './modifications-requests/modification-request/modification-request.component';
 
 export const operationalRoutes: Routes = [
   { path: 'event-types', component: ListEventTypesComponent },
@@ -27,5 +28,6 @@ export const operationalRoutes: Routes = [
   { path : 'card-issuance', component: MassUploadPeopleComponent},
   { path : 'import-batches/:id/details', component: DetailsPeopleImportComponent},
   { path : 'people-management', component: CardPersonListComponent},
+  { path : 'modification-request', component: ModificationRequestComponent},
 
 ];

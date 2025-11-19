@@ -1,0 +1,92 @@
+<h2 mat-dialog-title>
+  <mat-icon>description</mat-icon>
+  Detalles de la solicitud
+</h2>
+
+<mat-dialog-content class="content">
+
+  <div class="status-badge" [ngClass]="'status-' + data.statusName.toLowerCase()">
+    {{ data.statusName }}
+  </div>
+
+  <div class="section">
+    <h3>Información del solicitante</h3>
+    <div class="detail-row">
+      <span class="label">Usuario</span>
+      <span class="value">{{ data.userName }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Identificación</span>
+      <span class="value">{{ data.userIdentification }}</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Detalles de la modificación</h3>
+    <div class="detail-row">
+      <span class="label">Campo a modificar</span>
+      <span class="value">{{ data.fieldName }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Razón del cambio</span>
+      <span class="value">{{ data.reasonName }}</span>
+    </div>
+  </div>
+
+  <div class="section comparison">
+    <h3>Cambios propuestos</h3>
+    <div class="comparison-grid">
+      <div class="comparison-item old">
+        <span class="comparison-label">Valor anterior</span>
+        <span class="comparison-value">{{ data.oldValue }}</span>
+      </div>
+      <div class="comparison-arrow">
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      <div class="comparison-item new">
+        <span class="comparison-label">Nuevo valor</span>
+        <span class="comparison-value">{{ data.newValue }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section message-section">
+
+
+    <h3>Mensaje adicional</h3>
+    <mat-form-field appearance="outline" class="message-field"
+      *ngIf="data.statusName === 'Pendiente'">
+      <mat-label>Escriba un mensaje (opcional)</mat-label>
+      <textarea
+        matInput
+        rows="3"
+        [(ngModel)]="additionalMessage"
+        placeholder="Agregue observaciones o comentarios sobre la decisión..."></textarea>
+    </mat-form-field>
+    <div class="message-box"
+      *ngIf="data.statusName !== 'Pendiente' && data.message">
+      <span>{{ data.message }}</span>
+    </div>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="openUserDetail()">
+    <mat-icon>person</mat-icon>
+    Ver persona
+  </button>
+
+  <div class="action-buttons" *ngIf="data.statusName === 'Pendiente'">
+    <button mat-raised-button color="warn" (click)="reject()">
+      <mat-icon>close</mat-icon>
+      Rechazar
+    </button>
+    <button mat-raised-button color="primary" (click)="approve()">
+      <mat-icon>check</mat-icon>
+      Aprobar
+    </button>
+  </div>
+
+  <button mat-button mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>
