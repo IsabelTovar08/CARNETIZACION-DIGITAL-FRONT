@@ -171,6 +171,8 @@ private toCardItem = (e: any): any => {
     this.router.navigate(['crear'], { relativeTo: this.route });
   }
 
+  
+
   view(e: any) {
     this.openTagsModal(e);
   }
