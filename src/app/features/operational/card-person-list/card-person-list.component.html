@@ -87,9 +87,9 @@
   <button
     mat-icon-button
     color="primary"
-    [disabled]="!item.pdfUrl"
-    matTooltip="Ver carnet PDF"
-    (click)="openPdf(item.pdfUrl)">
+    [disabled]="!item.id"
+    matTooltip="Generar carnet PDF"
+    (click)="generatePdf(item.id)">
     <mat-icon>picture_as_pdf</mat-icon>
   </button>
 </ng-template>

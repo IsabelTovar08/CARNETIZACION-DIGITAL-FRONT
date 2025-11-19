@@ -1,4 +1,5 @@
 import { ApiService } from './../../../core/Services/api/api.service';
+import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
 import { Component, signal } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
@@ -116,7 +117,8 @@ export class CardPersonListComponent {
   ];
 
   constructor(private fb: FormBuilder,
-    private issuedCardService: ApiService<any, any>
+    private apiService: ApiService<any, any>,
+    private issuedCardService: IssuedCardService
   ) {}
 
   ngOnInit(): void {
@@ -130,7 +132,7 @@ export class CardPersonListComponent {
 
     this.dataSource.set(this.peopleMock);
 
-    this.issuedCardService.ObtenerTodo('IssuedCard').subscribe({
+    this.apiService.ObtenerTodo('IssuedCard').subscribe({
       next: (result) => {
         this.peopleMock = result.data;
         this.dataSource.set(this.peopleMock)
@@ -176,22 +178,25 @@ export class CardPersonListComponent {
     this.dataSource.set(this.peopleMock);
   }
 
-    /// <summary>
-  /// Abre un archivo PDF desde una cadena Base64 en una nueva pestaña del navegador
+  /// <summary>
+  /// Genera y abre el PDF del carnet para el issuedCardId dado
   /// </summary>
-  openPdf(base64Data: string): void {
-    try {
-      // Convierte la cadena base64 en un Blob
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+  generatePdf(issuedCardId: number): void {
+    this.issuedCardService.getCardPdf(issuedCardId).subscribe({
+      next: (blob) => {
+        this.openPdf(blob);
+      },
+      error: (err) => {
+        console.error('Error generating PDF:', err);
       }
+    });
+  }
 
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
-
+    /// <summary>
+  /// Abre un archivo PDF desde un Blob en una nueva pestaña del navegador
+  /// </summary>
+  openPdf(blob: Blob): void {
+    try {
       // Crea una URL temporal para el Blob
       const blobUrl = URL.createObjectURL(blob);
 
