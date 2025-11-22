@@ -5,20 +5,25 @@ import { GenericModel } from "../security/generic.model";
  // Ajusta la ruta según tu estructura
 
 // Para crear/actualizar AccessPoints
-export interface AccessPointCreate extends GenericModel {
-//   description?: string | null;
+export interface AccessPointCreate {
+  id?: number;
+  name?: string;
+  description?: string | null;
   eventId: number;
   typeId: number;
 }
 
 // Para listar/mostrar AccessPoints
-export interface AccessPointList extends GenericModel {
-//   description?: string | null;
+export interface AccessPointList {
+  id: number;
+  name: string;
+  description?: string | null;
   eventId: number;
   eventName?: string | null;
   typeId: number;
   type?: string | null;
-  qrCode?: string | null;
+  QrCodeKey?: string | null;
+  code?: string | null;
 }
 
 // DTO simplificado para enviar al crear evento

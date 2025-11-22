@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { ModificationRequestService } from './modification-request.service';
 
-import { ModificationRequestService } from '../modification-request.service';
 
 describe('ModificationRequestService', () => {
   let service: ModificationRequestService;

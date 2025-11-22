@@ -60,13 +60,13 @@
         {{ ap.code }}
       </div>
 
-      <div class="ap-qr" *ngIf="ap.qrCode">
-        <img [src]="'data:image/png;base64,' + ap.qrCode" alt="QR Code" class="qr-image">
+      <div class="ap-qr" *ngIf="ap.qrCodeKey">
+        <img [src]="'data:image/png;base64,' + ap.qrCodeKey" alt="QR Code" class="qr-image">
         <div class="qr-actions">
-          <button mat-mini-fab color="primary" (click)="enlargeQr(ap.qrCode)" matTooltip="Ampliar QR">
+          <button mat-mini-fab color="primary" (click)="enlargeQr(ap.qrCodeKey)" matTooltip="Ampliar QR">
             <mat-icon>zoom_in</mat-icon>
           </button>
-          <button mat-mini-fab color="accent" (click)="downloadQr(ap.qrCode, ap.name + '_qr.png')" matTooltip="Descargar QR">
+          <button mat-mini-fab color="accent" (click)="downloadQr(ap.qrCodeKey, ap.name + '_qr.png')" matTooltip="Descargar QR">
             <mat-icon>download</mat-icon>
           </button>
         </div>

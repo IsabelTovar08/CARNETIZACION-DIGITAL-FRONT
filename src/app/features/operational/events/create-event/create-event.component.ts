@@ -23,6 +23,7 @@ import { ScheduleCreate, ScheduleList } from '../../../../core/Models/organizati
 import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
 import { fromApiTime } from '../../../../core/utils/time-only';
 import { ApiService } from '../../../../core/Services/api/api.service';
+import { ScheduleService } from '../../../../core/Services/api/event/Schedules/schedule.service';
 
 @Component({
   selector: 'app-create-event',
@@ -63,7 +64,7 @@ export class CreateEventComponent {
 
   accessPointTypes = [
     { id: 1, name: 'Entrada' },
-    { id: 2, name: 'Exit' },
+    { id: 2, name: 'Salida' },
     { id: 3, name: 'Mixto' }
   ];
 
@@ -74,6 +75,7 @@ export class CreateEventComponent {
 
   constructor(
     private apiService: ApiService<ScheduleCreate, ScheduleList>,
+    private scheduleService: ScheduleService,
     private fb: FormBuilder,
     private eventService: EventService,
     private useservice: SnackbarService,
@@ -293,7 +295,7 @@ export class CreateEventComponent {
   }
 
   crearJornada(data: any): void {
-    this.apiService.Crear('Schedule', data).subscribe({
+    this.scheduleService.createSchedule(data).subscribe({
       next: () => {
         this.cargarJornadas();
         this.useservice.showSuccess('Jornada creada con éxito');
@@ -304,7 +306,7 @@ export class CreateEventComponent {
 
   actualizarJornada(data: any, id: number): void {
     const scheduleData = { ...data, id };
-    this.apiService.update('Schedule', scheduleData).subscribe({
+    this.scheduleService.updateSchedule(scheduleData).subscribe({
       next: () => {
         this.cargarJornadas();
         this.useservice.showSuccess('Jornada actualizada con éxito');

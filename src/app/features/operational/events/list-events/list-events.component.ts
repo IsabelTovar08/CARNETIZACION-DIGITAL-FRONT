@@ -185,7 +185,7 @@ private toCardItem = (e: any): any => {
   remove(e: any) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `¿Deseas eliminar el evento "${e.title || e.name}"? Esta acción no se puede deshacer.`,
+      text: `¿Deseas eliminar el evento "${e.title || e.name}"?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -194,12 +194,15 @@ private toCardItem = (e: any): any => {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.eventService.deleteEvent(e.id).subscribe({
+        this.apiService.deleteLogic('Event', e.id).subscribe({
           next: () => {
             this.snackbarService.showSuccess('Evento eliminado exitosamente');
-            this.loadEvents();
+            // Remover de la lista local sin recargar
+            this.allEvents = this.allEvents.filter(ev => ev.id !== e.id);
+            this.applyFilters();
           },
           error: (err) => {
+            console.error('Error al eliminar evento:', err);
             this.snackbarService.showError('Error al eliminar el evento');
           }
         });

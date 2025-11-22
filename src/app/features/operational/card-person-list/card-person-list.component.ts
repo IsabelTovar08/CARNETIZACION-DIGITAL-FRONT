@@ -10,6 +10,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-card-person-list',
@@ -43,9 +44,14 @@ export class CardPersonListComponent {
   ];
 
   /// <summary>
-  /// Fuente de datos para la tabla genérica
-  /// </summary>
-  dataSource = signal<any[]>([]);
+   /// Fuente de datos para la tabla genérica
+   /// </summary>
+   dataSource = signal<any[]>([]);
+
+   /// <summary>
+   /// Datos originales sin filtrar
+   /// </summary>
+   private originalData: any[] = [];
 
   /// <summary>
   /// Columnas visibles en la tabla genérica
@@ -126,57 +132,67 @@ export class CardPersonListComponent {
       search: [''],
       organizationalUnit: [''],
       division: [''],
-      profile: [''],  
+      profile: [''],
       onlyActive: [true]
     });
 
+    this.originalData = this.peopleMock;
     this.dataSource.set(this.peopleMock);
 
     this.apiService.ObtenerTodo('IssuedCard').subscribe({
       next: (result) => {
-        this.peopleMock = result.data;
-        this.dataSource.set(this.peopleMock)
+        this.originalData = result.data;
+        this.dataSource.set(this.originalData);
+        this.loadData(); // Aplicar filtros iniciales
       },
       error: (err) => {
         console.error('Error fetching issued cards:', err);
       }
     });
+
+    // Suscribirse a cambios en el formulario para filtrado automático
+    this.filterForm.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+      this.loadData();
+    });
   }
 
   /// <summary>
-  /// Aplica filtros locales sobre la data quemada
-  /// </summary>
-  loadData(): void {
-    const { search, organizationalUnit, division, onlyActive } = this.filterForm.value;
-    let filtered = [...this.peopleMock];
+   /// Aplica filtros sobre los datos originales
+   /// </summary>
+   loadData(): void {
+     const { search, organizationalUnit, division, profile, onlyActive } = this.filterForm.value;
+     let filtered = [...this.originalData];
 
-    if (search) {
-      const s = search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.fullName.toLowerCase().includes(s) ||
-        p.email.toLowerCase().includes(s)
-      );
-    }
+     if (search) {
+       const s = search.toLowerCase();
+       filtered = filtered.filter(p =>
+         p.personName?.toLowerCase().includes(s) ||
+         p.email?.toLowerCase().includes(s)
+       );
+     }
 
-    if (organizationalUnit)
-      filtered = filtered.filter(p => p.organizationalUnit === organizationalUnit);
+     if (organizationalUnit)
+       filtered = filtered.filter(p => p.organizationalUnit === organizationalUnit);
 
-    if (division)
-      filtered = filtered.filter(p => p.division === division);
+     if (division)
+       filtered = filtered.filter(p => p.divisionName === division);
 
-    if (onlyActive)
-      filtered = filtered.filter(p => p.cardStatus === 'Activo');
+     if (profile)
+       filtered = filtered.filter(p => p.profileName === profile);
 
-    this.dataSource.set(filtered);
-  }
+     if (onlyActive)
+       filtered = filtered.filter(p => p.isCurrentlySelected);
+
+     this.dataSource.set(filtered);
+   }
 
   /// <summary>
-  /// Limpia los filtros y muestra toda la data
-  /// </summary>
-  resetFilters(): void {
-    this.filterForm.reset({ onlyActive: true });
-    this.dataSource.set(this.peopleMock);
-  }
+   /// Limpia los filtros y muestra toda la data
+   /// </summary>
+   resetFilters(): void {
+     this.filterForm.reset({ onlyActive: true });
+     this.dataSource.set(this.originalData);
+   }
 
   /// <summary>
   /// Genera y abre el PDF del carnet para el issuedCardId dado
