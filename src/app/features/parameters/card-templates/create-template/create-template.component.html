@@ -1,0 +1,69 @@
+<h1 mat-dialog-title>Crear Nueva Plantilla de Carnet</h1>
+<div mat-dialog-content class="template-form">
+  <form [formGroup]="templateForm" class="form-content">
+
+    <!-- Nombre de la plantilla -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre de la Plantilla</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Plantilla Corporativa Azul">
+    </mat-form-field>
+
+    <!-- Color de fondo -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Color de Fondo</mat-label>
+      <input matInput type="color" formControlName="backgroundColor">
+    </mat-form-field>
+
+    <!-- Color de texto -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Color de Texto</mat-label>
+      <input matInput type="color" formControlName="textColor">
+    </mat-form-field>
+
+    <!-- Fuente -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fuente</mat-label>
+      <mat-select formControlName="fontFamily">
+        <mat-option *ngFor="let font of fontOptions" [value]="font.value">
+          {{ font.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Tamaño de fuente -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tamaño de Fuente (px)</mat-label>
+      <input matInput type="number" formControlName="fontSize" min="8" max="24">
+    </mat-form-field>
+
+    <!-- Layout -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Diseño/Layout</mat-label>
+      <mat-select formControlName="layout">
+        <mat-option *ngFor="let layout of layoutOptions" [value]="layout.value">
+          {{ layout.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Imagen de fondo (opcional) -->
+    <div class="file-input-container">
+      <label for="backgroundImage">Imagen de Fondo (opcional)</label>
+      <input
+        type="file"
+        id="backgroundImage"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="margin-top: 8px;">
+      <p *ngIf="selectedFile" class="file-name">Archivo seleccionado: {{ selectedFile.name }}</p>
+    </div>
+
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="templateForm.invalid">
+    Crear Plantilla
+  </button>
+</div>

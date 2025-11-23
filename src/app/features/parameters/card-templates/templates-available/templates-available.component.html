@@ -1,37 +1,35 @@
 <!-- templates-available.component.html -->
 <div class="plantilla-carnet">
   <div class="header">
-    <h1 class="title">Plantillas de carnets</h1>
-    <p class="subtitle">Plantillas disponibles</p>
+    <div class="header-content">
+      <div>
+        <h1 class="title">Plantillas de carnets</h1>
+        <!-- <p class="subtitle">Plantillas disponibles</p> -->
+      </div>
+      <button mat-raised-button color="primary" (click)="openCreateTemplateModal()">
+        Crear Nueva Plantilla
+      </button>
+    </div>
   </div>
 
-  <div class="cards-grid">
-    <app-generic-list-cards
-      [items]="TemplateAvaleCards"
-      [clickable]="true"
+  <div class="cards-grid" style="display: flex; flex-wrap: wrap; gap: 24px; padding: 16px;">
+
+    <app-generic-list-card
+      [title]="'Plantillas Disponibles'"
+      [buttonSave]="false"
+      [dataSourceInput]="TemplateAvaleCards"
       [pageSize]="10"
-      size="large"
-      gridClass="templates"
-      [showPagination]="false"
-      (cardClick)="onSectionClick($event)">
-    </app-generic-list-cards>
-  </div>
-</div><!-- templates-available.component.html -->
-<div class="plantilla-carnet">
-  <div class="header">
-    <h1 class="title">Plantillas de carnets</h1>
-    <p class="subtitle">Plantillas disponibles</p>
+      [customTemplates]="{
+        'actions': actionsTpl
+      }"
+      (onView)="showTemplateSummary($event)">
+    </app-generic-list-card>
   </div>
 
-  <div class="cards-grid">
-    <app-generic-list-cards
-      [items]="TemplateAvaleCards"
-      [clickable]="true"
-      [pageSize]="10"
-      size="large"
-      gridClass="templates"
-      [showPagination]="false"
-      (cardClick)="onSectionClick($event)">
-    </app-generic-list-cards>
-  </div>
+  <!-- Custom Actions Template -->
+  <ng-template #actionsTpl let-template>
+    <button mat-stroked-button (click)="showTemplateSummary(template)">
+      Ver Más Información
+    </button>
+  </ng-template>
 </div>

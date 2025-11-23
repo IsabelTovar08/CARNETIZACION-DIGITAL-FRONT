@@ -2,28 +2,34 @@
 .plantilla-carnet {
   padding: 32px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
 .header {
-  text-align: center;
   margin-bottom: 48px;
   color: #1a202c;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .title {
   font-size: 2.8rem;
   font-weight: 700;
   margin: 0 0 12px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #1a202c;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin: 0;
   opacity: 0.8;
   font-weight: 400;
@@ -32,9 +38,109 @@
 }
 
 .cards-grid {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+  padding: 16px;
+}
+
+
+
+/* Estilos para las tarjetas individuales */
+::ng-deep .generic-card {
+  border: 2px solid #e2e8f0 !important;
+  width: 200px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Estilos para GenericListCardComponent */
+::ng-deep app-generic-list-card .event-card {
+  width: 280px !important;
+  max-height: 600px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+::ng-deep app-generic-list-card .event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 50%, #ddd6fe 100%);
+}
+
+::ng-deep app-generic-list-card .event-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: #a855f7 !important;
+}
+
+::ng-deep app-generic-list-card .card-media {
+  height: 450px !important;
+}
+
+::ng-deep app-generic-list-card .cards-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 24px !important;
+  padding: 16px !important;
+  overflow-x: auto !important;
+  justify-content: flex-start !important;
+}
+
+::ng-deep .generic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 50%, #ddd6fe 100%);
+}
+
+::ng-deep .generic-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: #a855f7 !important;
+}
+
+/* Estilo personalizado para el botón */
+::ng-deep .mat-mdc-raised-button {
+  border-radius: 12px !important;
+  padding: 12px 32px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  min-width: 200px !important;
+  height: 48px !important;
+  border: 2px solid #c084fc !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #a855f7 !important;
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .mat-mdc-raised-button:hover {
+  background-color: rgba(168, 85, 247, 0.1) !important;
+  border-color: #a855f7 !important;
+  color: #9333ea !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3) !important;
+}
+
+::ng-deep .mat-mdc-raised-button .mdc-button__label {
+  font-weight: 600 !important;
 }
 
 /* Responsive */
@@ -53,6 +159,11 @@
 
   .header {
     margin-bottom: 32px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
