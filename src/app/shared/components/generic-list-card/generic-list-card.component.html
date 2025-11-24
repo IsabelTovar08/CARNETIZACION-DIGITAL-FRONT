@@ -11,8 +11,8 @@
 
 <!-- GRID DE CARDS -->
 <div class="cards-grid">
-  <mat-card class="event-card" 
-            *ngFor="let item of items | slice:0:pageSize" 
+  <mat-card class="event-card"
+            *ngFor="let item of paginatedItems"
             [class.inactive]="isInactive(item)">
 
     <!-- Media -->
@@ -116,10 +116,11 @@
 </div>
 
 <!-- PAGINADOR -->
-<div class="paginator-wrap" *ngIf="items.length > pageSize">
-  <mat-paginator 
-    [length]="items.length" 
-    [pageSize]="pageSize" 
-    [pageSizeOptions]="[6, 9, 12, 18]">
+<div class="paginator-wrap" *ngIf="items.length > currentPageSize">
+  <mat-paginator
+    [length]="items.length"
+    [pageSize]="currentPageSize"
+    [pageSizeOptions]="[6, 9, 12, 18]"
+    (page)="onPageChange($event)">
   </mat-paginator>
 </div>

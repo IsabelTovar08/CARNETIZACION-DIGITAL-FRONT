@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild, ChangeDetectorRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
@@ -6,6 +6,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-generic-list-card',
@@ -13,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './generic-list-card.component.html',
   styleUrl: './generic-list-card.component.css'
 })
-export class GenericListCardComponent {
+export class GenericListCardComponent implements AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() buttonSave = true;
 
@@ -22,15 +23,45 @@ export class GenericListCardComponent {
     console.log('GenericListCard: dataSourceInput cambió, nuevos items:', data?.length || 0);
     this.items = data || [];
     // Resetear paginador a la primera página cuando cambian los datos
+    this.pageIndex = 0;
     if (this.paginator) {
       this.paginator.pageIndex = 0;
     }
+    this.updatePaginator();
     // Forzar detección de cambios
     this.cdr.detectChanges();
   }
   items: any[] = [];
 
   constructor(private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit(): void {
+    this.currentPageSize = this.pageSize;
+    this.pageIndex = 0;
+    this.updatePaginator();
+  }
+
+  ngOnDestroy(): void {
+    // No subscription to unsubscribe
+  }
+
+  onPageChange(event: any): void {
+    this.pageIndex = event.pageIndex;
+    this.currentPageSize = event.pageSize;
+    this.cdr.detectChanges();
+  }
+
+  private updatePaginator(): void {
+    if (this.paginator) {
+      this.paginator.length = this.items.length;
+    }
+  }
+
+  get paginatedItems(): any[] {
+    const start = this.pageIndex * this.currentPageSize;
+    const end = start + this.currentPageSize;
+    return this.items.slice(start, end);
+  }
 
   @Input() customTemplates: { [key: string]: TemplateRef<any> } = {};
 
@@ -42,9 +73,11 @@ export class GenericListCardComponent {
   @Output() onToggleStatus = new EventEmitter<any>();
   @Output() onMoreTags = new EventEmitter<any>();
 
-  // Paginación simple
+  // Paginación
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Input() pageSize = 9;
+  currentPageSize = 9;
+  pageIndex = 0;
 
   // Métodos de acciones por defecto
   emitCreate() { this.onCreate.emit(); }
