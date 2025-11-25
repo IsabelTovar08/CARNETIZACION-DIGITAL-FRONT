@@ -4,24 +4,29 @@
     "¿Qué puedes hacer en esta sección?",
     "Aquí puedes consultar toda la información disponible sobre nuestros productos y servicios de carnetización digital.",
     "¿Por qué es importante esta consulta?",
-    "Te permite identificar la opción más adecuada según tus necesidades, conocer el alcance del servicio y garantizar un proceso de carnetización eficiente y a medida."
+    "Te permite identificar la opción más adecuada según tus necesidades, conocer el alcance del servicio y garantizar un proceso de carnetización eficiente y a medida.",
+    "Nuestro sistema ofrece soluciones completas para la gestión de identidades digitales y control de acceso."
   ],
   "details": [
     {
       "title": "¿Qué incluye el servicio de carnetización digital?",
-      "description": "Nuestro sistema de carnetización digital genera carnets de manera digital, además incorpora un código QR único y seguro para cada usuario, permitiendo validar la autenticidad en tiempo real. También incluye la administración centralizada de datos, control de accesos a eventos, y opciones de personalización del diseño del carnet ."
+      "description": "Nuestro sistema de carnetización digital genera carnets de manera automática, incorpora un código QR único y seguro para cada usuario, permitiendo validar la autenticidad en tiempo real. También incluye la administración centralizada de datos, control de accesos a eventos, gestión de usuarios por roles y permisos, y opciones avanzadas de personalización del diseño del carnet."
     },
     {
-      "title": "Personalización",
-      "description": "Diseño con colores corporativos, logotipos, fotografías, códigos QR únicos, entre otros elementos."
+      "title": "Gestión de Eventos y Asistencia",
+      "description": "Crea y administra eventos con control de acceso mediante carnets digitales. Registra asistencia automáticamente al escanear códigos QR, genera reportes en tiempo real y administra listas de invitados con diferentes niveles de permisos."
     },
     {
-      "title": "Equipos y accesorios",
-      "description": "lectores QR"
+      "title": "Personalización Avanzada",
+      "description": "Diseño con colores corporativos, logotipos institucionales, fotografías de alta resolución, códigos QR únicos, campos personalizados, plantillas múltiples y opciones de branding completo para mantener la identidad visual de la organización."
     },
     {
-      "title": "Servicios adicionales",
-      "description": "Soporte técnico, mantenimiento de base de datos y entregas."
+      "title": "Sistema de Roles y Permisos",
+      "description": "Control granular de accesos con roles predefinidos (Administrador, Operador, Usuario) y permisos específicos para cada módulo del sistema, asegurando que cada usuario tenga acceso solo a las funciones necesarias."
+    },
+    {
+      "title": "Equipos y Tecnología",
+      "description": "Lectores QR profesionales, integración con dispositivos móviles, API para desarrollos personalizados, soporte para múltiples formatos de importación (Excel, CSV) y exportación de datos en diversos formatos."
     }
   ]
 }

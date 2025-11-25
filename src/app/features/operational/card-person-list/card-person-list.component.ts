@@ -1,5 +1,6 @@
 import { ApiService } from './../../../core/Services/api/api.service';
 import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
+import { ManagentPersonService, PersonSearchFilters } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
 import { Component, signal } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
@@ -10,48 +11,40 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { debounceTime } from 'rxjs/operators';
+import { EventService } from '../../../core/Services/api/event/event.service';
 
 @Component({
   selector: 'app-card-person-list',
-  imports: [CommonModule, GenericTableComponent, MatIconModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatCheckboxModule],
+  imports: [CommonModule, GenericTableComponent, MatIconModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatCheckboxModule, MatPaginatorModule],
   templateUrl: './card-person-list.component.html',
   styleUrl: './card-person-list.component.css'
 })
 export class CardPersonListComponent {
     /// <summary>
-  /// Formulario reactivo con filtros
-  /// </summary>
-  filterForm!: FormGroup;
-
-  unidadesOrganizacionales = [
-    'Administración',
-    'Operaciones',
-    'Logística',
-    'Seguridad'
-  ];
-  divisionesInternas = [
-    'Recursos Humanos',
-    'Producción',
-    'Transporte',
-    'Control de acceso'
-  ];
-  perfiles = [
-    'Coordinadora',
-    'Supervisor',
-    'Auxiliar',
-    'Vigilante'
-  ];
-
-  /// <summary>
-   /// Fuente de datos para la tabla genérica
-   /// </summary>
-   dataSource = signal<any[]>([]);
-
-   /// <summary>
-   /// Datos originales sin filtrar
-   /// </summary>
-   private originalData: any[] = [];
+    /// Formulario reactivo con filtros
+    /// </summary>
+    filterForm!: FormGroup;
+  
+    /// <summary>
+    /// Opciones para los filtros
+    /// </summary>
+    organizationalUnits: any[] = [];
+    internalDivisions: any[] = [];
+    profiles: any[] = [];
+  
+    /// <summary>
+    /// Fuente de datos para la tabla genérica
+    /// </summary>
+    dataSource = signal<any[]>([]);
+  
+    /// <summary>
+    /// Información de paginación
+    /// </summary>
+    totalItems = 0;
+    currentPage = 1;
+    pageSize = 20;
 
   /// <summary>
   /// Columnas visibles en la tabla genérica
@@ -59,72 +52,28 @@ export class CardPersonListComponent {
   columns = [
     { key: 'photoUrl', label: 'Foto' },
     { key: 'personName', label: 'Nombre completo' },
-    { key: 'divisionName', label: 'División interna' },
+    { key: 'internalDivisionName', label: 'División interna' },
     { key: 'profileName', label: 'Perfil' },
     { key: 'isCurrentlySelected', label: 'Estado del carnet' },
     { key: 'expirationDate', label: 'Vencimiento' }
-
   ];
 
   displayedColumns = [
     'photoUrl',
     'personName',
-    'divisionName',
+    'internalDivisionName',
     'profileName',
     'isCurrentlySelected',
     'expirationDate',
     'actions'
   ];
 
-  /// <summary>
-  /// Datos quemados para prueba
-  /// </summary>
-  private peopleMock = [
-    {
-      photoUrl: '/assets/images/user1.jpg',
-      fullName: 'Laura Gómez',
-      email: 'laura.gomez@empresa.com',
-      organizationalUnit: 'Administración',
-      division: 'Recursos Humanos',
-      profile: 'Coordinadora',
-      cardStatus: 'Activo',
-      expirationDate: '2025-12-31'
-    },
-    {
-      photoUrl: '/assets/images/user2.jpg',
-      fullName: 'Carlos Martínez',
-      email: 'carlos.martinez@empresa.com',
-      organizationalUnit: 'Operaciones',
-      division: 'Producción',
-      profile: 'Supervisor',
-      cardStatus: 'Vencido',
-      expirationDate: '2024-08-15'
-    },
-    {
-      photoUrl: '/assets/images/user3.jpg',
-      fullName: 'Ana Torres',
-      email: 'ana.torres@empresa.com',
-      organizationalUnit: 'Logística',
-      division: 'Transporte',
-      profile: 'Auxiliar',
-      cardStatus: 'Activo',
-      expirationDate: '2026-01-10'
-    },
-    {
-      photoUrl: '/assets/images/user4.jpg',
-      fullName: 'Julián Restrepo',
-      email: 'julian.restrepo@empresa.com',
-      organizationalUnit: 'Seguridad',
-      division: 'Control de acceso',
-      profile: 'Vigilante',
-      cardStatus: 'Activo',
-      expirationDate: '2025-07-20'
-    }
-  ];
 
   constructor(private fb: FormBuilder,
     private apiService: ApiService<any, any>,
-    private issuedCardService: IssuedCardService
+    private issuedCardService: IssuedCardService,
+    private managentPersonService: ManagentPersonService,
+    private eventService: EventService
   ) {}
 
   ngOnInit(): void {
@@ -136,19 +85,11 @@ export class CardPersonListComponent {
       onlyActive: [true]
     });
 
-    this.originalData = this.peopleMock;
-    this.dataSource.set(this.peopleMock);
+    // Cargar opciones de filtros
+    this.loadFilterOptions();
 
-    this.apiService.ObtenerTodo('IssuedCard').subscribe({
-      next: (result) => {
-        this.originalData = result.data;
-        this.dataSource.set(this.originalData);
-        this.loadData(); // Aplicar filtros iniciales
-      },
-      error: (err) => {
-        console.error('Error fetching issued cards:', err);
-      }
-    });
+    // Cargar datos iniciales
+    this.loadData();
 
     // Suscribirse a cambios en el formulario para filtrado automático
     this.filterForm.valueChanges.pipe(debounceTime(300)).subscribe(() => {
@@ -157,47 +98,129 @@ export class CardPersonListComponent {
   }
 
   /// <summary>
-   /// Aplica filtros sobre los datos originales
-   /// </summary>
-   loadData(): void {
-     const { search, organizationalUnit, division, profile, onlyActive } = this.filterForm.value;
-     let filtered = [...this.originalData];
+  /// Carga las opciones para los filtros desde la API
+  /// </summary>
+  private loadFilterOptions(): void {
+    console.log('🔧 CardPersonList: Loading filter options...');
 
-     if (search) {
-       const s = search.toLowerCase();
-       filtered = filtered.filter(p =>
-         p.personName?.toLowerCase().includes(s) ||
-         p.email?.toLowerCase().includes(s)
-       );
-     }
+    // Cargar unidades organizativas
+    this.eventService.getOrganizationalUnits().subscribe({
+      next: (result) => {
+        this.organizationalUnits = result.data || [];
+        console.log('✅ CardPersonList: Organizational units loaded:', this.organizationalUnits);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading organizational units:', err);
+      }
+    });
 
-     if (organizationalUnit)
-       filtered = filtered.filter(p => p.organizationalUnit === organizationalUnit);
+    // Cargar divisiones internas
+    this.eventService.getInternalDivisions().subscribe({
+      next: (result) => {
+        this.internalDivisions = result.data || [];
+        console.log('✅ CardPersonList: Internal divisions loaded:', this.internalDivisions);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading internal divisions:', err);
+      }
+    });
 
-     if (division)
-       filtered = filtered.filter(p => p.divisionName === division);
-
-     if (profile)
-       filtered = filtered.filter(p => p.profileName === profile);
-
-     if (onlyActive)
-       filtered = filtered.filter(p => p.isCurrentlySelected);
-
-     this.dataSource.set(filtered);
-   }
+    // Cargar perfiles
+    this.eventService.getProfiles().subscribe({
+      next: (result) => {
+        this.profiles = result.data || [];
+        console.log('✅ CardPersonList: Profiles loaded:', this.profiles);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading profiles:', err);
+      }
+    });
+  }
 
   /// <summary>
-   /// Limpia los filtros y muestra toda la data
-   /// </summary>
-   resetFilters(): void {
-     this.filterForm.reset({ onlyActive: true });
-     this.dataSource.set(this.originalData);
-   }
+  /// Carga datos desde la API con filtros y paginación
+  /// </summary>
+  loadData(): void {
+    const { search, organizationalUnit, division, profile, onlyActive } = this.filterForm.value;
+
+    const filters: PersonSearchFilters = {
+      internalDivisionId: division ? parseInt(division) : undefined,
+      organizationalUnitId: organizationalUnit ? parseInt(organizationalUnit) : undefined,
+      profileId: profile ? parseInt(profile) : undefined,
+      page: this.currentPage,
+      pageSize: this.pageSize
+    };
+
+    console.log('🔍 CardPersonList: loadData called with filters:', filters);
+
+    this.managentPersonService.search(filters).subscribe({
+      next: (result) => {
+        console.log('✅ CardPersonList: API response:', result);
+        console.log('📊 CardPersonList: Data received:', result.data);
+
+        // Transformar los datos para que coincidan con las columnas esperadas
+        console.log("RAW PERSON RESULT:", result.data);
+        let transformedData = (result.data || []).map((person: any) => ({
+          personId: person.id,         // ID de la persona
+          issuedCardId: person.issuedCardId,
+          id: person.issuedCardId,
+          photoUrl: person.photoUrl || '/assets/images/default-avatar.png',
+          personName: person.firstName && person.lastName ? `${person.firstName} ${person.lastName}` : person.name || 'Sin nombre',
+          internalDivisionName: person.internalDivisionName || person.divisionName || 'Sin división',
+          profileName: person.profileName || 'Sin perfil',
+          isCurrentlySelected: person.isCurrentlySelected || false,
+          expirationDate: person.expirationDate || null,
+          // Mantener todos los campos originales por si se necesitan
+          ...person
+        }));
+
+        // Aplicar filtro de búsqueda en el frontend si hay término de búsqueda
+        if (search && search.trim()) {
+          const searchTerm = search.trim().toLowerCase();
+          transformedData = transformedData.filter(person =>
+            person.personName.toLowerCase().includes(searchTerm) ||
+            (person.email && person.email.toLowerCase().includes(searchTerm))
+          );
+        }
+
+        console.log('🔄 CardPersonList: Transformed and filtered data:', transformedData);
+
+        this.dataSource.set(transformedData);
+        this.totalItems = result.total || 0;
+
+        console.log('📈 CardPersonList: Total items:', this.totalItems);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading persons:', err);
+        this.dataSource.set([]);
+        this.totalItems = 0;
+      }
+    });
+  }
+
+  /// <summary>
+  /// Maneja el cambio de página
+  /// </summary>
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadData();
+  }
+
+  /// <summary>
+  /// Limpia los filtros y recarga los datos
+  /// </summary>
+  resetFilters(): void {
+    this.filterForm.reset({ onlyActive: true });
+    this.currentPage = 1;
+    this.loadData();
+  }
 
   /// <summary>
   /// Genera y abre el PDF del carnet para el issuedCardId dado
   /// </summary>
   generatePdf(issuedCardId: number): void {
+    console.log("IssuedCardId recibido →", issuedCardId);
     this.issuedCardService.getCardPdf(issuedCardId).subscribe({
       next: (blob) => {
         this.openPdf(blob);
