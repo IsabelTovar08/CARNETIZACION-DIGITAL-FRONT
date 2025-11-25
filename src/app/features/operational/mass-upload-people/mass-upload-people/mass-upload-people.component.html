@@ -1,6 +1,5 @@
-<div class="page-container mat-elevation-z2">
-  <!-- Capa de carga -->
-  <div class="loading-overlay" *ngIf="loading">
+<ng-template #loadingPortal>
+  <div class="loading-overlay">
     <div class="loading-container">
       <mat-icon class="loading-icon" color="accent">
         {{ loadingMessages[loadingStep].icon }}
@@ -10,34 +9,155 @@
       </p>
     </div>
   </div>
+</ng-template>
 
+<div class="page-container mat-elevation-z2">
   <!-- Título y contexto -->
   <div class="page-header">
-    <h1>Gestión de Cargas Masivas</h1>
+    <h1>Gestión de Cargas de Carnets</h1>
     <p class="page-description">
       Desde esta sección puede configurar la importación de carnets,
-      subir sus archivos de datos y consultar el historial de procesos realizados.
+      realizar cargas masivas o individuales y consultar el historial de
+      procesos realizados.
       Siga los pasos en orden para garantizar una carga exitosa.
     </p>
   </div>
 
   <!-- Paso 1: Configuración -->
   <section class="section-block">
-    <app-config-form (configChanged)="onConfigChanged($event)"></app-config-form>
+    <app-config-form
+      (configChanged)="onConfigChanged($event)"></app-config-form>
   </section>
 
-  <!-- Bloque de carga -->
-  <app-file-upload
-    (fileSelected)="onFileSelected($event)"
-    (fileUploaded)="uploadToBackend()">
-  </app-file-upload>
+  <!-- Paso 2: Tipo de Carga -->
+  <section class="section-block">
+    <div class="upload-options">
+      <h2>Tipo de Carga</h2>
+      <mat-button-toggle-group [(value)]="uploadType">
+        <mat-button-toggle value="masiva">
+          <mat-icon>cloud_upload</mat-icon>
+          Carga Masiva (Excel)
+        </mat-button-toggle>
+        <mat-button-toggle value="individual">
+          <mat-icon>person_add</mat-icon>
+          Carga Individual
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
 
+    <!-- Carga masiva (Excel) -->
+    <div *ngIf="uploadType === 'masiva'">
+      <app-file-upload
+        (fileSelected)="onFileSelected($event)"
+        (fileUploaded)="uploadToBackend()">
+      </app-file-upload>
+    </div>
+
+    <!-- Carga individual (Formulario) -->
+    <div *ngIf="uploadType === 'individual'"
+      class="individual-upload-container">
+      <div class="individual-content">
+        <mat-icon class="info-icon">info</mat-icon>
+        <p class="individual-description">
+          Cree un carnet para una sola persona completando el formulario.
+        </p>
+
+        <!-- Botón: Crear nueva persona -->
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openIndividualForm()"
+          [disabled]="!isConfigValid">
+          <mat-icon>add</mat-icon>
+          Crear Carnet Individual
+        </button>
+
+        <!-- Botón: Seleccionar persona existente -->
+        <button
+          mat-raised-button
+          color="accent"
+          class="mt-10"
+          (click)="toggleSelectExisting()"
+          [disabled]="!isConfigValid">
+          <mat-icon>search</mat-icon>
+          Seleccionar Persona Existente
+        </button>
+
+        <!-- Selector incrustado -->
+        <div *ngIf="showSelectExisting" class="select-person-container">
+
+          <h3>Seleccionar Persona Existente</h3>
+
+          <!-- Buscador -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Buscar persona</mat-label>
+            <input matInput (input)="searchPerson($event)"
+              placeholder="Nombre, documento, email...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Tabla -->
+          <table mat-table [dataSource]="pagedPersons"
+            class="mat-elevation-z1 person-table">
+
+            <!-- Documento -->
+            <ng-container matColumnDef="document">
+              <th mat-header-cell *matHeaderCellDef> Documento </th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.documentType }} - {{ p.documentNumber }}
+              </td>
+            </ng-container>
+
+            <!-- Nombre -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Nombre </th>
+              <td mat-cell *matCellDef="let p">
+                {{ p.firstName }} {{ p.lastName }}
+              </td>
+            </ng-container>
+
+            <!-- Acción -->
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let p">
+                <button mat-button color="primary" (click)="selectPerson(p)">
+                  Seleccionar
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="personColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: personColumns;"></tr>
+          </table>
+          <mat-paginator
+            [length]="filteredPersons.length"
+            [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 20]"
+            (page)="onPageChange($event)">
+          </mat-paginator>
+
+          <p *ngIf="filteredPersons.length === 0" class="empty-text">
+            No se encontraron resultados.
+          </p>
+        </div>
+
+        <p class="help-text" *ngIf="!isConfigValid">
+          <mat-icon>warning</mat-icon>
+          Primero configure los datos necesarios en el Paso 1
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Historial -->
   <app-generic-table
-    [title]="'Historial de cargas masivas'"
+    [title]="'Historial de cargas'"
     [displayedColumns]="displayedColumns"
     [columns]="columns"
     [dataSourceInput]="records"
     [customTemplates]="{
+      source: sourceTemplate,
       startedAt: startedAtTemplate,
       endedAt: endedAtTemplate,
       successCount: successTemplate,
@@ -49,6 +169,13 @@
   </app-generic-table>
 
   <!-- Templates -->
+  <ng-template #sourceTemplate let-item>
+    <mat-chip [color]="item.source === 'MANUAL' ? 'accent' : 'primary'"
+      selected>
+      {{ item.source === 'MANUAL' ? 'Individual' : 'Masiva' }}
+    </mat-chip>
+  </ng-template>
+
   <ng-template #startedAtTemplate let-item>
     <span *ngIf="item.startedAt !== '0001-01-01T05:00:00Z'; else pending">
       {{ item.startedAt | date:'dd/MM/yyyy HH:mm' }}
@@ -86,3 +213,4 @@
       <mat-icon>visibility</mat-icon>
     </button>
   </ng-template>
+</div>

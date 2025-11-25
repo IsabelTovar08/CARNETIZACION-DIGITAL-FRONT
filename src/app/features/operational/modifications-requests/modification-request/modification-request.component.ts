@@ -70,6 +70,12 @@ export class ModificationRequestComponent {
   }
 
   openDetails(item: any): void {
+    // Si el motivo contiene "foto", convertir el nuevo valor a imagen
+    if (this.containsFoto(item.fieldName)) {
+      item.newValueImage = this.base64ToImage(item.newValue);
+      console.log(item.newValueImage)
+    }
+
     this.dialog.open(RequestDetailsComponent, {
       width: '500px',
       data: item,
@@ -79,4 +85,20 @@ export class ModificationRequestComponent {
       }
     });
   }
+
+
+  /// <summary>
+  /// Determina si el motivo contiene la palabra 'foto'
+  /// </summary>
+  containsFoto(reason: string): boolean {
+    return reason?.toLowerCase().includes('foto') ?? false;
+  }
+
+  /// <summary>
+  /// Convierte un string base64 a un data URL para mostrarlo como imagen
+  /// </summary>
+  base64ToImage(base64: string): string {
+    return base64 ? `data:image/png;base64,${base64}` : '';
+  }
+
 }

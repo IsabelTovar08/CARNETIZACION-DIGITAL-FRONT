@@ -24,8 +24,8 @@ export class ApiService<T, D> {
   public ObtenerPorId(entidad: string, id: number): Observable<ApiResponse<D>> {
     return this.wrapper.handleRequest(this.http.get<ApiResponse<D>>(`${this.urlBase}/${entidad}/${id}`));
   }
-  public ObtenerActivos(entidad: string): Observable<ApiResponse<D>> {
-    return this.http.get<ApiResponse<D>>(`${this.urlBase}/${entidad}/active`);
+  public ObtenerActivos(entidad: string): Observable<ApiResponse<D[]>> {
+    return this.wrapper.handleRequest(this.http.get<ApiResponse<D[]>>(`${this.urlBase}/${entidad}/active`));
   }
   public Crear(entidad: string, objeto: T) {
     return this.wrapper.handleRequest(this.http.post<ApiResponse<D>>(`${this.urlBase}/${entidad}`, objeto));
