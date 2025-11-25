@@ -7,24 +7,31 @@ import { ImportBatchService } from '../../../../core/Services/import-banch/impor
 import { ActivatedRoute } from '@angular/router';
 import { CdkNoDataRow } from "@angular/cdk/table";
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatDialog } from '@angular/material/dialog';
+import { UserIssuedCardInfoComponent } from '../../../../shared/components/user-issued-card-info/user-issued-card-info.component';
 
 @Component({
   selector: 'app-details-people-import',
-  imports: [GenericTableComponent, MatChipsModule, CdkNoDataRow, CommonModule],
+  imports: [GenericTableComponent, MatChipsModule, CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './details-people-import.component.html',
   styleUrl: './details-people-import.component.css'
 })
 export class DetailsPeopleImportComponent {
   constructor(
     private importBatchService: ImportBatchService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) { }
 
-  displayedColumns: string[] = ['rowNumber', 'status', 'message'];
+  displayedColumns: string[] = ['rowNumber' , 'personName', 'identification', 'status', 'message', 'actions'];
 
   // ✅ Configuración de columnas
   columns = [
     { key: 'rowNumber', label: 'Fila' },
+    { key: 'personName', label: 'Nombre' },
+    { key: 'identification', label: 'Identificación' },
     { key: 'status', label: 'Estado' },
     { key: 'message', label: 'Mensaje' }
   ];
@@ -76,6 +83,15 @@ export class DetailsPeopleImportComponent {
       `,
       confirmButtonText: 'Cerrar',
       width: 400
+    });
+  }
+
+   openUserProfileModal(item: any): void {
+    this.dialog.open(UserIssuedCardInfoComponent, {
+      width: '90%',
+      maxWidth: '1200px',
+      maxHeight: '90vh',
+      data: { issuedCardId: item.issuedCardId }
     });
   }
 }

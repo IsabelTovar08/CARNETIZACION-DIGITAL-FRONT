@@ -1,55 +1,142 @@
 <mat-card>
   <mat-card-title>1. Configuración previa</mat-card-title>
-  <mat-card-content>
-    <p class="section-description text-muted">
-      Seleccione la plantilla, división interna, perfil y vigencia antes de cargar un archivo.
-    </p>
 
-    <form class="form-grid">
-      <!-- Plantilla -->
+  <mat-card-content>
+
+    <p class="section-description text-muted">
+      Puede seleccionar una configuración guardada o llenar los datos
+      manualmente.
+    </p>
+    <div class="form-grid">
+      <!-- Selección de configuración previa -->
       <mat-form-field appearance="outline">
-        <mat-label>Plantilla de Carnet</mat-label>
-        <input matInput [value]="selectedTemplate?.name" readonly placeholder="Seleccione una plantilla">
-        <button type="button" mat-icon-button matSuffix (click)="openTemplateSelector()">
-          <mat-icon>collections</mat-icon>
-        </button>
-        <mat-hint>Escoja el diseño del carnet</mat-hint>
+        <mat-label>Configuración existente</mat-label>
+        <mat-select (selectionChange)="onSelectConfig($event.value)">
+          <mat-option [value]="null">Ninguna (llenar manualmente)</mat-option>
+
+          <mat-option *ngFor="let conf of existingConfigs" [value]="conf">
+            {{ conf.name }} - {{ conf.profileName }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Si selecciona una configuración, se bloquearán Plantilla,
+          Perfil
+          y Vigencia ya que se cargan desde la configuración seleccionada.</mat-hint>
       </mat-form-field>
 
-      <!-- División -->
+    </div>
+
+    <br>
+    <hr>
+    <!-- FORMULARIO -->
+    <form class="form-grid">
+
+      <!-- PLANTILLA -->
+      <mat-form-field appearance="outline">
+        <mat-label>Plantilla de Carnet</mat-label>
+
+        <input matInput
+          [value]="selectedTemplate?.name"
+          [readonly]="isPresetSelected"
+          placeholder="Seleccione una plantilla">
+
+        <button mat-icon-button matSuffix
+          *ngIf="!isPresetSelected"
+          (click)="openTemplateSelector()">
+          <mat-icon>collections</mat-icon>
+        </button>
+
+        <mat-hint>Diseño del carnet</mat-hint>
+      </mat-form-field>
+
+      <!-- CAMPO NOMBRE SOLO EN MODO MANUAL -->
+      <mat-form-field
+        appearance="outline"
+        *ngIf="!isPresetSelected">
+
+        <mat-label>Nombre de la configuración</mat-label>
+
+        <input matInput
+          [formControl]="configNameControl"
+          placeholder="Ej: Carnet Estudiantes 2025"
+          (input)="emitConfig()" />
+
+        <mat-hint>Asigne un nombre a esta nueva configuración</mat-hint>
+      </mat-form-field>
+
+      <!-- DIVISIÓN -->
       <mat-form-field appearance="outline">
         <mat-label>División Interna</mat-label>
         <input matInput type="text"
-               placeholder="Seleccione una división"
-               [formControl]="divisionControl"
-               [matAutocomplete]="auto"
-               (input)="filter()" (focus)="filter()">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayDivision" (optionSelected)="emitConfig()">
-          <mat-option *ngFor="let div of filteredDivisions" [value]="div">{{ div.name }}</mat-option>
+          #input
+          placeholder="Seleccione una división"
+          [formControl]="divisionControl"
+          [matAutocomplete]="auto"
+          (input)="filter()"
+          (focus)="filter()">
+
+        <mat-autocomplete #auto="matAutocomplete"
+          [displayWith]="displayDivision"
+          (optionSelected)="emitConfig()">
+          <mat-option *ngFor="let div of filteredDivisions" [value]="div">
+            {{ div.name }}
+          </mat-option>
         </mat-autocomplete>
-        <mat-hint>Área o división donde se asignará</mat-hint>
+
+        <mat-hint>Área donde se asignará</mat-hint>
       </mat-form-field>
 
-      <!-- Perfil -->
+      <!-- PERFIL — bloqueado si preset -->
       <mat-form-field appearance="outline">
         <mat-label>Perfil</mat-label>
-        <mat-select>
-          <mat-option *ngFor="let profile of profiles" [value]="profile.id">{{ profile.name }}</mat-option>
+        <mat-select [(value)]="selectedProfileId"
+          [disabled]="isPresetSelected"
+          (selectionChange)="emitConfig()">
+          <mat-option *ngFor="let profile of profiles" [value]="profile.id">
+            {{ profile.name }}
+          </mat-option>
         </mat-select>
-        <mat-hint>Seleccione el perfil asociado</mat-hint>
+        <mat-hint>Perfil del carnet</mat-hint>
       </mat-form-field>
 
-      <!-- Vigencia -->
+      <!-- SCHEDULE -->
+      <mat-form-field appearance="outline">
+        <mat-label>Horario (Jornada)</mat-label>
+        <mat-select
+          [(value)]="selectedScheduleId"
+          (selectionChange)="emitConfig()">
+          <mat-option *ngFor="let s of schedules" [value]="s.id">
+            {{ s.name }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Horario aplicable al carnet</mat-hint>
+      </mat-form-field>
+
+      <!-- VIGENCIA -->
       <mat-form-field appearance="outline">
         <mat-label>Vigencia (Desde - Hasta)</mat-label>
+
         <mat-date-range-input [formGroup]="validityForm" [rangePicker]="picker">
-          <input matStartDate formControlName="ValidFrom" placeholder="Desde" (dateChange)="emitConfig()">
-          <input matEndDate formControlName="ValidTo" placeholder="Hasta" (dateChange)="emitConfig()">
+          <input matStartDate
+            formControlName="ValidFrom"
+            placeholder="Desde"
+            [readonly]="isPresetSelected"
+            (dateChange)="emitConfig()">
+
+          <input matEndDate
+            formControlName="ValidTo"
+            placeholder="Hasta"
+            [readonly]="isPresetSelected"
+            (dateChange)="emitConfig()">
         </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+
+        <mat-datepicker-toggle matSuffix [for]="picker"
+          *ngIf="!isPresetSelected"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
+
         <mat-hint>Periodo de validez del carnet</mat-hint>
       </mat-form-field>
+
     </form>
+
   </mat-card-content>
 </mat-card>

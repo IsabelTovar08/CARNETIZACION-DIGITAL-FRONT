@@ -5,7 +5,8 @@
 
 <mat-dialog-content class="content">
 
-  <div class="status-badge" [ngClass]="'status-' + data.statusName.toLowerCase()">
+  <div class="status-badge"
+    [ngClass]="'status-' + data.statusName.toLowerCase()">
     {{ data.statusName }}
   </div>
 
@@ -38,20 +39,29 @@
     <div class="comparison-grid">
       <div class="comparison-item old">
         <span class="comparison-label">Valor anterior</span>
-        <span class="comparison-value">{{ data.oldValue }}</span>
+        <span *ngIf="!data.newValueImage" class="comparison-value">{{ data.oldValueName ?? 'N/A' }}</span>
+        <img
+          *ngIf="data.newValueImage && data.oldValue"
+          [src]="data.oldValueName"
+          style="width: 100%; border-radius: 6px;" />
       </div>
       <div class="comparison-arrow">
         <mat-icon>arrow_forward</mat-icon>
       </div>
       <div class="comparison-item new">
         <span class="comparison-label">Nuevo valor</span>
-        <span class="comparison-value">{{ data.newValue }}</span>
+        <span class="comparison-value" *ngIf="!data.newValueImage">{{
+          data.newValueName }}</span>
+        <img
+          *ngIf="data.newValueImage"
+          [src]="data.newValueImage"
+          style="width: 100%; border-radius: 6px;" />
+
       </div>
     </div>
   </div>
 
   <div class="section message-section">
-
 
     <h3>Mensaje adicional</h3>
     <mat-form-field appearance="outline" class="message-field"

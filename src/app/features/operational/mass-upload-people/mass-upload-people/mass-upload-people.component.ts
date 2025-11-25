@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
 import { MatChipsModule } from "@angular/material/chips";
 import { GenericTableComponent } from "../../../../shared/components/generic-table/generic-table.component";
 import { ConfigFormComponent } from "../config-form/config-form.component";
@@ -12,30 +12,56 @@ import { MatIconModule } from "@angular/material/icon";
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatDialog } from '@angular/material/dialog';
+import { TargetPersonComponent } from '../../../security/people/components/target-person/target-person.component';
+import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
+import { CardsService } from '../../../../core/Services/api/card/cards.service';
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from "@angular/material/paginator";
+
 @Component({
   selector: 'app-mass-upload-people',
-  imports: [MatChipsModule,
+  imports: [
     CommonModule,
-    GenericTableComponent, ConfigFormComponent, FileUploadComponent, MatButtonModule, MatIconModule],
+    MatChipsModule,
+    MatButtonModule,
+    MatIconModule,
+    GenericTableComponent,
+    ConfigFormComponent,
+    FileUploadComponent,
+    MatButtonToggleModule,
+    MatFormFieldModule,
+    MatTableModule,
+    MatInputModule,
+    MatPaginatorModule
+  ],
   templateUrl: './mass-upload-people.component.html',
   styleUrl: './mass-upload-people.component.css'
 })
 export class MassUploadPeopleComponent {
-  constructor(private importBatchService: ImportBatchService,
+
+  @ViewChild('loadingPortal') loadingPortal!: TemplateRef<any>;
+  overlayRef!: OverlayRef;
+  constructor(
+    private overlay: Overlay,
+    private viewContainerRef: ViewContainerRef,
+    private importBatchService: ImportBatchService,
     private templateService: ApiService<any, any>,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private snackbarService: SnackbarService,
+    private cardConfigurationService: CardsService
   ) { }
 
+
   displayedColumns = [
-    'fileName',
-    'source',
-    'startedByUserName',
-    'totalRows',
-    'successCount',
-    'errorCount',
-    'startedAt',
-    'endedAt',
-    'actions'
+    'fileName', 'source', 'startedByUserName', 'totalRows',
+    'successCount', 'errorCount', 'startedAt', 'endedAt', 'actions'
   ];
 
   columns = [
@@ -52,66 +78,56 @@ export class MassUploadPeopleComponent {
   records: ImportBatch[] = [];
   configData: any = {};
   selectedFile: File | null = null;
-  loading = false;
+
   loadingStep = 0;
+  intervalId: any;
+  uploadType: 'masiva' | 'individual' = 'masiva';
+  isConfigValid: boolean = false;
+  existingConfigurations: any[] = [];
+
+  showSelectExisting = false;
+  persons: any[] = [];
+  filteredPersons: any[] = [];
+  personColumns: string[] = ['document', 'name', 'action'];
+
+  pagedPersons: any[] = [];
+  pageIndex = 0;
+  pageSize = 5;
+
+
   loadingMessages = [
     { icon: 'upload', text: 'Subiendo archivo...' },
     { icon: 'inventory_2', text: 'Procesando datos...' },
     { icon: 'badge', text: 'Generando carnets...' },
     { icon: 'check_circle', text: 'Finalizando...' }
   ];
-  intervalId: any;
 
   ngOnInit(): void {
     this.getImportBatches();
   }
 
-  getImportBatches() {
-    this.importBatchService.getAll().subscribe({
-      next: (data) => {
-        this.records = data.data;
-        console.log('Filas cargadas:', this.records);
-      },
-      error: (err) => console.error('Error cargando filas:', err)
+  private showLoading(): void {
+    const positionStrategy = this.overlay.position()
+      .global()
+      .centerHorizontally()
+      .centerVertically();
+
+    this.overlayRef = this.overlay.create({
+      hasBackdrop: true,
+      backdropClass: 'loading-overlay-backdrop',
+      positionStrategy
     });
+
+    const portal = new TemplatePortal(this.loadingPortal, this.viewContainerRef);
+    this.overlayRef.attach(portal);
   }
 
-  onEdit(item: ImportBatchRowTable) {
-    console.log('Editar:', item);
-  }
 
-  onDelete(item: ImportBatchRowTable) {
-    console.log('Eliminar:', item);
-  }
-
-  onToggleStatus(item: ImportBatchRowTable) {
-    console.log('Toggle status:', item);
-  }
-
-  // viewCard(item: ImportBatchRowTable) {
-  //   Swal.fire({
-  //     title: `${item.name}`,
-  //     html: `
-  //       <div style="display:flex; flex-direction:column; align-items:center;">
-  //         <img src="${item.photo ?? '/assets/default-avatar.png'}"
-  //              style="border-radius:50%; width:80px; height:80px; margin-bottom:10px;" />
-  //         <p><strong>Unidad:</strong> ${item.org}</p>
-  //         <p><strong>División:</strong> ${item.division}</p>
-  //         <p><strong>Estado:</strong> ${item.state}</p>
-  //       </div>
-  //     `,
-  //     confirmButtonText: 'Cerrar',
-  //     width: 400
-  //   });
-  // }
-
-
-  onConfigChanged(config: any) {
-    this.configData = config;
-  }
-
-  onFileSelected(file: File) {
-    this.selectedFile = file;
+  private hideLoading(): void {
+    if (this.overlayRef) {
+      this.overlayRef.detach();
+    }
+    clearInterval(this.intervalId);
   }
 
   uploadToBackend() {
@@ -120,7 +136,7 @@ export class MassUploadPeopleComponent {
       return;
     }
 
-    this.loading = true;
+    this.showLoading();
     this.loadingStep = 0;
 
     this.intervalId = setInterval(() => {
@@ -128,34 +144,193 @@ export class MassUploadPeopleComponent {
     }, 2000);
 
     const formData = new FormData();
+
     Object.entries(this.configData).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         formData.append(key, value as any);
       }
     });
+
     formData.append('file', this.selectedFile);
 
     this.templateService.uploadImport(formData).subscribe({
       next: () => {
-        this.stopLoading();
+        this.hideLoading();
         Swal.fire('Éxito', 'Carnets generados correctamente', 'success');
         this.getImportBatches();
       },
       error: () => {
-        this.stopLoading();
+        this.hideLoading();
         Swal.fire('Error', 'No se pudo generar carnets', 'error');
       }
     });
   }
 
-  stopLoading() {
-    this.loading = false;
-    clearInterval(this.intervalId);
+  onFileSelected(file: File) { this.selectedFile = file; }
+
+  onConfigChanged(config: any) {
+    this.configData = config;
+
+    const isManualValid =
+      !!config?.ConfigurationName &&
+      !!config?.CardTemplateId &&
+      !!config?.ProfileId &&
+      !!config?.InternalDivisionId &&
+      !!config?.ValidFrom &&
+      !!config?.ValidTo &&
+      !!config?.SheduleId;
+
+    const isPresetValid =
+      !!config?.cardConfigurationId &&
+      !!config?.SheduleId;
+
+    this.isConfigValid = isManualValid || isPresetValid;
+
+    console.log('CONFIG DATA:', this.configData);
+    console.log('CONFIG VALID:', this.isConfigValid);
   }
 
+
+  getImportBatches() {
+    this.importBatchService.getAll().subscribe({
+      next: (data) => this.records = data.data,
+      error: (err) => console.error(err)
+    });
+  }
+
+
   verDetalles(item: any) {
-    console.log('Ver detalles de lote:', item);
     this.router.navigate([`dashboard/operational/import-batches/${item.id}/details`]);
   }
+
+  openIndividualForm() {
+    const dialogRef = this.dialog.open(TargetPersonComponent, {
+      width: '800px',
+      height: '90vh',
+      maxHeight: '90vh',
+      disableClose: true,
+      autoFocus: false,
+      data:
+      {
+        createUser: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(personId => {
+      if (!personId) return;
+
+      this.createIndividualCard(personId);
+    });
+  }
+
+  /**
+   * Crea un carnet individual usando el ID de la persona recién creada.
+   * Combina los datos seleccionados en el formulario principal.
+   */
+  createIndividualCard(personId: number): void {
+    // 2️ Construir payload para crear el carnet individual
+    var payload = this.buildPayload(personId)
+    // servicio que guarda el carnet individual
+    this.templateService.Crear('IssuedCard', payload).subscribe({
+      next: (res) => {
+        this.snackbarService.showSuccess('Carnet individual creado con éxito');
+        this.getImportBatches();
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackbarService.showError('Error al crear el carnet individual');
+      }
+    });
+  }
+
+
+  buildPayload(personId: number) {
+
+    const c = this.configData;
+
+    // 1. MODO PRESET (solo ID + schedule)
+    if (c?.cardConfigurationId && c?.SheduleId) {
+      return {
+        personId: personId,
+        cardId: c.cardConfigurationId,
+        sheduleId: c.SheduleId,
+        internalDivisionId: c.InternalDivisionId,
+        isActive: true
+      };
+    }
+
+    // 2. MODO MANUAL (todo explícito)
+    return {
+      personId: personId,
+      cardName: c.ConfigurationName,
+      cardTemplateId: c.CardTemplateId,
+      internalDivisionId: c.InternalDivisionId,
+      profileId: c.ProfileId,
+      validFrom: c.ValidFrom,
+      validTo: c.ValidTo,
+      sheduleId: c.ScheduleId
+    };
+  }
+
+
+
+  toggleSelectExisting() {
+    this.showSelectExisting = !this.showSelectExisting;
+
+    if (this.showSelectExisting && this.persons.length === 0) {
+      this.loadPersons();
+    }
+  }
+
+  loadPersons() {
+    this.templateService.ObtenerActivos('Person').subscribe({
+      next: res => {
+        this.persons = res.data;
+        this.filteredPersons = [...this.persons];
+        this.updatePagedData();   // <-- agregar
+      },
+      error: err => {
+        console.error(err);
+        this.snackbarService.showError('Error cargando personas');
+      }
+    });
+  }
+
+  searchPerson(event: any) {
+    const value = event.target.value.toLowerCase().trim();
+
+    this.filteredPersons = this.persons.filter(p =>
+      p.firstName.toLowerCase().includes(value) ||
+      p.lastName.toLowerCase().includes(value) ||
+      p.documentNumber.toLowerCase().includes(value) ||
+      (p.email ?? '').toLowerCase().includes(value)
+    );
+
+    this.pageIndex = 0;
+    this.updatePagedData();   // <-- agregar
+  }
+
+
+  selectPerson(person: any) {
+    this.showSelectExisting = false;
+
+    this.snackbarService.showSuccess(
+      `Persona seleccionada: ${person.firstName} ${person.lastName}`
+    );
+
+    this.createIndividualCard(person.id);
+  }
+
+  private updatePagedData() {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedPersons = this.filteredPersons.slice(start, end);
+  }
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePagedData();
+  }
+
 
 }
