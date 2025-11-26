@@ -1,0 +1,129 @@
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #e0e6f0;
+  border-radius: 1vh;
+}
+
+/* CARD DE EDICIÓN */
+.edit-card {
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.edit-card mat-card-header {
+  padding: 1.5rem 1.5rem 1rem;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.edit-card mat-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.edit-card mat-card-title strong {
+  color: #1976d2;
+}
+
+.edit-card mat-card-subtitle {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-weight: normal;
+}
+
+.edit-card mat-card-content {
+  padding: 1.5rem;
+}
+
+/* FORMULARIO */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin: 0;
+}
+
+.form-grid mat-form-field {
+  width: 100%;
+}
+
+/* ACCIONES */
+.actions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actions button[mat-flat-button] {
+  height: 40px;
+  font-weight: 500;
+}
+
+/* TABLA */
+::ng-deep app-generic-table mat-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+}
+
+::ng-deep app-generic-table mat-card-header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1.5rem;
+}
+
+::ng-deep app-generic-table mat-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-card mat-card-header,
+  .edit-card mat-card-content {
+    padding: 1rem;
+  }
+}

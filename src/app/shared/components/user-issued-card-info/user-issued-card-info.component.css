@@ -34,11 +34,9 @@
 }
 
 .profile-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  overflow: hidden;
+  overflow-y: auto;
 }
+
 
 .profile-header {
   background: linear-gradient(135deg, #66c0ea 0%, #4b59a2 100%);
@@ -47,6 +45,7 @@
   display: flex;
   align-items: center;
   gap: 30px;
+  border-radius: 1vh;
 }
 
 .photo-section {
@@ -183,4 +182,41 @@
     text-align: left;
     max-width: 100%;
   }
+}
+
+.accordion-container {
+  margin-top: 20px;
+}
+
+.accordion-item {
+  padding: 15px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.accordion-item:last-child {
+  border-bottom: none;
+}
+
+.item-header {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.btn-mini {
+  background: #4b62a2;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-mini:hover {
+  opacity: .9;
+}
+
+.date {
+  font-size: 12px;
+  color: #666;
 }

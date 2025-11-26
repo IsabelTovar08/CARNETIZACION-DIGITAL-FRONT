@@ -190,3 +190,8 @@ img:hover {
     padding: 12px;
   }
 }
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* espacio entre botones */
+}

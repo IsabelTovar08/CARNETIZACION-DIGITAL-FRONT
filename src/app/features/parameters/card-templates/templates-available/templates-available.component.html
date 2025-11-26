@@ -1,35 +1,40 @@
-<!-- templates-available.component.html -->
-<div class="plantilla-carnet">
-  <div class="header">
-    <div class="header-content">
-      <div>
-        <h1 class="title">Plantillas de carnets</h1>
-        <!-- <p class="subtitle">Plantillas disponibles</p> -->
-      </div>
-      <button mat-raised-button color="primary" (click)="openCreateTemplateModal()">
-        Crear Nueva Plantilla
-      </button>
-    </div>
-  </div>
+<app-card-configurations></app-card-configurations>
 
-  <div class="cards-grid" style="display: flex; flex-wrap: wrap; gap: 24px; padding: 16px;">
+<div class="wrapper">
 
-    <app-generic-list-card
-      [title]="'Plantillas Disponibles'"
-      [buttonSave]="false"
-      [dataSourceInput]="TemplateAvaleCards"
-      [pageSize]="10"
-      [customTemplates]="{
-        'actions': actionsTpl
-      }"
-      (onView)="showTemplateSummary($event)">
-    </app-generic-list-card>
-  </div>
+  <!-- ⭐ BOTÓN PARA MOSTRAR/OCULTAR FORMULARIO -->
+  <div class="add-template-header">
+    <h2>Plantillas Existentes</h2>
 
-  <!-- Custom Actions Template -->
-  <ng-template #actionsTpl let-template>
-    <button mat-stroked-button (click)="showTemplateSummary(template)">
-      Ver Más Información
+    <button mat-raised-button color="primary" (click)="openModal()">
+      <mat-icon>add</mat-icon>
+      Agregar Plantilla
     </button>
-  </ng-template>
+
+  </div>
+  <!-- ⭐ LISTADO DE PLANTILLAS -->
+  <div class="cards">
+    <mat-card class="tpl" *ngFor="let t of templates()">
+      <mat-card-title>{{ t.name }}</mat-card-title>
+
+      <div class="pv">
+        <img [src]="t.frontBackgroundUrl" class="mini">
+        <img [src]="t.backBackgroundUrl" class="mini">
+      </div>
+
+      <!-- 🔥 BOTONES DE ACCIONES -->
+      <div class="actions ">
+        <button mat-icon-button color="primary" (click)="openEdit(t)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <mat-slide-toggle
+          [checked]="!t.isDeleted"
+          (change)="toggle(t)">
+          {{ !t.isDeleted ? 'Activa' : 'Inactiva' }}
+        </mat-slide-toggle>
+      </div>
+    </mat-card>
+  </div>
+
 </div>

@@ -1,0 +1,62 @@
+<h2 mat-dialog-title class="header">
+  <mat-icon>{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+  {{ isEditMode ? 'Editar Plantilla' : 'Nueva Plantilla' }}
+</h2>
+
+<mat-dialog-content class="content">
+
+  <form [formGroup]="form" class="form">
+
+    <!-- Nombre -->
+    <mat-form-field appearance="outline" class="field">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Mi Plantilla">
+    </mat-form-field>
+
+    <mat-divider></mat-divider>
+
+    <!-- GRID -->
+    <div class="grid">
+
+      <!-- Frente -->
+      <div class="block">
+        <span class="block-title">Frente (SVG)</span>
+
+        <label class="file-btn">
+          Seleccionar archivo
+          <input type="file" accept=".svg" (change)="uploadFront($event)">
+        </label>
+
+        <mat-card *ngIf="previewFront()" class="preview-card">
+          <img [src]="previewFront()" class="preview-img">
+        </mat-card>
+      </div>
+
+      <!-- Reverso -->
+      <div class="block">
+        <span class="block-title">Reverso (SVG)</span>
+
+        <label class="file-btn">
+          Seleccionar archivo
+          <input type="file" accept=".svg" (change)="uploadBack($event)">
+        </label>
+
+        <mat-card *ngIf="previewBack()" class="preview-card">
+          <img [src]="previewBack()" class="preview-img">
+        </mat-card>
+      </div>
+
+    </div>
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+
+  <button mat-raised-button color="primary" (click)="submit()">
+    <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+    {{ isEditMode ? 'Actualizar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>

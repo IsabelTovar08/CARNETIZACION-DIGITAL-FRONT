@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
+import { HttpServiceWrapperService } from '../../../loanding/http-service-wrapper.service';
 
 export interface PersonSearchFilters {
   search?: string;
@@ -28,7 +29,10 @@ export class ManagentPersonService {
 
   private apiUrl = `${environment.API_BASE_URL}/api/Person`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    protected wrapper: HttpServiceWrapperService
+
+  ) { }
 
   /**
    * Busca personas con filtros y paginación
@@ -60,6 +64,6 @@ export class ManagentPersonService {
       params = params.set('pageSize', filters.pageSize.toString());
     }
 
-    return this.http.get<PersonSearchResponse>(`${this.apiUrl}/search`, { params });
+    return this.wrapper.handleRequest(this.http.get<PersonSearchResponse>(`${this.apiUrl}/search`, { params }));
   }
 }

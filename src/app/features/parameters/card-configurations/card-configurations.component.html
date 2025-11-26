@@ -1,0 +1,76 @@
+<div class="page-wrapper">
+
+  <!-- 🌟 FORMULARIO DE EDICIÓN -->
+  <mat-card class="edit-card" *ngIf="selectedConfig()">
+
+    <mat-card-header>
+      <mat-card-title>
+        Editar Configuración — <strong>{{ selectedConfig().name }}</strong>
+      </mat-card-title>
+      <mat-card-subtitle>
+        Modifique nombre, plantilla y fechas de vigencia.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <form [formGroup]="form" class="form-grid">
+
+        <!-- Nombre -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <!-- Plantilla -->
+        <mat-form-field appearance="outline">
+          <mat-label>Plantilla</mat-label>
+          <mat-select formControlName="cardTemplateId">
+            <mat-option *ngFor="let t of templates" [value]="t.id">
+              {{ t.name }}
+            </mat-option>
+          </mat-select>
+          <button mat-icon-button matSuffix (click)="openTemplateSelector()">
+            <mat-icon>collections</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <!-- Fecha Desde -->
+        <mat-form-field appearance="outline">
+          <mat-label>Vigencia desde</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="validFrom">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha Hasta -->
+        <mat-form-field appearance="outline">
+          <mat-label>Vigencia hasta</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="validTo">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+      </form>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" (click)="save()">
+          <mat-icon>save</mat-icon>
+          Guardar cambios
+        </button>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+  <!-- 🗂 TABLA DE CONFIGURACIONES -->
+  <app-generic-table
+    [title]="'Configuraciones de Carnets'"
+    [buttonSave]="false"
+    [columns]="columns"
+    [displayedColumns]="displayedColumns"
+    [dataSourceInput]="configs()"
+    (onEdit)="onEdit($event)">
+  </app-generic-table>
+
+</div>

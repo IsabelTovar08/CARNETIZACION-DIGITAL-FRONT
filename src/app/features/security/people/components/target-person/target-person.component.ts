@@ -71,9 +71,8 @@ export class TargetPersonComponent {
     private snackbarService: SnackbarService,
     private apiServicePerson: ApiService<PersonCreate, PersonList>,
     private store: UserStoreService,
+    @Optional() private dialogRef: MatDialogRef<TargetPersonComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data?: any,
-    private dialogRef?: MatDialogRef<TargetPersonComponent>
-
   ) { }
 
   // propiedad para simular cierre si es modal

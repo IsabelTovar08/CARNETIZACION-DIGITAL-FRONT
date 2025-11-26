@@ -88,7 +88,7 @@ export class DetailsPeopleImportComponent {
 
    openUserProfileModal(item: any): void {
     this.dialog.open(UserIssuedCardInfoComponent, {
-      width: '90%',
+      width: '60%',
       maxWidth: '1200px',
       maxHeight: '90vh',
       data: { issuedCardId: item.issuedCardId }
