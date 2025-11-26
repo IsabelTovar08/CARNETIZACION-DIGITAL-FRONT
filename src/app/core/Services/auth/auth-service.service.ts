@@ -130,4 +130,11 @@ export class AuthService {
   getPendingUserId(): string | null {
     return sessionStorage.getItem('pending_login_id');
   }
+
+  /// <summary>
+  /// Llama al endpoint para alternar el 2FA del usuario
+  /// </summary>
+  toggleTwoFactor() {
+    return this.http.post(`${this.urlBase}/User/two-factor/toggle`, {});
+  }
 }

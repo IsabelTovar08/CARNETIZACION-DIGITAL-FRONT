@@ -30,7 +30,9 @@ export class HeaderSeccionComponent implements OnInit {
 
   tabs = [
     { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' },
-    { key: 'organizational', label: 'Organizacional', route: '/dashboard/perfil/organizational' }
+    { key: 'organizational', label: 'Organizacional', route: '/dashboard/perfil/organizational' },
+    { key: 'security', label: 'Seguridad', route: '/dashboard/perfil/security' }
+
   ];
 
   constructor(
@@ -48,6 +50,9 @@ export class HeaderSeccionComponent implements OnInit {
         this.activeTab = 'me';
       } else if (event.url.includes('/perfil/organizational')) {
         this.activeTab = 'organizational';
+      }
+      else if (event.url.includes('/perfil/security')) {
+        this.activeTab = 'security';
       }
     });
   }
