@@ -14,6 +14,7 @@ import { EventService } from '../../../../core/Services/api/event/event.service'
 import { AttendanceService } from '../../../../core/Services/api/attendance.service/attendance.service';
 import { EventTagsModalComponent } from '../../../../shared/components/event-tags-modal/event-tags-modal.component';
 import { AttendanceModalComponent } from '../../../../shared/components/attendance-modal/attendance-modal.component';
+import { SupervisorSelectionModalComponent } from '../../../../shared/components/supervisor-selection-modal/supervisor-selection-modal.component';
 import { CardItem, GenericListCardsComponent } from '../../../../shared/components/components-cards/generic-list-cards/generic-list-cards.component';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
 import { MatChip, MatChipSet, MatChipsModule } from "@angular/material/chips";
@@ -63,16 +64,8 @@ export class ListEventsComponent implements OnInit {
   
   openTagsModal(e: any) {
   this.dialog.open(EventTagsModalComponent, {
-    width: '520px',
-    data: {
-      title: e.title ?? e.name,
-      description: e.description,
-      dateLabel: e.dateLabel,
-      eventType: e.eventTypeName,
-      tags: e.fullTags ?? [],
-      accessPoints: e.accessPoints ?? [],
-      schedules: e.schedules ?? []
-    }
+    width: '650px',
+    data: { eventId: e.id }
   });
 }
 
@@ -240,6 +233,42 @@ private toCardItem = (e: any): any => {
         this.snackbarService.showError('Error al cargar los asistentes');
       }
     });
+  }
+
+  assignSupervisor(e: any): void {
+    const dialogRef = this.dialog.open(SupervisorSelectionModalComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: { eventId: e.id }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.supervisorUserIds) {
+        // Aquí implementaremos la lógica para enviar el supervisorUserIds al endpoint
+        console.log('Supervisor asignado:', result);
+        
+        // TODO: Implementar la llamada al endpoint para asignar supervisor
+        // Suponiendo que existe un método en EventService para asignar supervisor
+        this.updateEventSupervisor(e.id, result.supervisorUserIds);
+      }
+    });
+  }
+
+  private updateEventSupervisor(eventId: number, supervisorUserIds: number[]): void {
+    this.eventService.assignSupervisor(eventId, supervisorUserIds).subscribe({
+      next: (response) => {
+        this.snackbarService.showSuccess(`Supervisor asignado exitosamente al evento ${eventId}`);
+        console.log('Supervisor asignado correctamente:', response);
+        // Recargar los eventos para mostrar los cambios
+        this.loadEvents();
+      },
+      error: (error) => {
+        console.error('Error al asignar supervisor:', error);
+        this.snackbarService.showError('Error al asignar el supervisor al evento');
+      }
+    });
+    
+    console.log('Enviando supervisorUserIds:', supervisorUserIds, 'para evento:', eventId);
   }
 
   private populateTypeOptions(): void {

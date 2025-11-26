@@ -216,6 +216,53 @@
             </mat-form-field>
           </div> -->
         </div>
+
+        <!-- Supervisores -->
+        <div class="supervisors-card">
+          <div class="card-header">
+            <mat-icon class="card-icon">supervisor_account</mat-icon>
+            <h3 class="card-title">Supervisores del Evento</h3>
+          </div>
+
+          <div class="supervisors-content">
+            <!-- Botón para agregar supervisor -->
+            <button mat-raised-button color="primary" type="button" (click)="assignSupervisor()" class="add-supervisor-btn">
+              <mat-icon>person_add</mat-icon>
+              Asignar Supervisor
+            </button>
+
+            <!-- Lista de supervisores asignados -->
+            <div class="supervisors-list" *ngIf="selectedSupervisors.length > 0">
+              <div class="supervisor-item" *ngFor="let supervisor of selectedSupervisors; let i = index">
+                <div class="supervisor-info">
+                  <div class="supervisor-name">
+                    {{ supervisor.firstName }} {{ supervisor.lastName }}
+                  </div>
+                  <div class="supervisor-details">
+                    <span class="detail">
+                      <mat-icon>badge</mat-icon>
+                      {{ supervisor.documentNumber }}
+                    </span>
+                    <span class="detail">
+                      <mat-icon>email</mat-icon>
+                      {{ supervisor.email }}
+                    </span>
+                  </div>
+                </div>
+                <button mat-icon-button color="warn" type="button" (click)="removeSupervisor(i)" matTooltip="Remover supervisor">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Estado vacío -->
+            <div class="empty-supervisors" *ngIf="selectedSupervisors.length === 0">
+              <mat-icon class="empty-icon">supervisor_account</mat-icon>
+              <p>No hay supervisores asignados</p>
+              <p class="empty-description">Asigna supervisores para tu evento</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Columna Derecha -->

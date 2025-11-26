@@ -56,6 +56,7 @@ export interface CreateEventRequest {
   profileIds: number[];
   organizationalUnitIds: number[];
   internalDivisionIds: number[];
+  supervisorUserIds?: number[];
 }
 
 export interface EventDtoRequest {
@@ -75,5 +76,6 @@ export interface EventDtoRequest {
   profileIds?: number[];
   organizationalUnitIds?: number[];
   internalDivisionIds?: number[];
+  supervisorUserIds?: number[];
 }
 

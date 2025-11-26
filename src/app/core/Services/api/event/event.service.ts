@@ -112,5 +112,14 @@ public getAllEventsFull(): Observable<ApiResponse<any>> {
     );
   }
 
+  // Asignar supervisor a un evento
+  assignSupervisor(eventId: number, supervisorUserIds: number[]): Observable<ApiResponse<{ id: number }>> {
+    return this.http.put<ApiResponse<{ id: number }>>(
+      `${this.urlBase}/Event/${eventId}/assign-supervisor`,
+      { supervisorUserIds },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
 
 }
