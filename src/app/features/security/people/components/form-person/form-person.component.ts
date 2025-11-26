@@ -294,7 +294,7 @@ export class FormPErsonComponent implements OnInit {
 
   // Verificar si todo el formulario es válido
   isFormValid(): boolean {
-    // 
+    //
     if (this.isEditMode) {
       return this.personalInfoForm.valid && this.documentForm.valid && this.contactForm.valid;
     }

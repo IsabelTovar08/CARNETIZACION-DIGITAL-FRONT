@@ -1,37 +1,40 @@
-<!-- templates-available.component.html -->
-<div class="plantilla-carnet">
-  <div class="header">
-    <h1 class="title">Plantillas de carnets</h1>
-    <p class="subtitle">Plantillas disponibles</p>
+<app-card-configurations></app-card-configurations>
+
+<div class="wrapper">
+
+  <!-- ⭐ BOTÓN PARA MOSTRAR/OCULTAR FORMULARIO -->
+  <div class="add-template-header">
+    <h2>Plantillas Existentes</h2>
+
+    <button mat-raised-button color="primary" (click)="openModal()">
+      <mat-icon>add</mat-icon>
+      Agregar Plantilla
+    </button>
+
+  </div>
+  <!-- ⭐ LISTADO DE PLANTILLAS -->
+  <div class="cards">
+    <mat-card class="tpl" *ngFor="let t of templates()">
+      <mat-card-title>{{ t.name }}</mat-card-title>
+
+      <div class="pv">
+        <img [src]="t.frontBackgroundUrl" class="mini">
+        <img [src]="t.backBackgroundUrl" class="mini">
+      </div>
+
+      <!-- 🔥 BOTONES DE ACCIONES -->
+      <div class="actions ">
+        <button mat-icon-button color="primary" (click)="openEdit(t)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <mat-slide-toggle
+          [checked]="!t.isDeleted"
+          (change)="toggle(t)">
+          {{ !t.isDeleted ? 'Activa' : 'Inactiva' }}
+        </mat-slide-toggle>
+      </div>
+    </mat-card>
   </div>
 
-  <div class="cards-grid">
-    <app-generic-list-cards
-      [items]="TemplateAvaleCards"
-      [clickable]="true"
-      [pageSize]="10"
-      size="large"
-      gridClass="templates"
-      [showPagination]="false"
-      (cardClick)="onSectionClick($event)">
-    </app-generic-list-cards>
-  </div>
-</div><!-- templates-available.component.html -->
-<div class="plantilla-carnet">
-  <div class="header">
-    <h1 class="title">Plantillas de carnets</h1>
-    <p class="subtitle">Plantillas disponibles</p>
-  </div>
-
-  <div class="cards-grid">
-    <app-generic-list-cards
-      [items]="TemplateAvaleCards"
-      [clickable]="true"
-      [pageSize]="10"
-      size="large"
-      gridClass="templates"
-      [showPagination]="false"
-      (cardClick)="onSectionClick($event)">
-    </app-generic-list-cards>
-  </div>
 </div>

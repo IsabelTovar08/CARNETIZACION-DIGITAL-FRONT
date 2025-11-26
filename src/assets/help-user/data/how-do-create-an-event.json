@@ -2,9 +2,25 @@
   "title": "¿Cómo crear un evento?",
   "content": [
     "La creación de eventos se realiza exclusivamente desde el módulo \"Eventos y Control de Acceso\", donde puedes hacer clic en \"Crear Nuevo Evento\".",
-    "¿Cómo se crea un evento?",
-    "Al hacer clic, se abrirá un formulario para ingresar la información básica: nombre, descripción, fecha y hora de inicio y fin...",
-    "¿Qué sigue después?",
-    "Desde la plataforma podrás gestionarlo, hacer ediciones y controlar el acceso de los asistentes de forma clara y segura."
+    "Pasos para crear un evento:",
+    "1. Accede al módulo de Eventos desde el menú principal.",
+    "2. Haz clic en el botón \"Crear Nuevo Evento\" (icono +).",
+    "3. Completa el formulario con la información requerida:",
+    "   - Nombre del evento (obligatorio)",
+    "   - Descripción detallada",
+    "   - Fecha y hora de inicio",
+    "   - Fecha y hora de finalización",
+    "   - Ubicación o sede",
+    "   - Tipo de evento (seleccionar de la lista disponible)",
+    "   - Configuración de visibilidad (público/privado)",
+    "   - Audiencias objetivo (perfiles, unidades organizativas, etc.)",
+    "4. Opcionalmente, puedes agregar puntos de acceso específicos para control de asistencia.",
+    "5. Una vez completado, haz clic en \"Guardar\" para crear el evento.",
+    "Después de crear el evento, podrás:",
+    "- Gestionar la lista de asistentes registrados",
+    "- Editar la información del evento si es necesario",
+    "- Controlar el acceso mediante validación de carnets con QR",
+    "- Generar reportes de asistencia",
+    "- Activar o desactivar el evento según sea necesario"
   ]
 }

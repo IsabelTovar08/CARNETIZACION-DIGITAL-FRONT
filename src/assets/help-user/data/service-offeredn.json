@@ -1,12 +1,16 @@
 {
   "title": "Servicio ofrecido",
   "features": [
-    "Registro masivo: Carga rápida de personal a través de archivos Excel o formularios en línea.",
-    "Diseño personalizado: Carnets con logo institucional, colores corporativos, fotografía y código QR único.",
-    "Descarga en PDF: Cada carnet está disponible para descarga o impresión en formato PDF.",
-    "Envío automático por correo: El carnet se envía al correo registrado inmediatamente después de su generación.",
-    "Validación por QR: Escaneo rápido para verificar la identidad y autenticidad del carnet.",
-    "Impresión física (opcional): Producción de carnets en PVC o materiales ecológicos, según necesidad.",
-    "Panel administrativo: Plataforma para gestionar usuarios, generar reportes y consultar estadísticas."
+    "Registro masivo: Carga rápida de personal a través de archivos Excel, CSV o formularios en línea con validación automática de datos.",
+    "Diseño personalizado: Carnets con logo institucional, colores corporativos, fotografías de alta resolución, códigos QR únicos y campos personalizados según requerimientos específicos.",
+    "Gestión de eventos: Creación, edición y administración de eventos con control de acceso, registro de asistencia y generación de reportes en tiempo real.",
+    "Sistema de roles y permisos: Control granular de accesos con diferentes niveles de usuario (Administrador, Operador, Usuario final) y permisos específicos por módulo.",
+    "Validación por QR: Escaneo rápido y seguro para verificar identidad, autenticidad del carnet y control de acceso a eventos con historial de validaciones.",
+    "Reportes y estadísticas: Generación automática de reportes de asistencia, uso del sistema, estadísticas de eventos y métricas de rendimiento con exportación a múltiples formatos.",
+    "Descarga en PDF: Cada carnet está disponible para descarga inmediata o impresión en formato PDF de alta calidad con opciones de compresión.",
+    "Envío automático por correo: El carnet se envía al correo registrado inmediatamente después de su generación, con opciones de recordatorios y notificaciones automáticas.",
+    "Soporte multi-dispositivo: Acceso completo desde computadoras, tablets y dispositivos móviles con interfaz responsiva y optimizada.",
+    "Panel administrativo completo: Plataforma intuitiva para gestionar usuarios, configurar plantillas, administrar eventos, generar reportes y consultar estadísticas avanzadas.",
+    "Seguridad avanzada: Encriptación de datos, autenticación de dos factores, auditoría completa de acciones y cumplimiento con estándares de protección de datos."
   ]
 }

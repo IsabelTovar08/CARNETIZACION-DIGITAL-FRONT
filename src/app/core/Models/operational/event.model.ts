@@ -28,7 +28,7 @@ export interface AccessPointDto {
   description?: string;
   typeId: number;
   type?: string;
-  qrCode?: string;
+  qrCodeKey?: string;
   code?: string;
   isDeleted?: boolean;
   eventId?: number;

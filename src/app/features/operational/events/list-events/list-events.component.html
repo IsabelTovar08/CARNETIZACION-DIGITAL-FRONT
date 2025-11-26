@@ -3,6 +3,36 @@
   <h2>Eventos</h2>
 </div>
 
+<!-- Filtros -->
+<div class="filters-container">
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Estado</mat-label>
+    <mat-select [value]="selectedStatus" (selectionChange)="onStatusChange($event.value)">
+      <mat-option *ngFor="let status of statusOptions" [value]="status">
+        {{ status }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Tipo de Evento</mat-label>
+    <mat-select [value]="selectedType" (selectionChange)="onTypeChange($event.value)">
+      <mat-option *ngFor="let type of typeOptions" [value]="type">
+        {{ type }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Visibilidad</mat-label>
+    <mat-select [value]="selectedVisibility" (selectionChange)="onVisibilityChange($event.value)">
+      <mat-option *ngFor="let visibility of visibilityOptions" [value]="visibility">
+        {{ visibility }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
 <!-- LISTA DE TARJETAS (usa tu componente real) -->
 <app-generic-list-card
   [title]="'Eventos'"
@@ -20,6 +50,13 @@
   (onToggleStatus)="toggle($event)"
   (onMoreTags)="openTagsModal($event)">
 </app-generic-list-card>
+
+<!-- Mensaje cuando no hay eventos -->
+<div *ngIf="!listEvents || listEvents.length === 0" class="no-results">
+  <mat-icon>search_off</mat-icon>
+  <h3>No se encontraron eventos</h3>
+  <p>Intenta ajustar los filtros para ver más resultados.</p>
+</div>
 
 <ng-template #metaTpl let-e>
   <span>{{ e.city || 'Sede principal' }} | {{ e.dateLabel }}</span>
@@ -46,10 +83,22 @@
     </mat-chip-set>
   </div>
 
-  <!-- Botón principal -->
-  <button mat-stroked-button (click)="view(e)">
-    Ver Más Información
+  <!-- Botones de acción de mirar asistencia, y de mas informacion -->
+<div class="button-container compact">
+  <button mat-icon-button color="primary" matTooltip="Más información" (click)="view(e)">
+    <mat-icon>info</mat-icon>
   </button>
+
+  <button mat-icon-button color="accent" matTooltip="Ver asistencias" (click)="viewAttendees(e)">
+    <mat-icon>groups</mat-icon>
+  </button>
+
+  <button mat-icon-button matTooltip="Más acciones" [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</div>
+
+
 
   <span class="spacer"></span>
 

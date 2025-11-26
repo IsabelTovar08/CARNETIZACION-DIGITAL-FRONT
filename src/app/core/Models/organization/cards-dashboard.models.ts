@@ -22,3 +22,17 @@ export interface CarnetsByShedule {
   jornada: string;
   totalCarnets: number;
 }
+
+//  DTO: Eventos por Tipo
+export interface EventsByType {
+  eventTypeId: number;
+  eventTypeName: string;
+  totalEvents: number;
+}
+
+//  DTO: Top eventos con asistencia por tipo
+export interface EventTopAttendance {
+  eventId: number;
+  eventName: string;
+  totalAttendees: number;
+}

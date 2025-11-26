@@ -1,71 +1,197 @@
-/* templates-available.component.css */
-.plantilla-carnet {
-  padding: 32px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  font-family: system-ui, -apple-system, sans-serif;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 48px;
-  color: #1a202c;
-}
-
-.title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  margin: 0;
-  opacity: 0.8;
-  font-weight: 400;
-  color: #64748b;
-  text-transform: capitalize;
-}
-
-.cards-grid {
-  max-width: 1400px;
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 2rem;
+  background: #e0e6f0;
+  border-radius: 1vh;
+  margin-top: 2%;
+}
+
+/* SECCIÓN NUEVA PLANTILLA */
+.upload-card {
+  background: white;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.upload-card mat-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding: 1.5rem 1.5rem 0;
+  margin: 0;
+}
+
+.upload-card mat-card-content {
+  padding: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Campo de nombre */
+.grid mat-form-field {
+  width: 100%;
+}
+
+/* Secciones de upload */
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upload label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.upload input[type="file"] {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.upload input[type="file"]:hover {
+  border-color: #1976d2;
+}
+
+.preview {
+  width: 100px;
+  height: auto;
+  margin-top: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 4px;
+  background: white;
+}
+
+/* Botón guardar */
+.upload-card button[mat-raised-button] {
+  height: 40px;
+  font-weight: 500;
+}
+
+/* TÍTULO SECCIÓN */
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 4px solid #1976d2;
+}
+
+/* GRID DE PLANTILLAS EXISTENTES */
+.cards {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.tpl {
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+}
+
+.tpl mat-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding: 1.25rem 1.25rem 1rem;
+  margin: 0;
+  background: #fafafa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Contenedor de previews */
+.pv {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1.5rem;
+  background: white;
+  margin: 0;
+}
+
+.mini {
+  width: 100px;
+  height: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 4px;
+  background: #fafafa;
+}
+
+/* Toggle */
+.tpl mat-slide-toggle {
+  padding: 1rem 1.25rem;
+  display: block;
+  border-top: 1px solid #f0f0f0;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .plantilla-carnet {
-    padding: 20px;
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 
-  .title {
-    font-size: 2.2rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-  }
-
-  .header {
-    margin-bottom: 32px;
+  .cards {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 480px) {
-  .plantilla-carnet {
-    padding: 16px;
+@media (max-width: 600px) {
+  .wrapper {
+    padding: 1rem;
   }
+}
+.add-template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+}
 
-  .title {
-    font-size: 1.9rem;
-  }
+.form-container {
+  animation: fadeIn 0.25s ease-in-out;
+  margin-bottom: 2rem;
+}
 
-  .header {
-    margin-bottom: 24px;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tpl-actions {
+  padding: 1rem;
+  text-align: center;
+}
+
+.tpl-actions button {
+  width: 100%;
 }

@@ -157,44 +157,66 @@
     </div>
   </div>
 
-  <!-- Sección inferior: Eventos y Notificaciones -->
+  <!-- Sección inferior: Tipos de Eventos y Notificaciones -->
   <div class="row g-4">
-    <!-- Eventos Destacados -->
+    <!-- Tipos de Evento con drill-down (MODIFICADO) -->
     <div class="col-lg-8">
       <div class="chart-card modern-card events-card">
         <div class="chart-header">
           <div>
-            <h5 class="chart-title">Eventos Próximos</h5>
-            <p class="chart-subtitle">Agenda de actividades programadas</p>
+            <h5 class="chart-title">Distribución por Tipos de Evento</h5>
+            <p class="chart-subtitle">Tipos de eventos más utilizados</p>
           </div>
           <div class="event-metrics">
             <div class="metric-badge metric-success">
-              <span class="metric-value">{{ nextEvents }}</span>
-              <span class="metric-label">Total</span>
+              <span class="metric-value">{{ (eventTypesRawData || []).length }}</span>
+              <span class="metric-label">Tipos</span>
             </div>
             <div class="metric-badge metric-trend">
-              <span class="trend-indicator">↑ 5%</span>
+              <span class="trend-indicator">↑ Eventos activos</span>
             </div>
           </div>
         </div>
-        <div class="chart-body events-body">
+        <div class="chart-body events-body" style="height: 500px;">
           <canvas
             baseChart
-            [data]="eventsChartData"
-            [options]="horizontalBarChartOptions"
-            [type]="'bar'">
+            [data]="eventTypesChartData"
+            [options]="nonResponsiveHorizontalBarChartOptions"
+            [type]="'bar'"
+            style="width: 90%; height: 90%;"
+            (chartClick)="onEventTypeClick($event)">
           </canvas>
         </div>
         <div class="chart-footer">
           <div class="event-summary">
             <div class="summary-item">
               <span class="summary-dot dot-high"></span>
-              <span>Alta prioridad: 2 eventos</span>
+              <span>Haz clic en una barra para ver eventos con más asistencia</span>
             </div>
-            <div class="summary-item">
-              <span class="summary-dot dot-medium"></span>
-              <span>Media prioridad: 3 eventos</span>
+          </div>
+        </div>
+
+        <!-- ✅ SOLUCIÓN: Detalle de Top Eventos DENTRO de la misma card -->
+        <div class="top-attendance-container" *ngIf="(eventTopAttendanceRawData || []).length > 0">
+          <div class="divider-section">
+            <span class="divider-text">Desglose Detallado</span>
+          </div>
+          <div class="chart-header mt-4">
+            <div>
+              <h5 class="chart-title">
+                <span class="badge-pill">Top 5</span>
+                Eventos con Mayor Asistencia
+              </h5>
+              <p class="chart-subtitle">Por tipo seleccionado</p>
             </div>
+          </div>
+          <div class="chart-body mt-3" style="height: 280px;">
+            <canvas
+              baseChart
+              [data]="eventTopAttendanceChartData"
+              [options]="smallBarChartOptions"
+              [type]="'bar'">
+            </canvas>
           </div>
         </div>
       </div>

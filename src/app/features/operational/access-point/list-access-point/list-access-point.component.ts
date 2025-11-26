@@ -2,14 +2,15 @@ import { AccessPointDto } from './../../../../core/Models/operational/event.mode
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GenericListCardComponent } from "../../../../shared/components/generic-list-card/generic-list-card.component";
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../core/Services/api/api.service';
 import { SnackbarService } from '../../../../core/Services/snackbar/snackbar.service';
+import { EventTagsModalComponent } from '../../../../shared/components/event-tags-modal/event-tags-modal.component';
 
 @Component({
   selector: 'app-list-access-point',
-  imports: [CommonModule, GenericListCardComponent],
+  imports: [CommonModule, GenericListCardComponent, MatDialogModule],
   templateUrl: './list-access-point.component.html',
   styleUrl: './list-access-point.component.css'
 })
@@ -17,6 +18,8 @@ export class ListAccessPointComponent {
   accessPoints: AccessPointDto[] = [];
 
   cards: any[] = [];
+  enlargedQr: string | null = null;
+
   constructor(
     private apiService: ApiService<AccessPointDto, AccessPointDto>,
     private route: ActivatedRoute,
@@ -30,9 +33,22 @@ export class ListAccessPointComponent {
     })
   }
 
+  enlargeQr(qrCode: string) {
+    this.enlargedQr = qrCode;
+  }
+
   // acciones
   create() { }
-  view(item: any) { }
+  view(item: any) {
+    this.dialog.open(EventTagsModalComponent, {
+      width: '520px',
+      data: {
+        title: item.name,
+        description: item.description,
+        accessPoints: [item] // Pasar el punto de acceso como array
+      }
+    });
+  }
   edit(item: any) {  }
   remove(item: any) { }
   toggle(item: any) { }

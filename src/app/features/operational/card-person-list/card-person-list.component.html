@@ -2,7 +2,7 @@
   <h2>Gestión de personas</h2>
 
   <!-- Filtros -->
-  <form [formGroup]="filterForm" (ngSubmit)="loadData()" class="filter-bar">
+  <form [formGroup]="filterForm" class="filter-bar">
 
     <!-- Campo de búsqueda -->
     <mat-form-field appearance="outline" class="input-field">
@@ -14,8 +14,9 @@
     <mat-form-field appearance="outline" class="input-field">
       <mat-label>Unidad organizacional</mat-label>
       <mat-select formControlName="organizationalUnit">
-        <mat-option value="">Todas</mat-option>
-        <mat-option *ngFor="let u of unidadesOrganizacionales" [value]="u">{{ u }}</mat-option>
+        <mat-option value>Todas</mat-option>
+        <mat-option *ngFor="let u of organizationalUnits" [value]="u.id">{{
+          u.name }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -23,8 +24,9 @@
     <mat-form-field appearance="outline" class="input-field">
       <mat-label>División interna</mat-label>
       <mat-select formControlName="division">
-        <mat-option value="">Todas</mat-option>
-        <mat-option *ngFor="let d of divisionesInternas" [value]="d">{{ d }}</mat-option>
+        <mat-option value>Todas</mat-option>
+        <mat-option *ngFor="let d of internalDivisions" [value]="d.id">{{ d.name
+          }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -32,8 +34,9 @@
     <mat-form-field appearance="outline" class="input-field">
       <mat-label>Perfil</mat-label>
       <mat-select formControlName="profile">
-        <mat-option value="">Todos</mat-option>
-        <mat-option *ngFor="let p of perfiles" [value]="p">{{ p }}</mat-option>
+        <mat-option value>Todos</mat-option>
+        <mat-option *ngFor="let p of profiles" [value]="p.id">{{ p.name
+          }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -41,7 +44,7 @@
     <mat-checkbox formControlName="onlyActive">Solo activos</mat-checkbox>
 
     <!-- Botones -->
-    <button mat-flat-button color="primary" type="submit">
+    <button mat-flat-button color="primary" (click)="loadData()">
       <mat-icon>search</mat-icon>
       Buscar
     </button>
@@ -67,15 +70,26 @@
   }">
 </app-generic-table>
 
+<!-- Paginador manual -->
+<div class="paginator-container" *ngIf="totalItems > pageSize">
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage - 1"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>
+
 <!-- Templates personalizados -->
 <ng-template #photoTemplate let-item>
   <img
-    [src]="item.photoUrl || '/assets/images/default-avatar.png'"
+    [src]="item.photoUrl || '/assets/default-avatar.png'"
     alt="foto"
     width="45"
     height="45"
-    style="border-radius: 50%; object-fit: cover;"
-  />
+    style="border-radius: 50%; object-fit: cover;" />
 </ng-template>
 
 <ng-template #dateTemplate let-item let-key="key">
@@ -84,13 +98,45 @@
 
 <!-- Template para acciones -->
 <ng-template #actionsTemplate let-item>
-  <button
-    mat-icon-button
-    color="primary"
-    [disabled]="!item.pdfUrl"
-    matTooltip="Ver carnet PDF"
-    (click)="openPdf(item.pdfUrl)">
-    <mat-icon>picture_as_pdf</mat-icon>
-  </button>
+  <div class="action-buttons">
+    <button mat-icon-button (click)="openPersonProfile(item.personId)">
+      <mat-icon>person_search</mat-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      color="primary"
+      [disabled]="!item.id"
+      matTooltip="Generar carnet PDF"
+      (click)="generatePdf(item)">
+      <mat-icon>picture_as_pdf</mat-icon>
+    </button>
+  </div>
 </ng-template>
 
+
+<!-- Selector de carnet en este mismo componente -->
+<ng-template #selectCardTemplate let-data>
+  <h2 mat-dialog-title>Seleccionar carnet</h2>
+
+  <mat-dialog-content>
+    <p>Elige cuál carnet deseas consultar:</p>
+
+    <mat-form-field appearance="outline" style="width:100%;">
+      <mat-label>Carnet</mat-label>
+      <mat-select [(value)]="selectedCardId">
+        <mat-option *ngFor="let c of data.cards" [value]="c.id">
+          {{ c.profileName }} - {{ c.internalDivisionName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-flat-button color="primary" (click)="onSelectCardConfirm()"
+      [disabled]="!selectedCardId">
+      Continuar
+    </button>
+  </mat-dialog-actions>
+</ng-template>

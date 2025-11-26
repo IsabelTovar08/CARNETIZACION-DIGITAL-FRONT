@@ -22,5 +22,5 @@ export interface UserMe {
   photoUrl?: string;
   permissions: Role[];
   currentProfile: any;
-
+  twoFactorEnabled: boolean | null;
 }

@@ -101,7 +101,7 @@ export class DashboardComponent implements OnInit {
   }
 
   // Escucha cambios de tamaño de pantalla
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.checkScreenSize();
   }

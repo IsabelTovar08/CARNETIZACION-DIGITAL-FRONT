@@ -4,8 +4,9 @@
   [columns]="columns"
   [dataSourceInput]="records || []"
   [customTemplates]="{
+    message: messageTemplate,
     status: statusTemplate,
-    message: messageTemplate
+    actions: actionTemplate
   }"
   [buttonSave]="false">
 </app-generic-table>
@@ -24,4 +25,10 @@
   <div [ngClass]="{'error-row': !item.success}">
     {{ item.message }}
   </div>
+</ng-template>
+
+<ng-template #actionTemplate let-item>
+  <button mat-icon-button (click)="openUserProfileModal(item)">
+    <mat-icon>person_search</mat-icon>
+  </button>
 </ng-template>

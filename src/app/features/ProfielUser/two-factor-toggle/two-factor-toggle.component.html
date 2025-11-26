@@ -1,0 +1,54 @@
+<mat-card class="twofactor-card">
+
+  <h2 class="section-title">Seguridad de la Cuenta</h2>
+
+  <p class="section-description">
+    La autenticación en dos pasos (2FA) agrega una capa adicional de seguridad.
+    Al activarla, se te solicitará un código temporal cada vez que inicies sesión,
+    lo que reduce significativamente riesgos de acceso no autorizado.
+  </p>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <div class="toggle-container">
+
+    <div class="toggle-info">
+      <h3 class="toggle-title">
+        Autenticación en dos pasos
+      </h3>
+
+      <p class="toggle-text">
+        Activa este interruptor si deseas añadir mayor protección.
+        Si lo desactivas, tu cuenta dependerá únicamente de tu contraseña.
+      </p>
+    </div>
+
+    <div class="toggle-action">
+      <mat-slide-toggle
+        [checked]="twoFactorEnabled"
+        [disabled]="loading"
+        (change)="onToggleChange()">
+
+        {{ twoFactorEnabled ? '2FA Activo' : '2FA Inactivo' }}
+
+      </mat-slide-toggle>
+
+      <mat-progress-spinner
+        *ngIf="loading"
+        class="spin"
+        mode="indeterminate"
+        diameter="24"
+        strokeWidth="3">
+      </mat-progress-spinner>
+    </div>
+
+  </div>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <p class="note">
+    Puedes activar o desactivar esta opción en cualquier momento.
+    Recomendamos mantenerla activada para proteger tu información personal y evitar accesos indebidos.
+  </p>
+
+</mat-card>

@@ -1,5 +1,7 @@
 import { ApiService } from './../../../core/Services/api/api.service';
-import { Component, signal } from '@angular/core';
+import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
+import { ManagentPersonService, PersonSearchFilters } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
+import { Component, signal, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
 import { MatIconModule } from "@angular/material/icon";
@@ -9,37 +11,30 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { debounceTime } from 'rxjs/operators';
+import { EventService } from '../../../core/Services/api/event/event.service';
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { UserIssuedCardInfoComponent } from '../../../shared/components/user-issued-card-info/user-issued-card-info.component';
 
 @Component({
   selector: 'app-card-person-list',
-  imports: [CommonModule, GenericTableComponent, MatIconModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatCheckboxModule],
+  imports: [CommonModule, GenericTableComponent, MatIconModule, ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatCheckboxModule, MatPaginatorModule, MatDialogModule],
   templateUrl: './card-person-list.component.html',
   styleUrl: './card-person-list.component.css'
 })
 export class CardPersonListComponent {
-    /// <summary>
+  /// <summary>
   /// Formulario reactivo con filtros
   /// </summary>
   filterForm!: FormGroup;
 
-  unidadesOrganizacionales = [
-    'Administración',
-    'Operaciones',
-    'Logística',
-    'Seguridad'
-  ];
-  divisionesInternas = [
-    'Recursos Humanos',
-    'Producción',
-    'Transporte',
-    'Control de acceso'
-  ];
-  perfiles = [
-    'Coordinadora',
-    'Supervisor',
-    'Auxiliar',
-    'Vigilante'
-  ];
+  /// <summary>
+  /// Opciones para los filtros
+  /// </summary>
+  organizationalUnits: any[] = [];
+  internalDivisions: any[] = [];
+  profiles: any[] = [];
 
   /// <summary>
   /// Fuente de datos para la tabla genérica
@@ -47,151 +42,259 @@ export class CardPersonListComponent {
   dataSource = signal<any[]>([]);
 
   /// <summary>
+  /// Información de paginación
+  /// </summary>
+  totalItems = 0;
+  currentPage = 1;
+  pageSize = 20;
+
+  /// <summary>
   /// Columnas visibles en la tabla genérica
   /// </summary>
   columns = [
     { key: 'photoUrl', label: 'Foto' },
     { key: 'personName', label: 'Nombre completo' },
-    { key: 'divisionName', label: 'División interna' },
-    { key: 'profileName', label: 'Perfil' },
-    { key: 'isCurrentlySelected', label: 'Estado del carnet' },
-    { key: 'expirationDate', label: 'Vencimiento' }
-
+    { key: 'internalDivisionNames', label: 'División interna' },
+    { key: 'profileName', label: 'Perfil' }
   ];
 
   displayedColumns = [
     'photoUrl',
     'personName',
-    'divisionName',
+    'internalDivisionNames',
     'profileName',
-    'isCurrentlySelected',
-    'expirationDate',
     'actions'
   ];
 
-  /// <summary>
-  /// Datos quemados para prueba
-  /// </summary>
-  private peopleMock = [
-    {
-      photoUrl: '/assets/images/user1.jpg',
-      fullName: 'Laura Gómez',
-      email: 'laura.gomez@empresa.com',
-      organizationalUnit: 'Administración',
-      division: 'Recursos Humanos',
-      profile: 'Coordinadora',
-      cardStatus: 'Activo',
-      expirationDate: '2025-12-31'
-    },
-    {
-      photoUrl: '/assets/images/user2.jpg',
-      fullName: 'Carlos Martínez',
-      email: 'carlos.martinez@empresa.com',
-      organizationalUnit: 'Operaciones',
-      division: 'Producción',
-      profile: 'Supervisor',
-      cardStatus: 'Vencido',
-      expirationDate: '2024-08-15'
-    },
-    {
-      photoUrl: '/assets/images/user3.jpg',
-      fullName: 'Ana Torres',
-      email: 'ana.torres@empresa.com',
-      organizationalUnit: 'Logística',
-      division: 'Transporte',
-      profile: 'Auxiliar',
-      cardStatus: 'Activo',
-      expirationDate: '2026-01-10'
-    },
-    {
-      photoUrl: '/assets/images/user4.jpg',
-      fullName: 'Julián Restrepo',
-      email: 'julian.restrepo@empresa.com',
-      organizationalUnit: 'Seguridad',
-      division: 'Control de acceso',
-      profile: 'Vigilante',
-      cardStatus: 'Activo',
-      expirationDate: '2025-07-20'
-    }
-  ];
+  @ViewChild('selectCardTemplate') selectCardTemplate!: any;
+
+  selectedCardId: number | null = null;
+  private currentPersonCards: any[] = [];
+
+
 
   constructor(private fb: FormBuilder,
-    private issuedCardService: ApiService<any, any>
-  ) {}
+    private apiService: ApiService<any, any>,
+    private issuedCardService: IssuedCardService,
+    private managentPersonService: ManagentPersonService,
+    private eventService: EventService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
       search: [''],
       organizationalUnit: [''],
       division: [''],
-      profile: [''],  
+      profile: [''],
       onlyActive: [true]
     });
 
-    this.dataSource.set(this.peopleMock);
+    // Cargar opciones de filtros
+    this.loadFilterOptions();
 
-    this.issuedCardService.ObtenerTodo('IssuedCard').subscribe({
+    // Cargar datos iniciales
+    this.loadData();
+
+    // Suscribirse a cambios en el formulario para filtrado automático
+    this.filterForm.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+      this.loadData();
+    });
+  }
+
+  /// <summary>
+  /// Carga las opciones para los filtros desde la API
+  /// </summary>
+  private loadFilterOptions(): void {
+    console.log('🔧 CardPersonList: Loading filter options...');
+
+    // Cargar unidades organizativas
+    this.eventService.getOrganizationalUnits().subscribe({
       next: (result) => {
-        this.peopleMock = result.data;
-        this.dataSource.set(this.peopleMock)
+        this.organizationalUnits = result.data || [];
+        console.log('✅ CardPersonList: Organizational units loaded:', this.organizationalUnits);
       },
       error: (err) => {
-        console.error('Error fetching issued cards:', err);
+        console.error('❌ CardPersonList: Error loading organizational units:', err);
+      }
+    });
+
+    // Cargar divisiones internas
+    this.eventService.getInternalDivisions().subscribe({
+      next: (result) => {
+        this.internalDivisions = result.data || [];
+        console.log('✅ CardPersonList: Internal divisions loaded:', this.internalDivisions);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading internal divisions:', err);
+      }
+    });
+
+    // Cargar perfiles
+    this.eventService.getProfiles().subscribe({
+      next: (result) => {
+        this.profiles = result.data || [];
+        console.log('✅ CardPersonList: Profiles loaded:', this.profiles);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading profiles:', err);
       }
     });
   }
 
   /// <summary>
-  /// Aplica filtros locales sobre la data quemada
+  /// Carga datos desde la API con filtros y paginación
   /// </summary>
   loadData(): void {
-    const { search, organizationalUnit, division, onlyActive } = this.filterForm.value;
-    let filtered = [...this.peopleMock];
+    const { search, organizationalUnit, division, profile, onlyActive } = this.filterForm.value;
 
-    if (search) {
-      const s = search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.fullName.toLowerCase().includes(s) ||
-        p.email.toLowerCase().includes(s)
-      );
-    }
+    const filters: PersonSearchFilters = {
+      internalDivisionId: division ? parseInt(division) : undefined,
+      organizationalUnitId: organizationalUnit ? parseInt(organizationalUnit) : undefined,
+      profileId: profile ? parseInt(profile) : undefined,
+      page: this.currentPage,
+      pageSize: this.pageSize
+    };
 
-    if (organizationalUnit)
-      filtered = filtered.filter(p => p.organizationalUnit === organizationalUnit);
+    console.log('🔍 CardPersonList: loadData called with filters:', filters);
 
-    if (division)
-      filtered = filtered.filter(p => p.division === division);
+    this.managentPersonService.search(filters).subscribe({
+      next: (result) => {
+        console.log('✅ CardPersonList: API response:', result);
+        console.log('📊 CardPersonList: Data received:', result.data);
 
-    if (onlyActive)
-      filtered = filtered.filter(p => p.cardStatus === 'Activo');
+        // Transformar los datos para que coincidan con las columnas esperadas
+        console.log("RAW PERSON RESULT:", result.data);
+        let transformedData = (result.data || []).map((person: any) => {
 
-    this.dataSource.set(filtered);
+          // Divisiones internas sin duplicados
+          const divisions = Array.from(
+            new Set(
+              (person.cards || [])
+                .map((c: any) => c.internalDivisionName)
+                .filter((x: any) => x)
+            )
+          ).join(', ');
+
+          // Perfiles sin duplicados
+          const profiles = Array.from(
+            new Set(
+              (person.cards || [])
+                .map((c: any) => c.profileName)
+                .filter((x: any) => x)
+            )
+          ).join(', ');
+
+          return {
+            personId: person.id,
+            issuedCardId: person.issuedCardId,
+            id: person.issuedCardId,
+            photoUrl: person.photoUrl || '/assets/images/default-avatar.png',
+
+            personName: person.firstName && person.lastName
+              ? `${person.firstName} ${person.lastName}`
+              : person.name || 'Sin nombre',
+
+            internalDivisionNames: divisions || 'Sin divisiones',
+            profileName: profiles || 'Sin perfiles',
+
+            isCurrentlySelected: person.isCurrentlySelected || false,
+            expirationDate: person.expirationDate || null,
+
+            ...person
+          };
+        });
+
+
+        // Aplicar filtro de búsqueda en el frontend si hay término de búsqueda
+        if (search && search.trim()) {
+          const searchTerm = search.trim().toLowerCase();
+          transformedData = transformedData.filter(person =>
+            person.personName.toLowerCase().includes(searchTerm) ||
+            (person.email && person.email.toLowerCase().includes(searchTerm))
+          );
+        }
+
+        console.log('🔄 CardPersonList: Transformed and filtered data:', transformedData);
+
+        this.dataSource.set(transformedData);
+        this.totalItems = result.total || 0;
+
+        console.log('📈 CardPersonList: Total items:', this.totalItems);
+      },
+      error: (err) => {
+        console.error('❌ CardPersonList: Error loading persons:', err);
+        this.dataSource.set([]);
+        this.totalItems = 0;
+      }
+    });
   }
 
   /// <summary>
-  /// Limpia los filtros y muestra toda la data
+  /// Maneja el cambio de página
+  /// </summary>
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex + 1;
+    this.pageSize = event.pageSize;
+    this.loadData();
+  }
+
+  /// <summary>
+  /// Limpia los filtros y recarga los datos
   /// </summary>
   resetFilters(): void {
     this.filterForm.reset({ onlyActive: true });
-    this.dataSource.set(this.peopleMock);
+    this.currentPage = 1;
+    this.loadData();
   }
 
-    /// <summary>
-  /// Abre un archivo PDF desde una cadena Base64 en una nueva pestaña del navegador
+  /// <summary>
+  /// Genera y abre el PDF del carnet para el issuedCardId dado
   /// </summary>
-  openPdf(base64Data: string): void {
+  generatePdf(person: any): void {
+    if (!person.cards || person.cards.length === 0) {
+      console.error("Esta persona no tiene carnets.");
+      return;
+    }
+
+    // 🔥 Preparar lista de carnets
+    this.currentPersonCards = person.cards;
+
+    // Si solo tiene un carnet → PDF directo
+    if (person.cards.length === 1) {
+      this.selectedCardId = person.cards[0].id;
+      this.getPdf(Number(this.selectedCardId));
+      return;
+    }
+
+    // 🔥 Tiene varios → abrir selector del MISMO componente
+    this.selectedCardId = null;
+
+    this.dialog.open(this.selectCardTemplate, {
+      width: '400px',
+      data: { cards: person.cards }
+    });
+  }
+
+  onSelectCardConfirm() {
+    if (!this.selectedCardId) return;
+
+    this.dialog.closeAll();
+    this.getPdf(this.selectedCardId);
+  }
+  private getPdf(cardId: number) {
+    this.issuedCardService.getCardPdf(cardId).subscribe({
+      next: (blob) => this.openPdf(blob),
+      error: (err) => console.error('Error generating PDF:', err)
+    });
+  }
+
+
+  /// <summary>
+  /// Abre un archivo PDF desde un Blob en una nueva pestaña del navegador
+  /// </summary>
+  openPdf(blob: Blob): void {
     try {
-      // Convierte la cadena base64 en un Blob
-      const byteCharacters = atob(base64Data);
-      const byteNumbers = new Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
-
       // Crea una URL temporal para el Blob
       const blobUrl = URL.createObjectURL(blob);
 
@@ -201,5 +304,15 @@ export class CardPersonListComponent {
       console.error('Error opening PDF:', error);
     }
   }
+  openPersonProfile(personId: number) {
+    this.dialog.open(UserIssuedCardInfoComponent, {
+      width: '850px',
+      maxHeight: '90vh',
+
+      data: { personId }
+    });
+  }
+
+
 
 }

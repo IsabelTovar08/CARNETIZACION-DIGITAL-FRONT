@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Crear Nuevo Fondo de Carnet</h1>
+<div mat-dialog-content class="template-form">
+  <form [formGroup]="templateForm" class="form-content">
+
+    <!-- Nombre de la plantilla -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre de la Plantilla</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Fondo Corporativo Azul">
+    </mat-form-field>
+
+    <!-- Imagen de fondo (requerida) -->
+    <div class="file-input-container">
+      <label for="backgroundImage">Imagen de Fondo <span style="color: red;">*</span></label>
+      <input
+        type="file"
+        id="backgroundImage"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="margin-top: 8px;"
+        required>
+      <p *ngIf="selectedFile" class="file-name">Archivo seleccionado: {{ selectedFile.name }}</p>
+      <mat-error *ngIf="templateForm.get('backgroundImage')?.invalid && templateForm.get('backgroundImage')?.touched">
+        La imagen de fondo es requerida
+      </mat-error>
+    </div>
+
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="templateForm.invalid">
+    Crear Fondo
+  </button>
+</div>

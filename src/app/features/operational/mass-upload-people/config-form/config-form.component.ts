@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { CardsService } from './../../../../core/Services/api/card/cards.service';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatSelectModule } from "@angular/material/select";
@@ -8,50 +9,73 @@ import { ApiService } from '../../../../core/Services/api/api.service';
 import { InternalDivisionCreate, InternalDivisionList } from '../../../../core/Models/organization/internal-divison.models';
 import { ProfileCreate, ProfileList } from '../../../../core/Models/organization/profile.models';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { map, Observable, startWith } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from "@angular/material/icon";
 import { TemplateSelectorDialogComponent } from '../template-selector-dialog/template-selector-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 
-
 @Component({
   selector: 'app-config-form',
-  imports: [MatInputModule,
+  standalone: true,
+  imports: [
+    MatInputModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatSelectModule, MatCardModule, CommonModule, MatAutocompleteModule, ReactiveFormsModule, MatIconModule],
+    MatSelectModule,
+    MatCardModule,
+    CommonModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    MatIconModule,
+  ],
   templateUrl: './config-form.component.html',
   styleUrl: './config-form.component.css'
 })
 export class ConfigFormComponent implements OnInit {
-  templates: any[] = [];
-  divisions: InternalDivisionList[] = [];
-  profiles: any[] = [];
-  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
-  filteredDivisions = this.divisions.slice();
+
+  @Output() configChanged = new EventEmitter<any>();
+
+  // Estado general
+  isPresetSelected = false;
+  selectedConfigId: number | null = null;
+
+  // Campos seleccionados
   selectedTemplate: any = null;
+  selectedProfileId: number | null = null;
+  selectedScheduleId: number | null = null;
+
+  // Nuevo campo: nombre configuración (modo manual)
+  configName: string = '';
+
   validityForm!: FormGroup;
 
-  // Control del input
+  divisions: InternalDivisionList[] = [];
+  filteredDivisions: InternalDivisionList[] = [];
+  profiles: ProfileList[] = [];
+  schedules: any[] = [];
+  templates: any[] = [];
+  existingConfigs: any[] = [];
+
   divisionControl = new FormControl<InternalDivisionList | null>(null);
-  @Output() configChanged = new EventEmitter<any>();
-  /**
-   *
-   */
+  // Campo nombre como FormControl
+  configNameControl = new FormControl<string | null>(null);
+
+
+  @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+
   constructor(
     private divissionService: ApiService<InternalDivisionCreate, InternalDivisionList>,
     private profileService: ApiService<ProfileCreate, ProfileList>,
     private templateService: ApiService<any, any>,
+    private scheduleService: ApiService<any, any>,
+    private cardService: CardsService,
     private dialog: MatDialog,
     private fb: FormBuilder,
-  ) {
+  ) { }
 
-
-  }
   ngOnInit(): void {
-    this.getData();
+    this.loadData();
 
     this.validityForm = this.fb.group({
       ValidFrom: [null],
@@ -59,67 +83,61 @@ export class ConfigFormComponent implements OnInit {
     });
   }
 
+  // Cargar TODO
+  loadData() {
+    this.getTemplates();
+    this.getDivisions();
+    this.getProfiles();
+    this.getSchedules();
+    this.getCardConfigurations();
+  }
 
-  filter(): void {
+  // ---------------------- CONSULTAS ----------------------
+
+  getTemplates() {
+    this.templateService.ObtenerActivos('CardTemplate').subscribe(res => {
+      this.templates = res.data;
+    });
+  }
+
+  getCardConfigurations() {
+    this.cardService.ObtenerActivos('Card').subscribe(res => {
+      this.existingConfigs = res.data;
+    });
+
+  }
+
+  getDivisions() {
+    this.divissionService.ObtenerActivos('InternalDivision').subscribe(res => {
+      this.divisions = res.data;
+      this.filteredDivisions = this.divisions.slice();
+    });
+  }
+
+  getProfiles() {
+    this.profileService.ObtenerActivos('Profile').subscribe(res => {
+      this.profiles = res.data;
+    });
+  }
+
+  getSchedules() {
+    this.scheduleService.ObtenerActivos('Schedule').subscribe(res => {
+      this.schedules = res.data;
+    });
+  }
+
+  // ---------------------- Lógica UI ----------------------
+
+  filter() {
     const filterValue = this.input.nativeElement.value.toLowerCase();
     this.filteredDivisions = this.divisions.filter(div =>
       div.name.toLowerCase().includes(filterValue)
     );
   }
 
-  displayDivision(division?: InternalDivisionList): string {
-    return division ? division.name : '';
+  displayDivision(d?: InternalDivisionList) {
+    return d ? d.name : '';
   }
-  emitConfig() {
-    const division = this.divisionControl.value;
-    console.log('División seleccionada:', division
-    );
-    this.configChanged.emit({
-      OrganizationId: 1,
-      OrganizationCode: 'ORG001',
-      OrganizationalUnitId: 1,
-      OrganizationalUnitCode: 'UNIT001',
-      InternalDivisionId: division?.id ?? 0,
-      InternalDivisionCode: division?.code ?? 'CODE001',
-      CardTemplateId: this.selectedTemplate?.id ?? 0,
-      CardTemplateCode: this.selectedTemplate?.code ?? 'CODE001',
-      ProfileId: this.profiles.find(p => p.id)?.id ?? 0,
-      ValidFrom: this.validityForm.value.ValidFrom
-        ? new Date(this.validityForm.value.ValidFrom).toISOString()
-        : null,
-      ValidTo: this.validityForm.value.ValidTo
-        ? new Date(this.validityForm.value.ValidTo).toISOString()
-        : null
-    });
-  }
-
-
-  getData() {
-    this.getTemplates();
-    this.getDivisions();
-    this.getProfiles();
-  }
-
-  getTemplates() {
-    this.templateService.ObtenerTodo('CardTemplate').subscribe(data =>
-      this.templates = data.data
-    );
-  }
-
-  getDivisions() {
-  this.divissionService.ObtenerTodo('InternalDivision').subscribe(data => {
-    this.divisions = data.data;
-    this.filteredDivisions = this.divisions.slice(); // ✅ refresca la lista inicial
-  });
-}
-
-  getProfiles() {
-    this.profileService.ObtenerTodo('Profile').subscribe(data =>
-      this.profiles = data.data
-    );
-
-  }
-
 
   openTemplateSelector() {
     const dialogRef = this.dialog.open(TemplateSelectorDialogComponent, {
@@ -128,10 +146,85 @@ export class ConfigFormComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.selectedTemplate = result;
-        console.log('Plantilla seleccionada:', this.selectedTemplate);
-      }
+      if (!result) return;
+      this.selectedTemplate = result;
+      this.emitConfig();
+    });
+  }
+
+  // ---------------------- Selección Configuración ----------------------
+
+  onSelectConfig(config: any) {
+    if (!config) {
+      // MODO MANUAL
+      this.isPresetSelected = false;
+      this.selectedConfigId = null;
+
+      this.configNameControl.reset();   // ← limpiar nombre
+      this.selectedTemplate = null;
+      this.selectedProfileId = null;
+      this.validityForm.reset();
+
+      this.emitConfig();
+      return;
+    }
+
+    // MODO PRESET
+    this.isPresetSelected = true;
+    this.selectedConfigId = config.id;
+
+    // Rellenar pero NO mostrar
+    this.configNameControl.setValue(config.name ?? null);
+
+
+    // Plantilla
+    this.selectedTemplate = {
+      id: config.cardTemplateId,
+      name: config.cardTemplateName
+    };
+
+    // Perfil
+    this.selectedProfileId = config.profileId;
+
+    // Vigencia
+    this.validityForm.patchValue({
+      ValidFrom: config.validFrom ? new Date(config.validFrom) : null,
+      ValidTo: config.validTo ? new Date(config.validTo) : null
+    });
+
+
+    // Emitir solo ID + Schedule
+    this.configChanged.emit({
+      cardConfigurationId: config.id,
+      ScheduleId: this.selectedScheduleId
+    });
+  }
+
+  // ---------------------- Emitir Configuración ----------------------
+
+  emitConfig() {
+    const division = this.divisionControl.value;
+
+    // Preset → solo enviamos id + schedule
+    if (this.isPresetSelected && this.selectedConfigId) {
+      this.configChanged.emit({
+        cardConfigurationId: this.selectedConfigId,
+        SheduleId: this.selectedScheduleId,
+        InternalDivisionId: division?.id ?? null,
+      });
+      return;
+    }
+
+    // Manual → enviamos todo
+
+    this.configChanged.emit({
+      ScheduleId: this.selectedScheduleId,
+      ConfigurationName: this.configNameControl.value || null,
+      InternalDivisionId: division?.id ?? null,
+      CardTemplateId: this.selectedTemplate?.id ?? null,
+      ProfileId: this.selectedProfileId,
+      ValidFrom: this.validityForm.value.ValidFrom,
+      ValidTo: this.validityForm.value.ValidTo
     });
   }
 

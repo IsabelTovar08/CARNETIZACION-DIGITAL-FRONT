@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../Models/api-response.models';
 import { CreateEventRequest, EventDtoRequest, SelectOption } from '../../../Models/operational/event.model';
+import { EventsByType, EventTopAttendance } from '../../../Models/organization/cards-dashboard.models';
 import { ApiService } from '../api.service';
 import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
 
@@ -93,8 +94,23 @@ public getAllEventsFull(): Observable<ApiResponse<any>> {
     return this.http.get<ApiResponse<SelectOption[]>>(`${this.urlBase}/InternalDivision`);
   }
 
+  // Dashboard: Obtener eventos por tipo
+  getEventsByType(): Observable<ApiResponse<EventsByType[]>> {
+    console.log('🔧 EventService: getEventsByType() llamado');
+    console.log('🔗 EventService: URL completa:', `${this.urlBase}/Event/types/count`);
+    
+    return this.http.get<ApiResponse<EventsByType[]>>(`${this.urlBase}/Event/types/count`);
+  }
 
+  // Dashboard: Obtener top eventos con asistencia por tipo
+  getTopAttendanceByType(typeId: number, top: number = 5): Observable<EventTopAttendance[]> {
+    console.log('🔧 EventService: getTopAttendanceByType() llamado con typeId:', typeId, 'top:', top);
+    console.log('🔗 EventService: URL completa:', `${this.urlBase}/Event/top-attendance-by-type/${typeId}?top=${top}`);
 
+    return this.http.get<EventTopAttendance[]>(
+      `${this.urlBase}/Event/top-attendance-by-type/${typeId}?top=${top}`
+    );
+  }
 
 
 }

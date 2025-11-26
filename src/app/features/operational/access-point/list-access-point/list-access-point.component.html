@@ -13,8 +13,16 @@
 <ng-template #metaTpl let-ap>
   <div class="ap-meta">
     <span *ngIf="ap.description">{{ ap.description }}</span>
-    <div *ngIf="ap.qrCode" class="ap-qr-small">
-      <img [src]="'data:image/png;base64,' + ap.qrCode" alt="QR" class="qr-small">
+    <div *ngIf="ap.qrCodeKey" class="ap-qr-small">
+      <img [src]="'data:image/png;base64,' + ap.qrCodeKey" alt="QR" class="qr-small" (click)="enlargeQr(ap.qrCodeKey)">
     </div>
   </div>
 </ng-template>
+
+<!-- Modal para QR agrandado -->
+<div *ngIf="enlargedQr" class="qr-modal-overlay" (click)="enlargedQr = null">
+  <div class="qr-modal-content" (click)="$event.stopPropagation()">
+    <img [src]="'data:image/png;base64,' + enlargedQr" alt="QR Agrandado" class="qr-large">
+    <button class="close-btn" (click)="enlargedQr = null">Cerrar</button>
+  </div>
+</div>
