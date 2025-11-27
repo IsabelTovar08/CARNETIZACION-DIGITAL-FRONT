@@ -1,6 +1,6 @@
 import { ApiService } from './../../../core/Services/api/api.service';
 import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
-import { ManagentPersonService, PersonSearchFilters } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
+import { ManagentPersonService } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
 import { Component, signal, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { debounceTime } from 'rxjs/operators';
 import { EventService } from '../../../core/Services/api/event/event.service';
+import { PersonSearchFilters } from '../../../core/Models/organization/person-search.models';
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { UserIssuedCardInfoComponent } from '../../../shared/components/user-issued-card-info/user-issued-card-info.component';
 
