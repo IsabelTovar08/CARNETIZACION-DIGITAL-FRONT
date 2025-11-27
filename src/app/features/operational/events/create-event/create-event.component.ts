@@ -744,7 +744,7 @@ private mapFormToUpdateDto(): EventDtoRequest {
     const dialogRef = this.dialog.open(SupervisorSelectionModalComponent, {
       width: '800px',
       maxWidth: '90vw',
-      data: { eventId: this.editingEventId }
+      data: { eventId: this.editingEventId, isForCreation: !this.editingEventId }
     });
 
     dialogRef.afterClosed().subscribe(result => {

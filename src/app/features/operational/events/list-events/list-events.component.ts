@@ -42,121 +42,146 @@ export class ListEventsComponent implements OnInit {
   typeOptions: string[] = ['Todos'];
   visibilityOptions: string[] = ['Todos', 'Público', 'Privado'];
 
-  /**
-    *
-    */
-   constructor(
-     private apiService: ApiService<Event, Event>,
-     private eventService: EventService,
-     private attendanceService: AttendanceService,
-     private route: ActivatedRoute,
-     private router: Router,
-     private dialog: MatDialog,
-     private snackbarService: SnackbarService,
+  constructor(
+    private apiService: ApiService<Event, Event>,
+    private eventService: EventService,
+    private attendanceService: AttendanceService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog,
+    private snackbarService: SnackbarService,
+  ) {}
 
-   ) {
-
-   }
   ngOnInit(): void {
     this.loadEvents();
   }
 
-  
+  onFinalizeEvent(eventId: number): void {
+    Swal.fire({
+      title: '¿Finalizar evento?',
+      text: 'Esta acción finalizará el evento y notificará a los supervisores. ¿Estás seguro?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, finalizar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eventService.finalizeEvent(eventId).subscribe({
+          next: (response) => {
+            this.snackbarService.showSuccess(response.message || 'Evento finalizado exitosamente');
+            this.loadEvents(); // Actualizar la lista
+          },
+          error: (err) => {
+            console.error('Error al finalizar evento:', err);
+            this.snackbarService.showError('Error al finalizar el evento');
+          }
+        });
+      }
+    });
+  }
+
+
+  // 👇 MÉTODO CORREGIDO - Ahora pasa el evento completo
   openTagsModal(e: any) {
-  this.dialog.open(EventTagsModalComponent, {
-    width: '650px',
-    data: { eventId: e.id }
-  });
-}
+    console.log("🔵 Abriendo modal con evento:", e);
+    console.log("👥 Supervisores del evento:", e.supervisors);
+    
+    this.dialog.open(EventTagsModalComponent, {
+      width: '650px',
+      data: { event: e } // 👈 Pasa el evento completo
+    });
+  }
 
 
   private loadEvents(): void {
-  this.eventService.getAllEventsFull().subscribe({
-    next: (res) => {
-      console.log("🚀 Datos crudos del servicio:", res.data);
+    this.eventService.getAllEventsFull().subscribe({
+      next: (res) => {
+        console.log("🚀 Datos crudos del servicio:", res.data);
 
-      const events = res.data;
-      this.allEvents = events.map((e: any) => {
-        const card = this.toCardItem(e);
-        console.log("🟦 Tarjeta generada:", card);
-        return card;
-      });
+        const events = res.data;
+        this.allEvents = events.map((e: any) => {
+          const card = this.toCardItem(e);
+          console.log("🟦 Tarjeta generada:", card);
+          return card;
+        });
 
-      // Poblar opciones de tipo de evento
-      this.populateTypeOptions();
+        // Poblar opciones de tipo de evento
+        this.populateTypeOptions();
 
-      // Aplicar filtros iniciales
-      this.applyFilters();
-    },
-    error: () => {
-      this.snackbarService.showError("Error al cargar los eventos completos");
-    }
-  });
-}
-
-
-// Para convertir los datos del evento del API a CardItem y mostrarlos en las tarjetas
-private toCardItem = (e: any): any => {
-  const eventStart = e.eventStart ? new Date(e.eventStart) : undefined;
-  const eventEnd = e.eventEnd ? new Date(e.eventEnd) : undefined;
-
-  const dateLabel =
-    eventStart && eventEnd
-      ? `${eventStart.toLocaleDateString()} – ${eventEnd.toLocaleDateString()}`
-      : eventStart?.toLocaleDateString();
-
-  // ---------- Construimos tags como OBJETOS ----------
-  const tagObjects: Array<{ label: string; color: string }> = [];
-
-  // Estado
-  if (e.statusName) {
-    tagObjects.push({ label: e.statusName, color: '#a8d8ea' }); // Azul
+        // Aplicar filtros iniciales
+        this.applyFilters();
+      },
+      error: () => {
+        this.snackbarService.showError("Error al cargar los eventos completos");
+      }
+    });
   }
 
-  // Tipo de evento
-  if (e.eventTypeName) {
-    tagObjects.push({ label: e.eventTypeName, color: '#b0c4de' }); // Gris
-  }
 
-  // Audiencias (perfil / unidad / división)
-  (e.audiences ?? []).forEach((a: any) => {
-    switch (a.typeId) {
-      case 1: // Perfil
-        tagObjects.push({ label: a.referenceName, color: '#f0f8ff' }); // Verde
-        break;
-      case 2: // Unidad organizativa
-        tagObjects.push({ label: a.referenceName, color: '#d4a5c7' }); // Morado
-        break;
-      case 3: // División interna
-        tagObjects.push({ label: a.referenceName, color: '#f7dc6f' }); // Naranja
-        break;
+  // Para convertir los datos del evento del API a CardItem y mostrarlos en las tarjetas
+  private toCardItem = (e: any): any => {
+    const eventStart = e.eventStart ? new Date(e.eventStart) : undefined;
+    const eventEnd = e.eventEnd ? new Date(e.eventEnd) : undefined;
+
+    const dateLabel =
+      eventStart && eventEnd
+        ? `${eventStart.toLocaleDateString()} – ${eventEnd.toLocaleDateString()}`
+        : eventStart?.toLocaleDateString();
+
+    // ---------- Construimos tags como OBJETOS ----------
+    const tagObjects: Array<{ label: string; color: string }> = [];
+
+    // Estado
+    if (e.statusName) {
+      tagObjects.push({ label: e.statusName, color: '#a8d8ea' }); // Azul
     }
-  });
 
-  // ---------- Separamos visibles y extra ----------
-  const visibles = tagObjects.slice(0, 3);
-  const extras = tagObjects.length > 3 ? tagObjects.slice(3) : [];
+    // Tipo de evento
+    if (e.eventTypeName) {
+      tagObjects.push({ label: e.eventTypeName, color: '#b0c4de' }); // Gris
+    }
 
-  return {
-    id: e.id,
-    title: e.name ?? e.code ?? 'Evento',
-    subtitle: e.eventTypeName ?? 'Evento',
-    dateLabel,
-    description: e.description ?? 'Sin descripción.',
-    imageUrl:
-      e.imageUrl ??
-      'https://www.avilatinoamerica.com/images/stories/AVI/users/rsanta/16_tecnologias_basicas_para_un_auditorio.jpg',
+    // Audiencias (perfil / unidad / división)
+    (e.audiences ?? []).forEach((a: any) => {
+      switch (a.typeId) {
+        case 1: // Perfil
+          tagObjects.push({ label: a.referenceName, color: '#f0f8ff' }); // Verde
+          break;
+        case 2: // Unidad organizativa
+          tagObjects.push({ label: a.referenceName, color: '#d4a5c7' }); // Morado
+          break;
+        case 3: // División interna
+          tagObjects.push({ label: a.referenceName, color: '#f7dc6f' }); // Naranja
+          break;
+      }
+    });
 
-    // 👇 ahora sí como espera generic-cards
-    tags: visibles,           // [{ label, color }]
-    fullTags: tagObjects,     // todas las tags
-    showMoreCount: extras.length,
+    // ---------- Separamos visibles y extra ----------
+    const visibles = tagObjects.slice(0, 3);
+    const extras = tagObjects.length > 3 ? tagObjects.slice(3) : [];
 
-    isLocked: !(e.isPublic ?? e.ispublic ?? true),
-    isDeleted: !!e.isDeleted,
-    ...e
+    return {
+      id: e.id,
+      title: e.name ?? e.code ?? 'Evento',
+      subtitle: e.eventTypeName ?? 'Evento',
+      dateLabel,
+      description: e.description ?? 'Sin descripción.',
+      imageUrl:
+        e.imageUrl ??
+        'https://www.avilatinoamerica.com/images/stories/AVI/users/rsanta/16_tecnologias_basicas_para_un_auditorio.jpg',
+
+      // 👇 ahora sí como espera generic-cards
+      tags: visibles,           // [{ label, color }]
+      fullTags: tagObjects,     // todas las tags
+      showMoreCount: extras.length,
+
+      isLocked: !(e.isPublic ?? e.ispublic ?? true),
+      isDeleted: !!e.isDeleted,
+      ...e // 👈 IMPORTANTE: Esto incluye supervisors, accessPoints, schedules, etc.
+    };
   };
-};
 
 
 
@@ -167,11 +192,11 @@ private toCardItem = (e: any): any => {
   
 
   view(e: any) {
+    // 👇 Esta es la función que se llama con el botón "Más información"
     this.openTagsModal(e);
   }
 
   edit(e: any) {
-   
     this.router.navigate(['crear'], { relativeTo: this.route, queryParams: { id: e.id } });
   }
 
@@ -239,18 +264,12 @@ private toCardItem = (e: any): any => {
     const dialogRef = this.dialog.open(SupervisorSelectionModalComponent, {
       width: '800px',
       maxWidth: '90vw',
-      data: { eventId: e.id }
+      data: { eventId: e.id, supervisors: e.supervisors || [], isForCreation: false }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.supervisorUserIds) {
-        // Aquí implementaremos la lógica para enviar el supervisorUserIds al endpoint
-        console.log('Supervisor asignado:', result);
-        
-        // TODO: Implementar la llamada al endpoint para asignar supervisor
-        // Suponiendo que existe un método en EventService para asignar supervisor
-        this.updateEventSupervisor(e.id, result.supervisorUserIds);
-      }
+      // Recargar la lista para reflejar cambios en supervisores (asignación/eliminación)
+      this.loadEvents();
     });
   }
 
@@ -284,12 +303,6 @@ private toCardItem = (e: any): any => {
     });
     let filtered = [...this.allEvents];
     console.log('Eventos totales antes de filtrar:', this.allEvents.length);
-    console.log('Ejemplo de evento:', this.allEvents[0] ? {
-      title: this.allEvents[0].title,
-      statusId: this.allEvents[0].statusId,
-      eventTypeName: this.allEvents[0].eventTypeName,
-      isLocked: this.allEvents[0].isLocked
-    } : 'No hay eventos');
 
     // Filtro por estado
     if (this.selectedStatus !== 'Todos') {
@@ -301,7 +314,7 @@ private toCardItem = (e: any): any => {
       } else if (this.selectedStatus === 'Finalizado') {
         statusId = 9;
       }
-      filtered = filtered.filter(e => e.statusId === statusId);
+      filtered = filtered.filter(e => e.statusId === statusId!);
       console.log('Después de filtro estado:', filtered.length);
     }
 
@@ -314,7 +327,7 @@ private toCardItem = (e: any): any => {
     // Filtro por visibilidad
     if (this.selectedVisibility !== 'Todos') {
       const isPublic = this.selectedVisibility === 'Público';
-      filtered = filtered.filter(e => e.isLocked !== isPublic); // isLocked es lo opuesto a isPublic
+      filtered = filtered.filter(e => e.isLocked !== isPublic);
       console.log('Después de filtro visibilidad:', filtered.length);
     }
 

@@ -49,12 +49,19 @@ export class SupervisorSelectionModalComponent implements OnInit {
   pageSize = 20;
   loading = false;
 
+  currentSupervisors: any[] = [];
+
+  isForCreation: boolean = false;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { eventId: number },
+    @Inject(MAT_DIALOG_DATA) public data: { eventId: number, supervisors?: any[], isForCreation?: boolean },
     private dialogRef: MatDialogRef<SupervisorSelectionModalComponent>,
     private personService: ManagentPersonService,
     private eventService: EventService
-  ) {}
+  ) {
+    this.currentSupervisors = data.supervisors || [];
+    this.isForCreation = data.isForCreation || false;
+  }
 
   ngOnInit(): void {
     this.loadFilterOptions();
@@ -130,10 +137,40 @@ export class SupervisorSelectionModalComponent implements OnInit {
   }
 
   selectPerson(person: PersonDto): void {
-    // Enviar el userId del supervisor seleccionado
-    this.dialogRef.close({
-      supervisorUserIds: [person.userId],
-      selectedPerson: person
+    if (!person.userId) return;
+
+    if (this.isForCreation) {
+      // Para creación de evento, solo devolver la persona seleccionada
+      this.dialogRef.close({
+        selectedPerson: person
+      });
+    } else {
+      // Para eventos existentes, asignar vía API
+      this.eventService.assignSupervisorIndividual(this.data.eventId, person.userId).subscribe({
+        next: () => {
+          // Agregar a la lista local
+          this.currentSupervisors.push({
+            userId: person.userId,
+            fullName: `${person.firstName} ${person.lastName}`,
+            userEmail: person.email
+          });
+        },
+        error: (error) => {
+          console.error('Error al asignar supervisor:', error);
+        }
+      });
+    }
+  }
+
+  removeSupervisor(userId: number): void {
+    this.eventService.removeSupervisor(this.data.eventId, userId).subscribe({
+      next: () => {
+        // Remover de la lista local
+        this.currentSupervisors = this.currentSupervisors.filter(s => s.userId !== userId);
+      },
+      error: (error) => {
+        console.error('Error al eliminar supervisor:', error);
+      }
     });
   }
 

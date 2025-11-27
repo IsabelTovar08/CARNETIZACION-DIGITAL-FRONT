@@ -98,6 +98,10 @@
     Supervisor
   </button>
 
+  <button *ngIf="e.statusId !== 9" mat-icon-button color="primary" matTooltip="Finalizar evento" (click)="onFinalizeEvent(e.id)">
+    <mat-icon>check_circle</mat-icon>
+  </button>
+
   <button mat-icon-button matTooltip="Más acciones" [matMenuTriggerFor]="menu">
     <mat-icon>more_vert</mat-icon>
   </button>
@@ -106,11 +110,6 @@
 
 
   <span class="spacer"></span>
-
-  <!-- Menú acciones -->
-  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más acciones">
-    <mat-icon>more_vert</mat-icon>
-  </button>
 
   <mat-menu #menu="matMenu">
     <button mat-menu-item (click)="edit(e)">

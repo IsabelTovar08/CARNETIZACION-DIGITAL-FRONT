@@ -1,6 +1,22 @@
 <h2 mat-dialog-title>Asignar Supervisor</h2>
 
 <mat-dialog-content>
+  <!-- Supervisores actuales -->
+  <div *ngIf="currentSupervisors.length > 0 && !isForCreation" class="current-supervisors">
+    <h3>Supervisores Actuales</h3>
+    <div class="supervisor-list">
+      <div *ngFor="let supervisor of currentSupervisors" class="supervisor-item">
+        <div class="supervisor-info">
+          <div class="supervisor-name">{{ supervisor.fullName }}</div>
+          <div class="supervisor-email">{{ supervisor.userEmail }}</div>
+        </div>
+        <button mat-icon-button color="warn" matTooltip="Eliminar supervisor" (click)="removeSupervisor(supervisor.userId)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Filtros -->
   <div class="filters-container">
     <mat-form-field appearance="outline" class="filter-field">

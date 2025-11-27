@@ -66,24 +66,30 @@ export class EventTagsModalComponent {
   ];
 
  constructor(
-  @Inject(MAT_DIALOG_DATA) public data: { eventId: number },
+  @Inject(MAT_DIALOG_DATA) public data: { event: EventDetailsDtoResponse  },
   private eventService: EventService
 ) {
-  this.loadEvent();
+  this.event = data.event;
+
+  if (!this.event.supervisors) {
+      this.event.supervisors = [];
+    }
+    console.log("🟦 EVENTO COMPLETO EN MODAL", this.event);
+    console.log("👥 SUPERVISORES", this.event.supervisors);
 }
 
-  // ========= CARGAR DETALLES DEL EVENTO ==========
-   private loadEvent(): void {
-    this.eventService.getEventDetails(this.data.eventId).subscribe({
-      next: (r) => {
-        this.event = r.data;
-        console.log("🟦 EVENTO COMPLETO", this.event);
-      },
-      error: (err) => {
-        console.error("❌ Error cargando detalles del evento:", err);
-      }
-    });
-  }
+  // // ========= CARGAR DETALLES DEL EVENTO ==========
+  //  private loadEvent(): void {
+  //   this.eventService.getEventDetails(this.data.eventId).subscribe({
+  //     next: (r) => {
+  //       this.event = r.data;
+  //       console.log("🟦 EVENTO COMPLETO", this.event);
+  //     },
+  //     error: (err) => {
+  //       console.error("❌ Error cargando detalles del evento:", err);
+  //     }
+  //   });
+  // }
 
   // ========= TAGS ==========
   private darkenColor(hex: string, percent: number): string {

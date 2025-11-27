@@ -1,3 +1,49 @@
+/* Supervisores actuales */
+.current-supervisors {
+  margin-bottom: 24px;
+}
+
+.current-supervisors h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.supervisor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.supervisor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.supervisor-info {
+  flex: 1;
+}
+
+.supervisor-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.supervisor-email {
+  font-size: 14px;
+  color: #666;
+}
+
 /* Estilos para el modal de selección de supervisor */
 .filters-container {
   display: flex;

@@ -100,11 +100,11 @@
 .button-container {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
-  /* Evita salto de línea innecesario */
+  flex-wrap: wrap;
+  /* Permite envolver botones si es necesario */
   align-items: center;
   flex-shrink: 1;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .info-button,
