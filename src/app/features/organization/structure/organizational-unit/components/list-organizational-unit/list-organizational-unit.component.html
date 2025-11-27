@@ -21,21 +21,68 @@
 
 <!-- Acciones personalizadas -->
 <ng-template #actionsTpl let-e>
-  <button mat-stroked-button (click)="view(e)">
-    Ver Más Información
-  </button>
-
-  <span class="spacer"></span>
-
-  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Más acciones">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="edit(e)"><mat-icon>edit</mat-icon>Editar</button>
-    <button mat-menu-item (click)="remove(e)"><mat-icon>delete</mat-icon>Eliminar</button>
-    <button mat-menu-item (click)="toggle(e)">
-      <mat-icon>{{ e.isDeleted ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-      {{ e.isDeleted ? 'Activar' : 'Desactivar' }}
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" (click)="view(e)">
+      <mat-icon>visibility</mat-icon>
+      Ver Detalle
     </button>
-  </mat-menu>
+
+    <button mat-raised-button color="accent" (click)="edit(e)">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+
+    <button mat-raised-button color="warn" (click)="remove(e)">
+      <mat-icon>delete</mat-icon>
+      Eliminar
+    </button>
+  </div>
+</ng-template>
+
+<!-- Dialog Template for Create Form -->
+<ng-template #createFormDialog>
+  <h2 mat-dialog-title>Crear Unidad Organizativa</h2>
+  <mat-dialog-content>
+    <form [formGroup]="organizationalUnitForm" class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="organizationalUnitForm.get('name')?.invalid && organizationalUnitForm.get('name')?.touched">
+          Nombre es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" required></textarea>
+        <mat-error *ngIf="organizationalUnitForm.get('description')?.invalid && organizationalUnitForm.get('description')?.touched">
+          Descripción es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="code" required>
+        <mat-error *ngIf="organizationalUnitForm.get('code')?.invalid && organizationalUnitForm.get('code')?.touched">
+          Código es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Sedes</mat-label>
+        <mat-select formControlName="branchIds" multiple required>
+          <mat-option *ngFor="let branch of branches" [value]="branch.id">
+            {{ branch.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="organizationalUnitForm.get('branchIds')?.invalid && organizationalUnitForm.get('branchIds')?.touched">
+          Seleccionar al menos una sede
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="organizationalUnitForm.invalid">Crear</button>
+  </mat-dialog-actions>
 </ng-template>

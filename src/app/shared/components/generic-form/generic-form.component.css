@@ -51,6 +51,7 @@ mat-form-field {
   max-height: calc(90vh - 160px); /* espacio dinámico para pantallas grandes */
   overflow-y: auto;
   padding-right: 8px; /* espacio para que no se tape el scrollbar */
+  padding-top: 1rem; /* espacio superior para bajar los inputs */
   scrollbar-width: thin;
   scrollbar-color: #9ca3af #f3f4f6; /* gris suave */
 }
