@@ -179,7 +179,10 @@ export class DetailOrganizationalUnitComponent implements OnInit {
       this.organizationalUnitService.removeBranch(dto).subscribe({
         next: () => {
           this.snackbarService.showSuccess('Sucursal removida');
-          this.loadUnitDetail(); // 🔥 actualizar
+
+          // 🔥 Actualizar listas localmente en lugar de recargar todo
+          this.assignedBranches = this.assignedBranches.filter(b => b.id !== branchId);
+          this.updateAvailableBranches();
         },
         error: (err) => {
           this.snackbarService.showError('Error al remover sucursal');
