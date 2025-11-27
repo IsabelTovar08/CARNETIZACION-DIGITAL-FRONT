@@ -20,7 +20,7 @@ import { SnackbarService } from '../../../core/Services/snackbar/snackbar.servic
 export class HeaderSeccionComponent implements OnInit {
   activeTab: string = 'profile';
 
-  profileImage: string = '/assets/perfiles/perfil.png';
+  profileImage: string = '/assets/default-avatar.png';
   tempImage: string | null | undefined = null;
   selectedFile: File | null = null;
   isEditing: boolean = false;
@@ -30,7 +30,9 @@ export class HeaderSeccionComponent implements OnInit {
 
   tabs = [
     { key: 'me', label: 'Perfil', route: '/dashboard/perfil/me' },
-    { key: 'organizational', label: 'Organizacional', route: '/dashboard/perfil/organizational' }
+    { key: 'organizational', label: 'Organizacional', route: '/dashboard/perfil/organizational' },
+    { key: 'security', label: 'Seguridad', route: '/dashboard/perfil/security' }
+
   ];
 
   constructor(
@@ -49,6 +51,9 @@ export class HeaderSeccionComponent implements OnInit {
       } else if (event.url.includes('/perfil/organizational')) {
         this.activeTab = 'organizational';
       }
+      else if (event.url.includes('/perfil/security')) {
+        this.activeTab = 'security';
+      }
     });
   }
   ngOnInit(): void {
@@ -59,7 +64,7 @@ export class HeaderSeccionComponent implements OnInit {
 
   private updateProfileImage(): void {
     // Siempre usar la imagen del usuario si existe, sino usar la predeterminada
-    this.profileImage = this.user()?.photoUrl || '/assets/perfiles/perfil.png';
+    this.profileImage = this.user()?.photoUrl || '/assets/default-avatar.png';
   }
 
   selectTab(tabKey: string, route: string) {
@@ -113,8 +118,8 @@ export class HeaderSeccionComponent implements OnInit {
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     // Si la imagen falla al cargar, usar la imagen predeterminada
-    if (imgElement.src !== '/assets/perfiles/perfil.png') {
-      imgElement.src = '/assets/perfiles/perfil.png';
+    if (imgElement.src !== '/assets/default-avatar.png') {
+      imgElement.src = '/assets/default-avatar.png';
     }
   }
 

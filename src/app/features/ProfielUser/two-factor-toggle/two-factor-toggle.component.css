@@ -1,0 +1,63 @@
+.twofactor-card {
+  padding: 22px;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.section-description {
+  font-size: 14px;
+  color: #5b5b5b;
+  line-height: 1.5;
+}
+
+.divider {
+  margin: 18px 0;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.toggle-info {
+  max-width: 70%;
+}
+
+.toggle-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.toggle-text {
+  margin-top: 6px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.toggle-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spin {
+  margin-left: 6px;
+}
+
+.note {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #757575;
+  max-width: 90%;
+  line-height: 1.4;
+}

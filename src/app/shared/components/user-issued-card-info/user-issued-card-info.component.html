@@ -1,0 +1,232 @@
+<div class="profile-container">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+
+
+  <!-- ========================================================= -->
+  <!-- === VISTA A: CONSULTA POR CARNET (issuedCardId)        === -->
+  <!-- ========================================================= -->
+  <div *ngIf="isCardView && userData && !loading" class="profile-content">
+
+    <!-- HEADER -->
+    <div class="profile-header">
+      <div class="photo-section">
+        <img
+          [src]="userData.userPhotoUrl || 'assets/default-avatar.png'"
+          alt="Foto"
+          class="profile-photo"
+          (error)="onImageError($event)" />
+
+        <img
+          [src]="userData.logoUrl"
+          alt="Logo"
+          class="company-logo"
+          (error)="onLogoError($event)" />
+      </div>
+
+      <div class="header-info">
+        <h1>{{ userData.name }}</h1>
+        <p class="profile-type">{{ userData.profile }}</p>
+        <p class="category">{{ userData.categoryArea }}</p>
+      </div>
+    </div>
+
+    <!-- INFORMACIÓN PERSONAL (se mantiene igual que antes) -->
+    <div class="info-grid">
+
+      <div class="info-section">
+        <h2>Información Personal</h2>
+
+        <div class="info-item">
+          <span class="label">Documento:</span>
+          <span class="value">{{ userData.documentNumber }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.bloodTypeValue">
+          <span class="label">Tipo de Sangre:</span>
+          <span class="value">{{ userData.bloodTypeValue }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Teléfono:</span>
+          <span class="value">{{ userData.phoneNumber }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.email">
+          <span class="label">Email:</span>
+          <span class="value">{{ userData.email }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.address">
+          <span class="label">Dirección:</span>
+          <span class="value">{{ userData.address }}</span>
+        </div>
+      </div>
+
+
+      <!-- INFORMACIÓN DEL CARNET -->
+      <div class="info-section">
+        <h2>Información del Carnet</h2>
+
+        <div class="info-item">
+          <span class="label">Perfil:</span>
+          <span class="value">{{ userData.profile }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">División:</span>
+          <span class="value">{{ userData.internalDivisionName }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Unidad Organizacional:</span>
+          <span class="value">{{ userData.organizationalUnit }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Empresa:</span>
+          <span class="value">{{ userData.companyName }}</span>
+        </div>
+      </div>
+
+
+      <div class="info-section">
+        <h2>Validez</h2>
+
+        <div class="info-item">
+          <span class="label">Desde:</span>
+          <span class="value">{{ formatDate(userData.validFrom) }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Hasta:</span>
+          <span class="value">{{ formatDate(userData.validUntil) }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botón PDF -->
+    <div class="action-section">
+      <button class="btn-carnet" (click)="verCarnet(userData)">
+        Ver Carnet PDF
+      </button>
+    </div>
+
+  </div>
+
+
+
+
+
+  <!-- ========================================================= -->
+  <!-- === VISTA B: CONSULTA POR PERSONA (personId)            === -->
+  <!-- ========================================================= -->
+  <div *ngIf="isPersonView && userData && !loading" class="profile-content">
+
+    <!-- HEADER PERSONA -->
+    <div class="profile-header">
+      <div class="photo-section">
+        <img
+          [src]="userData.userPhotoUrl || 'assets/default-avatar.png'"
+          class="profile-photo">
+      </div>
+
+      <div class="header-info">
+        <h1>{{ userData.name }}</h1>
+        <p class="profile-type">Información del usuario</p>
+        <p class="category">Documento: {{ userData.documentNumber }}</p>
+      </div>
+    </div>
+
+    <!-- INFO GENERAL -->
+    <div class="info-grid">
+
+      <div class="info-section">
+        <h2>Información Personal</h2>
+
+        <div class="info-item">
+          <span class="label">Documento:</span>
+          <span class="value">{{ userData.documentNumber }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.bloodTypeValue">
+          <span class="label">Tipo de Sangre:</span>
+          <span class="value">{{ userData.bloodTypeValue }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Teléfono:</span>
+          <span class="value">{{ userData.phoneNumber }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.email">
+          <span class="label">Email:</span>
+          <span class="value">{{ userData.email }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="userData.address">
+          <span class="label">Dirección:</span>
+          <span class="value">{{ userData.address }}</span>
+        </div>
+      </div>
+
+    </div>
+
+
+
+
+    <!-- ACORDEONES -->
+    <div class="accordion-wrapper">
+
+      <!-- CARNETS -->
+      <mat-accordion *ngIf="cardsList">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Carnets del usuario</mat-panel-title>
+            <mat-panel-description>{{ cardsList.length }}</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let c of cardsList" class="accordion-item">
+            <strong>{{ c.profileName }}</strong> — {{ c.internalDivisionName }}
+            <p><strong>Emitido:</strong> {{ c.issuedDate }}</p>
+            <p><strong>Expira:</strong> {{ c.validUntil }}</p>
+            <button class="btn-mini" (click)="verCarnet(c)">Ver PDF</button>
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <!-- MODIFICACIONES -->
+      <mat-accordion *ngIf="modifications">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Solicitudes de modificación</mat-panel-title>
+            <mat-panel-description>{{ modifications.length }}</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngFor="let m of modifications" class="accordion-item">
+            <strong>{{ m.field }}</strong>
+            <p><strong>Antes:</strong> {{ m.old }}</p>
+            <p><strong>Después:</strong> {{ m.new }}</p>
+            <p class="date">{{ m.date }}</p>
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+    </div>
+
+  </div>
+
+</div>

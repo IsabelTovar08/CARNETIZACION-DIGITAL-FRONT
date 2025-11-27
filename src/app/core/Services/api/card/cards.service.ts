@@ -38,4 +38,13 @@ export class CardsService extends ApiService<any, any> {
     return this.http.get<ApiResponse<CarnetsByDivision[]>>(`${this.urlBase}/IssuedCard/by-unit/${unitId}/divisions`);
   }
 
+  CrearWithImage(endpoint: string, data: FormData) {
+    return this.wrapper.handleRequest(this.http.post(`${this.urlBase}/${endpoint}`, data));
+  }
+
+  ActualizarWithImage(endpoint: string, data: FormData) {
+    return this.wrapper.handleRequest(this.http.put(`${this.urlBase}/${endpoint}`, data));
+  }
+
+
 }

@@ -42,8 +42,11 @@ import { UserStoreService } from '../../../../../core/Services/auth/user-store.s
 export class TargetPersonComponent {
   // Input para recibir datos de la empresa si es necesario
   @Input() companyData: any;
-  // Input para controlar si requiere validación de contraseña 
+  // Input para controlar si requiere validación de contraseña
   @Input() requirePasswordValidation = false;
+
+  createUser: boolean = false;
+
 
   @Output() formSubmitted = new EventEmitter<any>();
 
@@ -54,10 +57,10 @@ export class TargetPersonComponent {
   deparments: Deparment[] = [];
   schedules: ScheduleList[] = [];
 
-   user!: Signal<UserMe | null>;
+  user!: Signal<UserMe | null>;
   isLoggedIn!: Signal<boolean>;
 
-  // Variables para el control de edición y modal 
+  // Variables para el control de edición y modal
 
   constructor(
     private fb: FormBuilder,
@@ -67,16 +70,17 @@ export class TargetPersonComponent {
     private userService: VerificationCredencials,
     private snackbarService: SnackbarService,
     private apiServicePerson: ApiService<PersonCreate, PersonList>,
-     private store: UserStoreService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any
-  ) {}
+    private store: UserStoreService,
+    @Optional() private dialogRef: MatDialogRef<TargetPersonComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: any,
+  ) { }
 
   // propiedad para simular cierre si es modal
-  dialogRef?: MatDialogRef<TargetPersonComponent>;
 
   ngOnInit(): void {
     this.user = this.store.user;
     this.isLoggedIn = this.store.isLoggedIn;
+    if (this.data.createUser) this.createUser = this.data.createUser;
 
     this.profileForm = this.fb.group({
       id: [''],
@@ -92,6 +96,7 @@ export class TargetPersonComponent {
       address: ['', Validators.minLength(10)],
       departmentId: [null, Validators.required],
       cityId: [{ value: null, disabled: true }, [Validators.required, Validators.min(1)]],
+      createUser: [this.createUser]
     });
 
     this.getData();
@@ -107,7 +112,7 @@ export class TargetPersonComponent {
     });
   }
 
-  getData(){
+  getData() {
     this.listService.getdocumentTypes().subscribe(data => this.documentTypes = data);
     this.listService.getbloodTypes().subscribe(data => this.bloodTypes = data);
     this.listService.getdeparments().subscribe(data => this.deparments = data);
@@ -115,7 +120,7 @@ export class TargetPersonComponent {
 
   getCytie(id: number) {
     this.ubicationService.GetCytiesByDeparment(id).subscribe((res: any) => {
-      
+
       this.cities = Array.isArray(res.data) ? res.data : res;
     });
   }
@@ -129,7 +134,7 @@ export class TargetPersonComponent {
       // Preparar datos para crear nueva persona
       const personData = {
         ...this.profileForm.value,
-        id: 0 
+        id: 0
       };
 
       // Emitir el evento con los datos del formulario
@@ -138,6 +143,9 @@ export class TargetPersonComponent {
       this.apiServicePerson.Crear('Person', personData).subscribe((data) => {
         console.log(data);
         this.snackbarService.showSuccess('Persona creada con éxito');
+        const personId = data.data.id;
+
+        this.dialogRef?.close(personId);
         this.profileForm.reset();
         // Resetear validaciones del formulario
         this.profileForm.get('cityId')?.disable();
@@ -148,7 +156,7 @@ export class TargetPersonComponent {
     }
   }
 
-  // Función para cancelar cambios 
+  // Función para cancelar cambios
   onCancel() {
     this.dialogRef?.close();
   }

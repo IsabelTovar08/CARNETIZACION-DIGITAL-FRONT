@@ -44,4 +44,32 @@ mat-card-title {
 }
 
 
+/* Campos bloqueados (readonly) */
+mat-form-field input[readonly] {
+  background: #f1f5f9;
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+/* mat-select bloqueado */
+mat-select[disabled] {
+  opacity: 0.7;
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+.full-width {
+  grid-column: span 2;
+}
+
+mat-form-field input[readonly] {
+  background: #f1f5f9 !important;
+  cursor: not-allowed;
+  color: #64748b;
+}
+
+mat-select[disabled] {
+  opacity: 0.7;
+  background: #f1f5f9;
+  border-radius: 6px;
+}
 
