@@ -188,13 +188,15 @@ export class CardPersonListComponent {
 
           return {
             personId: person.id,
-            issuedCardId: person.issuedCardId,
-            id: person.issuedCardId,
+            issuedCardId: person.issuedCardId || null,
+            id: person.id,
             photoUrl: person.photoUrl || '/assets/images/default-avatar.png',
 
             personName: person.firstName && person.lastName
               ? `${person.firstName} ${person.lastName}`
               : person.name || 'Sin nombre',
+
+            cards: person.cards,
 
             internalDivisionNames: divisions || 'Sin divisiones',
             profileName: profiles || 'Sin perfiles',
@@ -290,6 +292,26 @@ export class CardPersonListComponent {
     });
   }
 
+   getStatusClass(status: any): string {
+    if (typeof status === 'string') {
+      status = status.toLowerCase();
+    }
+    
+    switch (status) {
+      case 0:
+      case 'pending':
+        return 'pending';
+      case 1:
+      case 'approved':
+        return 'approved';
+      case 2:
+      case 'rejected':
+        return 'rejected';
+      default:
+        return '';
+    }
+  }
+
 
   /// <summary>
   /// Abre un archivo PDF desde un Blob en una nueva pestaña del navegador
@@ -310,7 +332,7 @@ export class CardPersonListComponent {
       width: '850px',
       maxHeight: '90vh',
 
-      data: { personId }
+      data: { personId: personId }
     });
   }
 

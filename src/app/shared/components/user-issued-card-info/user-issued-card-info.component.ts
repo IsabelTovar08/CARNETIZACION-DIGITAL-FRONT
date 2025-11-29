@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
+import { ViewDatePersonCarnetService } from '../../../core/Services/api/person/ViewDatePersonCarnet/ViewDatePersonCarnet.service';
+import { MatIcon } from "@angular/material/icon";
 
 interface UserProfile {
   id: number;
@@ -13,7 +15,6 @@ interface UserProfile {
   bloodTypeValue: string;
   address: string | null;
 
-  /* CAMPOS SOLO DE CARNET */
   profile: string;
   categoryArea: string;
   companyName: string;
@@ -28,7 +29,7 @@ interface UserProfile {
 
 @Component({
   selector: 'app-user-issued-card-info',
-  imports: [CommonModule, MatExpansionModule],
+  imports: [CommonModule, MatExpansionModule, MatIcon],
   templateUrl: './user-issued-card-info.component.html',
   styleUrl: './user-issued-card-info.component.css'
 })
@@ -36,6 +37,7 @@ export class UserIssuedCardInfoComponent implements OnInit {
 
   issuedCardId!: number;
   personId!: number;
+
   isCardView = false;
   isPersonView = false;
 
@@ -44,98 +46,123 @@ export class UserIssuedCardInfoComponent implements OnInit {
 
   userData: UserProfile | null = null;
 
-  /* Dummy */
   cardsList: any[] = [];
   modifications: any[] = [];
 
   constructor(
     private service: IssuedCardService,
+    private viewDateService: ViewDatePersonCarnetService,
     @Inject(MAT_DIALOG_DATA) public data: { issuedCardId?: number; personId?: number },
     public dialogRef: MatDialogRef<UserIssuedCardInfoComponent>
   ) { }
 
   ngOnInit(): void {
-
     if (this.data?.issuedCardId) {
       this.issuedCardId = this.data.issuedCardId;
       this.isCardView = true;
-      this.loadUserData();
-    }
-    else if (this.data?.personId) {
+      this.loadDataByIssuedCardId();
+    } else if (this.data?.personId) {
       this.personId = this.data.personId;
       this.isPersonView = true;
       this.loadPersonFullData();
-    }
-    else {
+    } else {
       this.error = "No se proporcionaron datos.";
     }
   }
 
-
   /* ===========================
      LOAD DATA – ISSUED CARD
   ============================ */
-  loadUserData(): void {
+    loadDataByIssuedCardId(): void {
     this.loading = true;
 
-    this.service.getinfoUser(this.issuedCardId).subscribe({
-      next: (response) => {
-        this.userData = response.data;
+    // ✅ Usa el endpoint correcto para issuedCardId
+    this.service.getCardDataByIssuedId(this.issuedCardId).subscribe({
+      next: (resp: any) => {
+        this.userData = resp.data;
         this.loading = false;
       },
-      error: () => {
-        this.error = "Error al cargar la información.";
+      error: (err) => {
+        console.error('Error al cargar carnet:', err);
+        this.error = "Error al cargar la información del carnet.";
         this.loading = false;
       }
     });
   }
 
-
   /* ===========================
      LOAD DATA – PERSON
   ============================ */
-  loadPersonFullData(): void {
+    loadPersonFullData(): void {
     this.loading = true;
+    console.log('Cargando datos para personId:', this.personId);
 
-    /* Dummy data — Replace when API ready */
-    this.userData = {
-      id: this.personId,
-      name: "Juan Pérez",
-      phoneNumber: "3214567890",
-      email: "juan@example.com",
-      documentNumber: "1023456789",
-      bloodTypeValue: "A+",
-      address: "Calle 10 # 20 - 30",
+    // ✅ Obtener TODOS los carnets del usuario
+    this.service.getCardsByUser(this.personId).subscribe({
+      next: (response: any) => {
+        console.log('Respuesta getCardsByUser:', response);
+        this.cardsList = response.data || [];
+        
+        // ✅ Usar el primer carnet para mostrar info general
+        if (this.cardsList.length > 0) {
+          const firstCard = this.cardsList[0];
+          
+          // ✅ Ahora obtén los datos completos del PRIMER carnet
+          this.service.getCardDataByIssuedId(firstCard.id).subscribe({
+            next: (detailResponse: any) => {
+              this.userData = detailResponse.data;
+              console.log('Datos de usuario asignados:', this.userData);
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error al cargar datos completos:', err);
+              this.error = "Error al cargar la información completa.";
+              this.loading = false;
+            }
+          });
+        } else {
+          this.error = "No se encontraron carnets para este usuario.";
+          this.loading = false;
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar carnets:', err);
+        this.cardsList = [];
+        this.error = "Error al cargar los carnets del usuario.";
+        this.loading = false;
+      }
+    });
 
-      /* Campos de carnet no usados aquí */
-      profile: "",
-      categoryArea: "",
-      companyName: "",
-      internalDivisionName: "",
-      organizationalUnit: "",
-      userPhotoUrl: "assets/default-avatar.png",
-      logoUrl: "",
-      validFrom: "",
-      validUntil: "",
-      issuedDate: ""
-    };
-
-    this.cardsList = [
-      { id: 21, profileName: "Empleado", internalDivisionName: "Sistemas", issuedDate: "2024-01-10", validUntil: "2025-01-10" },
-      { id: 19, profileName: "Contratista", internalDivisionName: "Talento Humano", issuedDate: "2023-03-15", validUntil: "2024-03-15" }
-    ];
-
-    this.modifications = [
-      { id: 1, field: "Correo", old: "old@mail.com", new: "nuevo@mail.com", date: "2024-02-10" },
-      { id: 2, field: "Teléfono", old: "3110000", new: "3200000", date: "2024-03-12" }
-    ];
-
-    this.loading = false;
+    // ✅ Cargar solicitudes de modificación
+    this.viewDateService.getModificationsByUser(this.personId).subscribe({
+      next: (response: any) => {
+        console.log('Modificaciones:', response);
+        this.modifications = response.data || [];
+      },
+      error: (err) => {
+        console.error('Error al cargar modificaciones:', err);
+        this.modifications = [];
+      }
+    });
   }
 
+    verCarnet(item: any): void {
+    // ✅ Asegúrate de usar el ID correcto del carnet
+    const cardId = item.id || item.issuedCardId;
+    if (!cardId) {
+      console.error('No se encontró ID del carnet');
+      return;
+    }
 
-  verCarnet(item: any): void {
-    this.service.getCardPdf(item.id).subscribe(blob => this.openPdf(blob));
+    this.service.getCardPdf(cardId).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: (err) => {
+        console.error('Error al generar PDF:', err);
+      }
+    });
   }
 
   openPdf(blob: Blob): void {
@@ -148,11 +175,37 @@ export class UserIssuedCardInfoComponent implements OnInit {
     return new Date(date).toLocaleDateString("es-ES");
   }
 
-  onImageError(e: any) {
+  onImageError(e: any): void {
     // e.target.src = 'assets/default-avatar.png';
   }
 
-  onLogoError(e: any) {
+  onLogoError(e: any): void {
     e.target.style.display = 'none';
+  }
+
+  getStatusClass(status: string): string {
+    if (!status) return 'unknown';
+
+    const statusLower = status.toLowerCase();
+
+    switch (statusLower) {
+      case 'pending':
+      case 'pendiente':
+        return 'pending';
+      case 'approved':
+      case 'aprobado':
+      case 'aceptado':
+        return 'approved';
+      case 'rejected':
+      case 'rechazado':
+      case 'denegado':
+        return 'rejected';
+      case 'in_progress':
+      case 'en_progreso':
+      case 'progreso':
+        return 'in-progress';
+      default:
+        return 'unknown';
+    }
   }
 }
