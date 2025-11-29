@@ -75,7 +75,7 @@ height: 100vh;
 }
 
 /* Columna izquierda (CTA + flecha + redes) */
-.hero-left {  
+.hero-left {
   max-width: 550px;
   text-align: left;
   display: flex;
@@ -703,14 +703,14 @@ height: 100vh;
   line-height: 1.5;
 }
 
-  
+
   .left-features,
   .right-features {
     left: clamp(10px, 5vw, 40px);
     right: clamp(10px, 5vw, 40px);
   }
 
- 
+
 
 .icon-email {
   --delay: 0.60s;
@@ -741,7 +741,7 @@ height: 100vh;
   bottom: 8%;
   left: 60%;
 }
-  
+
   /* Características responsive */
   .characteristics-content {
     flex-direction: column;
@@ -946,12 +946,12 @@ height: 100vh;
   .ventajas {
     grid-template-columns: 1fr;
   }
-  
+
   .feature-card {
     width: 100%;
     max-width: 280px;
   }
-  
+
   .hero-phone img {
     width: clamp(140px, 40vw, 200px);
   }
@@ -981,3 +981,51 @@ height: 100vh;
     transition: none !important;
   }
 }
+
+/* ===== Descarga de App ===== */
+.download-app-box {
+  margin: 40px auto 0 auto;
+  padding: 24px;
+  max-width: 420px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 14px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.15);
+  animation: fade-up 700ms ease-out both;
+}
+
+.download-title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.download-text {
+  font-size: clamp(14px, 2vw, 16px);
+  margin-bottom: 18px;
+  color: #f1f1f1;
+  opacity: .9;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #013655;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 16px;
+  text-decoration: none;
+  transition: .25s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+
+.download-btn:hover {
+  background: #04527c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
