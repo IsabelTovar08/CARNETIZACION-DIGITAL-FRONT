@@ -144,4 +144,15 @@ public getAllEventsFull(): Observable<ApiResponse<any>> {
     );
   }
 
+  // Generar QR para punto de acceso
+  generateAccessPointQr(qrCodeKey: string): Observable<Blob> {
+    const headers = { 'Accept': 'image/png' };
+    return this.wrapper.handleRequest(
+      this.http.get(`${this.urlBase}/AccessPoint/generate/${qrCodeKey}`, {
+        headers,
+        responseType: 'blob'
+      })
+    );
+  }
+
 }

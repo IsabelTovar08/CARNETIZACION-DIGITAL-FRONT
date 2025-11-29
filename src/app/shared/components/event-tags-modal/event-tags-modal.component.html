@@ -116,60 +116,101 @@
     </h3>
 
     <div class="event-qr-section">
-      <img [src]="'data:image/png;base64,' + event!.qrCodeBase64" alt="QR Code del Evento" class="event-qr-image">
+      <img [src]="'data:image/png;base64,' + event.qrCodeBase64" alt="QR Code del Evento" class="event-qr-image">
       <div class="qr-actions">
-        <button mat-mini-fab color="primary" (click)="enlargeQr(event!.qrCodeBase64)" matTooltip="Ampliar QR">
+        <button mat-mini-fab color="primary" (click)="enlargeQr(event.qrCodeBase64)" matTooltip="Ampliar QR">
           <mat-icon>zoom_in</mat-icon>
         </button>
-        <button mat-mini-fab color="accent" (click)="downloadQr(event!.qrCodeBase64, event!.name + '_evento_qr.png')" matTooltip="Descargar QR">
+        <button mat-mini-fab color="accent" (click)="downloadQr(event.qrCodeBase64, (event.name || 'evento') + '_qr.png')" matTooltip="Descargar QR">
           <mat-icon>download</mat-icon>
         </button>
       </div>
     </div>
   </section>
+<!-- PUNTOS DE ACCESO -->
+<section class="section-block" *ngIf="event?.accessPoints?.length">
+  <h3 class="section-title">
+    <mat-icon class="section-icon">location_on</mat-icon>
+    Puntos de acceso
+  </h3>
 
+  <div class="ap-card" *ngFor="let ap of event?.accessPoints">
+    <div class="ap-title">
+      <mat-icon class="ap-icon">location_on</mat-icon>
+      {{ ap.name }}
+    </div>
 
-  <!-- PUNTOS DE ACCESO -->
-  <section class="section-block" *ngIf="event?.accessPoints?.length">
-    <h3 class="section-title">
-      <mat-icon class="section-icon">location_on</mat-icon>
-      Puntos de acceso
-    </h3>
+    <div class="ap-detail">
+      <strong>Tipo:</strong>
+      {{ getAccessPointType(ap.typeId) }}
+    </div>
 
-    <div class="ap-card" *ngFor="let ap of event?.accessPoints">
-      <div class="ap-title">
-        <mat-icon class="ap-icon">location_on</mat-icon>
-        {{ ap.name }}
+    <div class="ap-detail" *ngIf="ap.description">
+      <strong>Descripción:</strong>
+      {{ ap.description }}
+    </div>
+
+    <!-- ✅ QR GENERADO CON QRCODE -->
+    <div class="ap-qr" *ngIf="ap.qrCodeKey">
+      <!-- Mostrar imagen del QR -->
+      <img 
+        *ngIf="qrDataUrls[ap.qrCodeKey]" 
+        [src]="qrDataUrls[ap.qrCodeKey]" 
+        alt="QR Code"
+        class="qr-image">
+      
+      <!-- Loading mientras se genera -->
+      <div *ngIf="!qrDataUrls[ap.qrCodeKey]" class="qr-loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Generando QR...</p>
       </div>
 
-      <div class="ap-detail">
-        <strong>Tipo:</strong>
-        {{ getAccessPointType(ap.typeId) }}
+      <!-- Código debajo del QR -->
+      <div class="qr-code-text" *ngIf="qrDataUrls[ap.qrCodeKey]">
+        {{ ap.qrCodeKey }}
       </div>
 
-      <div class="ap-detail" *ngIf="ap.description">
-        <strong>Descripción:</strong>
-        {{ ap.description }}
-      </div>
+      <!-- Acciones -->
+      <div class="qr-actions" *ngIf="qrDataUrls[ap.qrCodeKey]">
+        <button 
+          mat-mini-fab 
+          color="primary" 
+          (click)="enlargeQr(ap.qrCodeKey)" 
+          matTooltip="Ampliar QR">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
 
-      <div class="ap-detail" *ngIf="ap.code">
-        <strong>Código:</strong>
-        {{ ap.code }}
-      </div>
+        <button 
+          mat-mini-fab 
+          color="accent" 
+          (click)="downloadQr(ap.qrCodeKey, event.name + '_' + ap.name + '_qr.png')" 
+          matTooltip="Descargar QR">
+          <mat-icon>download</mat-icon>
+        </button>
 
-      <div class="ap-qr" *ngIf="ap.qrCodeKey">
-        <img [src]="'data:image/png;base64,' + ap.qrCodeKey" alt="QR Code" class="qr-image">
-        <div class="qr-actions">
-          <button mat-mini-fab color="primary" (click)="enlargeQr(ap.qrCodeKey)" matTooltip="Ampliar QR">
-            <mat-icon>zoom_in</mat-icon>
-          </button>
-          <button mat-mini-fab color="accent" (click)="downloadQr(ap.qrCodeKey, ap.name + '_qr.png')" matTooltip="Descargar QR">
-            <mat-icon>download</mat-icon>
-          </button>
-        </div>
+        <button 
+          mat-mini-fab 
+          (click)="printQr(ap.qrCodeKey, ap.name)" 
+          matTooltip="Imprimir QR">
+          <mat-icon>print</mat-icon>
+        </button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- ✅ MODAL AMPLIADO -->
+<div *ngIf="enlargedQr" class="qr-overlay" (click)="closeEnlargedQr()">
+  <div class="qr-enlarged-container" (click)="$event.stopPropagation()">
+    <button mat-icon-button class="close-btn" (click)="closeEnlargedQr()">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <h3>{{ event?.name || 'Evento' }}</h3>
+
+    <img [src]="enlargedQr" alt="QR Ampliado" class="qr-enlarged">
+  </div>
+</div>
 
   <!-- JORNADAS -->
   <section class="section-block" *ngIf="event?.schedules?.length">
@@ -198,9 +239,6 @@
     </div>
   </section>
 
-  <div *ngIf="enlargedQr" class="qr-overlay" (click)="enlargedQr = null">
-    <img [src]="'data:image/png;base64,' + enlargedQr" alt="QR Code Ampliado" class="qr-enlarged">
-  </div>
 
 </mat-dialog-content>
 
