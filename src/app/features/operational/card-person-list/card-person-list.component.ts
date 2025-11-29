@@ -1,6 +1,6 @@
 import { ApiService } from './../../../core/Services/api/api.service';
 import { IssuedCardService } from '../../../core/Services/api/person/generic.service-PDF/issued-card.service';
-import { ManagentPersonService, PersonSearchFilters } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
+import { ManagentPersonService } from '../../../core/Services/api/organizational/managent-person/managent-person.service';
 import { Component, signal, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { GenericTableComponent } from "../../../shared/components/generic-table/generic-table.component";
@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { debounceTime } from 'rxjs/operators';
 import { EventService } from '../../../core/Services/api/event/event.service';
+import { PersonSearchFilters } from '../../../core/Models/organization/person-search.models';
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { UserIssuedCardInfoComponent } from '../../../shared/components/user-issued-card-info/user-issued-card-info.component';
 
@@ -187,13 +188,15 @@ export class CardPersonListComponent {
 
           return {
             personId: person.id,
-            issuedCardId: person.issuedCardId,
-            id: person.issuedCardId,
+            issuedCardId: person.issuedCardId || null,
+            id: person.id,
             photoUrl: person.photoUrl || '/assets/images/default-avatar.png',
 
             personName: person.firstName && person.lastName
               ? `${person.firstName} ${person.lastName}`
               : person.name || 'Sin nombre',
+
+            cards: person.cards,
 
             internalDivisionNames: divisions || 'Sin divisiones',
             profileName: profiles || 'Sin perfiles',
@@ -289,6 +292,26 @@ export class CardPersonListComponent {
     });
   }
 
+   getStatusClass(status: any): string {
+    if (typeof status === 'string') {
+      status = status.toLowerCase();
+    }
+    
+    switch (status) {
+      case 0:
+      case 'pending':
+        return 'pending';
+      case 1:
+      case 'approved':
+        return 'approved';
+      case 2:
+      case 'rejected':
+        return 'rejected';
+      default:
+        return '';
+    }
+  }
+
 
   /// <summary>
   /// Abre un archivo PDF desde un Blob en una nueva pestaña del navegador
@@ -309,7 +332,7 @@ export class CardPersonListComponent {
       width: '850px',
       maxHeight: '90vh',
 
-      data: { personId }
+      data: { personId: personId }
     });
   }
 

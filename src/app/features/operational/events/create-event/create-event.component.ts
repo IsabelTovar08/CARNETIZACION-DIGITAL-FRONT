@@ -21,6 +21,8 @@ import {
   CreateEventRequest,SelectOption,AccessPointDto,EventDtoRequest} from '../../../../core/Models/operational/event.model';
 import { ScheduleCreate, ScheduleList } from '../../../../core/Models/organization/schedules.models';
 import { GenericFormComponent } from '../../../../shared/components/generic-form/generic-form.component';
+import { SupervisorSelectionModalComponent } from '../../../../shared/components/supervisor-selection-modal/supervisor-selection-modal.component';
+import { PersonDto } from '../../../../core/Models/organization/person-search.models';
 import { fromApiTime } from '../../../../core/utils/time-only';
 import { ApiService } from '../../../../core/Services/api/api.service';
 import { ScheduleService } from '../../../../core/Services/api/event/Schedules/schedule.service';
@@ -57,6 +59,9 @@ export class CreateEventComponent {
 
   // Almacenar datos del evento cargado para actualizar selecciones de audiencia
   private loadedEventData: any = null;
+
+  // Supervisor
+  selectedSupervisors: PersonDto[] = [];
 
   // Progress tracking
   progressPercentage = 0;
@@ -181,6 +186,7 @@ export class CreateEventComponent {
           organizationalUnits: event.organizationalUnitIds || [],
           divisions: event.internalDivisionIds || []
         });
+        
         if (event.accessPoints) {
           // Limpiar el FormArray actual
           while (this.accessPointsArray.length !== 0) {
@@ -195,6 +201,13 @@ export class CreateEventComponent {
               typeId: [ap.typeId, Validators.required]
             }));
           });
+        }
+
+        // Cargar supervisores si existen
+        if (event.supervisorUserIds && event.supervisorUserIds.length > 0) {
+          // TODO: Aquí necesitaríamos una API para obtener los datos de las personas por userId
+          // Por ahora solo inicializamos el array vacío
+          this.selectedSupervisors = [];
         }
     },
     error: (err) => {
@@ -435,7 +448,8 @@ export class CreateEventComponent {
     })),
     profileIds: f.profiles || [],
     organizationalUnitIds: f.organizationalUnits || [],
-    internalDivisionIds: f.divisions || []
+    internalDivisionIds: f.divisions || [],
+    supervisorUserIds: this.selectedSupervisors.map(s => s.userId).filter(id => id !== undefined)
   };
 }
 
@@ -458,7 +472,8 @@ private mapFormToUpdateDto(): EventDtoRequest {
     accessPoints: this.accessPointsArray.value.map((ap: any) => ap.id || 0).filter((id: number) => id > 0),
     profileIds: f.profiles || [],
     organizationalUnitIds: f.organizationalUnits || [],
-    internalDivisionIds: f.divisions || []
+    internalDivisionIds: f.divisions || [],
+    supervisorUserIds: this.selectedSupervisors.map(s => s.userId).filter(id => id !== undefined)
   };
 }
 
@@ -722,5 +737,35 @@ private mapFormToUpdateDto(): EventDtoRequest {
         divisions: this.loadedEventData.internalDivisionIds || []
       });
     }
+  }
+
+  // Asignar supervisor
+  assignSupervisor(): void {
+    const dialogRef = this.dialog.open(SupervisorSelectionModalComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: { eventId: this.editingEventId, isForCreation: !this.editingEventId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.selectedPerson) {
+        // Verificar si ya existe un supervisor con el mismo userId
+        const exists = this.selectedSupervisors.some(s => s.userId === result.selectedPerson.userId);
+        
+        if (!exists) {
+          this.selectedSupervisors.push(result.selectedPerson);
+          this.useservice.showSuccess(`Supervisor ${result.selectedPerson.firstName} ${result.selectedPerson.lastName} asignado`);
+        } else {
+          this.useservice.showInfo('Este supervisor ya está asignado al evento');
+        }
+      }
+    });
+  }
+
+  // Eliminar supervisor
+  removeSupervisor(index: number): void {
+    const supervisor = this.selectedSupervisors[index];
+    this.selectedSupervisors.splice(index, 1);
+    this.useservice.showSuccess(`Supervisor ${supervisor.firstName} ${supervisor.lastName} removido`);
   }
 }

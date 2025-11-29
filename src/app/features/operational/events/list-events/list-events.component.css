@@ -100,11 +100,11 @@
 .button-container {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
-  /* Evita salto de línea innecesario */
+  flex-wrap: wrap;
+  /* Permite envolver botones si es necesario */
   align-items: center;
   flex-shrink: 1;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .info-button,
@@ -133,6 +133,40 @@
   font-size: 16px;
   width: 16px;
   height: 16px;
+}
+
+.supervisor-button {
+  background-color: #3f51b5 !important;
+  color: white !important;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  box-shadow: 0 2px 4px rgba(63, 81, 181, 0.2);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: auto;
+  height: 36px;
+}
+
+.supervisor-button:hover {
+  background-color: #303f9f !important;
+  box-shadow: 0 4px 8px rgba(63, 81, 181, 0.3);
+  transform: translateY(-1px);
+}
+
+.supervisor-button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
+
+.compact .supervisor-button {
+  padding: 6px 12px;
+  font-size: 12px;
+  height: 32px;
 }
 
 .no-results {

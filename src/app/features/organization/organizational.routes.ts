@@ -7,6 +7,7 @@ import { JornadasComponent } from './structure/working-day/components/working-da
 import { ListDeparmentComponent } from './location/deparment/components/list-deparment/list-deparment.component';
 import { ListCitiesComponent } from './location/city/components/list-cities/list-cities.component';
 import { ListOrganizationalUnitComponent } from './structure/organizational-unit/components/list-organizational-unit/list-organizational-unit.component';
+import { DetailOrganizationalUnitComponent } from './structure/organizational-unit/components/detail-organizational-unit/detail-organizational-unit.component';
 import { ModificationRequestsListComponent } from './modification-requests/modification-requests-list/modification-requests-list.component';
 
 export const organizationalRoutes:
@@ -19,6 +20,7 @@ export const organizationalRoutes:
         {
           path: 'unit', component: ListOrganizationalUnitComponent
         },
+        { path: 'unit/:id/detail', component: DetailOrganizationalUnitComponent },
         { path: 'unit/:id/internal-division', component: DivisionesInternasComponent },
 
         { path: 'internal-division', component: DivisionesInternasComponent },

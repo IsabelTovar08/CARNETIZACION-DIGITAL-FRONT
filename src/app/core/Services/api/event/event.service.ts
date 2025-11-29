@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../Models/api-response.models';
-import { CreateEventRequest, EventDtoRequest, SelectOption } from '../../../Models/operational/event.model';
+import { CreateEventRequest, EventDtoRequest, SelectOption, FinalizeEventResponse } from '../../../Models/operational/event.model';
 import { EventsByType, EventTopAttendance } from '../../../Models/organization/cards-dashboard.models';
 import { ApiService } from '../api.service';
 import { HttpServiceWrapperService } from '../../loanding/http-service-wrapper.service';
@@ -112,5 +112,47 @@ public getAllEventsFull(): Observable<ApiResponse<any>> {
     );
   }
 
+  // Asignar supervisor a un evento
+  assignSupervisor(eventId: number, supervisorUserIds: number[]): Observable<ApiResponse<{ id: number }>> {
+    return this.http.put<ApiResponse<{ id: number }>>(
+      `${this.urlBase}/Event/${eventId}/assign-supervisor`,
+      { supervisorUserIds },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Asignar un supervisor individual
+  assignSupervisorIndividual(eventId: number, userId: number): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(
+      `${this.urlBase}/Event/${eventId}/supervisors/${userId}`,
+      {}
+    );
+  }
+
+  // Eliminar un supervisor
+  removeSupervisor(eventId: number, userId: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(
+      `${this.urlBase}/Event/${eventId}/supervisors/${userId}`
+    );
+  }
+
+  // Finalizar evento
+  finalizeEvent(eventId: number): Observable<FinalizeEventResponse> {
+    return this.http.put<FinalizeEventResponse>(
+      `${this.urlBase}/Event/${eventId}/finalize`,
+      {}
+    );
+  }
+
+  // Generar QR para punto de acceso
+  generateAccessPointQr(qrCodeKey: string): Observable<Blob> {
+    const headers = { 'Accept': 'image/png' };
+    return this.wrapper.handleRequest(
+      this.http.get(`${this.urlBase}/AccessPoint/generate/${qrCodeKey}`, {
+        headers,
+        responseType: 'blob'
+      })
+    );
+  }
 
 }

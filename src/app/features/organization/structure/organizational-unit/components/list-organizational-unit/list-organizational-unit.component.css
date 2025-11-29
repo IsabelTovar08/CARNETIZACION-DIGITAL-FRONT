@@ -1,0 +1,23 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-dialog-content {
+  padding-top: 20px !important;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-buttons button {
+  min-width: 100px;
+}

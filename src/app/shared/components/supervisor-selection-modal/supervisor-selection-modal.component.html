@@ -1,0 +1,113 @@
+<h2 mat-dialog-title>Asignar Supervisor</h2>
+
+<mat-dialog-content>
+  <!-- Supervisores actuales -->
+  <div *ngIf="currentSupervisors.length > 0 && !isForCreation" class="current-supervisors">
+    <h3>Supervisores Actuales</h3>
+    <div class="supervisor-list">
+      <div *ngFor="let supervisor of currentSupervisors" class="supervisor-item">
+        <div class="supervisor-info">
+          <div class="supervisor-name">{{ supervisor.fullName }}</div>
+          <div class="supervisor-email">{{ supervisor.userEmail }}</div>
+        </div>
+        <button mat-icon-button color="warn" matTooltip="Eliminar supervisor" (click)="removeSupervisor(supervisor.userId)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-container">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Perfil</mat-label>
+      <mat-select [(value)]="selectedProfile">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let profile of profileOptions" [value]="profile.id">
+          {{ profile.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Unidad Organizativa</mat-label>
+      <mat-select [(value)]="selectedOrganizationalUnit">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let unit of organizationalUnitOptions" [value]="unit.id">
+          {{ unit.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>División Interna</mat-label>
+      <mat-select [(value)]="selectedInternalDivision">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let division of internalDivisionOptions" [value]="division.id">
+          {{ division.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="search()" class="search-button">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-icon>hourglass_empty</mat-icon>
+    <span>Cargando personas...</span>
+  </div>
+
+  <!-- Lista de personas -->
+  <div *ngIf="!loading" class="persons-list">
+    <div *ngIf="filteredPersons.length === 0" class="no-results">
+      <mat-icon>person_off</mat-icon>
+      <span>No se encontraron personas</span>
+    </div>
+
+    <div *ngFor="let person of filteredPersons" class="person-card">
+      <div class="person-info">
+        <div class="person-name">
+          {{ person.firstName }} {{ person.lastName }}
+        </div>
+        <div class="person-details">
+          <span class="detail-item">
+            <mat-icon>badge</mat-icon>
+            {{ person.documentNumber }}
+          </span>
+          <span class="detail-item">
+            <mat-icon>email</mat-icon>
+            {{ person.email }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="person-actions">
+        <button mat-raised-button color="primary" 
+                (click)="selectPerson(person)"
+                [disabled]="!person.userId">
+          <mat-icon>person_add</mat-icon>
+          Seleccionar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginación -->
+  <mat-paginator 
+    *ngIf="!loading && totalPersons > 0"
+    [length]="totalPersons"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage - 1"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancelar</button>
+</mat-dialog-actions>

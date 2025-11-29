@@ -21,17 +21,10 @@
     <!-- HEADER -->
     <div class="profile-header">
       <div class="photo-section">
-        <img
-          [src]="userData.userPhotoUrl || 'assets/default-avatar.png'"
-          alt="Foto"
-          class="profile-photo"
+        <img [src]="userData.userPhotoUrl || 'assets/default-avatar.png'" alt="Foto" class="profile-photo"
           (error)="onImageError($event)" />
 
-        <img
-          [src]="userData.logoUrl"
-          alt="Logo"
-          class="company-logo"
-          (error)="onLogoError($event)" />
+        <img [src]="userData.logoUrl" alt="Logo" class="company-logo" (error)="onLogoError($event)" />
       </div>
 
       <div class="header-info">
@@ -137,9 +130,7 @@
     <!-- HEADER PERSONA -->
     <div class="profile-header">
       <div class="photo-section">
-        <img
-          [src]="userData.userPhotoUrl || 'assets/default-avatar.png'"
-          class="profile-photo">
+        <img [src]="userData.userPhotoUrl || 'assets/default-avatar.png'" class="profile-photo">
       </div>
 
       <div class="header-info">
@@ -190,41 +181,80 @@
     <div class="accordion-wrapper">
 
       <!-- CARNETS -->
-      <mat-accordion *ngIf="cardsList">
+      <mat-accordion *ngIf="cardsList && cardsList.length > 0">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>Carnets del usuario</mat-panel-title>
-            <mat-panel-description>{{ cardsList.length }}</mat-panel-description>
+            <mat-panel-description>{{ cardsList.length }} carnet(s)</mat-panel-description>
           </mat-expansion-panel-header>
 
           <div *ngFor="let c of cardsList" class="accordion-item">
-            <strong>{{ c.profileName }}</strong> — {{ c.internalDivisionName }}
-            <p><strong>Emitido:</strong> {{ c.issuedDate }}</p>
-            <p><strong>Expira:</strong> {{ c.validUntil }}</p>
-            <button class="btn-mini" (click)="verCarnet(c)">Ver PDF</button>
+            <div class="card-header">
+              <strong>{{ c.profileName }}</strong>
+              <span class="badge" [class.active]="c.isCurrentlySelected">
+                {{ c.isCurrentlySelected ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+            <div class="card-details">
+              <p><strong>Persona:</strong> {{ c.personName }}</p>
+              <p><strong>División:</strong> {{ c.divisionName }}</p>
+              <p><strong>Código QR:</strong> {{ c.qrCode }}</p>
+              <p *ngIf="c.pdfUrl"><strong>PDF:</strong> {{ c.pdfUrl }}</p>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-mini" (click)="verCarnet(c)">
+                <mat-icon>picture_as_pdf</mat-icon>
+                Ver PDF
+              </button>
+            </div>
+          </div>
+
+          <!-- Si no hay carnets -->
+          <div *ngIf="cardsList.length === 0" class="no-data">
+            <p>No se encontraron carnets para este usuario.</p>
           </div>
 
         </mat-expansion-panel>
       </mat-accordion>
 
       <!-- MODIFICACIONES -->
-      <mat-accordion *ngIf="modifications">
+      <mat-accordion *ngIf="modifications && modifications.length > 0">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>Solicitudes de modificación</mat-panel-title>
-            <mat-panel-description>{{ modifications.length }}</mat-panel-description>
+            <mat-panel-description>{{ modifications.length }} solicitud(es)</mat-panel-description>
           </mat-expansion-panel-header>
 
-          <div *ngFor="let m of modifications" class="accordion-item">
-            <strong>{{ m.field }}</strong>
-            <p><strong>Antes:</strong> {{ m.old }}</p>
-            <p><strong>Después:</strong> {{ m.new }}</p>
-            <p class="date">{{ m.date }}</p>
+          <div *ngFor="let mod of modifications" class="accordion-item">
+            <div class="mod-header">
+              <strong>{{ mod.fieldName || mod.field }}</strong>
+              <span class="badge" [ngClass]="getStatusClass(mod.status)">
+                {{ mod.statusName || mod.status }}
+              </span>
+            </div>
+
+            <div class="mod-details">
+              <p><strong>Motivo:</strong> {{ mod.reasonName || mod.reason }}</p>
+              <p><strong>Valor anterior:</strong> {{ mod.oldValue }}</p>
+              <p><strong>Valor nuevo:</strong> {{ mod.newValue }}</p>
+              <p *ngIf="mod.message"><strong>Mensaje:</strong> {{ mod.message }}</p>
+              <p class="date"><strong>Fecha:</strong> {{ formatDate(mod.requestDate) }}</p>
+            </div>
+          </div>
+
+          <!-- Si no hay modificaciones -->
+          <div *ngIf="modifications.length === 0" class="no-data">
+            <p>No hay solicitudes de modificación.</p>
           </div>
 
         </mat-expansion-panel>
       </mat-accordion>
-
+      <div *ngIf="(!cardsList || cardsList.length === 0) && (!modifications || modifications.length === 0)"
+        class="no-data-global">
+        <mat-icon>info</mat-icon>
+        <p>No hay información adicional disponible para este usuario.</p>
+      </div>
     </div>
 
   </div>

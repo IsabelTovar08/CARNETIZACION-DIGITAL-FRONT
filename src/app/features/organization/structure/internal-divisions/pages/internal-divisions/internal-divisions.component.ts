@@ -8,7 +8,7 @@ import { GenericTableComponent } from '../../../../../../shared/components/gener
 import { CommonModule } from '@angular/common';
 import { GenericFormComponent } from '../../../../../../shared/components/generic-form/generic-form.component';
 import { InternalDivisionCreate, InternalDivisionList } from '../../../../../../core/Models/organization/internal-divison.models';
-import { OrganizationalUnitService } from '../../../../../../core/Services/api/organization-unit/organization-unit.service';
+import { OrganizationalUnitService } from '../../../../../../core/Services/api/organizational/organization-unit/organization-unit.service';
 import { SubTitle } from 'chart.js';
 import { GenericModel } from '../../../../../../core/Models/security/generic.model';
 

@@ -11,8 +11,17 @@ export interface PersonSearchFilters {
 export interface PersonSearchResponse {
   success: boolean;
   message: string;
-  data: any[];
+  data: PersonDto[];
   total: number;
   page: number;
   pageSize: number;
+}
+
+export interface PersonDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  documentNumber: string;
+  email: string;
+  userId?: number;
 }

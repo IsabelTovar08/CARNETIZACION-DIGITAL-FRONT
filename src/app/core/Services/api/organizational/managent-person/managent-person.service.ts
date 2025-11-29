@@ -2,25 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
+import { PersonSearchFilters, PersonSearchResponse } from '../../../../Models/organization/person-search.models';
 import { HttpServiceWrapperService } from '../../../loanding/http-service-wrapper.service';
 
-export interface PersonSearchFilters {
-  search?: string;
-  internalDivisionId?: number;
-  organizationalUnitId?: number;
-  profileId?: number;
-  page?: number;
-  pageSize?: number;
-}
 
-export interface PersonSearchResponse {
-  success: boolean;
-  message: string;
-  data: any[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
 
 @Injectable({
   providedIn: 'root'

@@ -22,8 +22,9 @@ export interface AccessPointList {
   eventName?: string | null;
   typeId: number;
   type?: string | null;
-  QrCodeKey?: string | null;
+  qrCodeKey?: string | null;
   code?: string | null;
+  isDeleted?: boolean;
 }
 
 // DTO simplificado para enviar al crear evento

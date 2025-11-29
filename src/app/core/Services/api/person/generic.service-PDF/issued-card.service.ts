@@ -15,6 +15,12 @@ export class IssuedCardService extends ApiService<any, any> {
     super(http, wrapper);
   }
 
+   public getCardDataByIssuedId(issuedCardId: number): Observable<ApiResponse<any>> {
+    return this.wrapper.handleRequest(
+      this.http.get<ApiResponse<any>>(`${this.urlBase}/IssuedCard/get-data-complete/${issuedCardId}`)
+    );
+  }
+
   public getCardPdf(issuedCardId: number): Observable<Blob> {
     const headers = new HttpHeaders({
       'Accept': 'application/pdf'
@@ -33,4 +39,13 @@ export class IssuedCardService extends ApiService<any, any> {
       this.http.get<ApiResponse<any>>(`${this.urlBase}/IssuedCard/get-data-complete/${issuedCardId}`)
     );
   }
+
+   // ✅ Obtener todos los carnets de una persona
+  public getCardsByUser(userId: number): Observable<ApiResponse<any>> {
+    return this.wrapper.handleRequest(
+      this.http.get<ApiResponse<any>>(`${this.urlBase}/IssuedCard/by-user/${userId}`)
+    );
+  }
+
+ 
 }

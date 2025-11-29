@@ -1,33 +1,89 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-
 <mat-dialog-content class="modal-content">
+  <div class="event-header">
+    <h2 class="event-title">{{ event?.name }}</h2>
+    <h3 *ngIf="event?.subtitle" class="event-subtitle">{{ event?.subtitle }}</h3>
+  </div>
 
-  <!-- DESCRIPCIÓN -->
-  <section class="section-block" *ngIf="data.description">
-    <h3 class="section-title">Descripción</h3>
-    <p class="section-text">{{ data.description }}</p>
+  <!-- SUPERVISORES ASIGNADOS -->
+  <section class="section-block supervisors-section">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">supervisor_account</mat-icon>
+      Supervisores Asignados
+    </h3>
+
+    <ng-container *ngIf="(event?.supervisors || []).length > 0; else noSupervisors">
+      <div class="supervisor-chips">
+        <mat-chip
+          *ngFor="let supervisor of event?.supervisors"
+          class="supervisor-chip"
+          matTooltip="{{ supervisor.fullName }} — {{ supervisor.userEmail }}">
+          <mat-icon matChipAvatar>person</mat-icon>
+          {{ supervisor.fullName }} — {{ supervisor.userEmail }}
+        </mat-chip>
+      </div>
+    </ng-container>
+
+    <ng-template #noSupervisors>
+      <p class="text-muted no-supervisors">
+        <mat-icon>person_off</mat-icon>
+        Aún no hay supervisores asignados para este evento
+      </p>
+    </ng-template>
   </section>
 
-  <!-- FECHA / TIPO -->
-  <section class="section-block">
-    <h3 class="section-title">Detalles</h3>
+  <!-- DESCRIPCIÓN -->
+  <section class="section-block" *ngIf="event?.description">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">description</mat-icon>
+      Descripción
+    </h3>
+    <p class="section-text">{{ event?.description }}</p>
+  </section>
 
-    <div class="detail-row">
-      <strong>Tipo:</strong> {{ data.eventType }}
-    </div>
+  <!-- DETALLES DEL EVENTO -->
+  <section class="section-block event-details-section">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">info</mat-icon>
+      Detalles del Evento
+    </h3>
 
-    <div class="detail-row" *ngIf="data.dateLabel">
-      <strong>Fecha:</strong> {{ data.dateLabel }}
+    <div class="event-details-grid">
+      <div class="detail-card">
+        <mat-icon class="detail-icon">category</mat-icon>
+        <div class="detail-content">
+          <div class="detail-label">Tipo</div>
+          <div class="detail-value">{{ event?.eventTypeName }}</div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <mat-icon class="detail-icon">flag</mat-icon>
+        <div class="detail-content">
+          <div class="detail-label">Estado</div>
+          <div class="detail-value">{{ event?.statusName }}</div>
+        </div>
+      </div>
+
+      <div class="detail-card" *ngIf="event?.dateLabel || (event?.eventStart && event?.eventEnd)">
+        <mat-icon class="detail-icon">event</mat-icon>
+        <div class="detail-content">
+          <div class="detail-label">Fecha</div>
+          <div class="detail-value">{{ event?.dateLabel || (event?.eventStart | date:'mediumDate') + ' - ' + (event?.eventEnd | date:'mediumDate') }}</div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- TAGS -->
-  <section class="section-block" *ngIf="data.tags?.length">
-    <h3 class="section-title">Etiquetas</h3>
+  <section class="section-block" *ngIf="(event?.tags?.length || event?.fullTags?.length)">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">label</mat-icon>
+      Etiquetas
+    </h3>
 
     <div class="tag-list">
       <span
-        *ngFor="let t of data.tags"
+        *ngFor="let t of (event?.fullTags || event?.tags)"
         class="tag-item"
         [ngStyle]="getTagStyle(t)">
         {{ t.label }}
@@ -35,50 +91,135 @@
     </div>
   </section>
 
-  <!-- PUNTOS DE ACCESO -->
-  <section class="section-block" *ngIf="data.accessPoints?.length">
-    <h3 class="section-title">Puntos de acceso</h3>
+  <!-- AUDIENCIAS -->
+  <section class="section-block" *ngIf="event?.audiences?.length">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">groups</mat-icon>
+      Audiencias
+    </h3>
 
-    <div class="ap-card" *ngFor="let ap of data.accessPoints">
-      <div class="ap-title">
-        <mat-icon class="ap-icon">location_on</mat-icon>
-        {{ ap.name }}
-      </div>
-
-      <div class="ap-detail">
-        <strong>Tipo:</strong>
-        {{ getAccessPointType(ap.typeId) }}
-      </div>
-
-      <div class="ap-detail" *ngIf="ap.description">
-        <strong>Descripción:</strong>
-        {{ ap.description }}
-      </div>
-
-      <div class="ap-detail" *ngIf="ap.code">
-        <strong>Código:</strong>
-        {{ ap.code }}
-      </div>
-
-      <div class="ap-qr" *ngIf="ap.qrCodeKey">
-        <img [src]="'data:image/png;base64,' + ap.qrCodeKey" alt="QR Code" class="qr-image">
-        <div class="qr-actions">
-          <button mat-mini-fab color="primary" (click)="enlargeQr(ap.qrCodeKey)" matTooltip="Ampliar QR">
-            <mat-icon>zoom_in</mat-icon>
-          </button>
-          <button mat-mini-fab color="accent" (click)="downloadQr(ap.qrCodeKey, ap.name + '_qr.png')" matTooltip="Descargar QR">
-            <mat-icon>download</mat-icon>
-          </button>
-        </div>
+    <div class="audience-list">
+      <div *ngFor="let audience of event?.audiences" class="audience-item">
+        <mat-icon class="audience-icon">
+          {{ audience.typeId === 1 ? 'school' : audience.typeId === 2 ? 'business' : 'group' }}
+        </mat-icon>
+        <span>{{ audience.referenceName }}</span>
       </div>
     </div>
   </section>
 
-  <!-- JORNADAS -->
-  <section class="section-block" *ngIf="data.schedules?.length">
-    <h3 class="section-title">Jornadas</h3>
+  <!-- CÓDIGO QR DEL EVENTO -->
+  <section class="section-block" *ngIf="event?.qrCodeBase64">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">qr_code</mat-icon>
+      Código QR del Evento
+    </h3>
 
-    <div class="schedule-card" *ngFor="let s of data.schedules">
+    <div class="event-qr-section">
+      <img [src]="'data:image/png;base64,' + event.qrCodeBase64" alt="QR Code del Evento" class="event-qr-image">
+      <div class="qr-actions">
+        <button mat-mini-fab color="primary" (click)="enlargeQr(event.qrCodeBase64)" matTooltip="Ampliar QR">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
+        <button mat-mini-fab color="accent" (click)="downloadQr(event.qrCodeBase64, (event.name || 'evento') + '_qr.png')" matTooltip="Descargar QR">
+          <mat-icon>download</mat-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+<!-- PUNTOS DE ACCESO -->
+<section class="section-block" *ngIf="event?.accessPoints?.length">
+  <h3 class="section-title">
+    <mat-icon class="section-icon">location_on</mat-icon>
+    Puntos de acceso
+  </h3>
+
+  <div class="ap-card" *ngFor="let ap of event?.accessPoints">
+    <div class="ap-title">
+      <mat-icon class="ap-icon">location_on</mat-icon>
+      {{ ap.name }}
+    </div>
+
+    <div class="ap-detail">
+      <strong>Tipo:</strong>
+      {{ getAccessPointType(ap.typeId) }}
+    </div>
+
+    <div class="ap-detail" *ngIf="ap.description">
+      <strong>Descripción:</strong>
+      {{ ap.description }}
+    </div>
+
+    <!-- ✅ QR GENERADO CON QRCODE -->
+    <div class="ap-qr" *ngIf="ap.qrCodeKey">
+      <!-- Mostrar imagen del QR -->
+      <img 
+        *ngIf="qrDataUrls[ap.qrCodeKey]" 
+        [src]="qrDataUrls[ap.qrCodeKey]" 
+        alt="QR Code"
+        class="qr-image">
+      
+      <!-- Loading mientras se genera -->
+      <div *ngIf="!qrDataUrls[ap.qrCodeKey]" class="qr-loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Generando QR...</p>
+      </div>
+
+      <!-- Código debajo del QR -->
+      <div class="qr-code-text" *ngIf="qrDataUrls[ap.qrCodeKey]">
+        {{ ap.qrCodeKey }}
+      </div>
+
+      <!-- Acciones -->
+      <div class="qr-actions" *ngIf="qrDataUrls[ap.qrCodeKey]">
+        <button 
+          mat-mini-fab 
+          color="primary" 
+          (click)="enlargeQr(ap.qrCodeKey)" 
+          matTooltip="Ampliar QR">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
+
+        <button 
+          mat-mini-fab 
+          color="accent" 
+          (click)="downloadQr(ap.qrCodeKey, event.name + '_' + ap.name + '_qr.png')" 
+          matTooltip="Descargar QR">
+          <mat-icon>download</mat-icon>
+        </button>
+
+        <button 
+          mat-mini-fab 
+          (click)="printQr(ap.qrCodeKey, ap.name)" 
+          matTooltip="Imprimir QR">
+          <mat-icon>print</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ✅ MODAL AMPLIADO -->
+<div *ngIf="enlargedQr" class="qr-overlay" (click)="closeEnlargedQr()">
+  <div class="qr-enlarged-container" (click)="$event.stopPropagation()">
+    <button mat-icon-button class="close-btn" (click)="closeEnlargedQr()">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <h3>{{ event?.name || 'Evento' }}</h3>
+
+    <img [src]="enlargedQr" alt="QR Ampliado" class="qr-enlarged">
+  </div>
+</div>
+
+  <!-- JORNADAS -->
+  <section class="section-block" *ngIf="event?.schedules?.length">
+    <h3 class="section-title">
+      <mat-icon class="section-icon">schedule</mat-icon>
+      Jornadas
+    </h3>
+
+    <div class="schedule-card" *ngFor="let s of event?.schedules">
       <div class="schedule-title">
         <mat-icon class="schedule-icon">schedule</mat-icon>
         {{ s.name }}
@@ -98,9 +239,6 @@
     </div>
   </section>
 
-  <div *ngIf="enlargedQr" class="qr-overlay" (click)="enlargedQr = null">
-    <img [src]="'data:image/png;base64,' + enlargedQr" alt="QR Code Ampliado" class="qr-enlarged">
-  </div>
 
 </mat-dialog-content>
 
