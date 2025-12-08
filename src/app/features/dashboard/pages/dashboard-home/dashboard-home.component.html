@@ -12,6 +12,23 @@
 
   <!-- KPIs Principales con iconos y efectos -->
   <div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+      <div class="kpi-card kpi-warning">
+        <div class="kpi-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <p class="kpi-label">Solicitudes Pendientes</p>
+          <h2 class="kpi-value">5</h2>
+        </div>
+        <div class="kpi-sparkline"></div>
+      </div>
+    </div>
+
     <div class="col-md-4">
       <div class="kpi-card kpi-primary">
         <div class="kpi-icon">
@@ -30,23 +47,6 @@
     </div>
 
     <div class="col-md-4">
-      <div class="kpi-card kpi-warning">
-        <div class="kpi-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 11l3 3L22 4"/>
-            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-          </svg>
-        </div>
-        <div class="kpi-content">
-          <p class="kpi-label">Solicitudes Pendientes</p>
-          <h2 class="kpi-value">35</h2>
-          <span class="kpi-trend trend-neutral">Requieren atención</span>
-        </div>
-        <div class="kpi-sparkline"></div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
       <div class="kpi-card kpi-success">
         <div class="kpi-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -58,8 +58,9 @@
         </div>
         <div class="kpi-content">
           <p class="kpi-label">Próximos Eventos</p>
-          <h2 class="kpi-value">{{ nextEvents }}</h2>
-          <span class="kpi-trend trend-up">5 eventos esta semana</span>
+           <h2 class="kpi-value">
+        {{ (eventTypesRawData || []).length }}
+      </h2>
         </div>
         <div class="kpi-sparkline"></div>
       </div>
@@ -222,50 +223,6 @@
       </div>
     </div>
 
-    <!-- Notificaciones Mejoradas -->
-    <div class="col-lg-4">
-      <div class="chart-card modern-card notifications-card">
-        <div class="chart-header">
-          <h5 class="chart-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 01-3.46 0"/>
-            </svg>
-            Actividad Reciente
-          </h5>
-          <span class="notification-badge">3</span>
-        </div>
-        <div class="notifications-body">
-          <ul class="notifications-list">
-            <li *ngFor="let notif of notifications" class="notification-item">
-              <div class="notification-avatar">
-                <img [src]="notif.avatar" alt="avatar" />
-                <span class="notification-status status-active"></span>
-              </div>
-              <div class="notification-content">
-                <p class="notification-name">{{ notif.name }}</p>
-                <p class="notification-message">{{ notif.message }}</p>
-                <span class="notification-time">Hace 5 minutos</span>
-              </div>
-              <button class="notification-action">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </button>
-            </li>
-          </ul>
-        </div>
-        <div class="chart-footer">
-          <button mat-raised-button class="btn-view-all">
-            Ver todas las notificaciones
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Footer informativo -->
