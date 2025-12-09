@@ -29,6 +29,15 @@ jobs:
       - name: Build Angular App
         run: npm run build --prod
 
+      - name: Clean remote folder
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo rm -rf /var/www/front/*
+
       - name: Copy build to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -37,7 +46,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "dist/carnetizacion-digital-front/browser/**"
           target: "/var/www/front"
-          strip_components: 4
+          strip_components: 3
 
       - name: Restart nginx on EC2
         uses: appleboy/ssh-action@v0.1.10
@@ -53,4 +62,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Pull request closed. Nothing to deploy."
-
