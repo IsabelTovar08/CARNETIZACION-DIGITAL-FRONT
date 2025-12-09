@@ -35,8 +35,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "dist/**"
+          source: "dist/carnetizacion-digital-front/browser/**"
           target: "/var/www/front"
+          strip_components: 4
 
       - name: Restart nginx on EC2
         uses: appleboy/ssh-action@v0.1.10
@@ -52,3 +53,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Pull request closed. Nothing to deploy."
+
