@@ -346,13 +346,13 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   loadEventTypesData(): void {
     console.log('📊 DashboardHomeComponent: Iniciando loadEventTypesData()');
-    
+
     try {
       console.log('🔧 DashboardHomeComponent: Verificando eventService...', this.eventService);
-      
+
       // Método alternativo de prueba con URL directa
       this.testDirectAPI();
-      
+
     } catch (exception) {
       console.error('💥 DashboardHomeComponent: Exception en loadEventTypesData:', exception);
     }
@@ -363,11 +363,11 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   testDirectAPI(): void {
     console.log('🧪 DashboardHomeComponent: Iniciando testDirectAPI()');
-    
+
     // URL directa para pruebas
-    const testUrl = 'https://localhost:7126/api/Event/types/count';
+    const testUrl = '/api/Event/types/count';
     console.log('🔗 DashboardHomeComponent: URL de prueba:', testUrl);
-    
+
     fetch(testUrl)
       .then(response => {
         console.log('📡 DashboardHomeComponent: Respuesta HTTP:', response.status, response.statusText);
@@ -377,7 +377,7 @@ export class DashboardHomeComponent implements OnInit {
         console.log('✅ DashboardHomeComponent: Datos directos recibidos:', data);
         this.eventTypesRawData = data.data || data || [];
         console.log('📊 DashboardHomeComponent: eventTypesRawData actualizado:', this.eventTypesRawData);
-        
+
         // Crear gráfica con los datos directos
         this.updateEventTypesChart();
       })
@@ -393,21 +393,21 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   loadEventTypesDataViaService(): void {
     console.log('🔄 DashboardHomeComponent: Intentando con servicio normal...');
-    
+
     this.eventService.getEventsByType().subscribe({
       next: (res) => {
         console.log('✅ DashboardHomeComponent: Respuesta del servicio:', res);
         console.log('📊 DashboardHomeComponent: Datos del servicio:', res.data);
-        
+
         this.eventTypesRawData = res.data || [];
         console.log('📊 DashboardHomeComponent: eventTypesRawData:', this.eventTypesRawData);
-        
+
         this.updateEventTypesChart();
       },
       error: (err) => {
         console.error('❌ DashboardHomeComponent: Error loading event types data:', err);
         console.error('❌ DashboardHomeComponent: Error details:', err.message, err.status, err.url);
-        
+
         // Crear gráfica vacía en caso de error
         this.eventTypesRawData = [];
         this.updateEventTypesChart();
@@ -420,7 +420,7 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   updateEventTypesChart(): void {
     console.log('🎨 DashboardHomeComponent: Actualizando gráfica...');
-    
+
     if (this.eventTypesRawData.length > 0) {
       console.log('🎨 DashboardHomeComponent: Creando gráfica con datos');
       const color = this.chartColors.eventTypes;
@@ -439,7 +439,7 @@ export class DashboardHomeComponent implements OnInit {
           borderSkipped: false
         }]
       };
-      
+
       console.log('🎯 DashboardHomeComponent: Gráfica creada:', this.eventTypesChartData);
     } else {
       console.log('⚠️ DashboardHomeComponent: No hay datos, creando gráfica vacía');
@@ -455,10 +455,10 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   testTopAttendanceDirect(typeId: number): void {
     console.log('🧪 DashboardHomeComponent: testTopAttendanceDirect() con typeId:', typeId);
-    
-    const testUrl = `https://localhost:7126/api/Event/top-attendance-by-type/${typeId}?top=5`;
+
+    const testUrl = `https://api.carnetgo.site/api/Event/top-attendance-by-type/${typeId}?top=5`;
     console.log('🔗 DashboardHomeComponent: URL de prueba top attendance:', testUrl);
-    
+
     // Primero intentar con fetch directo
     fetch(testUrl)
       .then(response => {
@@ -469,14 +469,14 @@ export class DashboardHomeComponent implements OnInit {
         console.log('✅ DashboardHomeComponent: Datos directos de top attendance:', data);
         this.eventTopAttendanceRawData = data.data || data || [];
         console.log('📊 DashboardHomeComponent: eventTopAttendanceRawData actualizado:', this.eventTopAttendanceRawData);
-        
+
         // Crear gráfica con los datos directos
         this.updateEventTopAttendanceChart();
       })
       .catch(error => {
         console.error('❌ DashboardHomeComponent: Error en fetch directo de top attendance:', error);
         console.log('📦 DashboardHomeComponent: Usando datos mock como fallback');
-        
+
         // Fallback: usar datos mock basados en el tipo de evento
         this.useMockDataForType(typeId);
       });
@@ -487,7 +487,7 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   useMockDataForType(typeId: number): void {
     console.log('📦 DashboardHomeComponent: Creando datos mock para typeId:', typeId);
-    
+
     // Datos mock por tipo de evento
     const mockData: { [key: number]: any[] } = {
       1: [ // Bienvenida
@@ -540,7 +540,7 @@ export class DashboardHomeComponent implements OnInit {
         { eventId: 35, eventName: "Encuentro Corporativo", totalAttendees: 18 }
       ]
     };
-    
+
     // Obtener datos mock o usar datos por defecto
     this.eventTopAttendanceRawData = mockData[typeId] || [
       { eventId: 999, eventName: "Evento Mock", totalAttendees: 10 },
@@ -549,7 +549,7 @@ export class DashboardHomeComponent implements OnInit {
       { eventId: 996, eventName: "Evento Test", totalAttendees: 4 },
       { eventId: 995, eventName: "Evento Prueba", totalAttendees: 2 }
     ];
-    
+
     console.log('📦 DashboardHomeComponent: Datos mock generados:', this.eventTopAttendanceRawData);
     this.updateEventTopAttendanceChart();
   }
@@ -559,7 +559,7 @@ export class DashboardHomeComponent implements OnInit {
   /// </summary>
   updateEventTopAttendanceChart(): void {
     console.log('🎨 DashboardHomeComponent: Actualizando gráfica de top attendance...');
-    
+
     if (this.eventTopAttendanceRawData.length > 0) {
       console.log('🎨 DashboardHomeComponent: Creando gráfica de top attendance con datos');
       const color = this.chartColors.eventTopAttendance;
@@ -578,7 +578,7 @@ export class DashboardHomeComponent implements OnInit {
           borderSkipped: false
         }]
       };
-      
+
       console.log('🎯 DashboardHomeComponent: Gráfica de top attendance creada:', this.eventTopAttendanceChartData);
     } else {
       console.log('⚠️ DashboardHomeComponent: No hay datos de top attendance, creando gráfica vacía');
