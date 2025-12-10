@@ -1,6 +1,6 @@
 export const environment = {
-  API_BASE_URL: 'https://api.carnetgo.site'
-  //  API_BASE_URL: 'https://localhost:7126'
+  // API_BASE_URL: 'https://api.carnetgo.site'
+   API_BASE_URL: 'https://localhost:7126'
 
 };
 

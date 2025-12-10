@@ -5,6 +5,17 @@
       Cargue el archivo Excel con la información de las personas a registrar.
     </p>
 
+    <!-- ============================== -->
+    <!--     NUEVO: DESCARGAR PLANTILLA -->
+    <!-- ============================== -->
+    <div class="template-download-box">
+      <div class="template-info">
+        <button mat-stroked-button color="primary" (click)="downloadTemplate()">
+          Descargar plantilla
+        </button>
+      </div>
+    </div>
+
     <mat-horizontal-stepper [linear]="true" #stepper>
 
       <!-- Paso 1: Selección de archivo -->
@@ -49,11 +60,11 @@
                 </button>
               </div>
 
-              <!-- Texto más directo al tener archivo -->
               <div class="context-info">
                 <p>Confirma si este es el archivo correcto o quítalo para cargar otro.</p>
               </div>
             </ng-template>
+
           </div>
 
           <div class="step-actions">

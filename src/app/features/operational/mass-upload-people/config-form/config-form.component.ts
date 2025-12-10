@@ -43,7 +43,7 @@ export class ConfigFormComponent implements OnInit {
   // Campos seleccionados
   selectedTemplate: any = null;
   selectedProfileId: number | null = null;
-  selectedScheduleId: number | null = null;
+  selectedSheduleId: number | null = null;
 
   // Nuevo campo: nombre configuración (modo manual)
   configName: string = '';
@@ -196,36 +196,53 @@ export class ConfigFormComponent implements OnInit {
     // Emitir solo ID + Schedule
     this.configChanged.emit({
       cardConfigurationId: config.id,
-      ScheduleId: this.selectedScheduleId
+      SheduleId: this.selectedSheduleId
     });
   }
 
   // ---------------------- Emitir Configuración ----------------------
 
-  emitConfig() {
-    const division = this.divisionControl.value;
+emitConfig() {
+  const division = this.divisionControl.value;
 
-    // Preset → solo enviamos id + schedule
-    if (this.isPresetSelected && this.selectedConfigId) {
-      this.configChanged.emit({
-        cardConfigurationId: this.selectedConfigId,
-        SheduleId: this.selectedScheduleId,
-        InternalDivisionId: division?.id ?? null,
-      });
-      return;
-    }
-
-    // Manual → enviamos todo
-
+  if (this.isPresetSelected && this.selectedConfigId) {
     this.configChanged.emit({
-      ScheduleId: this.selectedScheduleId,
-      ConfigurationName: this.configNameControl.value || null,
+      cardConfigurationId: this.selectedConfigId,
+      SheduleId: this.selectedSheduleId,
       InternalDivisionId: division?.id ?? null,
-      CardTemplateId: this.selectedTemplate?.id ?? null,
-      ProfileId: this.selectedProfileId,
-      ValidFrom: this.validityForm.value.ValidFrom,
-      ValidTo: this.validityForm.value.ValidTo
     });
+    return;
   }
+
+  this.configChanged.emit({
+    SheduleId: this.selectedSheduleId,
+    CardConfigurationName: this.configNameControl.value || null,
+    InternalDivisionId: division?.id ?? null,
+    CardTemplateId: this.selectedTemplate?.id,
+    ProfileId: this.selectedProfileId,
+    // 🚀 AQUÍ MANDAMOS UTC EXACTO CON Z
+    ValidFrom: this.toUtcZ(this.validityForm.value.ValidFrom),
+    ValidTo: this.toUtcZ(this.validityForm.value.ValidTo)
+  });
+}
+
+
+
+
+/// <summary>
+/// Convierte una fecha seleccionada a ISO UTC terminado en Z.
+/// </summary>
+private toUtcZ(date: any): string | null {
+  if (!date) return null;
+
+  const d = new Date(date);
+
+  // Ajusta la hora que tú necesites (aquí uso 10:00:00 como tu ejemplo)
+  d.setHours(10, 0, 0, 0);
+
+  // Convertir a UTC y asegurar el sufijo Z
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds())).toISOString();
+}
+
 
 }

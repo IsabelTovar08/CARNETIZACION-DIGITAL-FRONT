@@ -159,9 +159,12 @@ export class MassUploadPeopleComponent {
         Swal.fire('Éxito', 'Carnets generados correctamente', 'success');
         this.getImportBatches();
       },
-      error: () => {
+      error: (err) => {
         this.hideLoading();
-        Swal.fire('Error', 'No se pudo generar carnets', 'error');
+
+        const msg = err?.error?.message || 'No se pudo procesar el archivo.';
+
+        Swal.fire('Archivo inválido', msg, 'error');
       }
     });
   }
@@ -172,7 +175,7 @@ export class MassUploadPeopleComponent {
     this.configData = config;
 
     const isManualValid =
-      !!config?.ConfigurationName &&
+      !!config?.CardConfigurationName &&
       !!config?.CardTemplateId &&
       !!config?.ProfileId &&
       !!config?.InternalDivisionId &&
@@ -262,13 +265,13 @@ export class MassUploadPeopleComponent {
     // 2. MODO MANUAL (todo explícito)
     return {
       personId: personId,
-      cardName: c.ConfigurationName,
+      cardName: c.CardConfigurationName,
       cardTemplateId: c.CardTemplateId,
       internalDivisionId: c.InternalDivisionId,
       profileId: c.ProfileId,
       validFrom: c.ValidFrom,
       validTo: c.ValidTo,
-      sheduleId: c.ScheduleId
+      sheduleId: c.SheduleId,
     };
   }
 

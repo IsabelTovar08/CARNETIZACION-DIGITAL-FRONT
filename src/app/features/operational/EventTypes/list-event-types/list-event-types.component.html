@@ -1,7 +1,7 @@
 <app-generic-table
   [title]="'Tipos de Eventos'"
   *ngIf="listEventType as list"
-  [dataSourceInput]="list"
+  [dataSourceInput]="listEventType"
   [displayedColumns]="displayedColumns"
   [columns]="[
       { key: 'name', label: 'Nombre' },

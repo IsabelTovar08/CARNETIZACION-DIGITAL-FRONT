@@ -74,5 +74,16 @@ export class FileUploadComponent {
     }
   }
 
+  /// <summary>
+  /// Descarga la plantilla de carga masiva.
+  /// </summary>
+  downloadTemplate(): void {
+    const url = '/assets/templates/plantilla-carga-masiva.xlsm';
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'plantilla-carga-masiva.xlsm';
+    link.click();
+  }
+
 
 }

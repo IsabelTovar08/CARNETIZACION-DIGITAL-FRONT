@@ -55,7 +55,7 @@ export class GenericTableComponent {
   // Usamos MatTableDataSource para la paginación y ordenamiento
   dataSource = new MatTableDataSource<any>();
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('paginator') paginator!: MatPaginator;
   /**
    *
    */
@@ -64,12 +64,22 @@ export class GenericTableComponent {
     private route: ActivatedRoute
   ) { }
 
+  private pendingData: any[] | null = null;
   @Input() set dataSourceInput(data: any[]) {
     this.dataSource.data = data || [];
+
+    setTimeout(() => {
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
+    });
   }
 
+
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+    });
   }
 
   emitEdit(item: any) {
@@ -106,10 +116,10 @@ export class GenericTableComponent {
       if (result.isConfirmed) {
         item.isDeleted = !item.isDeleted;  // invierte el valor
 
-      this.onToggleStatus.emit(item);
+        this.onToggleStatus.emit(item);
 
-      // Forzar actualización tabla:
-      this.dataSource.data = [...this.dataSource.data];
+        // Forzar actualización tabla:
+        this.dataSource.data = [...this.dataSource.data];
         // Swal.fire(
         //   isActivating ? 'Activado' : 'Desactivado',
         //   `El elemento ha sido ${isActivating ? 'activado' : 'desactivado'} correctamente.`,

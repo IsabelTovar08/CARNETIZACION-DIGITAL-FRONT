@@ -48,7 +48,8 @@
             <mat-cell *matCellDef="let item">
               <div class="action-buttons">
                 <!-- Template personalizado para acciones -->
-                <ng-container *ngIf="customTemplates?.['actions']; else defaultActions">
+                <ng-container
+                  *ngIf="customTemplates?.['actions']; else defaultActions">
                   <ng-container
                     *ngTemplateOutlet="customTemplates['actions']; context: { $implicit: item }">
                   </ng-container>
@@ -56,10 +57,12 @@
 
                 <!-- Acciones por defecto -->
                 <ng-template #defaultActions>
-                  <button mat-icon-button (click)="emitEdit(item)" matTooltip="Editar">
+                  <button mat-icon-button (click)="emitEdit(item)"
+                    matTooltip="Editar">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="emitDelete(item)" matTooltip="Eliminar">
+                  <button mat-icon-button (click)="emitDelete(item)"
+                    matTooltip="Eliminar">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </ng-template>
@@ -80,7 +83,8 @@
         </mat-table>
 
         <!-- ✅ Mensaje de “No hay registros” fuera del mat-table -->
-        <div class="no-data-message" *ngIf="!dataSource.data || dataSource.data.length === 0">
+        <div class="no-data-message"
+          *ngIf="!dataSource.data || dataSource.data.length === 0">
           <mat-icon>info</mat-icon>
           <p>No hay registros disponibles</p>
         </div>
@@ -88,12 +92,13 @@
 
       <!-- ✅ Paginación -->
       <mat-paginator
-        *ngIf="dataSource && dataSource.data.length > 0"
+        #paginator
+        [length]="dataSource.data || 0"
         [pageSizeOptions]="[5, 10, 25, 50]"
-        [length]="dataSource.data.length"
         [pageSize]="10"
         showFirstLastButtons>
       </mat-paginator>
+
     </mat-card-content>
   </mat-card>
 </div>

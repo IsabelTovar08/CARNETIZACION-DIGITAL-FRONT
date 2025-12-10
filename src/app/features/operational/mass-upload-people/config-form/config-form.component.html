@@ -103,7 +103,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Horario (Jornada)</mat-label>
         <mat-select
-          [(value)]="selectedScheduleId"
+          [(value)]="selectedSheduleId"
           (selectionChange)="emitConfig()">
           <mat-option *ngFor="let s of schedules" [value]="s.id">
             {{ s.name }}
