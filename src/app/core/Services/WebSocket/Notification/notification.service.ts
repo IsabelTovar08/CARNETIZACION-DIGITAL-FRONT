@@ -2,12 +2,12 @@ import { User } from './../../../../../stories/user';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { WebSocketService } from '../web-socket.service';
-import { environment } from '../../../../../environments/environment.development';
 import { NotificationsService } from '../../api/notifications/notifications.service';
 import { NotificationDto } from '../../../Models/notifications/notifications.models';
 import { ApiResponse } from '../../../Models/api-response.models';
 import { UserStoreService } from '../../auth/user-store.service';
 import { SnackbarService } from '../../snackbar/snackbar.service';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
